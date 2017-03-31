@@ -1,3 +1,13 @@
+Notice of Liability
+-------------------
+The information contained in this document and the import packages are distributed on an "As Is" basis, 
+without warranty of any kind, express or implied, including, but not limited to, the implied warranties 
+of merchantability and fitness for a particular purpose or a warranty of non-infringement. Aras shall have 
+no liability to any person or entity with respect to any loss or damage caused or alleged to be caused 
+directly or indirectly by the information contained in this document or by the software or hardware products 
+described herein.
+
+
 --------------------------------------------
 Packages Import Instructions
 --------------------------------------------
@@ -7,9 +17,94 @@ Author:
 
 Version:
 --------
+V4-0 (Oct 2015)
+- added flexible "Grid Configurations" based on "CommonBase Grid Utiltities" (package)
+- added new folder relationship "cFolder URL" that allows 
+
+- context menus are defined in "Grid Configurations" - total rework of previous menus
+- added inheritance of "owner" and "manager" and "team" to all subfolders (used to be "team" only).
+
+- major rework of "grid loading" - based on "Grid Configurations" now.
+
+- added concept or "TOC Folders" - "Dummy" Item Types exposed on TOC can have "cFolder Structure" form in their TOC view.
+	--> configuration can point to a folder identified by its "config_id" to be displayed in a TOC Folder
+	--> configuration can have "config_id" = "root:*" so all root folder accessible by user are displayed in a TOC Folder
+	--> configuration can have "config_id" = "root:owner" so all root folder directly owned by user "My Folders" are displayed in a TOC Folder
+
+
+Known Issues
+------------
+- Folder Navigator: action "refresh_this_folder" does not work and got disabled.
+- Folder Navigator: action "cut_folder" not implemented, yet. 
+- Folder Navigator: action "paste_folder" not implemented, yet. 
+- File Drag n Drop does not yet work with Aras 11 !
+- Loading by level no longer supported. For large structures loading can take a while. Future release may re-introduce loading by levels
+
+
+=========================
+Installation Instructions
+=========================
+	1. Start the Aras Packing "Import Tool" and logon as "admin". 
+
+	The imports will require multiple steps that need to be run extactly in the sequence listed below. Use option MERGE for all steps !!!
+
+	STEP1:  Select this manifest File "…\1-Other Dependent Packages\1-Common Utilties v2-1 (partial)\imports (admin).mf"
+		"Common Utilities" <-- place check mark in this option and start the import.
+
+	STEP2:  Select this manifest File "…\1-Other Dependent Packages\2-Common Grid Utilities v3-0\1-Grid Utilities\imports (admin).mf"
+		"Common Grid Utilities" <-- place check mark in this option and start the import.
+
+	STEP3:  Select this manifest File "…\2-Innovator Core and PLM extensions\1-imports - PLM (admin).mf"
+		"com.aras.innovator.solution.PLM" <-- place check mark in this option and start the import.
+
+	STEP4:  Select this manifest File "…\2-Innovator Core and PLM extensions\2-imports - core (admin).mf"
+		"com.aras.innovator.core" <-- place check mark in this option and start the import.
+
+	STEP5:  Select this manifest File "…\3-Collaboration Folders\1-imports (admin) - Renaming.mf"
+		"Collaboration Folders" <-- place check mark in this option and start the import.
+
+	STEP6:  Select this manifest File "…\3-Collaboration Folders\2-imports (admin).mf"
+		"Collaboration Folders" <-- place check mark in this option and start the import.
+
+	(Optional) STEP7:  Select this manifest File "…\4-Collaboration Folders on TOC\imports (admin).mf"
+		"Collaboration Folders" <-- place check mark in this option and start the import.
+
+	STEP8:  Select this manifest File "…\5-Configuration Data\imports (admin).mf"
+		"Collaboration Folders" <-- place check mark in this option and start the import.
+
+	(Optional) STEP9:  Select this manifest File "…\6-Folders On Program And Project\1_AddToProgram\1-imports - CF (admin).mf"
+		"Collaboration Folders" <-- place check mark in this option and start the import.
+
+	(Optional) STEP10:  Select this manifest File "…\6-Folders On Program And Project\1_AddToProgram\2-imports - Program (admin).mf"
+		"com.aras.innovator.solution.Project" <-- place check mark in this option and start the import.
+			
+	(Optional) STEP11:  Select this manifest File "…\6-Folders On Program And Project\2_AddToProject\1-imports - CF (admin).mf"
+		"Collaboration Folders" <-- place check mark in this option and start the import.
+
+	(Optional) STEP12:  Select this manifest File "…\6-Folders On Program And Project\2_AddToProject\2-imports - Project (admin).mf"
+		"com.aras.innovator.solution.Project" <-- place check mark in this option and start the import.
+		
+	(Optional) STEP13:  Select this manifest File "…\SetPackageVersion (optioal)\imports (admin).mf"
+		"Collaboration Folders" <-- place check mark in this option and start the import.
+		## this import will fail, if you do not have the package "Package Utilities v1-6(A11)" loaded already ##
+		
+
+	2. After all imports have finished the final step is to copy some add-on "images" and "ui_resource"(for multi-language messages) files into the
+	"CodeTree" of your Aras installation.
+		Open folder "…\_CodeTreeOverlays" then copy folder "Innovator". Navigate to your CodeTree and paste the "Innovator" folder to the installation root.
+		Choose option "overwrite", if older versions of any file are found.
+
+
+
+
+################
+Version History:
+################
+
 V3-1 (May 2014)
 - added dynamic grid context menu logic
 - added/improved related projects property on folder and Document/CAD (if folder connected to project, property is filled)
+
 V3-0 (May 2014)
 
 - Made compatible with Aras10 - IE and Firefox - (90% but still some minor issues)
@@ -28,178 +123,6 @@ V3-0 (May 2014)
   all controlled items added to a folder will get this project/program keyed_name copy to their property "related_projects"
     (if connected to more folders the different project/program names get listed in a comma separated list)
     on main grid documents can then be search for by "project name"
-
-
-Known Issues
-------------
-- File Drag n Drop does not yet work with Aras 10 !
-- Folder Navigator: action "refresh_this_folder" does not work.  grid API .getChildItems() missing !
-
-
-=========================
-Installation Instructions
-=========================
-
-NOTE: If you already have a previous version of "Item Folders" or "Collaboration Folders" installed, then you MUST run installation Stage0 and Stage8 !!!
-      If you install collaboration Folders the first time. DO NOT run Stage0 and start with Stage1 and skip Stage7 !!!
-
-      Also if you install into Aras10, there are addtional steps within some stages !!!
-
---------------------------------------------
-Stage - 0  Updates Flags existing Folders Items 
-
---> Nash update
---> you only need this, if a previous version of Item Folders is in use in your DB !!!
-
-
-- use text editor and open file 
-      .\0-nash update\Remove PackageDefinitions (Item Folders).xml
-
-  Select all and paste to Nash input box "XML"
-
-  then, click submit button
-
-- use text editor and open file --> you only need this if you have a package "PLM Common Utilities" in your DB. Else it will fail, which is ok.
-      .\0-nash update\Rename PackageDefinitions (Common Utilties).xml
-
-  Select all and paste to Nash input box "XML"
-
-  then, click submit button  (Error 'Common Utilities' already exists may occur. This is OK. rename was done before)
-
-
-  done. Close the Nash tool
-
-
---> Use the Aras import utiltity tool "import.exe" log on as "admin"
-
-  Select Mainfest file from folder .\0-xItemFolder LifeCycle correction\imports (admin).mf
-  place checkmark on all listed packages and  set option "Merge"
-  then, click the "import" button on top tool bar
-
-
-=============================================
-Stage - 1 Import subset of "Common Utilities"
-
---> Use the Aras import utiltity tool "import.exe" log on as "admin"
-
-
-Select Mainfest file from folder .\1-Common Grid Utilities v1-0\imports.mf
-place checkmark on all listed packages and  set option "Merge"
-then, click the "import" button on top tool bar
-
-
-Select Mainfest file from folder .\1-Common Utilties v1-9 (partial)\imports.mf
-place checkmark on all listed packages and  set option "Merge"
-then, click the "import" button on top tool bar
-
-
-
-=============================================
-Stage - 2  Import extensions to core and PLM item types
-
---> Use the Aras import utiltity tool "import.exe" log on as "admin"
-
-
-Select Mainfest file from folder .\2-Innovator Core and PLM extensions\1-imports - PLM (admin).mf
-place checkmark on all listed packages and  set option "Merge"
-then, click the "import" button on top tool bar
-Select Mainfest file from folder .\2-Innovator Core and PLM extensions\2-imports - core (admin).mf
-place checkmark on all listed packages and  set option "Merge"
-then, click the "import" button on top tool bar
-
-
-=============================================
-Stage - 3  Import next parts of Collaboration Folder add-on
-
---> Use the Aras import utiltity tool "import.exe" log on as "admin"
-
-Select Mainfest file from folder .\3-Collaboration Folders\imports (admin).mf
-place checkmark on all listed packages and  set option "Merge"
-then, click the "import" button on top tool bar
-
-
-=============================================
-Stage - 4  Import final parts of Collaboration Folder add-on
-
---> Use the Aras import utiltity tool "import.exe" log on as "admin"
-
-Select Mainfest file from folder .\4-Collaboration Folders\imports (admin).mf
-place checkmark on all listed packages and  set option "Merge"
-then, click the "import" button on top tool bar
-
-
-=============================================
-Stage - 5  Adds Folder Features to standard Program ItemType
-
---> Use the Aras import utiltity tool "import.exe" log on as "admin"
-
-Select Mainfest file from folder .\5-Folders On Program And Project\1_AddToProgram\1-imports - CF (admin).mf
-place checkmark on all listed packages and  set option "Merge"
-then, click the "import" button on top tool bar
-Select Mainfest file from folder .\5-Folders On Program And Project\1_AddToProgram\1-imports - Program (admin).mf
-place checkmark on all listed packages and  set option "Merge"
-then, click the "import" button on top tool bar
-
-Select Mainfest file from folder .\5-Folders On Program And Project\2_AddToProject\1-imports - CF (admin).mf
-place checkmark on all listed packages and  set option "Merge"
-then, click the "import" button on top tool bar
-Select Mainfest file from folder .\5-Folders On Program And Project\2_AddToProject\1-imports - Project (admin).mf
-place checkmark on all listed packages and  set option "Merge"
-then, click the "import" button on top tool bar
-
-
-=============================================
-Stage - 6 Additiontal import for Aras10 only !!!
-
---> Use the Aras import utiltity tool "import.exe" log on as "admin"
-
-Select Mainfest file from folder .\6-Collaboration Folders - Aras10 updates\imports(admin).mf
-place checkmark on all listed packages and  set option "Merge"
-then, click the "import" button on top tool bar
-
-
-=============================================
-Stage - 7 Copy code tree overlay files to the code tree of the the target Aras System
-
-Open folder "7-CodeTreeOverlays"
-
-if installing on Aras9x open sub folder "Aras9"
-if installing on Aras10 open sub folder "Aras10"
-
-- select "innovator" and copy this folder
-- on the target Aras System go to the installation folders and then paste the copy over the "innovator" folder
-- confirm to add or overwrite folders and files.
-
-- additional grid icons and language xml files are added.
-
-
-=============================================
-Stage - 8  Updates Flags existing Folders Items 
-
---> Nash update
---> you only need this if a previous version of Item Folders is in use and there are existing folder structres in your DB
-
-start Nash.aspx tool on the target Aras System and log on as "admin"
-(the url to nash.aspy tool could be like this: http://localhost/InnovatorServer/Client/scripts/nash.aspx )
-
-- use text editor and open file 
-      .\7-nash update\UpdateFlagsOnExistigFolderItems.xml
-
-  Select all and paste to Nash input box "XML"
-
-  then, click submit button
-
-  done. Close the Nash tool
-
-
-=============================================
-Stage - 9 (Optional) SetPackage version - Will fail, if you do not have the Package Utiltities v1-4 or higher loaded !!!
-
-
-
-################
-Version History:
-################
 
 v2-1 (October 2013)
  - reduced server calls from Navigator grid to load folder related items (Files, Documents) -> 30% performance increase.

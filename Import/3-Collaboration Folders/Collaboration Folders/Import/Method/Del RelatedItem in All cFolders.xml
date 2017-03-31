@@ -1,0 +1,80 @@
+﻿<AML>
+ <Item type="Method" id="51598A7A47FD405D9D2F11217EFF7FA4" action="add">
+  <comments>called from cFolder grid's context menu</comments>
+  <execution_allowed_to keyed_name="World" type="Identity">A73B655731924CD0B027E4F4D5FCC0A9</execution_allowed_to>
+  <method_code><![CDATA[// Check relationship to cFolders. If existing, then delete them. Then try to delete the referenced item
+// if item still cannot be deleted, then all transactions get rolled back and not harm is done.
+// this context must be the item to be deleted (defined by id and type)
+//
+// #required Attributes in context:
+//	folderRelationshipName  - must be the name of the relationship that can reference this item
+
+// #optional Attributes in context:
+//  checkWhereUsed = "1"  - if set, then the use of item in cFolder relationships is returned. set to "0" to force the delete action
+//	folderRelatedItemProperty  - it related_id is not the property linking to this item (i.e. in NULL relationship. then provide the name of the property referencing this item
+
+// Must do apply as 'super user'
+
+// Must be called from another method (server or client side)
+string thisMethodName = "Del RelatedItem in All cFolders";
+if (this.getAttribute("action","") != thisMethodName) {return this;}  // do noting
+
+//System.Diagnostics.Debugger.Break();
+
+// Grant 'Super User' permissions
+Aras.Server.Security.Identity plmIdentity = Aras.Server.Security.Identity.GetByName("Super User");
+bool PermissionWasSet = Aras.Server.Security.Permissions.GrantIdentity(plmIdentity); 
+
+string folderRelationshipName = this.getAttribute("folderRelationshipName","");
+if (folderRelationshipName == "") {return this.getInnovator().newError("Item passed to method '"+thisMethodName+"' does not have a value for attribute 'folderRelationshipName' set !");}
+
+string folderRelatedItemProperty = this.getAttribute("folderRelatedItemProperty","related_id");
+bool useConfigId = (this.getAttribute("useConfigId","0") == "1");
+
+string itemGetId = this.getID();
+if (useConfigId) {
+	itemGetId = this.getProperty("config_id","");
+	if (itemGetId == "") {return this.getInnovator().newError("Item passed to method '"+thisMethodName+"' does not have property 'config_id' set !");}
+}
+
+string aml = "<Item type='"+folderRelationshipName+"' action='get' serverEvents='0' select='id,sort_order,related_id(name,state,item_number)' >";
+aml += "<"+folderRelatedItemProperty+">"+itemGetId+"</"+folderRelatedItemProperty+">";
+aml += "</Item>";
+
+//check where used in any cFolder
+Item check = this.newItem("");
+check.loadAML(aml);
+check = check.apply();
+
+if (this.getAttribute("checkWhereUsed","0") == "1") {
+	if (PermissionWasSet) {Aras.Server.Security.Permissions.RevokeIdentity(plmIdentity);} // Revoke 'Aras PLM' permissions
+	return check;
+}
+if (check.getItemCount() <= 0) {
+	if (PermissionWasSet) {Aras.Server.Security.Permissions.RevokeIdentity(plmIdentity);} // Revoke 'Aras PLM' permissions
+	return this;  // not used in any folder. Proceed with core delete action
+}
+
+List<string> relIdsList = new List<string>();
+for (int i=0; i<check.getItemCount(); i++) {
+	relIdsList.Add(check.getItemByIndex(i).getID());
+}
+string ids = "'"+string.Join("','",relIdsList)+"'";
+aml = "<AML>";
+// delete the folder relationships
+aml += "<Item type=\"cFolder Controlled Item\" action=\"delete\" where=\"[cFolder_Controlled_Item].id in ("+ids+")\" />";
+// delete the referenced item
+aml += "<Item type=\""+this.getType()+"\" action=\"delete\" id=\""+this.getID()+"\" />";
+aml += "</AML>";
+check = this.getInnovator().applyAML(aml);
+
+if (PermissionWasSet) {Aras.Server.Security.Permissions.RevokeIdentity(plmIdentity);} // Revoke 'Aras PLM' permissions
+
+if (check.isError()) {return check;}
+
+
+return this;]]></method_code>
+  <method_type>C#</method_type>
+  <name>Del RelatedItem in All cFolders</name>
+ </Item>
+</AML>

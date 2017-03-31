@@ -1,0 +1,33 @@
+﻿<AML>
+ <Item type="Method" id="CC9B81FFED734BB2AE8A081097098AF6" action="add">
+  <comments>add  Solplar specific callback</comments>
+  <execution_allowed_to keyed_name="World" type="Identity">A73B655731924CD0B027E4F4D5FCC0A9</execution_allowed_to>
+  <method_code><![CDATA[//return this;
+
+
+// NOTE: 
+// The context item "this" can identify a single item or a collection of items "rootItems" 
+// It only specifies the item type and an item id or list of ids.  (list is in attribute "idsList")
+
+// add calls to your sever methods here. (remove return on 1st line)
+// . . . .
+
+// Soplar action to clean stale references regularily - context must be type = cFolder
+if (this.getType() == "cFolder") {
+	
+	var ids = this.getAttribute("idsList","");
+	if (ids == "") {
+		ids = this.getID();
+	}
+	Item runMethod = this.newItem("Method", "Soplar Delete StaleCtrlItemRef");
+	runMethod.setAttribute("cFolderIds",ids);
+	Item res = runMethod.apply();
+	if (res.isError()) {return res;}
+}
+
+
+return this;]]></method_code>
+  <method_type>C#</method_type>
+  <name>CommonBase onBefore GridDraw</name>
+ </Item>
+</AML>

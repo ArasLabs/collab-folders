@@ -1,0 +1,20 @@
+﻿<AML>
+ <Item type="List" id="5EB366A1569446DFB13B264EC71B981C" action="add">
+  <description></description>
+  <name>tgc_True_False</name>
+  <Relationships>
+   <Item type="Value" id="002C86F30AA44C769A759A9F73932763" action="add">
+    <label xml:lang="en">True</label>
+    <sort_order>10</sort_order>
+    <source_id keyed_name="tgc_True_False" type="List">5EB366A1569446DFB13B264EC71B981C</source_id>
+    <value>true</value>
+   </Item>
+   <Item type="Value" id="01A0C345458A4549B5DD228CDA40A136" action="add">
+    <label xml:lang="en">False</label>
+    <sort_order>20</sort_order>
+    <source_id keyed_name="tgc_True_False" type="List">5EB366A1569446DFB13B264EC71B981C</source_id>
+    <value>false</value>
+   </Item>
+  </Relationships>
+ </Item>
+</AML>

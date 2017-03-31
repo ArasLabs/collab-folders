@@ -46,7 +46,7 @@ window.createNewItemAndLinkToProperty = function(){
 LinkNewTeamToFolder = function(folderName){
   var tmpItm = document.item;
   var aml = tmpItm.xml;
-  var thisItem = top.aras.newIOMItem("","");  // holds the Item Folder context
+  var thisItem = top.aras.newIOMItem("","");  // holds the cFolder context
   thisItem.loadAML(aml);
 
   var thisFolderConfigId = thisItem.getProperty("config_id","");
@@ -54,7 +54,7 @@ LinkNewTeamToFolder = function(folderName){
   if (thisFolderConfigId === "") {thisFolderConfigId=thisItem.getID();}
   
   if (thisFolderConfigId === "") {
-    alert ("Cannot determine 'configId', of this Item Folder!");
+    alert ("Cannot determine 'configId', of this cFolder!");
     return;
   }
 
@@ -95,7 +95,7 @@ function createItemFolderTeamItem (folderItemConfigId,folderItemNumber,presetPro
   var teamId = "";
   if (amlCmd.getItemCount() <= 0) {
     //create new team for this Folder
-    amlCmd = top.aras.newIOMItem("Team","Item Folder CreateNew Team");
+    amlCmd = top.aras.newIOMItem("Team","cFolder CreateNew Team");
     amlCmd.setProperty(presetProperty,teamName);
     amlCmd.setProperty("private_team_item_id_string", folderItemConfigId);
     amlCmd = amlCmd.apply();

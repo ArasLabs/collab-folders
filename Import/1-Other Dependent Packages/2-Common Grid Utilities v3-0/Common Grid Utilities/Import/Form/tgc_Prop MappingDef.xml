@@ -1,0 +1,337 @@
+﻿<AML>
+ <Item type="Form" id="1042F5C9FFC84553BF860D891A985BD4" action="add">
+  <category_form>0</category_form>
+  <height>300</height>
+  <stylesheet><![CDATA[../styles/default.css]]></stylesheet>
+  <width>1000</width>
+  <name>tgc_Prop MappingDef</name>
+  <Relationships>
+   <Item type="Body" id="B18BDD5EFE6C4750A35EAE7CACD22D06" action="add">
+    <bg_color>#FFFFFF</bg_color>
+    <sort_order>128</sort_order>
+    <source_id keyed_name="tgc_Prop MappingDef" type="Form">1042F5C9FFC84553BF860D891A985BD4</source_id>
+    <Relationships>
+     <Item type="Field" id="8313C783EE5B4338953DE163647D9AD4" action="add">
+      <bg_color>#FFFFFF</bg_color>
+      <border_width>0</border_width>
+      <display_length>2</display_length>
+      <display_length_unit>ex</display_length_unit>
+      <field_type>color</field_type>
+      <font_color>#000000</font_color>
+      <font_family>arial, helvetica, sans-serif</font_family>
+      <font_size>8pt</font_size>
+      <font_weight>bold</font_weight>
+      <is_disabled>0</is_disabled>
+      <is_visible>1</is_visible>
+      <label xml:lang="en">Cell Bg Color</label>
+      <label_position>right</label_position>
+      <list_no_blank>0</list_no_blank>
+      <propertytype_id keyed_name="cell_bg_color" type="Property">75F785A7A54C47309F1F97AF13F07F01</propertytype_id>
+      <sort_order>896</sort_order>
+      <source_id keyed_name="B18BDD5EFE6C4750A35EAE7CACD22D06" type="Body">B18BDD5EFE6C4750A35EAE7CACD22D06</source_id>
+      <tab_index>104</tab_index>
+      <tab_stop>1</tab_stop>
+      <x>589</x>
+      <y>104</y>
+      <name>cell_bg_color</name>
+     </Item>
+     <Item type="Field" id="C1D5457CC18A4EA4B0498A41325BE95C" action="add">
+      <bg_color>#FFFFFF</bg_color>
+      <border_width>0</border_width>
+      <display_length_unit>px</display_length_unit>
+      <field_type>checkbox</field_type>
+      <font_color>#000000</font_color>
+      <font_family>arial, helvetica, sans-serif</font_family>
+      <font_size>8pt</font_size>
+      <font_weight>bold</font_weight>
+      <is_disabled>0</is_disabled>
+      <is_visible>1</is_visible>
+      <label xml:lang="en">is Editable</label>
+      <label_position>right</label_position>
+      <list_no_blank>0</list_no_blank>
+      <propertytype_id keyed_name="cell_is_editable" type="Property">05A4F7C256AF428991F303AB15EC4C53</propertytype_id>
+      <sort_order>1408</sort_order>
+      <source_id keyed_name="B18BDD5EFE6C4750A35EAE7CACD22D06" type="Body">B18BDD5EFE6C4750A35EAE7CACD22D06</source_id>
+      <tab_index>108</tab_index>
+      <tab_stop>1</tab_stop>
+      <x>570</x>
+      <y>20</y>
+      <name>cell_is_editable</name>
+     </Item>
+     <Item type="Field" id="EBBBA913E2BF49A4AD655CECE582103D" action="add">
+      <bg_color>#FFFFFF</bg_color>
+      <border_width>0</border_width>
+      <display_length>38</display_length>
+      <display_length_unit>ex</display_length_unit>
+      <field_type>text</field_type>
+      <font_color>#000000</font_color>
+      <font_family>arial, helvetica, sans-serif</font_family>
+      <font_size>8pt</font_size>
+      <font_weight>bold</font_weight>
+      <is_disabled>0</is_disabled>
+      <is_visible>1</is_visible>
+      <label xml:lang="en">Cell Link Item Type</label>
+      <label_position>top</label_position>
+      <list_no_blank>0</list_no_blank>
+      <propertytype_id keyed_name="cell_link_item_type" type="Property">CB9323FE0CF5462BBD3711AAA1259CD4</propertytype_id>
+      <sort_order>1280</sort_order>
+      <source_id keyed_name="B18BDD5EFE6C4750A35EAE7CACD22D06" type="Body">B18BDD5EFE6C4750A35EAE7CACD22D06</source_id>
+      <tab_index>107</tab_index>
+      <tab_stop>1</tab_stop>
+      <x>333</x>
+      <y>162</y>
+      <name>cell_link_item_type</name>
+     </Item>
+     <Item type="Field" id="2F8CC7C413964B68913B2AFF6904E30A" action="add">
+      <bg_color>#FFFFFF</bg_color>
+      <border_width>0</border_width>
+      <display_length>45</display_length>
+      <display_length_unit>ex</display_length_unit>
+      <field_type>dropdown</field_type>
+      <font_color>#000000</font_color>
+      <font_family>arial, helvetica, sans-serif</font_family>
+      <font_size>8pt</font_size>
+      <font_weight>bold</font_weight>
+      <is_disabled>0</is_disabled>
+      <is_visible>1</is_visible>
+      <label xml:lang="en">Cell Link Key Code</label>
+      <label_position>top</label_position>
+      <list_no_blank>0</list_no_blank>
+      <propertytype_id keyed_name="cell_link_key" type="Property">0FC08A93AF8D4B3CA5402A7A3BBBE372</propertytype_id>
+      <sort_order>1152</sort_order>
+      <source_id keyed_name="B18BDD5EFE6C4750A35EAE7CACD22D06" type="Body">B18BDD5EFE6C4750A35EAE7CACD22D06</source_id>
+      <tab_index>106</tab_index>
+      <tab_stop>1</tab_stop>
+      <x>181</x>
+      <y>160</y>
+      <name>cell_link_key</name>
+     </Item>
+     <Item type="Field" id="73E5C1B2E0264E1A9117DFEEEBE5C452" action="add">
+      <bg_color>#FFFFFF</bg_color>
+      <border_width>0</border_width>
+      <display_length>64</display_length>
+      <display_length_unit>ex</display_length_unit>
+      <field_type>ml_string</field_type>
+      <font_color>#000000</font_color>
+      <font_family>arial, helvetica, sans-serif</font_family>
+      <font_size>8pt</font_size>
+      <font_weight>bold</font_weight>
+      <is_disabled>0</is_disabled>
+      <is_visible>1</is_visible>
+      <label xml:lang="en">Cell Static Value</label>
+      <label_position>top</label_position>
+      <list_no_blank>0</list_no_blank>
+      <propertytype_id keyed_name="cell_static_value" type="Property">3538CF90AA9742F28D1357132344613B</propertytype_id>
+      <sort_order>512</sort_order>
+      <source_id keyed_name="B18BDD5EFE6C4750A35EAE7CACD22D06" type="Body">B18BDD5EFE6C4750A35EAE7CACD22D06</source_id>
+      <tab_index>101</tab_index>
+      <tab_stop>1</tab_stop>
+      <textarea_cols>350</textarea_cols>
+      <textarea_rows>50</textarea_rows>
+      <x>180</x>
+      <y>50</y>
+      <name>cell_static_value</name>
+     </Item>
+     <Item type="Field" id="F8434372DBDB47ECB9783205BC47C11A" action="add">
+      <bg_color>#FFFFFF</bg_color>
+      <border_width>0</border_width>
+      <display_length>2</display_length>
+      <display_length_unit>ex</display_length_unit>
+      <field_type>color</field_type>
+      <font_color>#000000</font_color>
+      <font_family>arial, helvetica, sans-serif</font_family>
+      <font_size>8pt</font_size>
+      <font_weight>bold</font_weight>
+      <is_disabled>0</is_disabled>
+      <is_visible>1</is_visible>
+      <label xml:lang="en">Cell Text Color</label>
+      <label_position>right</label_position>
+      <list_no_blank>0</list_no_blank>
+      <propertytype_id keyed_name="cell_text_color" type="Property">090F8438FD2447A88F89CC51B57D5255</propertytype_id>
+      <sort_order>1024</sort_order>
+      <source_id keyed_name="B18BDD5EFE6C4750A35EAE7CACD22D06" type="Body">B18BDD5EFE6C4750A35EAE7CACD22D06</source_id>
+      <tab_index>105</tab_index>
+      <tab_stop>1</tab_stop>
+      <x>589</x>
+      <y>130</y>
+      <name>cell_text_color</name>
+     </Item>
+     <Item type="Field" id="85EA08EF038B4D57BB73B132353267EB" action="add">
+      <bg_color>#FFFFFF</bg_color>
+      <border_width>0</border_width>
+      <display_length_unit>px</display_length_unit>
+      <field_type>dropdown</field_type>
+      <font_color>#000000</font_color>
+      <font_family>arial, helvetica, sans-serif</font_family>
+      <font_size>8pt</font_size>
+      <font_weight>bold</font_weight>
+      <is_disabled>0</is_disabled>
+      <is_visible>1</is_visible>
+      <label xml:lang="en">Cell Value Type</label>
+      <label_position>top</label_position>
+      <list_no_blank>0</list_no_blank>
+      <propertytype_id keyed_name="cell_value_type" type="Property">21F8FF6C9D2449DFB4B61F5F2F43ADEB</propertytype_id>
+      <sort_order>640</sort_order>
+      <source_id keyed_name="B18BDD5EFE6C4750A35EAE7CACD22D06" type="Body">B18BDD5EFE6C4750A35EAE7CACD22D06</source_id>
+      <tab_index>102</tab_index>
+      <tab_stop>1</tab_stop>
+      <x>180</x>
+      <y>90</y>
+      <name>cell_value_type</name>
+     </Item>
+     <Item type="Field" id="8A353781765B45818009B6D90B79F6C5" action="add">
+      <bg_color>#FFFFFF</bg_color>
+      <border_width>0</border_width>
+      <display_length>47</display_length>
+      <display_length_unit>ex</display_length_unit>
+      <field_type>textarea</field_type>
+      <font_color>#000000</font_color>
+      <font_family>arial, helvetica, sans-serif</font_family>
+      <font_size>8pt</font_size>
+      <font_weight>bold</font_weight>
+      <is_disabled>0</is_disabled>
+      <is_visible>1</is_visible>
+      <label xml:lang="en">Other Cell Value Type</label>
+      <label_position>top</label_position>
+      <list_no_blank>0</list_no_blank>
+      <propertytype_id keyed_name="cell_value_type_other" type="Property">4AC3EB7F24DE4109B6BA58D19691B4CE</propertytype_id>
+      <sort_order>768</sort_order>
+      <source_id keyed_name="B18BDD5EFE6C4750A35EAE7CACD22D06" type="Body">B18BDD5EFE6C4750A35EAE7CACD22D06</source_id>
+      <tab_index>103</tab_index>
+      <tab_stop>1</tab_stop>
+      <textarea_cols>47</textarea_cols>
+      <textarea_rows>6</textarea_rows>
+      <x>280</x>
+      <y>90</y>
+      <name>cell_value_type_other</name>
+     </Item>
+     <Item type="Field" id="7AECEBA62EEF4EDDBF91EF73916F93F8" action="add">
+      <bg_color>#FFFFFF</bg_color>
+      <border_width>0</border_width>
+      <display_length>30</display_length>
+      <display_length_unit>ex</display_length_unit>
+      <field_type>text</field_type>
+      <font_color>#000000</font_color>
+      <font_family>arial, helvetica, sans-serif</font_family>
+      <font_size>8pt</font_size>
+      <font_weight>bold</font_weight>
+      <is_disabled>0</is_disabled>
+      <is_visible>1</is_visible>
+      <label xml:lang="en">Column Name</label>
+      <label_position>top</label_position>
+      <list_no_blank>0</list_no_blank>
+      <propertytype_id keyed_name="col_name" type="Property">ED2C34A0609C4B0297C223F79268C967</propertytype_id>
+      <sort_order>256</sort_order>
+      <source_id keyed_name="B18BDD5EFE6C4750A35EAE7CACD22D06" type="Body">B18BDD5EFE6C4750A35EAE7CACD22D06</source_id>
+      <tab_index>10</tab_index>
+      <tab_stop>1</tab_stop>
+      <x>240</x>
+      <y>10</y>
+      <name>col_name</name>
+     </Item>
+     <Item type="Field" id="07E476D14C3C44E0BB9F07166B15E999" action="add">
+      <bg_color>#FFFFFF</bg_color>
+      <border_width>0</border_width>
+      <display_length_unit>px</display_length_unit>
+      <field_type>checkbox</field_type>
+      <font_color>#000000</font_color>
+      <font_family>arial, helvetica, sans-serif</font_family>
+      <font_size>8pt</font_size>
+      <font_weight>bold</font_weight>
+      <is_disabled>0</is_disabled>
+      <is_visible>1</is_visible>
+      <label xml:lang="en">Is Rel Property</label>
+      <label_position>right</label_position>
+      <list_no_blank>0</list_no_blank>
+      <propertytype_id keyed_name="is_rel_property" type="Property">65172D6197474F5F8AA4867B0D428928</propertytype_id>
+      <sort_order>384</sort_order>
+      <source_id keyed_name="B18BDD5EFE6C4750A35EAE7CACD22D06" type="Body">B18BDD5EFE6C4750A35EAE7CACD22D06</source_id>
+      <tab_index>100</tab_index>
+      <tab_stop>1</tab_stop>
+      <x>445</x>
+      <y>20</y>
+      <name>is_rel_property</name>
+     </Item>
+     <Item type="Field" id="612C50091AA64D48950113889B87D585" action="add">
+      <bg_color>#FFFFFF</bg_color>
+      <display_length_unit>px</display_length_unit>
+      <field_type>html</field_type>
+      <html_code><![CDATA[<span id='ITEM_INFO_INTERNAL_SPAN'/>
+<script>
+  populate_ITEM_INFO_INTERNAL_SPAN = function()
+  {
+    document.getElementById('ITEM_INFO_INTERNAL_SPAN').innerHTML = top.aras.uiGetItemInfoTable(document.itemType);
+  }
+  window.addEventListener('load', populate_ITEM_INFO_INTERNAL_SPAN);
+</script>]]></html_code>
+      <is_disabled>0</is_disabled>
+      <is_visible>1</is_visible>
+      <list_no_blank>0</list_no_blank>
+      <sort_order>1536</sort_order>
+      <source_id keyed_name="B18BDD5EFE6C4750A35EAE7CACD22D06" type="Body">B18BDD5EFE6C4750A35EAE7CACD22D06</source_id>
+      <tab_stop>0</tab_stop>
+      <x>0</x>
+      <y>0</y>
+      <name>item_info</name>
+     </Item>
+     <Item type="Field" id="E3AB96EB5D884DF7B5EB84F5D1C7AEC4" action="add">
+      <bg_color>#FFFFFF</bg_color>
+      <border_width>0</border_width>
+      <display_length>40</display_length>
+      <display_length_unit>ex</display_length_unit>
+      <field_type>text</field_type>
+      <font_color>#000000</font_color>
+      <font_family>tahoma, arial, helvetica, sans-serif</font_family>
+      <font_size>8pt</font_size>
+      <font_weight>bold</font_weight>
+      <is_disabled>0</is_disabled>
+      <is_visible>1</is_visible>
+      <label xml:lang="en">Property  Name</label>
+      <label_position>top</label_position>
+      <list_no_blank>0</list_no_blank>
+      <propertytype_id keyed_name="mapped_property" type="Property">2B3A09EDFC314E5290A84B41560CAFC7</propertytype_id>
+      <sort_order>1664</sort_order>
+      <source_id keyed_name="B18BDD5EFE6C4750A35EAE7CACD22D06" type="Body">B18BDD5EFE6C4750A35EAE7CACD22D06</source_id>
+      <tab_index>15</tab_index>
+      <tab_stop>1</tab_stop>
+      <x>674</x>
+      <y>11</y>
+      <name>mapped_property</name>
+     </Item>
+     <Item type="Field" id="75FE3937F6C941959D5358118691F132" action="add">
+      <bg_color>#FFFFFF</bg_color>
+      <border_width>0</border_width>
+      <display_length>44</display_length>
+      <display_length_unit>px</display_length_unit>
+      <field_type>text</field_type>
+      <font_color>#000000</font_color>
+      <font_family>arial, helvetica, sans-serif</font_family>
+      <font_size>8pt</font_size>
+      <font_weight>bold</font_weight>
+      <is_disabled>0</is_disabled>
+      <is_visible>1</is_visible>
+      <label xml:lang="en">Pos</label>
+      <label_position>top</label_position>
+      <list_no_blank>0</list_no_blank>
+      <sort_order>128</sort_order>
+      <source_id keyed_name="B18BDD5EFE6C4750A35EAE7CACD22D06" type="Body">B18BDD5EFE6C4750A35EAE7CACD22D06</source_id>
+      <tab_index>5</tab_index>
+      <tab_stop>1</tab_stop>
+      <x>180</x>
+      <y>10</y>
+      <name>sort_order</name>
+     </Item>
+    </Relationships>
+   </Item>
+  </Relationships>
+ </Item>
+ <Item type="Field" id="75FE3937F6C941959D5358118691F132" action="edit">
+  <!-- Please note: this AML depends on the "tgc_Prop MappingDef" ItemType. Please make sure it exists before running this. -->
+  <propertytype_id>
+   <Item type="Property" action="get" select="id">
+    <name>sort_order</name>
+    <source_id type="ItemType" keyed_name="tgc_Prop MappingDef">BF7E1FB22B2444E6BC6E28F9ECE9EDA3</source_id>
+   </Item>
+  </propertytype_id>
+ </Item>
+</AML>

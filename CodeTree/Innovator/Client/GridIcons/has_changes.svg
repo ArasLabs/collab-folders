@@ -1,0 +1,11 @@
+<svg width="64" xmlns="http://www.w3.org/2000/svg" height="64" viewBox="0 0 64 64" xmlns:xlink="http://www.w3.org/1999/xlink" enable-background="new 0 0 64 64">
+<path fill="#515151" d="M52,7v50H12V7 M10,5v54h44V20V5H10z"/>
+<g fill="#b83b1d">
+<path d="m16,14h32v2h-32z"/>
+<path d="m16,21h32v2h-32z"/>
+<path d="m16,28h32v2h-32z"/>
+<path d="m16,35h32v2h-32z"/>
+<path d="m16,49h32v2h-32z"/>
+<path d="m16,42h32v2h-32z"/>
+</g>
+</svg>

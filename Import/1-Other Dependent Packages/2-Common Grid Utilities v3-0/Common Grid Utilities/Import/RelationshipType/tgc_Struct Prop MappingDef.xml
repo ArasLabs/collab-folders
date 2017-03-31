@@ -1,0 +1,323 @@
+﻿<AML>
+ <Item type="RelationshipType" id="B33EA7541B4C454AA8C4B8F7D25B6BE1" action="add" dependencyLevel="1">
+  <auto_search>1</auto_search>
+  <behavior>float</behavior>
+  <copy_permissions>0</copy_permissions>
+  <create_related>0</create_related>
+  <hide_in_all>0</hide_in_all>
+  <inc_rel_key_name>1</inc_rel_key_name>
+  <inc_related_key_name>1</inc_related_key_name>
+  <is_list_type>0</is_list_type>
+  <label xml:lang="en">Structure Row Property Mappings</label>
+  <new_show_related>0</new_show_related>
+  <related_notnull>0</related_notnull>
+  <related_option>2</related_option>
+  <relationship_id keyed_name="tgc_Struct Prop MappingDef" type="ItemType" name="tgc_Struct Prop MappingDef">
+   <Item type="ItemType" id="C9A6ADE4BE3A4D8AA65A03DFAB8505CB" action="add">
+    <allow_private_permission>1</allow_private_permission>
+    <auto_search>0</auto_search>
+    <enforce_discovery>0</enforce_discovery>
+    <hide_where_used>0</hide_where_used>
+    <implementation_type>table</implementation_type>
+    <instance_data>TGC_STRUCT_PROP_MAPPINGDEF</instance_data>
+    <is_dependent>0</is_dependent>
+    <is_relationship>1</is_relationship>
+    <is_versionable>0</is_versionable>
+    <revisions keyed_name="Default" type="Revision">7FE395DD8B9F4E1090756A34B733D75E</revisions>
+    <show_parameters_tab>1</show_parameters_tab>
+    <structure_view>tabs off</structure_view>
+    <unlock_on_logout>0</unlock_on_logout>
+    <use_src_access>1</use_src_access>
+    <name>tgc_Struct Prop MappingDef</name>
+    <Relationships>
+     <Item type="Property" id="D623533B46BD400EB9576BFA3EA43E68" action="add">
+      <column_alignment>left</column_alignment>
+      <column_width>100</column_width>
+      <data_type>string</data_type>
+      <is_hidden>0</is_hidden>
+      <is_hidden2>0</is_hidden2>
+      <is_indexed>0</is_indexed>
+      <is_keyed>0</is_keyed>
+      <is_multi_valued>0</is_multi_valued>
+      <is_required>0</is_required>
+      <label xml:lang="en">Color</label>
+      <range_inclusive>0</range_inclusive>
+      <readonly>0</readonly>
+      <sort_order>104</sort_order>
+      <source_id keyed_name="tgc_Struct Prop MappingDef" type="ItemType" name="tgc_Struct Prop MappingDef">C9A6ADE4BE3A4D8AA65A03DFAB8505CB</source_id>
+      <stored_length>40</stored_length>
+      <track_history>0</track_history>
+      <name>cell_bg_color</name>
+     </Item>
+     <Item type="Property" id="B46D9073DF424130B9CECD5505C73AF7" action="add">
+      <column_alignment>center</column_alignment>
+      <column_width>80</column_width>
+      <data_type>boolean</data_type>
+      <is_hidden>0</is_hidden>
+      <is_hidden2>0</is_hidden2>
+      <is_indexed>0</is_indexed>
+      <is_keyed>0</is_keyed>
+      <is_multi_valued>0</is_multi_valued>
+      <is_required>0</is_required>
+      <label xml:lang="en">is Editable</label>
+      <range_inclusive>0</range_inclusive>
+      <readonly>0</readonly>
+      <sort_order>108</sort_order>
+      <source_id keyed_name="tgc_Struct Prop MappingDef" type="ItemType" name="tgc_Struct Prop MappingDef">C9A6ADE4BE3A4D8AA65A03DFAB8505CB</source_id>
+      <track_history>0</track_history>
+      <name>cell_is_editable</name>
+     </Item>
+     <Item type="Property" id="8B8447346FA44FF08E71279BC4479AF7" action="add">
+      <column_alignment>left</column_alignment>
+      <column_width>150</column_width>
+      <data_type>string</data_type>
+      <is_hidden>0</is_hidden>
+      <is_hidden2>0</is_hidden2>
+      <is_indexed>0</is_indexed>
+      <is_keyed>0</is_keyed>
+      <is_multi_valued>0</is_multi_valued>
+      <is_required>0</is_required>
+      <label xml:lang="en">Cell Link Item Type</label>
+      <range_inclusive>0</range_inclusive>
+      <readonly>0</readonly>
+      <sort_order>107</sort_order>
+      <source_id keyed_name="tgc_Struct Prop MappingDef" type="ItemType" name="tgc_Struct Prop MappingDef">C9A6ADE4BE3A4D8AA65A03DFAB8505CB</source_id>
+      <stored_length>64</stored_length>
+      <track_history>0</track_history>
+      <name>cell_link_item_type</name>
+     </Item>
+     <Item type="Property" id="E203E8641DA74EA28948CB50B8CB9A49" action="add">
+      <column_alignment>left</column_alignment>
+      <column_width>80</column_width>
+      <data_source keyed_name="tgc_LinkKey Types">85821BDCC1B549A5AC92D74AEBE6A414</data_source>
+      <data_type>list</data_type>
+      <is_hidden>0</is_hidden>
+      <is_hidden2>0</is_hidden2>
+      <is_indexed>0</is_indexed>
+      <is_keyed>0</is_keyed>
+      <is_multi_valued>0</is_multi_valued>
+      <is_required>0</is_required>
+      <label xml:lang="en">Cell Link Key</label>
+      <range_inclusive>0</range_inclusive>
+      <readonly>0</readonly>
+      <sort_order>106</sort_order>
+      <source_id keyed_name="tgc_Struct Prop MappingDef" type="ItemType" name="tgc_Struct Prop MappingDef">C9A6ADE4BE3A4D8AA65A03DFAB8505CB</source_id>
+      <stored_length>256</stored_length>
+      <track_history>0</track_history>
+      <name>cell_link_key</name>
+     </Item>
+     <Item type="Property" id="5BFF46B4D90A4889BD3788311BD39D39" action="add">
+      <column_alignment>left</column_alignment>
+      <column_width>100</column_width>
+      <data_type>ml_string</data_type>
+      <is_hidden>0</is_hidden>
+      <is_hidden2>0</is_hidden2>
+      <is_indexed>0</is_indexed>
+      <is_keyed>0</is_keyed>
+      <is_multi_valued>0</is_multi_valued>
+      <is_required>0</is_required>
+      <label xml:lang="en">Cell Static Value</label>
+      <range_inclusive>0</range_inclusive>
+      <readonly>0</readonly>
+      <sort_order>101</sort_order>
+      <source_id keyed_name="tgc_Struct Prop MappingDef" type="ItemType" name="tgc_Struct Prop MappingDef">C9A6ADE4BE3A4D8AA65A03DFAB8505CB</source_id>
+      <stored_length>255</stored_length>
+      <track_history>0</track_history>
+      <name>cell_static_value</name>
+     </Item>
+     <Item type="Property" id="940472028A0F41959287AAD5E28A8756" action="add">
+      <column_alignment>left</column_alignment>
+      <column_width>100</column_width>
+      <data_type>string</data_type>
+      <is_hidden>0</is_hidden>
+      <is_hidden2>0</is_hidden2>
+      <is_indexed>0</is_indexed>
+      <is_keyed>0</is_keyed>
+      <is_multi_valued>0</is_multi_valued>
+      <is_required>0</is_required>
+      <label xml:lang="en">Cell Text Color</label>
+      <range_inclusive>0</range_inclusive>
+      <readonly>0</readonly>
+      <sort_order>105</sort_order>
+      <source_id keyed_name="tgc_Struct Prop MappingDef" type="ItemType" name="tgc_Struct Prop MappingDef">C9A6ADE4BE3A4D8AA65A03DFAB8505CB</source_id>
+      <stored_length>10</stored_length>
+      <track_history>0</track_history>
+      <name>cell_text_color</name>
+     </Item>
+     <Item type="Property" id="36E34140B8AF46C680F83E065E509443" action="add">
+      <column_alignment>left</column_alignment>
+      <column_width>80</column_width>
+      <data_source keyed_name="tgc_PropMapping Value Types">BFD98BA0E0F743DFAC878036479C3200</data_source>
+      <data_type>list</data_type>
+      <is_hidden>0</is_hidden>
+      <is_hidden2>0</is_hidden2>
+      <is_indexed>0</is_indexed>
+      <is_keyed>0</is_keyed>
+      <is_multi_valued>0</is_multi_valued>
+      <is_required>0</is_required>
+      <label xml:lang="en">Cell Value Type</label>
+      <range_inclusive>0</range_inclusive>
+      <readonly>0</readonly>
+      <sort_order>102</sort_order>
+      <source_id keyed_name="tgc_Struct Prop MappingDef" type="ItemType" name="tgc_Struct Prop MappingDef">C9A6ADE4BE3A4D8AA65A03DFAB8505CB</source_id>
+      <stored_length>256</stored_length>
+      <track_history>0</track_history>
+      <name>cell_value_type</name>
+     </Item>
+     <Item type="Property" id="94C91EB23E8C476FADE4845C72C90425" action="add">
+      <column_alignment>left</column_alignment>
+      <column_width>100</column_width>
+      <data_type>string</data_type>
+      <is_hidden>0</is_hidden>
+      <is_hidden2>0</is_hidden2>
+      <is_indexed>0</is_indexed>
+      <is_keyed>0</is_keyed>
+      <is_multi_valued>0</is_multi_valued>
+      <is_required>0</is_required>
+      <label xml:lang="en">Other Cell Value Type</label>
+      <range_inclusive>0</range_inclusive>
+      <readonly>0</readonly>
+      <sort_order>103</sort_order>
+      <source_id keyed_name="tgc_Struct Prop MappingDef" type="ItemType" name="tgc_Struct Prop MappingDef">C9A6ADE4BE3A4D8AA65A03DFAB8505CB</source_id>
+      <stored_length>256</stored_length>
+      <track_history>0</track_history>
+      <name>cell_value_type_other</name>
+     </Item>
+     <Item type="Property" id="BB2992DE36F54B04ACC393A0F267286A" action="add">
+      <column_alignment>left</column_alignment>
+      <column_width>100</column_width>
+      <data_type>string</data_type>
+      <is_hidden>0</is_hidden>
+      <is_hidden2>0</is_hidden2>
+      <is_indexed>0</is_indexed>
+      <is_keyed>0</is_keyed>
+      <is_multi_valued>0</is_multi_valued>
+      <is_required>1</is_required>
+      <keyed_name_order>1</keyed_name_order>
+      <label xml:lang="en">Column Name</label>
+      <range_inclusive>0</range_inclusive>
+      <readonly>0</readonly>
+      <sort_order>10</sort_order>
+      <source_id keyed_name="tgc_Struct Prop MappingDef" type="ItemType" name="tgc_Struct Prop MappingDef">C9A6ADE4BE3A4D8AA65A03DFAB8505CB</source_id>
+      <stored_length>64</stored_length>
+      <track_history>0</track_history>
+      <name>col_name</name>
+     </Item>
+     <Item type="Property" id="44C17AC3A59C42FEBB5ED22638D08C87" action="add">
+      <column_alignment>center</column_alignment>
+      <column_width>60</column_width>
+      <data_type>boolean</data_type>
+      <is_hidden>0</is_hidden>
+      <is_hidden2>0</is_hidden2>
+      <is_indexed>0</is_indexed>
+      <is_keyed>0</is_keyed>
+      <is_multi_valued>0</is_multi_valued>
+      <is_required>0</is_required>
+      <range_inclusive>0</range_inclusive>
+      <readonly>0</readonly>
+      <sort_order>6</sort_order>
+      <source_id keyed_name="tgc_Struct Prop MappingDef" type="ItemType" name="tgc_Struct Prop MappingDef">C9A6ADE4BE3A4D8AA65A03DFAB8505CB</source_id>
+      <track_history>0</track_history>
+      <name>is_disabled</name>
+     </Item>
+     <Item type="Property" id="56329102F97448D995AEE475C2C58559" action="add">
+      <column_alignment>center</column_alignment>
+      <column_width>80</column_width>
+      <data_type>boolean</data_type>
+      <is_hidden>0</is_hidden>
+      <is_hidden2>0</is_hidden2>
+      <is_indexed>0</is_indexed>
+      <is_keyed>0</is_keyed>
+      <is_multi_valued>0</is_multi_valued>
+      <is_required>0</is_required>
+      <label xml:lang="en">Is Rel Property</label>
+      <range_inclusive>0</range_inclusive>
+      <readonly>0</readonly>
+      <sort_order>100</sort_order>
+      <source_id keyed_name="tgc_Struct Prop MappingDef" type="ItemType" name="tgc_Struct Prop MappingDef">C9A6ADE4BE3A4D8AA65A03DFAB8505CB</source_id>
+      <track_history>0</track_history>
+      <name>is_rel_property</name>
+     </Item>
+     <Item type="Property" id="A284C5862A194F21B32AFD5C0762CC34" action="add">
+      <column_alignment>left</column_alignment>
+      <column_width>200</column_width>
+      <data_type>string</data_type>
+      <is_hidden>0</is_hidden>
+      <is_hidden2>0</is_hidden2>
+      <is_indexed>0</is_indexed>
+      <is_keyed>0</is_keyed>
+      <is_multi_valued>0</is_multi_valued>
+      <is_required>0</is_required>
+      <keyed_name_order>2</keyed_name_order>
+      <label xml:lang="en">Property  Name</label>
+      <range_inclusive>0</range_inclusive>
+      <readonly>0</readonly>
+      <sort_order>15</sort_order>
+      <source_id keyed_name="tgc_Struct Prop MappingDef" type="ItemType" name="tgc_Struct Prop MappingDef">C9A6ADE4BE3A4D8AA65A03DFAB8505CB</source_id>
+      <stored_length>80</stored_length>
+      <track_history>0</track_history>
+      <name>mapped_property</name>
+     </Item>
+     <Item type="View" id="8F39511563C248629057EB9D390B21F1" action="add">
+      <client>js</client>
+      <related_id keyed_name="tgc_Struct Prop MappingDef" type="Form">4713BDCE16C24C4CA3C98CD544BEA76F</related_id>
+      <role keyed_name="World" type="Identity">
+       <Item type="Identity" action="get" select="id">
+        <name>World</name>
+       </Item>
+      </role>
+      <show_ssvc>0</show_ssvc>
+      <sort_order>128</sort_order>
+      <source_id keyed_name="tgc_Struct Prop MappingDef" type="ItemType" name="tgc_Struct Prop MappingDef">C9A6ADE4BE3A4D8AA65A03DFAB8505CB</source_id>
+      <type>default</type>
+     </Item>
+    </Relationships>
+   </Item>
+  </relationship_id>
+  <sort_order>36</sort_order>
+  <source_id keyed_name="tgc_View" type="ItemType" name="tgc_View">B25E654CC2EA442F874B8E461EAA3C5B</source_id>
+  <name>tgc_Struct Prop MappingDef</name>
+ </Item>
+ <Item type="ItemType" id="C9A6ADE4BE3A4D8AA65A03DFAB8505CB" action="edit">
+  <Relationships>
+   <Item type="Property" action="edit" where="source_id='C9A6ADE4BE3A4D8AA65A03DFAB8505CB' and name='sort_order'">
+    <column_alignment>left</column_alignment>
+    <column_width>40</column_width>
+    <data_type>integer</data_type>
+    <is_hidden>0</is_hidden>
+    <is_hidden2>0</is_hidden2>
+    <is_indexed>0</is_indexed>
+    <is_keyed>0</is_keyed>
+    <is_multi_valued>0</is_multi_valued>
+    <is_required>0</is_required>
+    <label xml:lang="en">Pos</label>
+    <range_inclusive>0</range_inclusive>
+    <readonly>0</readonly>
+    <sort_order>5</sort_order>
+    <source_id keyed_name="tgc_Struct Prop MappingDef" type="ItemType" name="tgc_Struct Prop MappingDef">C9A6ADE4BE3A4D8AA65A03DFAB8505CB</source_id>
+    <track_history>0</track_history>
+    <name>sort_order</name>
+   </Item>
+   <Item type="Property" action="edit" where="source_id='C9A6ADE4BE3A4D8AA65A03DFAB8505CB' and name='source_id'">
+    <column_alignment>left</column_alignment>
+    <column_width>100</column_width>
+    <data_source keyed_name="tgc_View" type="ItemType" name="tgc_View">B25E654CC2EA442F874B8E461EAA3C5B</data_source>
+    <data_type>item</data_type>
+    <is_hidden>0</is_hidden>
+    <is_hidden2>1</is_hidden2>
+    <is_indexed>1</is_indexed>
+    <is_keyed>0</is_keyed>
+    <is_multi_valued>0</is_multi_valued>
+    <is_required>0</is_required>
+    <item_behavior>float</item_behavior>
+    <label xml:lang="en">View</label>
+    <range_inclusive>0</range_inclusive>
+    <readonly>0</readonly>
+    <sort_order>2</sort_order>
+    <source_id keyed_name="tgc_Struct Prop MappingDef" type="ItemType" name="tgc_Struct Prop MappingDef">C9A6ADE4BE3A4D8AA65A03DFAB8505CB</source_id>
+    <track_history>0</track_history>
+    <name>source_id</name>
+   </Item>
+  </Relationships>
+ </Item>
+</AML>

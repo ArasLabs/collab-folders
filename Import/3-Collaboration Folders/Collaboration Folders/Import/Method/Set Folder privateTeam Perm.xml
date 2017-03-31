@@ -7,7 +7,7 @@ Dim private_team_item_id_string As String = Me.getProperty("private_team_item_id
 If private_team_item_id_string <> "" Then
   Dim tableName As String = "TEAM"
   Dim SQLstr As String = "UPDATE [" & tableName & "]"
-  SQLstr = SQLstr & " SET [" & tableName & "].permission_id='49D9C33BBFFB45B2BE6E8BB9B6C26F16'"  'id of perm: "Item Folder Private Team Update"
+  SQLstr = SQLstr & " SET [" & tableName & "].permission_id='49D9C33BBFFB45B2BE6E8BB9B6C26F16'"  'id of perm: "cFolder Private Team Update"
   SQLstr = SQLstr & " WHERE [" & tableName & "].id='" & Me.GetID() & "'"
   Return Me.getInnovator().applySQL(SQLstr)
 End If

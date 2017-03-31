@@ -37,8 +37,8 @@ For i=0 To  qry.getItemCount() -1
   ' due to config issues, poly item config could have an ItemType listed multiple times. Only add one row for each type.
   If (itemTypesAdded.IndexOf(itemTypeName) < 0) Then
   
-    aml = "<Item type=""Item Folder Tmpl CtrItemConfig"" action=""merge"" "
-    aml = aml & "where=""[Item_Folder_Tmpl_CtrItemConfig].source_id='" & Me.getID() & "' and [Item_Folder_Tmpl_CtrItemConfig].controlled_item_type='" & itemTypeName & "' "" >"
+    aml = "<Item type=""cFolder Tmpl CtrItemConfig"" action=""merge"" "
+    aml = aml & "where=""[cFolder_Tmpl_CtrItemConfig].source_id='" & Me.getID() & "' and [cFolder_Tmpl_CtrItemConfig].controlled_item_type='" & itemTypeName & "' "" >"
     aml = aml & "<controlled_item_type>" & itemTypeName & "</controlled_item_type>"   	
     aml = aml & "<source_id>" & Me.getID() & "</source_id>"   	
     aml = aml & "</Item>"   	

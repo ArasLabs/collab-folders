@@ -1,0 +1,15 @@
+﻿<AML>
+ <Item type="Action" id="341C0AEDEE374908BB57A69FD9302B76" action="add">
+  <item_query>&lt;Item type="{@type}" id="{@id}" levels= "1" action="get" /&gt;</item_query>
+  <label xml:lang="en">Open Structure Navigator</label>
+  <location>client</location>
+  <method keyed_name="configStructure Open Dialog" type="Method">
+   <Item type="Method" action="get" select="id">
+    <name>configStructure Open Dialog</name>
+   </Item>
+  </method>
+  <target>none</target>
+  <type>item</type>
+  <name>configStructure Open Dialog</name>
+ </Item>
+</AML>

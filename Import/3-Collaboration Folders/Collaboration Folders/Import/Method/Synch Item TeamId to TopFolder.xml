@@ -10,12 +10,12 @@ Function Main() As Item
 
   Dim thisItem As Item = Me.newItem(Me.GetType(),"get")
   thisItem.setID(Me.getID())
-  thisItem.setAttribute("select","team_id,keyed_name,top_item_folder_id(team_id,locked_by_id,related_project_keyed_name)")
+  thisItem.setAttribute("select","team_id,keyed_name,top_cfolder_id(team_id,locked_by_id,related_project_keyed_name)")
   thisItem.setAttribute("serverEvents","0")
   thisItem = thisItem.apply()
   If thisItem.isError() Then Return thisItem
 
-  Dim topFolderId As String = thisItem.getProperty("top_item_folder_id","")
+  Dim topFolderId As String = thisItem.getProperty("top_cfolder_id","")
   If topFolderId = ""  Then
     Return Me ' nothing to do
   End If
@@ -27,16 +27,16 @@ Function Main() As Item
   End If
 
   'read values from top folder
-  Dim topFolderTeamId As String = thisItem.getPropertyItem("top_item_folder_id").getProperty("team_id","")
-  Dim topFolderLockedBy As String = thisItem.getPropertyItem("top_item_folder_id").getProperty("locked_by_id","")
-  Dim topFolderProjectKN As String = thisItem.getPropertyItem("top_item_folder_id").getProperty("related_project_keyed_name","")
+  Dim topFolderTeamId As String = thisItem.getPropertyItem("top_cfolder_id").getProperty("team_id","")
+  Dim topFolderLockedBy As String = thisItem.getPropertyItem("top_cfolder_id").getProperty("locked_by_id","")
+  Dim topFolderProjectKN As String = thisItem.getPropertyItem("top_cfolder_id").getProperty("related_project_keyed_name","")
   
   If thisItemKN = topFolderProjectKN And thisItemTeamId = topFolderTeamId Then
     Return Me ' nothing to do
   End If
 
   'overwrite teamId on top folder 
-  Dim aml As Item = inn.newItem("Item Folder","")
+  Dim aml As Item = inn.newItem("cFolder","")
   If topFolderLockedBy = "" Then aml.setAction("edit")
   If topFolderLockedBy = inn.getUserId() Then aml.setAction("update")
 

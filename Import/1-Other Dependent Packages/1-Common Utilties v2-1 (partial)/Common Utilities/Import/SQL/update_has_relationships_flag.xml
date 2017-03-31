@@ -1,0 +1,40 @@
+﻿<AML>
+ <Item type="SQL" id="72D3D140CE304678B371328B4847BB0B" action="add">
+  <execution_count>7</execution_count>
+  <execution_flag>immediate</execution_flag>
+  <old_name>update_has_relationships_flag</old_name>
+  <sqlserver_body><![CDATA[create procedure update_has_relationships_flag(@sourceitemtypename nvarchar(32),@sourceitemID char(32),@flagpropname nvarchar(32),@relationshiptocheck nvarchar(32))
+AS
+BEGIN
+  DECLARE @relationship_db_name nvarchar(32)
+  DECLARE @sourceitemtype_db_name nvarchar(32)
+  
+  SET @sourceitemtype_db_name = (select instance_data from [ITEMTYPE] where name = @sourceitemtypename)  
+  
+  SET @relationship_db_name = (select instance_data from [ITEMTYPE] where name = @relationshiptocheck)  
+	
+  DECLARE @SQLstr nvarchar(500)
+  DECLARE @ParmDefinition nvarchar(500);
+  SET @ParmDefinition = N'@id char(32)';
+
+  DECLARE @count int
+  SET @SQLstr = N'UPDATE [' + @sourceitemtype_db_name + '] 
+	SET ' + @flagpropname + ' = CASE 
+		WHEN (select count(id) FROM [' + @relationship_db_name + '] where SOURCE_ID = @id) > 0 
+			THEN ''1'' 
+			ELSE ''0'' 
+		END
+	WHERE ID=@id';
+  
+  EXECUTE sp_executesql @SQLstr, @ParmDefinition, @id=@sourceitemID
+  
+  SET @SQLstr = N'SELECT * FROM [' + @sourceitemtype_db_name + '] WHERE ID = @id'
+  
+  EXECUTE sp_executesql @SQLstr, @ParmDefinition, @id=@sourceitemID
+END]]></sqlserver_body>
+  <stale>0</stale>
+  <transform_first>0</transform_first>
+  <type>procedure</type>
+  <name>update_has_relationships_flag</name>
+ </Item>
+</AML>

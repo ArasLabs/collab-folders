@@ -1,0 +1,146 @@
+﻿<AML>
+ <Item type="Method" id="D54F04B87A094BD3AB1209A3A26D760C" action="add">
+  <comments>onBeforeAdd -prop  'copied_from_folder_ref' must be set</comments>
+  <execution_allowed_to keyed_name="World" type="Identity">A73B655731924CD0B027E4F4D5FCC0A9</execution_allowed_to>
+  <method_code><![CDATA[/// OnAfterAdd of cFolder item
+/// if reference of cFolder to copy from is set in property "copied_from_folder_ref",
+/// then the copy action starts.  Else it is ignored.
+///
+/// optional custom item attributes on context item:
+///  folderRelationshipsToCopy="rel1,rel2..."   holds a comma separated list of the folder outgoing relationships to copy
+
+if (this.getAttribute("stopSubFolderCopy", "") == "1") {return this;}  // prevent recursive processing, when this method got called from parent folders.
+
+//System.Diagnostics.Debugger.Break();
+string fromFolderId = this.getProperty("copied_from_folder_ref","");
+if (fromFolderId == "") {return this;}  // standard Save action
+
+// if template is selected, then continue using template instead
+string templId = this.getProperty("cfolder_template_id","");
+if (templId != "") {return this;}
+
+// --> Start save action to copy from existing folder
+string folderRelationshipsToCopy = this.getAttribute("folderRelationshipsToCopy","");
+
+// get folder structure of folder to copy form
+string aml = "<Item type='cFolder' action='GetItemRepeatConfig' select='*' id='"+fromFolderId+"' >";
+aml += 			"<Relationships>";
+aml += 				"<Item type='Sub cFolder' action='get' repeatProp='related_id' repeatTimes='0' select='*' />";
+
+// add relationships to copy to query. Note "related_expand" MUST be off !!!
+if (folderRelationshipsToCopy != "") {
+	string[] relNames = folderRelationshipsToCopy.Split(',');
+	for (int r=0; r<relNames.Length; r++) {
+		aml += 		"<Item type='"+relNames[r]+"' action='get' select='*' related_expand='0' />";
+	}
+}
+aml += 			"</Relationships>";
+aml += 		"</Item>";
+Item queryRes = this.newItem("");
+queryRes.loadAML(aml);
+queryRes = queryRes.apply();
+if (queryRes.isError()) {return queryRes;}
+Item copyFromFolderItem = queryRes.getItemByIndex(0);
+
+// user must be the owner of folder to copy from
+/* this check may be too restrictive !!!
+string aliasId = this.getInnovator().getUserAliases();
+aliasId = aliasId.Substring(0,32);
+Item AliasItem = this.getInnovator().getItemById("Identity", aliasId);
+if (AliasItem.getItemCount() == 1) {
+	if (copyFromFolderItem.getProperty("owned_by_id","") != AliasItem.getAttribute("id")) {
+		return this.getInnovator().newError("You are not the owner of folder '"+copyFromFolderItem.getProperty("name","")+"' !  Save with copied structure cannot continue.");
+	}
+}
+*/
+string ownerId = this.getProperty("owned_by_id","");
+
+// Expand any truncated branches
+Item folderStructItems = queryRes.getItemsByXPath("//Item[related_id[not(Item)]]");
+Item tmpItem;
+for (int i=0; i<folderStructItems.getItemCount(); i++)
+{
+	tmpItem = folderStructItems.getItemByIndex(i);
+	Item expRelItem = queryRes.getItemsByXPath("//Item[@id='"+tmpItem.getProperty("related_id")+"']");
+	if (expRelItem.getItemCount() > 1) {
+		tmpItem.setRelatedItem(expRelItem.getItemByIndex(0));
+	}
+}
+
+// Transform the structure aml into copy of structure
+folderStructItems = queryRes.getItemsByXPath("//Item");
+folderRelationshipsToCopy = ","+folderRelationshipsToCopy+",";
+for (int i=0; i<folderStructItems.getItemCount(); i++)
+{
+	tmpItem = folderStructItems.getItemByIndex(i);
+	string tmpId = tmpItem.getID();
+	string tmpType = tmpItem.getType();
+	bool fixAttrAndProSettings = true;
+
+	// if a relationship node
+	if (tmpType == "Sub cFolder" || folderRelationshipsToCopy.IndexOf(","+tmpType+",") >= 0) {
+		tmpItem.removeProperty("owned_by_id");
+		tmpItem.removeProperty("source_id");
+	}
+	// else if the "folder" item node
+	else if (tmpType == "cFolder"){
+		tmpItem.setProperty("copied_from_folder_ref", tmpId);
+		tmpItem.setAttribute("stopSubFolderCopy", "1");  // 
+		if (ownerId != "") {
+			tmpItem.setProperty("owned_by_id", ownerId);
+		}
+	}
+	// else, ignore others
+	else {
+		queryRes.removeItem(tmpItem);
+		fixAttrAndProSettings = false;
+	}
+	if (fixAttrAndProSettings) {
+		tmpItem.setAction("add");
+		tmpItem.removeAttribute("id");
+		tmpItem.removeProperty("id");
+		tmpItem.removeProperty("config_id");
+		tmpItem.removeAttribute("typeId");
+		tmpItem.removeProperty("itemtype");
+		tmpItem.removeAttribute("keyed_name");
+		tmpItem.removeProperty("keyed_name");
+		tmpItem.removeProperty("item_number");
+		
+		// remove some system properties
+		tmpItem.removeProperty("permission_id");
+		tmpItem.removeProperty("created_by_id");
+		tmpItem.removeProperty("created_on");
+		tmpItem.removeProperty("modified_by_id");
+		tmpItem.removeProperty("modified_on");
+		tmpItem.removeProperty("generation");
+		tmpItem.removeProperty("current_state");
+		tmpItem.removeProperty("state");
+		tmpItem.removeProperty("managed_by_id");
+		tmpItem.removeProperty("team_id");
+	}
+}
+
+// Link top folder relationships to this context
+folderStructItems = copyFromFolderItem.getRelationships("Sub cFolder");
+for (int i=0; i<folderStructItems.getItemCount(); i++) {
+	tmpItem = folderStructItems.getItemByIndex(i);
+	this.addRelationship(tmpItem);
+}
+
+// link 1st lebel relationships to this context
+if (folderRelationshipsToCopy != "") {
+	string[] relNames = folderRelationshipsToCopy.Split(',');
+	for (int r=0; r<relNames.Length; r++) {
+		Item folderRelItems = copyFromFolderItem.getRelationships(relNames[r]);
+		for (int i=0; i<folderRelItems.getItemCount(); i++) {
+			tmpItem = folderRelItems.getItemByIndex(i);
+			this.addRelationship(tmpItem);
+		}
+	}
+}
+
+return this;]]></method_code>
+  <method_type>C#</method_type>
+  <name>Copy cFolderStruct From Folder</name>
+ </Item>
+</AML>

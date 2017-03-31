@@ -1,0 +1,348 @@
+﻿<AML>
+ <Item type="RelationshipType" id="2D919E26EA1149B09F50E60DA4D8940E" action="add" dependencyLevel="0">
+  <auto_search>1</auto_search>
+  <behavior>float</behavior>
+  <copy_permissions>0</copy_permissions>
+  <create_related>0</create_related>
+  <hide_in_all>0</hide_in_all>
+  <inc_rel_key_name>1</inc_rel_key_name>
+  <inc_related_key_name>1</inc_related_key_name>
+  <is_list_type>0</is_list_type>
+  <label xml:lang="en">Menu Actions</label>
+  <new_show_related>0</new_show_related>
+  <related_notnull>0</related_notnull>
+  <related_option>2</related_option>
+  <relationship_id keyed_name="fgc_MenuAction" type="ItemType" name="fgc_MenuAction">
+   <Item type="ItemType" id="02F1625D84CF445B84601C2A7E55BCD4" action="add">
+    <allow_private_permission>1</allow_private_permission>
+    <auto_search>0</auto_search>
+    <enforce_discovery>0</enforce_discovery>
+    <hide_where_used>0</hide_where_used>
+    <implementation_type>table</implementation_type>
+    <instance_data>FGC_MENUACTION</instance_data>
+    <is_dependent>0</is_dependent>
+    <is_relationship>1</is_relationship>
+    <is_versionable>0</is_versionable>
+    <revisions keyed_name="Default" type="Revision">7FE395DD8B9F4E1090756A34B733D75E</revisions>
+    <show_parameters_tab>1</show_parameters_tab>
+    <structure_view>tabs off</structure_view>
+    <unlock_on_logout>0</unlock_on_logout>
+    <use_src_access>1</use_src_access>
+    <name>fgc_MenuAction</name>
+    <Relationships>
+     <Item type="Property" id="6ED09836E5D9457D8ED43814B0F38EF8" action="add">
+      <column_alignment>left</column_alignment>
+      <column_width>100</column_width>
+      <data_type>string</data_type>
+      <is_hidden>0</is_hidden>
+      <is_hidden2>0</is_hidden2>
+      <is_indexed>0</is_indexed>
+      <is_keyed>0</is_keyed>
+      <is_multi_valued>0</is_multi_valued>
+      <is_required>0</is_required>
+      <label xml:lang="en">Execute This Action</label>
+      <range_inclusive>0</range_inclusive>
+      <readonly>0</readonly>
+      <sort_order>13</sort_order>
+      <source_id keyed_name="fgc_MenuAction" type="ItemType" name="fgc_MenuAction">02F1625D84CF445B84601C2A7E55BCD4</source_id>
+      <stored_length>80</stored_length>
+      <track_history>0</track_history>
+      <name>execute_this_action</name>
+     </Item>
+     <Item type="Property" id="DE568BD63C9B41F1905B469238D0DA79" action="add">
+      <column_alignment>left</column_alignment>
+      <column_width>80</column_width>
+      <data_source keyed_name="tgc_effectivity Modes">F70BA0857A1D4CE68D760938B8A624AE</data_source>
+      <data_type>list</data_type>
+      <is_hidden>0</is_hidden>
+      <is_hidden2>0</is_hidden2>
+      <is_indexed>0</is_indexed>
+      <is_keyed>0</is_keyed>
+      <is_multi_valued>0</is_multi_valued>
+      <is_required>0</is_required>
+      <label xml:lang="en">If Effectivity Mode</label>
+      <range_inclusive>0</range_inclusive>
+      <readonly>0</readonly>
+      <sort_order>23</sort_order>
+      <source_id keyed_name="fgc_MenuAction" type="ItemType" name="fgc_MenuAction">02F1625D84CF445B84601C2A7E55BCD4</source_id>
+      <stored_length>256</stored_length>
+      <track_history>0</track_history>
+      <name>if_effectivity_mode</name>
+     </Item>
+     <Item type="Property" id="2F36E6957C93499C9EB6E227C6197251" action="add">
+      <column_alignment>left</column_alignment>
+      <column_width>80</column_width>
+      <data_source keyed_name="tgc_True_False">5EB366A1569446DFB13B264EC71B981C</data_source>
+      <data_type>list</data_type>
+      <is_hidden>0</is_hidden>
+      <is_hidden2>0</is_hidden2>
+      <is_indexed>0</is_indexed>
+      <is_keyed>0</is_keyed>
+      <is_multi_valued>0</is_multi_valued>
+      <is_required>0</is_required>
+      <label xml:lang="en">If Grid Is Editable</label>
+      <range_inclusive>0</range_inclusive>
+      <readonly>0</readonly>
+      <sort_order>15</sort_order>
+      <source_id keyed_name="fgc_MenuAction" type="ItemType" name="fgc_MenuAction">02F1625D84CF445B84601C2A7E55BCD4</source_id>
+      <stored_length>256</stored_length>
+      <track_history>0</track_history>
+      <name>if_grid_is_editable</name>
+     </Item>
+     <Item type="Property" id="13D57C1FAB74492F8A68DE2862186256" action="add">
+      <column_alignment>left</column_alignment>
+      <column_width>80</column_width>
+      <data_source keyed_name="tgc_True_False">5EB366A1569446DFB13B264EC71B981C</data_source>
+      <data_type>list</data_type>
+      <is_hidden>0</is_hidden>
+      <is_hidden2>0</is_hidden2>
+      <is_indexed>0</is_indexed>
+      <is_keyed>0</is_keyed>
+      <is_multi_valued>0</is_multi_valued>
+      <is_required>0</is_required>
+      <label xml:lang="en">If User is Owner Or Manager of Row Item</label>
+      <range_inclusive>0</range_inclusive>
+      <readonly>0</readonly>
+      <sort_order>18</sort_order>
+      <source_id keyed_name="fgc_MenuAction" type="ItemType" name="fgc_MenuAction">02F1625D84CF445B84601C2A7E55BCD4</source_id>
+      <stored_length>256</stored_length>
+      <track_history>0</track_history>
+      <name>if_is_owner_manager_of_row_item</name>
+     </Item>
+     <Item type="Property" id="A47052BA71914E92837720C66B5EF2B0" action="add">
+      <column_alignment>left</column_alignment>
+      <column_width>80</column_width>
+      <data_source keyed_name="tgc_True_False">5EB366A1569446DFB13B264EC71B981C</data_source>
+      <data_type>list</data_type>
+      <is_hidden>0</is_hidden>
+      <is_hidden2>0</is_hidden2>
+      <is_indexed>0</is_indexed>
+      <is_keyed>0</is_keyed>
+      <is_multi_valued>0</is_multi_valued>
+      <is_required>0</is_required>
+      <label xml:lang="en">If User is Owner Of Top Item</label>
+      <range_inclusive>0</range_inclusive>
+      <readonly>0</readonly>
+      <sort_order>17</sort_order>
+      <source_id keyed_name="fgc_MenuAction" type="ItemType" name="fgc_MenuAction">02F1625D84CF445B84601C2A7E55BCD4</source_id>
+      <stored_length>256</stored_length>
+      <track_history>0</track_history>
+      <name>if_is_owner_of_context_item</name>
+     </Item>
+     <Item type="Property" id="3CACD4AB51D9449591FB50D9004534B9" action="add">
+      <column_alignment>left</column_alignment>
+      <column_width>80</column_width>
+      <data_source keyed_name="tgc_True_False">5EB366A1569446DFB13B264EC71B981C</data_source>
+      <data_type>list</data_type>
+      <is_hidden>0</is_hidden>
+      <is_hidden2>0</is_hidden2>
+      <is_indexed>0</is_indexed>
+      <is_keyed>0</is_keyed>
+      <is_multi_valued>0</is_multi_valued>
+      <is_required>0</is_required>
+      <label xml:lang="en">If User Is Owner Of Row Item</label>
+      <range_inclusive>0</range_inclusive>
+      <readonly>0</readonly>
+      <sort_order>16</sort_order>
+      <source_id keyed_name="fgc_MenuAction" type="ItemType" name="fgc_MenuAction">02F1625D84CF445B84601C2A7E55BCD4</source_id>
+      <stored_length>256</stored_length>
+      <track_history>0</track_history>
+      <name>if_is_owner_of_row_item</name>
+     </Item>
+     <Item type="Property" id="D7643FC10E3B4792B169EC4AC92433BE" action="add">
+      <column_alignment>left</column_alignment>
+      <column_width>80</column_width>
+      <data_source keyed_name="tgc_True_False">5EB366A1569446DFB13B264EC71B981C</data_source>
+      <data_type>list</data_type>
+      <is_hidden>0</is_hidden>
+      <is_hidden2>0</is_hidden2>
+      <is_indexed>0</is_indexed>
+      <is_keyed>0</is_keyed>
+      <is_multi_valued>0</is_multi_valued>
+      <is_required>0</is_required>
+      <label xml:lang="en">If Row Item is Current Version</label>
+      <range_inclusive>0</range_inclusive>
+      <readonly>0</readonly>
+      <sort_order>20</sort_order>
+      <source_id keyed_name="fgc_MenuAction" type="ItemType" name="fgc_MenuAction">02F1625D84CF445B84601C2A7E55BCD4</source_id>
+      <stored_length>256</stored_length>
+      <track_history>0</track_history>
+      <name>if_row_item_is_current</name>
+     </Item>
+     <Item type="Property" id="9D59BE6821684263A9758B2ACC72BAFE" action="add">
+      <column_alignment>left</column_alignment>
+      <column_width>80</column_width>
+      <data_source keyed_name="tgc_True_False">5EB366A1569446DFB13B264EC71B981C</data_source>
+      <data_type>list</data_type>
+      <is_hidden>0</is_hidden>
+      <is_hidden2>0</is_hidden2>
+      <is_indexed>0</is_indexed>
+      <is_keyed>0</is_keyed>
+      <is_multi_valued>0</is_multi_valued>
+      <is_required>0</is_required>
+      <label xml:lang="en">If Row Item is Locked</label>
+      <range_inclusive>0</range_inclusive>
+      <readonly>0</readonly>
+      <sort_order>22</sort_order>
+      <source_id keyed_name="fgc_MenuAction" type="ItemType" name="fgc_MenuAction">02F1625D84CF445B84601C2A7E55BCD4</source_id>
+      <stored_length>256</stored_length>
+      <track_history>0</track_history>
+      <name>if_row_item_is_locked</name>
+     </Item>
+     <Item type="Property" id="0E6FADBD19CA4768BF3BFB7EC6EB3186" action="add">
+      <column_alignment>left</column_alignment>
+      <column_width>80</column_width>
+      <data_source keyed_name="tgc_True_False">5EB366A1569446DFB13B264EC71B981C</data_source>
+      <data_type>list</data_type>
+      <is_hidden>0</is_hidden>
+      <is_hidden2>0</is_hidden2>
+      <is_indexed>0</is_indexed>
+      <is_keyed>0</is_keyed>
+      <is_multi_valued>0</is_multi_valued>
+      <is_required>0</is_required>
+      <label xml:lang="en">If Row Item is Released</label>
+      <range_inclusive>0</range_inclusive>
+      <readonly>0</readonly>
+      <sort_order>21</sort_order>
+      <source_id keyed_name="fgc_MenuAction" type="ItemType" name="fgc_MenuAction">02F1625D84CF445B84601C2A7E55BCD4</source_id>
+      <stored_length>256</stored_length>
+      <track_history>0</track_history>
+      <name>if_row_item_is_released</name>
+     </Item>
+     <Item type="Property" id="BDCE8C4287814AC8BC92E2255EDFCA82" action="add">
+      <column_alignment>left</column_alignment>
+      <column_width>80</column_width>
+      <data_source keyed_name="tgc_True_False">5EB366A1569446DFB13B264EC71B981C</data_source>
+      <data_type>list</data_type>
+      <is_hidden>0</is_hidden>
+      <is_hidden2>0</is_hidden2>
+      <is_indexed>0</is_indexed>
+      <is_keyed>0</is_keyed>
+      <is_multi_valued>0</is_multi_valued>
+      <is_required>0</is_required>
+      <label xml:lang="en">If Started From Tab</label>
+      <range_inclusive>0</range_inclusive>
+      <readonly>0</readonly>
+      <sort_order>14</sort_order>
+      <source_id keyed_name="fgc_MenuAction" type="ItemType" name="fgc_MenuAction">02F1625D84CF445B84601C2A7E55BCD4</source_id>
+      <stored_length>256</stored_length>
+      <track_history>0</track_history>
+      <name>if_started_from_tab</name>
+     </Item>
+     <Item type="Property" id="232F50917F54431BBA08172888D644C4" action="add">
+      <column_alignment>center</column_alignment>
+      <column_width>60</column_width>
+      <data_type>boolean</data_type>
+      <is_hidden>0</is_hidden>
+      <is_hidden2>0</is_hidden2>
+      <is_indexed>0</is_indexed>
+      <is_keyed>0</is_keyed>
+      <is_multi_valued>0</is_multi_valued>
+      <is_required>0</is_required>
+      <label xml:lang="en">Disabled</label>
+      <range_inclusive>0</range_inclusive>
+      <readonly>0</readonly>
+      <sort_order>6</sort_order>
+      <source_id keyed_name="fgc_MenuAction" type="ItemType" name="fgc_MenuAction">02F1625D84CF445B84601C2A7E55BCD4</source_id>
+      <track_history>0</track_history>
+      <name>is_disabled</name>
+     </Item>
+     <Item type="Property" id="1EF42055B1CC4566A9752E08D83622EB" action="add">
+      <column_alignment>center</column_alignment>
+      <column_width>80</column_width>
+      <data_type>boolean</data_type>
+      <is_hidden>0</is_hidden>
+      <is_hidden2>0</is_hidden2>
+      <is_indexed>0</is_indexed>
+      <is_keyed>0</is_keyed>
+      <is_multi_valued>0</is_multi_valued>
+      <is_required>0</is_required>
+      <label xml:lang="en">Is Separator</label>
+      <range_inclusive>0</range_inclusive>
+      <readonly>0</readonly>
+      <sort_order>12</sort_order>
+      <source_id keyed_name="fgc_MenuAction" type="ItemType" name="fgc_MenuAction">02F1625D84CF445B84601C2A7E55BCD4</source_id>
+      <track_history>0</track_history>
+      <name>is_separator</name>
+     </Item>
+     <Item type="Property" id="F77A45E9DDB04786A6BF8352C6433E79" action="add">
+      <column_alignment>left</column_alignment>
+      <column_width>100</column_width>
+      <data_type>ml_string</data_type>
+      <is_hidden>0</is_hidden>
+      <is_hidden2>0</is_hidden2>
+      <is_indexed>0</is_indexed>
+      <is_keyed>0</is_keyed>
+      <is_multi_valued>0</is_multi_valued>
+      <is_required>0</is_required>
+      <label xml:lang="en">Label</label>
+      <range_inclusive>0</range_inclusive>
+      <readonly>0</readonly>
+      <sort_order>11</sort_order>
+      <source_id keyed_name="fgc_MenuAction" type="ItemType" name="fgc_MenuAction">02F1625D84CF445B84601C2A7E55BCD4</source_id>
+      <stored_length>80</stored_length>
+      <track_history>0</track_history>
+      <name>label</name>
+     </Item>
+     <Item type="Property" id="5A3CA6DFB2BF44E0A26858600E5147A9" action="add">
+      <column_alignment>left</column_alignment>
+      <column_width>100</column_width>
+      <data_type>string</data_type>
+      <is_hidden>0</is_hidden>
+      <is_hidden2>0</is_hidden2>
+      <is_indexed>0</is_indexed>
+      <is_keyed>0</is_keyed>
+      <is_multi_valued>0</is_multi_valued>
+      <is_required>0</is_required>
+      <label xml:lang="en">Name</label>
+      <range_inclusive>0</range_inclusive>
+      <readonly>0</readonly>
+      <sort_order>10</sort_order>
+      <source_id keyed_name="fgc_MenuAction" type="ItemType" name="fgc_MenuAction">02F1625D84CF445B84601C2A7E55BCD4</source_id>
+      <stored_length>80</stored_length>
+      <track_history>0</track_history>
+      <name>name</name>
+     </Item>
+     <Item type="View" id="C968296E88A84641AE64C6E568D899C0" action="add">
+      <client>js</client>
+      <related_id keyed_name="fgc_MenuAction" type="Form">DD8AD242F16C488A984D900D1487AFAC</related_id>
+      <role keyed_name="World" type="Identity">
+       <Item type="Identity" action="get" select="id">
+        <name>World</name>
+       </Item>
+      </role>
+      <show_ssvc>0</show_ssvc>
+      <sort_order>128</sort_order>
+      <source_id keyed_name="fgc_MenuAction" type="ItemType" name="fgc_MenuAction">02F1625D84CF445B84601C2A7E55BCD4</source_id>
+      <type>default</type>
+     </Item>
+    </Relationships>
+   </Item>
+  </relationship_id>
+  <sort_order>20</sort_order>
+  <source_id keyed_name="fgc_Configuration" type="ItemType" name="fgc_Configuration">362FB8A676BC4A50B430FA6FA79EAD3F</source_id>
+  <name>fgc_MenuAction</name>
+ </Item>
+ <Item type="ItemType" id="02F1625D84CF445B84601C2A7E55BCD4" action="edit">
+  <Relationships>
+   <Item type="Property" action="edit" where="source_id='02F1625D84CF445B84601C2A7E55BCD4' and name='sort_order'">
+    <column_alignment>left</column_alignment>
+    <column_width>50</column_width>
+    <data_type>integer</data_type>
+    <is_hidden>0</is_hidden>
+    <is_hidden2>0</is_hidden2>
+    <is_indexed>0</is_indexed>
+    <is_keyed>0</is_keyed>
+    <is_multi_valued>0</is_multi_valued>
+    <is_required>0</is_required>
+    <label xml:lang="en">Pos</label>
+    <range_inclusive>0</range_inclusive>
+    <readonly>0</readonly>
+    <sort_order>5</sort_order>
+    <source_id keyed_name="fgc_MenuAction" type="ItemType" name="fgc_MenuAction">02F1625D84CF445B84601C2A7E55BCD4</source_id>
+    <track_history>0</track_history>
+    <name>sort_order</name>
+   </Item>
+  </Relationships>
+ </Item>
+</AML>

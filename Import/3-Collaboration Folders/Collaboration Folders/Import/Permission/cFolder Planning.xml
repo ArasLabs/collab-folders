@@ -1,0 +1,108 @@
+﻿<AML>
+ <Item type="Permission" id="A1A0285C53274487861ED9C4D5680DEA" action="add">
+  <is_private>0</is_private>
+  <name>cFolder Planning</name>
+  <Relationships>
+   <Item type="Access" id="3DF3B917F04448F2BD1A0C4CBD47D424" action="add">
+    <can_change_access>0</can_change_access>
+    <can_delete>0</can_delete>
+    <can_discover>1</can_discover>
+    <can_get>0</can_get>
+    <can_update>0</can_update>
+    <related_id keyed_name="Team" type="Identity">275764859FDE49AF817571E8BFD8CBB5</related_id>
+    <show_permissions_warning>0</show_permissions_warning>
+    <sort_order>768</sort_order>
+    <source_id keyed_name="cFolder Planning" type="Permission">A1A0285C53274487861ED9C4D5680DEA</source_id>
+   </Item>
+   <Item type="Access" id="5DBFB9DBA5194B95A844EF3CE5E5BBF4" action="add">
+    <can_change_access>1</can_change_access>
+    <can_delete>1</can_delete>
+    <can_discover>1</can_discover>
+    <can_get>1</can_get>
+    <can_update>1</can_update>
+    <related_id keyed_name="Aras PLM" type="Identity">56A96DA9E981481688563E2D14D5D878</related_id>
+    <show_permissions_warning>1</show_permissions_warning>
+    <sort_order>128</sort_order>
+    <source_id keyed_name="cFolder Planning" type="Permission">A1A0285C53274487861ED9C4D5680DEA</source_id>
+   </Item>
+   <Item type="Access" id="618C9566A904445687C95014B32DDCF4" action="add">
+    <can_change_access>0</can_change_access>
+    <can_delete>0</can_delete>
+    <can_discover>1</can_discover>
+    <can_get>1</can_get>
+    <can_update>1</can_update>
+    <related_id keyed_name="Manager" type="Identity">
+     <Item type="Identity" action="get" select="id">
+      <name>Manager</name>
+     </Item>
+    </related_id>
+    <show_permissions_warning>0</show_permissions_warning>
+    <sort_order>640</sort_order>
+    <source_id keyed_name="cFolder Planning" type="Permission">A1A0285C53274487861ED9C4D5680DEA</source_id>
+   </Item>
+   <Item type="Access" id="85C17DCFE942482BBB88E92D875D7DD4" action="add">
+    <can_change_access>0</can_change_access>
+    <can_delete>0</can_delete>
+    <can_discover>1</can_discover>
+    <can_get>1</can_get>
+    <can_update>1</can_update>
+    <related_id keyed_name="Team Member" type="Identity">7635594273054F2BA32C1CADB31FD413</related_id>
+    <show_permissions_warning>0</show_permissions_warning>
+    <sort_order>1024</sort_order>
+    <source_id keyed_name="cFolder Planning" type="Permission">A1A0285C53274487861ED9C4D5680DEA</source_id>
+   </Item>
+   <Item type="Access" id="92F104F8685C455FB22970AA237A58D4" action="add">
+    <can_change_access>0</can_change_access>
+    <can_delete>1</can_delete>
+    <can_discover>1</can_discover>
+    <can_get>1</can_get>
+    <can_update>1</can_update>
+    <related_id keyed_name="Creator" type="Identity">
+     <Item type="Identity" action="get" select="id">
+      <name>Creator</name>
+     </Item>
+    </related_id>
+    <show_permissions_warning>0</show_permissions_warning>
+    <sort_order>384</sort_order>
+    <source_id keyed_name="cFolder Planning" type="Permission">A1A0285C53274487861ED9C4D5680DEA</source_id>
+   </Item>
+   <Item type="Access" id="A819D4ACDA8F4F9486DA5355FADEFC99" action="add">
+    <can_change_access>0</can_change_access>
+    <can_delete>1</can_delete>
+    <can_discover>1</can_discover>
+    <can_get>1</can_get>
+    <can_update>1</can_update>
+    <related_id keyed_name="Team Manager" type="Identity">60EBF9D1BB584921A73FA2F8D74DAF80</related_id>
+    <show_permissions_warning>0</show_permissions_warning>
+    <sort_order>896</sort_order>
+    <source_id keyed_name="cFolder Planning" type="Permission">A1A0285C53274487861ED9C4D5680DEA</source_id>
+   </Item>
+   <Item type="Access" id="B15610930DB14670B694EA0A258C4E85" action="add">
+    <can_change_access>0</can_change_access>
+    <can_delete>1</can_delete>
+    <can_discover>1</can_discover>
+    <can_get>1</can_get>
+    <can_update>1</can_update>
+    <related_id keyed_name="Owner" type="Identity">
+     <Item type="Identity" action="get" select="id">
+      <name>Owner</name>
+     </Item>
+    </related_id>
+    <show_permissions_warning>0</show_permissions_warning>
+    <sort_order>512</sort_order>
+    <source_id keyed_name="cFolder Planning" type="Permission">A1A0285C53274487861ED9C4D5680DEA</source_id>
+   </Item>
+   <Item type="Access" id="D9A85FA80FDE45D892FB1EAC6B4E6B2A" action="add">
+    <can_change_access>1</can_change_access>
+    <can_delete>1</can_delete>
+    <can_discover>1</can_discover>
+    <can_get>1</can_get>
+    <can_update>1</can_update>
+    <related_id keyed_name="Administrators" type="Identity">2618D6F5A90949BAA7E920D1B04C7EE1</related_id>
+    <show_permissions_warning>1</show_permissions_warning>
+    <sort_order>256</sort_order>
+    <source_id keyed_name="cFolder Planning" type="Permission">A1A0285C53274487861ED9C4D5680DEA</source_id>
+   </Item>
+  </Relationships>
+ </Item>
+</AML>

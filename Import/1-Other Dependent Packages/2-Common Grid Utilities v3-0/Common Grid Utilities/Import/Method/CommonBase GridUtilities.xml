@@ -1,0 +1,2508 @@
+﻿<AML>
+ <Item type="Method" id="7027DE9F71B34BCBA67BE84AEE572042" action="add">
+  <comments>contains a grid wrapper class and classes with common grid row handling, and grid menu handling</comments>
+  <execution_allowed_to keyed_name="World" type="Identity">A73B655731924CD0B027E4F4D5FCC0A9</execution_allowed_to>
+  <method_code><![CDATA[/// Client-side Utilities module - "commonBase Grid Utilities"
+// can be used to build your own "programmed" grids  (Tree or Flat)
+// must connect to Form Event "onload" (load prior to your own modules)
+
+// assumes grid will get connected to an html field on an Aras form.
+// global variable "innovator"  must be declared in html-code of this field on the form !!!
+// global variable "I18Ncntx"   must be declared in html-code of this field on the form !!!
+
+// registers grid events to connect your callbacks to.
+// has  base classes to help with loading data into a grid  (row class, cell class)
+// has  base classes to handle standard menu actions  (based on configuration)
+
+// can be used together with module - "commonBase Grid Configurations"  (read grid/toolbar/menu configurations from config items from Aras server)
+
+/// ======================================
+/// ======BASE GRID CLASS ================
+/// ======================================
+BaseGrid = function () {
+    // determine browser type
+    navigator.sayswho = (function () {
+        var ua = navigator.userAgent, tem,
+        M = ua.match(/(opera|chrome|safari|firefox|msie|trident(?=\/))\/?\s*([\d\.]+)/i) || [];
+        if (/trident/i.test(M[1])) {
+            tem = /\brv[ :]+(\d+(\.\d+)?)/g.exec(ua) || [];
+            return 'IE ' + (tem[1] || '');
+        }
+        M = M[2] ? [M[1], M[2]] : [navigator.appName, navigator.appVersion, '-?'];
+        if ((tem = ua.match(/version\/([\.\d]+)/i)) !== null) { M[2] = tem[1]; }
+        return M.join(' ');
+    })();
+    this.browserType = navigator.sayswho;
+    //if (navigator.sayswho.indexOf("MSIE") < 0)
+    //{
+    //alert("This form only works with 'Internet Explorer' !  Your browser is '"+ navigator.sayswho +"'");
+    //}
+	
+	// mix-in C# like .format function to string class
+	if (!String.prototype.format) {
+		String.prototype.format = function() {
+			var s = this,i = arguments.length;
+			while (i--) {s = s.replace(new RegExp('\\{' + i + '\\}', 'gm'), arguments[i]);}
+			return s;
+		};
+	}
+	
+	var variable_dom;
+	variable_dom = top.aras.getItemFromServerByName("Variable", "VersionMajor", "value,default_value");
+	var arasReleaseCode = variable_dom.getProperty("value","");
+	variable_dom = top.aras.getItemFromServerByName("Variable", "VersionServicePack", "value,default_value");
+	arasReleaseCode += "-" + variable_dom.getProperty("value","");
+	this.arasRelaseCode = arasReleaseCode;
+	this.arasUseOldDojoPath = false;
+	if (this.arasRelaseCode === "10-SP3" || this.arasRelaseCode === "10-SP2" || this.arasRelaseCode === "10-SP1" ) { // backward compatibility
+		this.arasUseOldDojoPath = true; }
+
+	this.gridDataAML = null;
+	this.icons = {};
+	this.iconsOpen = {};
+	this.use_svg_icons = true;  /*enables icons: "locked","locked_else","item_chk0","item_chk1" */
+	
+	// item type based icons
+	this.icons["default"] = "";
+};
+
+BaseGrid.prototype = {
+    //variables
+    grid: null,
+    toolbar: null,
+
+    numberOfGridColumns: -1,
+    icons: {},
+    iconsOpen: {},
+    use_svg_icons: true,  /*enables icons: "locked","locked_else","item_chk0","item_chk1" */
+	
+    //methods
+    handleToolbarOnClick: function (item) {
+        this.grid.turnEditOff();
+        var id = item.getId();
+        this.onToolbarClick({ id: id });
+    },
+
+    handleToolbarOnChange: function (item) {
+        var id = item.getId();
+        this.onToolbarChange({ id: id });
+    },
+
+    handleGridClick: function (rowId, column) {
+        this.onGridClick({ rowId: rowId, column: column });
+    },
+
+    handleGridDoubleClick: function (rowId) {
+        this.onGridDoubleClick({ rowId: rowId });
+    },
+
+    handleGridLinkClick: function (strLink) {
+        this.onGridLinkClick({ linkData: strLink });
+    },
+
+    handleGridMenuInit: function (rowId, col, p) {
+        var menu = this.grid.getMenu();
+        var menuItems = [];
+        this.handleGridMenuClick = function (menuChoice) { }; // reset previous handler;
+        menu.removeAll();
+        var menuInit = this.onGridMenuInit({ rowId: rowId, column: col, menuItems: menuItems });
+        if (menuInit) {
+            for (var i = 0; i < menuItems.length; i++) {
+                if (menuItems[i].separator) {
+                    menu.addSeparator();
+                } else {
+                    //menu.add(i.toString(), (menuItems[i].label || ""), { disable: !menuItems[i].enabled });
+                    menu.add(menuItems[i].name, (menuItems[i].label || ""), { disable: !menuItems[i].enabled });
+                }
+            }
+
+            //set new handler which lock in closer menuItems
+            this.handleGridMenuClick = function (menuChoice) {
+                var selectedId = this.grid.getSelectedId();
+                if (selectedId) {
+					// to remain backward compatible with older versions, we must return the index of the menu item !!
+					var menuItemIdx = -1;
+					for (var i = 0; i < menuItems.length && menuItemIdx < 0; i++) {
+						if (menuItems[i].name === menuChoice) {menuItemIdx = i;}
+					}
+                    if (menuItemIdx >=0) {this.onGridMenuClick(menuItemIdx);}
+                    //var menu = menuItems[parseInt(menuChoice, 10)];
+                    //this.onGridMenuClick({menu: menu});
+                }
+                return;
+            };
+
+            return true;
+        }
+
+        return false;
+    },
+
+    handleGridMenuClick: function (menuChoice) {
+        //will be overridden in handleGridMenuInit;
+    },
+
+    handleGridKeyPress: function (key) {
+        this.onGridKeyPress({ key: key });
+    },
+
+    handleGridOpenNode: function (rowId) {
+        this.onGridOpenNode({ rowId: rowId });
+    },
+
+    handleGridCloseNode: function (rowId) {
+        this.onGridCloseNode({ rowId: rowId });
+    },
+
+    handleGridDragEnter: function (a, b) {
+        this.onGridDragEnter({ a: a, b: b });
+    },
+
+    handleGridDragDrop: function (a, b) {
+        this.onGridDragDrop({ a: a, b: b });
+    },
+
+    handleGridDragStart: function (a, b) {
+        this.onGridDragStart({ a: a, b: b });
+    },
+
+    //----default handlers (standardized on eArg) -- will get overridden by actual handlers -----------
+    onToolbarClick: function (eArg) { return; },
+    onToolbarChange: function (eArg) { return; },
+    onGridClick: function (eArg) { return; },
+    onGridDoubleClick: function (eArg) { return; },
+    onGridLinkClick: function (eArg) { return; },
+    onGridMenuInit: function (eArg) { return true; },
+    onGridMenuClick: function (eArg) { (eArg.menu.handler.execute ? eArg.menu.handler.execute() : eArg.menu.handler()); return; },
+    onBeginEditCell: function (eArg) { return false; },
+    onEndEditCell: function (eArg) { return false; },
+    onGridKeyPress: function (eArg) { return true; },
+    onGridDragEnter: function (eArg) { return true; },
+    onGridDragDrop: function (eArg) { return true; },
+    onGridDragStart: function (eArg) { return true; },
+    onGridOpenNode: function (eArg) { return; },
+    onGridCloseNode: function (eArg) { return; },
+
+	//--- API
+	/// <summary>
+	///
+	/// <summary>
+	initialize: function () {
+		//load grid and toolbar was success
+	},
+
+	//--- API
+	/// <summary>
+	///
+	/// </summary>
+	loadFlatGridAndToolbarIntoHtmlBody: function () {
+		this.loadGridAndToolbarControlIntoHtmlBody_ex(false);
+	},
+
+	//--- API
+	/// <summary>
+	///
+	/// </summary>
+	loadTreeGridAndToolbarIntoHtmlBody: function () {
+		this.loadGridAndToolbarControlIntoHtmlBody_ex(true);
+	},
+    //--- not API
+    loadGridAndToolbarControlIntoHtmlBody_ex: function (isTreeGrid) {
+		fn_initDefaultIcons(this);
+		
+		this.isTreeGrid = isTreeGrid;
+        var htmlText = '<table id="main_table" style="overflow:hidden; width: 100%; height: 100%; position: absolute; top: 0px; left: 0px;" cellspacing="0" cellpadding="0">' +
+							'<tr style="vertical-align: top;">' +
+								'<td id="toolbar_td" style="height: 28px;"></td>' +
+							'</tr>' +
+							'<tr style="vertical-align: top;">' +
+								'<td id="gridTD" style="height: 100%;"></td>' +
+								'<div id="loadingInProgress" style="top: 31px; width: 100%; height: 100%; position: absolute; padding-top: 20px; z-index: 100; background-color: #ffffff;">' +
+									'<center><b>Loading...<img src="../images/Progress.gif" /></b></center>' +
+								'</div>' +
+							'</tr>' +
+						'</table>',
+			docElement = document.documentElement,
+			mainDiv = document.createElement('div'),
+			mainTable,
+			toolbar,
+			grid;
+        mainDiv.setAttribute('style', 'position:absolute; width:100%; height:100%; overflow:hidden;');
+        mainDiv.innerHTML = htmlText;
+        document.body.appendChild(mainDiv);
+        mainTable = document.getElementById('main_table');
+        top.aras.browserHelper.adjustGridSize(window, function () {
+            mainTable.style.height = (docElement.clientHeight - 30) + 'px';
+        }, false);
+
+		if (this.arasUseOldDojoPath ) { // backward compatibility
+			dojo.require('Aras.Client.Controls.ToolBar');
+
+			if (isTreeGrid) {dojo.require('Aras.Client.Controls.TreeGridContainer');}
+			else {dojo.require('Aras.Client.Controls.GridContainer');}
+
+			dojo.require('dojo.aspect');
+
+			toolbar = new Aras.Client.Controls.ToolBar({ ImageBase: '../cbin/' });
+			document.getElementById('toolbar_td').appendChild(toolbar.domNode);
+			dojo.connect(toolbar, 'onClick', this, 'handleToolbarOnClick');
+			dojo.connect(toolbar, 'onChange', this, 'handleToolbarOnChange');
+			toolbar.startup();
+			this.toolbar = toolbar;
+
+			if (isTreeGrid) {
+				grid = new Aras.Client.Controls.TreeGridContainer({ connectId:"gridTD", canEdit: function (){return true;} });
+			}
+			else {
+				grid = new Aras.Client.Controls.GridContainer({ connectId:"gridTD", canEdit: function (){return true;} });
+			}
+		}
+		else {
+			dojo.require('Aras.Client.Controls.Public.ToolBar');
+			if (isTreeGrid) {dojo.require('Aras.Client.Controls.Public.TreeGridContainer');}
+			else {dojo.require('Aras.Client.Controls.Public.GridContainer');}
+			dojo.require('dojo.aspect');
+
+			toolbar = new Aras.Client.Controls.Public.ToolBar({ connectId: "toolbar_td", ImageBase: '../cbin/' });
+			dojo.connect(toolbar, 'onClick', this, 'handleToolbarOnClick');
+			dojo.connect(toolbar, 'onChange', this, 'handleToolbarOnChange');
+			this.toolbar = toolbar;
+
+			if (isTreeGrid) {
+				grid = new Aras.Client.Controls.Public.TreeGridContainer({ connectId:"gridTD", canEdit: function (){return true;} });
+			}
+			else {
+				grid = new Aras.Client.Controls.Public.GridContainer({ connectId:"gridTD", canEdit: function (){return true;} });
+			}
+		}
+		dojo.connect(grid, 'gridClick', this, 'handleGridClick');
+		dojo.connect(grid, 'gridDoubleClick', this, 'handleGridDoubleClick');
+		dojo.connect(grid, 'gridLinkClick', this, 'handleGridLinkClick');
+		dojo.connect(grid, 'gridMenuInit', this, 'handleGridMenuInit');
+		dojo.connect(grid, 'gridMenuClick', this, 'handleGridMenuClick');
+		dojo.connect(grid, 'onStartEdit_Experimental', this, function (rowId, field, value) {
+			//##old## var columnIndex = this.grid.columns.get(field, 'index');
+			var columnIndex = this.grid.columns_Experimental.get(field, 'index');
+			return this.onBeginEditCell({ rowId: rowId, column: columnIndex, field: field});
+		});
+		dojo.connect(grid, 'onApplyEdit_Experimental', this, function (rowId, field, value) {
+			//##old## var columnIndex = this.grid.columns.get(field, 'index');
+			var columnIndex = this.grid.columns_Experimental.get(field, 'index');
+			return this.onEndEditCell({ rowId: rowId, column: columnIndex, field: field});
+		});
+		dojo.connect(grid, 'gridKeyPress', this, 'handleGridKeyPress');
+		if (isTreeGrid) {
+			dojo.connect(grid, 'gridOpenNode', this, 'handleGridOpenNode');
+			dojo.connect(grid, 'gridCloseNode', this, 'handleGridCloseNode');
+		}
+
+		this.grid = grid;
+
+		this.ready = true;
+		this.initialize();
+    },
+    //--- API
+	/// <summary>
+	///
+	/// <summary>
+    loadToolbarIntoHtmlElement: function (toolbarElementId) {
+		return this.loadToolbarControlIntoHtmlElement_ex(toolbarElementId);
+    },
+    //--- not API
+    loadToolbarControlIntoHtmlElement_ex: function (toolbarElementId) {
+        var toolbar;
+		if (this.arasUseOldDojoPath ) { // backward compatibility
+			dojo.require('Aras.Client.Controls.ToolBar');
+			dojo.require('dojo.aspect');
+
+			toolbar = new Aras.Client.Controls.ToolBar({ connectId: toolbarElementId, ImageBase: '../cbin/' });
+			dojo.connect(toolbar, 'onClick', this, 'handleToolbarOnClick');
+			dojo.connect(toolbar, 'onChange', this, 'handleToolbarOnChange');
+		}
+		else {
+			dojo.require('Aras.Client.Controls.Public.ToolBar');
+			dojo.require('dojo.aspect');
+
+			toolbar = new Aras.Client.Controls.Public.ToolBar({ connectId: toolbarElementId, ImageBase: '../cbin/' });
+			dojo.connect(toolbar, 'onClick', this, 'handleToolbarOnClick');
+			dojo.connect(toolbar, 'onChange', this, 'handleToolbarOnChange');
+		}
+        return toolbar;
+    },
+
+    //--- API for barckward compatibility
+    loadHTML_DojoTreeGridIntoElement: function (gridElementId) {
+		return this.loadTreeGridIntoHtmlElement(gridElementId);
+    },
+    //--- API
+	/// <summary>
+	///
+	/// </summary>
+	loadFlatGridIntoHtmlElement: function (gridElementId) {
+		return this.loadGridControlIntoHtmlElement_ex(gridElementId, false);
+    },
+    //--- API
+	/// <summary>
+	///
+	/// </summary>
+	loadTreeGridIntoHtmlElement: function (gridElementId) {
+		return this.loadGridControlIntoHtmlElement_ex(gridElementId, true);
+    },
+    //--- not API
+	loadGridControlIntoHtmlElement_ex: function (gridElementId, isTreeGrid) {
+		fn_initDefaultIcons(this);
+		
+		this.isTreeGrid = isTreeGrid;
+        var grid;
+		if (this.arasUseOldDojoPath ) { // backward compatibility
+			if (isTreeGrid) {dojo.require('Aras.Client.Controls.TreeGridContainer');}
+			else {dojo.require('Aras.Client.Controls.GridContainer');}
+			dojo.require('dojo._base.connect');
+			dojo.require('dojo.aspect');
+
+			if (isTreeGrid) {
+				grid = new Aras.Client.Controls.TreeGridContainer({	connectId: gridElementId, canEdit: function (){return true;} });
+			}
+			else {
+				grid = new Aras.Client.Controls.GridContainer({ connectId: gridElementId, canEdit: function (){return true;} });
+			}
+		}
+		else {
+			if (isTreeGrid) {dojo.require('Aras.Client.Controls.Public.TreeGridContainer');}
+			else {dojo.require('Aras.Client.Controls.Public.GridContainer');}
+			dojo.require('dojo._base.connect');
+			dojo.require('dojo.aspect');
+
+			if (isTreeGrid) {
+				grid = new Aras.Client.Controls.Public.TreeGridContainer({ connectId: gridElementId, canEdit: function (){return true;} });
+			}
+			else {
+				grid = new Aras.Client.Controls.Public.GridContainer({ connectId: gridElementId, canEdit: function (){return true;} });
+			}
+		}
+        dojo.connect(grid, 'gridClick', this, 'handleGridClick');
+        dojo.connect(grid, 'gridDoubleClick', this, 'handleGridDoubleClick');
+        dojo.connect(grid, 'gridLinkClick', this, 'handleGridLinkClick');
+        dojo.connect(grid, 'gridMenuInit', this, 'handleGridMenuInit');
+        dojo.connect(grid, 'gridMenuClick', this, 'handleGridMenuClick');
+		dojo.connect(grid, 'onStartEdit_Experimental', this, function (rowId, field, value) {
+			//##old## var columnIndex = this.grid.columns.get(field, 'index');
+			var columnIndex = this.grid.columns_Experimental.get(field, 'index');
+			return this.onBeginEditCell({ rowId: rowId, column: columnIndex, field: field});
+		});
+        dojo.connect(grid, 'onApplyEdit_Experimental', this, function (rowId, field, value) {
+			//##old## var columnIndex = this.grid.columns.get(field, 'index');
+			var columnIndex = this.grid.columns_Experimental.get(field, 'index');
+            return this.onEndEditCell({ rowId: rowId, column: columnIndex, field: field });
+        });
+        dojo.connect(grid, 'gridKeyPress', this, 'handleGridKeyPress');
+		if (isTreeGrid) {
+			dojo.connect(grid, 'gridOpenNode', this, 'handleGridOpenNode');
+			dojo.connect(grid, 'gridCloseNode', this, 'handleGridCloseNode');
+		}
+
+        return grid;
+    },
+    //--- API
+	/// <summary>
+	///
+	/// </summary>
+    getColumnLabelByName: function (typeName, propName) {
+        var itemType = top.aras.getItemTypeForClient(typeName, "name");
+        var propItem = itemType.getItemsByXPath("Relationships/Item[@type='Property' and name='" + propName + "']").node;
+        return top.aras.getItemProperty(propItem, 'label');
+    },
+    //--- API
+	/// <summary>
+	///
+	/// </summary>
+    setToolbarItemEnable: function (ctrlName, bool) {
+        var toolbar = this.toolbar.getActiveToolbar();
+        bool = (bool === undefined) ? true : !!bool;
+        try {
+            var tbi = toolbar.getElement(ctrlName);
+            if (tbi) {
+                tbi.setEnabled(bool);
+            }
+        } catch (excep) {
+            top.aras.AlertError(top.aras.getResource("CommonUtilities","commonUtilities.message.utils_exception_toolbar_item_enable").format(ctrlName));
+        }
+    },
+    //--- API
+    getProperty: function (node, element) {
+        //this function is used instead of top.aras.getItemProperty because of performance reasons
+        var value = "";
+        if (node) {
+            var tempNode = node.selectSingleNode(element);
+            if (tempNode) {
+                value = tempNode.text;
+            }
+        }
+        return value;
+    },
+    //--- API
+	/// <summary>
+	///
+	/// </summary>
+    expandAll: function (bool) {
+        this.grid.setPaintEnabled(false);
+        if (bool) {
+            this.grid.expandAll();
+        } else {
+            this.grid.collapseAll();
+        }
+        this.grid.setPaintEnabled(true);
+    },
+    //--- API
+	/// <summary>
+	///
+	/// </summary>
+    setLink: function (row_id, col, linkInfo, propName, propValue) {
+        this.grid.SetCellTextColor(row_id, col, "#0000FF");
+        // propname/Value extend the linkinfo - must be concatenated with '+'
+        this.grid.SetCellLink(row_id, col, row_id + "~" + col + "~" + linkInfo + "+" + propName + "+" + propValue);
+    },
+    //--- API
+	/// <summary>
+	///
+	/// </summary>
+    GetGridState: function () {
+        return {
+            expanded: this.grid.getOpenedItems(";").split(";"),
+            selected: this.grid.getSelectedItemIDs(";").split(";")
+        };
+    },
+    //--- API
+	/// <summary>
+	///
+	/// </summary>
+    SetGridState: function (gridState) {
+        var l = gridState.expanded.length;
+        for (var i = 0; i < l; i++) {
+            if (gridState.expanded[i]) {
+                this.grid.openItem(gridState.expanded[i]);
+            }
+        }
+
+        l = gridState.selected.length;
+        for (i = 0; i < l; i++) {
+            if (gridState.selected[i]) {
+                this.grid.setSelectedRow(gridState.selected[i], true, true);
+            }
+        }
+    },
+    //--- API
+	/// <summary>
+	///
+	/// </summary>
+    gridSetCellValue: function (rowId, col, value) {
+//		if (this.grid.SetCellValue_Experimental) {return this.grid.SetCellValue_Experimental(rowId, col, value);}
+        this.grid.cells(rowId, col).setValue(value);
+    },
+    //--- API
+	/// <summary>
+	///
+	/// </summary>
+    gridSetCellBgColor: function (rowId, col, BgColor) {
+		if (BgColor && BgColor !== undefined) {
+            var gridCell = this.grid.cells(rowId, col);
+			//if (this.isTreeGrid) {gridCell.setBgColor(BgColor);}
+			//else {gridCell.SetBgColor_Experimental(BgColor);}
+			//#TODO - replace _Experimental call# else {gridCell.SetBgColor(BgColor);}
+			gridCell.SetBgColor_Experimental(BgColor);
+		}
+    },
+    //--- API
+	/// <summary>
+	///
+	/// </summary>
+    gridGetCellValue: function (rowId, col) {
+//		if (this.grid.GetCellValue_Experimental) {return this.grid.GetCellValue_Experimental(rowId, col);}
+		return this.grid.cells(rowId, col).getValue();
+    },
+    //--- API
+	/// <summary>
+	///
+	/// </summary>
+    clearGridRowUserData: function (rowId) {
+        if (rowId && rowId !== undefined) { this.gridRowUserData[rowId] = {}; return; }
+        this.gridRowUserData = {};
+    },
+    //--- API
+	/// <summary>
+	///
+	/// </summary>
+    setGridRowUserData: function (rowId, dataName, dataValue) {
+        if (!rowId || rowId === "") { return; }
+        var rowUserData = this.gridRowUserData[rowId];
+        if (!rowUserData || rowUserData === undefined) { this.gridRowUserData[rowId] = {}; }
+        this.gridRowUserData[rowId][dataName] = dataValue;
+    },
+    //--- API
+	/// <summary>
+	///
+	/// </summary>
+    getGridRowUserData: function (rowId, dataName) {
+        if (!rowId || rowId === "") { return; }
+        if (!dataName || dataName === "") { return; }
+        return this.gridRowUserData[rowId][dataName];
+    },
+    //--- API
+	/// <summary>
+	///
+	/// </summary>
+    gridRowExists: function (rowId) {
+        var r = this.gridRowUserData[rowId];
+        return (r && r !== undefined);
+    },
+    //--- API
+	/// <summary>
+	///
+	/// </summary>
+    getInputRowVals: function () {
+        this.inputRowTdVals = new Array(); // set in context variable
+        for (var i = 0; i < this.numberOfGridColumns; i++) {
+            var cellVal = this.grid.cells("input_row", i).getValue();
+            if (!cellVal) { cellVal = ""; }
+            this.inputRowTdVals.push(cellVal);
+        }
+    },
+    //--- API
+	/// <summary>
+	///
+	/// </summary>
+    setInputRowVals: function () {
+        if (!this.inputRowTdVals) { return; }
+        for (var i = 0; i < this.inputRowTdVals.length; i++) {
+            var elem = this.inputRowTdVals[i];
+            var cell = this.grid.cells("input_row", elem.colId);
+            cell.setValue(elem.val);
+        }
+    },
+    //--- API
+	/// <summary>
+	///
+	/// </summary>
+    clearInputRowVals: function () {
+        if (!this.inputRowTdVals) { return; }
+        for (var i = 0; i < this.inputRowTdVals.length; i++) {
+            var elem = this.inputRowTdVals[i];
+            var cell = this.grid.cells("input_row", elem.colId);
+            cell.setValue("");
+        }
+    },
+	
+	/// <grid_toolbar_api>  expects this context to have toobar control connected in "this.toolbar"
+    //--- API
+	/// <summary>
+	///
+	/// </summary>
+    setChoiceSelectionOnToolbar: function (choiceId, choiceValue) {
+        fn_setToolbarElementChoice(this.toolbar, choiceId, choiceValue); // a change triggeres a refresh
+    },
+    //--- API
+	/// <summary>
+	///
+	/// </summary>
+    getChoiceSelectionFromToolbar: function (choiceId) {
+        return fn_getToolbarElementChoice(this.toolbar, choiceId);
+    },
+    //--- API
+	/// <summary>
+	///
+	/// </summary>
+    setTextOnToolbarItem: function (tbItemId, textValue) {
+    //    this.ignoreToolbarChangeEvent = ignoreToolbarChangeEvent; // grid's refresh logic can ignore refresh
+        fn_setToolbarElementText(this.toolbar, tbItemId, textValue);
+    },
+    //--- API
+	/// <summary>
+	///
+	/// </summary>
+    getTextFromToolbarItem: function (tbItemId) {
+        fn_getToolbarElementText(this.toolbar, tbItemId);
+    },
+	
+	/// <grid_context_menu_api>
+	//--- API
+	initMenuActionArgs: function (eActionArgs, selectedRowId, isStartedFromTab, effectivityMode) {
+		if (selectedRowId && selectedRowId !== undefined) {
+			eActionArgs.rowId = selectedRowId;
+			eActionArgs.rowItemType = this.getGridRowUserData(selectedRowId,"rowItemType");
+			eActionArgs.rowItemId = this.getGridRowUserData(selectedRowId,"rowItemID");
+			eActionArgs.rowOfGroupName = this.getGridRowUserData(selectedRowId,"rowOfGroupName");
+			eActionArgs.isPhantomRow = (this.getGridRowUserData(selectedRowId,"isPhantomRow") === "1");	
+		}
+		eActionArgs.gridHandler = this;
+		eActionArgs.gridIsEditable = this.gridIsEditable;
+		eActionArgs.userIsOwnerOfContextItem = this.currentUserIsOwnerOfTopItem;
+		eActionArgs.isStartedFromTab = isStartedFromTab;
+		eActionArgs.effectivityMode =  effectivityMode;
+	},
+	
+	/// <flat_grid_api>
+    //--- API
+	/// <summary>
+	///
+	/// </summary>
+    DrawFlatGridRow: function (itemNode, rowConfig, rowId, rowIcon ) {
+        var itemNodeType = itemNode.getType();
+        var itemID = itemNode.getID();
+
+		//rowIcon and rowId are optional.
+		//if used they will override calculated values
+		var icon;
+		if (rowIcon && rowIcon !== "") {
+			icon = rowIcon;
+		}
+		else {
+		if (rowConfig.rowIcon && rowConfig.rowIcon !== undefined && rowConfig.rowIcon !== "{rowItemType}") { // use icon configured in xml file
+            icon = rowConfig.rowIcon;
+        }
+        else { //get small icon of item type
+            if (!this.icons[itemNodeType] || this.icons[itemNodeType] === undefined) {
+                this.icons[itemNodeType] = fn_GetSmallIconFormatOfItemType(itemNodeType);
+                icon = this.icons[itemNodeType];
+            }
+            else {
+                icon = this.icons[itemNodeType];
+            }
+        }
+		}
+		var data = { itemNode: itemNode, relationshipNode: null, parentRowId: null, rowIcon: icon};
+		if (!rowConfig.columnMapping)
+			{top.aras.AlertError(top.aras.getResource("CommonUtilities","commonUtilities.message.utils_flat_grid_api_missing_columnmapping")); return;}
+        var row = new RowClass(this, data, this.gridVisibleColumns, rowConfig.columnMapping);
+
+		var newRowID;
+		if (rowId && rowId !== "") {newRowID = rowId;}
+		else {newRowID = itemNode.getProperty("config_id", "");}
+		
+		if (this.gridRowExists(newRowID)) {return newRowID;}
+        this.grid.addRow(newRowID, row.getValues());
+        row.bind(newRowID, rowConfig.rowBgColor, itemNodeType, itemID);
+
+		return newRowID;
+    },
+
+	/// <tree_grid_api>
+    //--- API
+	/// <summary>
+	///
+	/// </summary>
+    DrawPlainStructureRootRow: function (gridStructureRelShipName, itemNode, rowConfig, applyDiffView, initialChangeAction) {
+		//debugger;
+        return this.DrawStructureRow_ex(gridStructureRelShipName, itemNode, null, null, null, rowConfig, false, applyDiffView, initialChangeAction);
+    },
+    //--- API
+	/// <summary>
+	///
+	/// </summary>
+    DrawStructureRootRow: function (gridStructureRelShipName, itemNode, rowConfig, applyDiffView, initialChangeAction) {
+		//debugger;
+        return this.DrawStructureRow_ex(gridStructureRelShipName, itemNode, null, null, null, rowConfig, true, applyDiffView, initialChangeAction);
+    },
+	
+    //--- API
+	/// <summary>
+	///
+	/// </summary>
+    DrawPlainStructureChildRow: function (gridStructureRelShipName, itemNode, relationshipNode, parentItemConfigId, parentRowId, rowConfig, applyDiffView, initialChangeAction) {
+		return this.DrawStructureRow_ex (gridStructureRelShipName, itemNode, relationshipNode, parentItemConfigId, parentRowId, rowConfig, false, applyDiffView, initialChangeAction);
+    },
+    //--- API
+	/// <summary>
+	///
+	/// </summary>
+    DrawStructureRow: function (gridStructureRelShipName, itemNode, relationshipNode, parentItemConfigId, parentRowId, rowConfig, applyDiffView, initialChangeAction) {
+		return this.DrawStructureRow_ex (gridStructureRelShipName, itemNode, relationshipNode, parentItemConfigId, parentRowId, rowConfig, true, applyDiffView, initialChangeAction);
+    },
+	//--- NO API
+    DrawStructureRow_ex: function (gridStructureRelShipName, itemNode, relationshipNode, parentItemConfigId, parentRowId, rowConfig, addRelatinonshipRows, applyDiffView, initialChangeAction) {
+        var data = { itemNode: itemNode, relationshipNode: relationshipNode, parentRowId: parentRowId };
+        var thisColumMapping;
+        if (rowConfig.columnMapping) { thisColumMapping = rowConfig.columnMapping; }
+        else { thisColumMapping = this.relShipColumnMappings[gridStructureRelShipName]; }
+        var row = new RowClass(this, data, this.gridVisibleColumns, thisColumMapping);
+
+        var itemID = itemNode.getID();
+		//conditional debugging --> if (itemID === "CD0F627D5ACA4425963B32232E6141D8") {debugger;}
+
+        var parentItemID = null;
+        if (relationshipNode) { parentItemID = relationshipNode.getProperty("source_id"); }
+        var itemConfigID = itemNode.getProperty("config_id", "");
+        var itemNodeType = itemNode.getType();
+
+        var icon;
+        if (rowConfig.rowIcon && rowConfig.rowIcon !== undefined && rowConfig.rowIcon !== "{rowItemType}") { // use icon configured in xml file
+            icon = rowConfig.rowIcon;
+        }
+        else { //get small icon of item type
+			var iconItemType = itemNodeType;
+            if (!this.icons[iconItemType] || this.icons[iconItemType] === undefined) {
+                this.icons[iconItemType] = fn_GetSmallIconFormatOfItemType(iconItemType);
+                icon = this.icons[iconItemType];
+            }
+            else {
+                icon = this.icons[iconItemType];
+            }
+        }
+        var iconOpen = icon;
+
+        var newRowID;
+        if (parentRowId) {
+			if (this.disallowDuplicateStructureItems) {
+				newRowID = parentItemConfigId + "-" + itemConfigID;
+			}
+			else {
+				newRowID = relationshipNode.getProperty("config_id", "") + "-" + itemConfigID;
+			}
+		}
+        else { newRowID = "ROOT-" + itemConfigID; }
+
+        if (!applyDiffView || applyDiffView === undefined) {
+            if (!this.gridRowExists(newRowID)) {
+                if (!parentRowId) {
+                    this.grid.insertRoot(newRowID, row.getValues(), newRowID, icon, iconOpen);
+                } else {
+                    this.grid.insertNewChild(parentRowId, newRowID, row.getValues(), newRowID, icon, iconOpen);
+                }
+                row.bind(newRowID, rowConfig.rowBgColor, itemNodeType, itemID);
+                this.setGridRowUserData(newRowID, "rowItemConfigId", itemConfigID);
+                this.setGridRowUserData(newRowID, "rowRelationshipType", gridStructureRelShipName);
+                this.setGridRowUserData(newRowID, "rowOfGroupName", gridStructureRelShipName);
+
+                if (initialChangeAction && initialChangeAction !== undefined) { this.setChangeActionInRow(newRowID, initialChangeAction); }
+
+                // add other relationship items as children
+				if (addRelatinonshipRows)
+					{this.DrawStructureRowRelationshipsGroups(gridStructureRelShipName, parentItemID, parentItemConfigId, itemNode, newRowID, applyDiffView, initialChangeAction, rowConfig);}
+            }
+			else {
+				return newRowID;
+			}
+        }
+        else {
+            if (!this.gridRowExists(newRowID)) {
+                // add new row
+                if (!parentRowId) {
+                    this.grid.insertRoot(newRowID, row.getValues(), newRowID, icon, iconOpen);
+                } else {
+                    this.grid.insertNewChild(parentRowId, newRowID, row.getValues(), newRowID, icon, iconOpen);
+                }
+                this.setChangeActionInRow(newRowID, this.diffViewChangeActions["changeActionAdded"]);
+                this.UpdateBaselineColumnsOfRow(gridStructureRelShipName, newRowID, itemNode, relationshipNode, rowConfig.rowBgColor);
+
+                // add other relationship items as children
+				if (addRelatinonshipRows)
+					{this.DrawStructureRowRelationshipsGroups(gridStructureRelShipName, parentItemID, parentItemConfigId, itemNode, newRowID, applyDiffView, null, this.diffViewChangeActions["changeActionAdded"], rowConfig);}
+            }
+            else {  //update existing rows
+                var rowItemId = this.getGridRowUserData(newRowID, "rowItemID");
+                if (rowItemId === itemID) {
+                    this.setChangeActionInRow(newRowID, this.diffViewChangeActions["changeActionBlank"]);
+					// add other relationship items as children
+					if (addRelatinonshipRows)
+						{this.DrawStructureRowRelationshipsGroups(gridStructureRelShipName, parentItemID, parentItemConfigId, itemNode, newRowID, applyDiffView, null, this.diffViewChangeActions["changeActionBlank"], rowConfig);}
+                }
+                else {
+                    this.setChangeActionInRow(newRowID, this.diffViewChangeActions["changeActionNewVersion"]);
+
+                    this.UpdateBaselineColumnsOfRow(gridStructureRelShipName, newRowID, itemNode, relationshipNode, rowConfig.rowBgColor);
+					// add other relationship items as children
+					if (addRelatinonshipRows)
+						{this.DrawStructureRowRelationshipsGroups(gridStructureRelShipName, parentItemID, parentItemConfigId, itemNode, newRowID, applyDiffView, null, this.diffViewChangeActions["changeActionNewVersion"], rowConfig);}
+                }
+            }
+        }
+        return newRowID;
+    },
+    //--- API
+	/// <summary>
+	///
+	/// </summary>
+    DrawStructureRowChildren: function (gridStructureRelShipName, parentItem, parentItemConfigId, parent_row_id, parents, rowConfig, applyDiffView, initialChangeAction) {
+        parents[parentItemConfigId] = true;
+        var structRels = parentItem.getRelationships(gridStructureRelShipName);
+        for (var i = 0; i < structRels.getItemCount() ; i++) {
+            var structRel = structRels.getItemByIndex(i);
+            var childItem = structRel.getRelatedItem();
+			if (childItem) {
+				if (childItem.getAttribute("typeId", "") === "") { // re-used item - get item details from first use
+					childItem = this.FindItemInGridData(parentItem.getType(), childItem.getID());
+				}
+				if (childItem && childItem.node) { // single item
+					var childItemConfigId = childItem.getProperty("config_id", "");
+					var rowID = this.DrawStructureRow(gridStructureRelShipName, childItem, structRel, parentItemConfigId, parent_row_id, rowConfig, applyDiffView, initialChangeAction);
+					if (parents[childItemConfigId] !== true) {
+						this.DrawStructureRowChildren(gridStructureRelShipName, childItem, childItemConfigId, rowID, parents, rowConfig, applyDiffView, initialChangeAction);
+					}
+				}
+			}
+        }
+        delete parents[parentItemConfigId];
+    },
+    //--- API
+	/// <summary>
+	///
+	/// </summary>
+    SetGridDataItems: function (resultItem) {
+		this.gridDataItems = resultItem;
+	},
+    //--- API
+	/// <summary>
+	///
+	/// </summary>
+	GetGridDataItems: function () {
+		return this.gridDataItems;
+	},
+    //--- API
+	/// <summary>
+	///
+	/// </summary>
+	FindItemInGridData: function (typeName, itemId) {
+		if (this.gridDataItems) {return this.gridDataItems.getItemsByXPath("//Item[@type='"+typeName+"' and id='"+itemId+"']");}
+		return null;
+	},
+    //--- API
+	/// <summary>
+	///
+	/// </summary>
+    UpdateStructureRowValues: function (gridStructureRelShipName, rowId, itemNode, relationshipNode) {
+        // row must exist
+        if (!this.gridRowExists(rowId)) { return; }
+
+        var data = { itemNode: itemNode, relationshipNode: relationshipNode };
+        var row = new RowClass(this, data, this.gridVisibleColumns, this.relShipColumnMappings[gridStructureRelShipName]);
+        var rowCellVals = row.getValues().split("|");
+
+        for (var i = 0; i < rowCellVals.length; i++) {
+            this.gridSetCellValue(rowId, i, rowCellVals[i]);
+        }
+    },
+    //#API change --> relName is relQueryName
+    //	DrawStructureRowSingleRelationshipRow: function (gridStructureRelShipName, relName, relshipNode, relItemNode, parentRowId, parentItemConfigId) {
+    //--- API
+    DrawStructureRowSingleRelationshipRow: function (gridStructureRelShipName, relQueryName, relshipNode, relItemNode, parentRowId, parentItemConfigId, insertGroupingRow) {
+		if (!insertGroupingRow || insertGroupingRow === undefined) {insertGroupingRow=false;}
+		var groupOrParentId = parentRowId;
+
+        var structItemRelShipConfig = {};
+        structItemRelShipConfig.relQueryName = relQueryName;
+        structItemRelShipConfig.relName = this.structureRowRelDefinitions[relQueryName].relationshipName; //relshipNode.getType();
+        structItemRelShipConfig.rowIcon = this.structureRowRelDefinitions[relQueryName].rowIcon;
+        structItemRelShipConfig.rowBgColor = this.structureRowRelDefinitions[relQueryName].rowBgColor;
+		structItemRelShipConfig.disallowDuplicateItems = this.structureRowRelDefinitions[relQueryName].disallowDuplicateItems;
+
+		// if no groupName defined, do not add phantom (grouping) row
+		if (structItemRelShipConfig.groupName === "") {
+			structItemRelShipConfig.groupRowId = "";
+			insertGroupingRow = false;
+		}
+		
+		if (insertGroupingRow) {
+			structItemRelShipConfig.groupName = this.structureRowRelDefinitions[relQueryName].groupName;
+			structItemRelShipConfig.groupLabel = this.structureRowRelDefinitions[relQueryName].groupLabel;
+			structItemRelShipConfig.groupIcon = this.structureRowRelDefinitions[relQueryName].groupIcon;
+			structItemRelShipConfig.groupRowBgColor = this.structureRowRelDefinitions[relQueryName].groupRowBgColor;
+
+			// add phantom grid row - in case it does not exist
+			structItemRelShipConfig.groupRowId = this.DrawGroupRowAsChild(gridStructureRelShipName, parentRowId, structItemRelShipConfig);
+			groupOrParentId = structItemRelShipConfig.groupRowId;
+		}
+
+		rowItemConfigId = relItemNode.getProperty("config_id", "");
+        var newRowID = parentItemConfigId + "-" + rowItemConfigId;
+        var relItemType = relItemNode.getType();
+
+        if (!this.gridRowExists(newRowID)) {
+            var icon;
+			var isRowItemIconDefined = false;
+			var iconItemType = relItemType;
+            if (structItemRelShipConfig.rowIcon && structItemRelShipConfig.rowIcon !== undefined && structItemRelShipConfig.rowIcon !== "{rowItemType}") { // use icon configured 
+				if (structItemRelShipConfig.rowIcon.indexOf("useTypeOfRelProperty:") >= 0 ) {
+					// {XXX}
+					var itemTypeProp = structItemRelShipConfig.rowIcon.split(":")[1];
+					itemTypeProp = itemTypeProp.replace(/}/g,"");
+					itemTypeProp = itemTypeProp.replace(/ /g,"");
+					iconItemType = relshipNode.getProperty(itemTypeProp, "");
+				}
+				else {
+					icon = structItemRelShipConfig.rowIcon;
+					isRowItemIconDefined = true;
+				}
+            }
+			if (!isRowItemIconDefined) {  //get small icon of item type
+                if (!this.icons[iconItemType] || this.icons[iconItemType] === undefined) {
+                    this.icons[iconItemType] = fn_GetSmallIconFormatOfItemType(iconItemType);
+                    icon = this.icons[iconItemType];
+                }
+                else {
+                    icon = this.icons[iconItemType];
+                }
+            }
+            var data = { itemNode: relItemNode, relationshipNode: relshipNode, parentRowId: parentRowId };
+            var row = new RowClass(this, data, this.gridVisibleColumns, this.relShipColumnMappings[structItemRelShipConfig.relQueryName]);
+            this.grid.insertNewChild(groupOrParentId, newRowID, row.getValues(), newRowID, icon, icon);
+            row.bind(newRowID, structItemRelShipConfig.rowBgColor, relItemType, relItemNode.getID());
+            this.setGridRowUserData(newRowID, "rowItemConfigId", rowItemConfigId);
+            if (relshipNode) {this.setGridRowUserData(newRowID, "rowRelationshipType", relshipNode.getType());}
+            this.setGridRowUserData(newRowID, "rowOfGroupName", relQueryName);
+
+            // expand rows to see new rows
+            this.grid.openItem(parentRowId);
+            if (insertGroupingRow) {this.grid.openItem(structItemRelShipConfig.groupRowId);}
+        }
+    },
+    //--- API
+	/// <summary>
+	///
+	/// </summary>
+    DrawStructureRowRelationshipsGroups: function (gridStructureRelShipName, parentItemID, parentItemConfigId, dataItem, newRowID, applyDiffView, initialChangeAction, rowConfig) {
+        if (this.showStructureOnly) { return; }
+
+        var phantomRowGroupIds = [];
+        var structItemRelShipConfig = {};
+        var groupName, relQueryName;
+
+        for (relQueryName in this.structureRowRelDefinitions) {
+            if (!phantomRowGroupIds[relQueryName] || phantomRowGroupIds[relQueryName] === undefined)
+            { phantomRowGroupIds[relQueryName] = { rowId: "" }; }
+
+            groupName = this.structureRowRelDefinitions[relQueryName].groupName;
+            if (this.showRelShipsFilter && this.showRelShipsFilter !== undefined && (this.showRelShipsFilter.indexOf(groupName) >= 0 || this.showRelShipsFilter === "ALL")) {
+			
+                structItemRelShipConfig.relQueryName = relQueryName;
+                structItemRelShipConfig.relName = this.structureRowRelDefinitions[relQueryName].relationshipName;
+                structItemRelShipConfig.groupRowId = phantomRowGroupIds[relQueryName].rowId;
+                structItemRelShipConfig.groupName = groupName;
+                structItemRelShipConfig.groupLabel = this.structureRowRelDefinitions[relQueryName].groupLabel;
+                structItemRelShipConfig.groupIcon = this.structureRowRelDefinitions[relQueryName].groupIcon;
+                structItemRelShipConfig.rowIcon = this.structureRowRelDefinitions[relQueryName].rowIcon;
+                structItemRelShipConfig.groupRowBgColor = this.structureRowRelDefinitions[relQueryName].groupRowBgColor;
+                structItemRelShipConfig.rowBgColor = this.structureRowRelDefinitions[relQueryName].rowBgColor;
+				structItemRelShipConfig.disallowDuplicateItems = this.structureRowRelDefinitions[relQueryName].disallowDuplicateItems;
+                structItemRelShipConfig.isReverseQuery = false;
+                structItemRelShipConfig.relatedItemReleasedCondition = "";
+                structItemRelShipConfig.relatedItemCondition = "";
+				structItemRelShipConfig.isApplyChildBgColorUpToRoot = rowConfig.isApplyChildBgColorUpToRoot;
+				structItemRelShipConfig.bgColorOfStructItemWithChildren = rowConfig.bgColorOfStructItemWithChildren;
+				structItemRelShipConfig.doNotColorRootRows = rowConfig.doNotColorRootRows;
+				
+                if (this.structureRowRelDefinitions[relQueryName].isReverseQuery) {
+                    structItemRelShipConfig.isReverseQuery = this.structureRowRelDefinitions[relQueryName].isReverseQuery;
+                    structItemRelShipConfig.relatedItemProperty = this.structureRowRelDefinitions[relQueryName].relatedItemProperty;
+                    structItemRelShipConfig.relatedItemType = this.structureRowRelDefinitions[relQueryName].relatedItemType;
+                    structItemRelShipConfig.relationshipSelectProperties = this.structureRowRelDefinitions[relQueryName].relationshipSelectProperties;
+                    structItemRelShipConfig.relatedItemSelectProperties = this.structureRowRelDefinitions[relQueryName].relatedItemSelectProperties;
+                    structItemRelShipConfig.relatedItemReleasedCondition = this.structureRowRelDefinitions[relQueryName].relatedItemReleasedCondition;
+                    structItemRelShipConfig.relatedItemCondition = this.structureRowRelDefinitions[relQueryName].relatedItemCondition;
+                }
+
+                this.DrawStructureRowRelationshipsGroupRows(gridStructureRelShipName, parentItemID, parentItemConfigId, dataItem, newRowID, structItemRelShipConfig, applyDiffView, initialChangeAction);
+            }
+        }
+    },
+    //--- API
+	/// <summary>
+	///
+	/// </summary>
+    DrawGroupRowAsChild: function (gridStructureRelShipName, parentNodeId, structItemRelShipConfig) {
+        var groupNodeRowId = parentNodeId + "-" + structItemRelShipConfig.groupName;
+        if (this.gridRowExists(groupNodeRowId)) { return groupNodeRowId; }
+
+        // add grouping phantom row
+        var vals = [];
+        vals[0] = structItemRelShipConfig.groupLabel;
+        for (var v = 1; v < this.numberOfGridColumns; v++) { vals[v] = ""; }
+        var gridRow = vals.join("|");
+        this.grid.insertNewChild(parentNodeId, groupNodeRowId, gridRow, groupNodeRowId, structItemRelShipConfig.groupIcon, structItemRelShipConfig.groupIcon);
+        this.setGridRowUserData(groupNodeRowId, "rowItemType", structItemRelShipConfig.groupName);
+        this.setGridRowUserData(groupNodeRowId, "isPhantomRow", "1");
+
+        // bg color of group row
+        if (structItemRelShipConfig.groupRowBgColor && structItemRelShipConfig.groupRowBgColor !== "") { this.setBackgroundColorOfRow(groupNodeRowId, structItemRelShipConfig.groupRowBgColor); }
+
+        return groupNodeRowId;
+    },
+    //--- API
+	/// <summary>
+	///
+	/// </summary>
+    DrawStructureRowRelationshipsGroupRows: function (gridStructureRelShipName, parentItemID, parentItemConfigId, dataItem, parentRowId, structItemRelShipConfig, applyDiffView, initialChangeAction) {
+        var relItems, relItem;
+
+        if (structItemRelShipConfig.isReverseQuery === true) {
+            // build and run reverse Query
+            var relShipItem = top.aras.newIOMItem(structItemRelShipConfig.relName, "get");
+			if (structItemRelShipConfig.relationshipSelectProperties.indexOf(structItemRelShipConfig.relatedItemProperty) < 0)
+				{relShipItem.setAttribute("select", structItemRelShipConfig.relationshipSelectProperties+","+structItemRelShipConfig.relatedItemProperty);}
+			else {relShipItem.setAttribute("select", structItemRelShipConfig.relationshipSelectProperties);}
+
+            relShipItem.setProperty("related_id", dataItem.getID());  //## for reverse query  - disconnected queries are different !!!!
+
+            relItem = top.aras.newIOMItem(structItemRelShipConfig.relatedItemType, "get");
+            relItem.setAttribute("select", structItemRelShipConfig.relatedItemSelectProperties);
+            if (this.isReleasedMode) {
+                fn_setConditonOnItem(relItem, structItemRelShipConfig.relatedItemReleasedCondition);
+            }
+            else {
+                relItem.setProperty("is_current", "1");
+            }
+            if (structItemRelShipConfig.relatedItemCondition && structItemRelShipConfig.relatedItemCondition !== "") {
+                fn_setConditonOnItem(relItem, structItemRelShipConfig.relatedItemCondition);
+            }
+            if (parentItemID) {
+                relItem.setProperty("id", parentItemID);
+                relItem.setPropertyAttribute("id", "condition", "ne");
+            }
+            relShipItem.setPropertyItem(structItemRelShipConfig.relatedItemProperty, relItem);
+			// load relationships from server (reverse)
+            relItems = relShipItem.apply();
+        }
+        else {
+			// get relationships from loaded data
+            relItems = dataItem.getRelationships(structItemRelShipConfig.relName);
+            structItemRelShipConfig.relatedItemProperty = "related_id";
+        }
+
+        var relCount = relItems.getItemCount();
+
+		// if .groupName not set, do not add phantom grid row for grouping
+		var groupOrParentId = "";
+        if (structItemRelShipConfig.groupName !== "") {
+			// add phantom grid row - in diffViewMode even, if no data found.
+			if (structItemRelShipConfig.groupRowId === "" && (this.showBaselineColumns || (relCount > 0)))
+				{ structItemRelShipConfig.groupRowId = this.DrawGroupRowAsChild(gridStructureRelShipName, parentRowId, structItemRelShipConfig); }
+
+			groupOrParentId = structItemRelShipConfig.groupRowId;
+		}
+		else {
+			// do not add phantom row
+			groupOrParentId = parentRowId;
+		    structItemRelShipConfig.groupRowId = "";
+		}
+		
+		if (relItems.getItemCount() <= 0) { return; } //no data
+		if (this.showDebugAlerts) {alert("Draw rows of Relationship = "+structItemRelShipConfig.relName+ " relCount = "+relCount);}
+
+		// determine the row's icon (if not set)
+        var icon = null;
+		var isRowItemIconDefined = false;
+		var RowIconItemTypeProp = "";
+		var isRowIconItemTypePropOnRel = false;
+        if (structItemRelShipConfig.rowIcon && structItemRelShipConfig.rowIcon !== undefined && structItemRelShipConfig.rowIcon !== "{rowItemType}" && structItemRelShipConfig.rowIcon.indexOf("useTypeOfRelProperty:") < 0) { // always use configured icon
+            icon = structItemRelShipConfig.rowIcon;
+			isRowItemIconDefined = true;
+        }
+		else {
+			if (structItemRelShipConfig.rowIcon.indexOf("useTypeOfRelProperty:") >= 0 ) {
+				// {XXX}
+				RowIconItemTypeProp = structItemRelShipConfig.rowIcon.split(":")[1];
+				RowIconItemTypeProp = RowIconItemTypeProp.replace(/}/g,"");
+				RowIconItemTypeProp = RowIconItemTypeProp.replace(/ /g,"");
+				isRowIconItemTypePropOnRel = true;
+			}
+		}
+		
+		// color code parent row (and group row), if has children
+		if (structItemRelShipConfig.bgColorOfStructItemWithChildren && structItemRelShipConfig.bgColorOfStructItemWithChildren !== "") {
+		  if (structItemRelShipConfig.groupRowId !== "") {
+			this.setBackgroundColorOfRow_ex(structItemRelShipConfig.groupRowId, structItemRelShipConfig.bgColorOfStructItemWithChildren, true, structItemRelShipConfig.isApplyChildBgColorUpToRoot, structItemRelShipConfig.doNotColorRootRows, true);}
+		  else {
+			this.setBackgroundColorOfRow_ex(parentRowId, structItemRelShipConfig.bgColorOfStructItemWithChildren, true, structItemRelShipConfig.isApplyChildBgColorUpToRoot, structItemRelShipConfig.doNotColorRootRows, true );}
+		}
+
+		// check if relevant grid config for newRowId is available
+		if (relItems.getItemByIndex(0).getProperty(structItemRelShipConfig.relatedItemProperty, "") === "") {
+			if ( relItems.getItemByIndex(0).getProperty("config_id", "") === "") {
+				top.aras.AlertError(top.aras.getResource("CommonUtilities","commonUtilities.message.draw_struct_row_a_null_rel_config_is_missing_prop_config_id"));
+			}
+		}
+		else {
+			if ( relItems.getItemByIndex(0).getPropertyItem(structItemRelShipConfig.relatedItemProperty).getProperty("config_id", "") === "") {
+				top.aras.AlertError(top.aras.getResource("CommonUtilities","commonUtilities.message.draw_struct_row_a_rel_config_is_missing_prop_config_id"));
+			}
+		}
+
+		// draw child rows
+        for (var i = 0; i < relCount; i++) {
+            var dataItemRel = relItems.getItemByIndex(i);
+            var relItemId = dataItemRel.getProperty(structItemRelShipConfig.relatedItemProperty, "");
+			var rowItemId = relItemId;
+            var relItemType, newRowID;
+
+            // relationship could be a NULL relationship
+			var rowItemConfigId = dataItem.getProperty("config_id", "");
+            if (relItemId === "") {
+                relItem = null;
+                relItemType = dataItemRel.getType();
+				rowItemId = dataItemRel.getID();
+                newRowID = dataItemRel.getProperty("config_id", "") + "-" + rowItemConfigId;
+            }
+            else {
+                relItem = dataItemRel.getPropertyItem(structItemRelShipConfig.relatedItemProperty);
+                relItemType = relItem.getType();
+				if (structItemRelShipConfig.disallowDuplicateItems) {
+					newRowID = parentItemConfigId + "-" + rowItemConfigId + "-" + relItem.getProperty("config_id", "");
+				}
+				else {
+					newRowID = dataItemRel.getProperty("config_id", "") + "-" + rowItemConfigId + "-" + relItem.getProperty("config_id", "");
+				}
+            }
+			
+			// determine icon for each row (can be mixed)
+			if (!isRowItemIconDefined) {  //get small icon of item type
+				var iconItemType = relItemType;
+				if (RowIconItemTypeProp !== "") {if (isRowIconItemTypePropOnRel) {iconItemType = dataItemRel.getProperty(RowIconItemTypeProp, "");}}
+				if (!this.icons[iconItemType] || this.icons[iconItemType] === undefined) {
+					this.icons[iconItemType] = fn_GetSmallIconFormatOfItemType(iconItemType);
+					icon = this.icons[iconItemType];
+				}
+				else {
+					icon = this.icons[iconItemType];
+				}
+			}
+			
+            var data, row;
+
+            if (!applyDiffView) {
+                if (!this.gridRowExists(newRowID)) {
+                    data = { itemNode: relItem, relationshipNode: dataItemRel, parentRowId: parentRowId };
+                    row = new RowClass(this, data, this.gridVisibleColumns, this.relShipColumnMappings[structItemRelShipConfig.relQueryName]);
+					//## use for detailed debugging
+					//if (this.showDebugAlerts) {alert("row values = "+ row.getValues());}
+
+                    this.grid.insertNewChild(groupOrParentId, newRowID, row.getValues(), newRowID, icon, icon);
+                    row.bind(newRowID, structItemRelShipConfig.rowBgColor, relItemType, rowItemId);
+					this.setGridRowUserData(newRowID, "rowItemConfigId", rowItemConfigId);
+                    this.setGridRowUserData(newRowID, "rowRelationshipType", structItemRelShipConfig.relName);
+                    this.setGridRowUserData(newRowID, "rowOfGroupName", structItemRelShipConfig.relQueryName);
+                    if (initialChangeAction && initialChangeAction !== undefined) { this.setChangeActionInRow(newRowID, initialChangeAction); }
+                }
+            }
+            else {
+                if (!this.gridRowExists(newRowID)) {
+                    data = { itemNode: relItem, relationshipNode: dataItemRel, parentRowId: parentRowId };
+                    row = new RowClass(this, data, this.gridVisibleColumns, this.relShipColumnMappings[structItemRelShipConfig.relQueryName]);
+                    this.grid.insertNewChild(groupOrParentId, newRowID, row.getValues(), newRowID, icon, icon);
+                    this.setChangeActionInRow(newRowID, this.diffViewChangeActions["changeActionAdded"]);
+                    this.UpdateBaselineColumnsOfRow(gridStructureRelShipName, newRowID, relItem, dataItemRel, structItemRelShipConfig.rowBgColor, structItemRelShipConfig.relQueryName);
+                }
+                else {//update existing rows
+                    rowItemId = this.getGridRowUserData(newRowID, "rowItemID");
+                    if (rowItemId === relItemId) {
+                        this.setChangeActionInRow(newRowID, this.diffViewChangeActions["changeActionBlank"]);
+                    }
+                    else {
+						var prevChangeAction = this.getGridRowUserData(newRowID, "rowChangeAction");
+						if (!prevChangeAction || prevChangeAction === undefined || prevChangeAction === "") {  //keep previous change action setting
+							this.setChangeActionInRow(newRowID, this.diffViewChangeActions["changeActionNewVersion"]);
+							this.UpdateBaselineColumnsOfRow(gridStructureRelShipName, newRowID, relItem, dataItemRel, structItemRelShipConfig.rowBgColor, structItemRelShipConfig.relQueryName);
+						}
+                    }
+                }
+            }
+        } //--- for i
+    },
+    //--- API
+	/// <summary>
+	///
+	/// </summary>
+    UpdateBaselineColumnsOfRow: function (gridStructureRelShipName, rowId, itemNode, relationshipNode, bgColor, relQueryName) {
+        // row must exist
+        if (!this.gridRowExists(rowId)) { return; }
+        if (!bgColor || bgColor === undefined) { bgColor = null; }
+        if (!relQueryName || relQueryName === undefined) {
+            if (!relationshipNode) { relQueryName = gridStructureRelShipName; }
+            else { relQueryName = relationshipNode.getType(); }
+        }
+
+        itemNode.setProperty("released_id", this.getGridRowUserData(rowId, "rowItemId")); // here the itemNode points to the new item version !!! copy id of released item to new property
+
+        var data = { itemNode: itemNode, relationshipNode: relationshipNode };
+        var row = new RowClass(this, data, this.gridVisibleColumns, this.relShipBaselineColumnMappings[relQueryName]);
+        row.bind(rowId, bgColor);
+
+        var rowCellVals = row.getValues().split("|");
+
+        // update row cells - assumes diffView columns are all to the right of column "CHG_ACTION"
+        for (var i = this.changeActionColumnNo + 1; i < rowCellVals.length; i++) {
+            this.gridSetCellValue(rowId, i, rowCellVals[i]);
+        }
+
+        this.setGridRowUserData(rowId, "rowNewItemId", itemNode.getID());
+        this.setGridRowUserData(rowId, "rowItemType", itemNode.getType());
+    },
+    //--- API
+	/// <summary>
+	///
+	/// </summary>
+    colorCodeAddedAndDeletedRows: function () {
+        var c;
+        for (var rowId in this.gridRowUserData) {
+            var changeAction = this.gridRowUserData[rowId].rowChangeAction;
+            if (!changeAction || changeAction === undefined) { changeAction = ""; }
+			//else {alert(changeAction);}
+
+
+            if (changeAction === this.diffViewChangeActions["changeActionDeleted"]) {
+                // color code up to change Action column
+                for (c = 0; c < this.changeActionColumnNo + 1; c++) { this.grid.SetCellTextColor(rowId, c, this.diffViewDeletedRowTextColor); }
+            }
+            if (changeAction === this.diffViewChangeActions["changeActionAdded"]) {
+                // color code up to change Action column
+                for (c = 0; c < this.changeActionColumnNo + 1; c++) { this.grid.SetCellTextColor(rowId, c, this.diffViewAddedRowTextColor); }
+            }
+
+            // highlight change Action cell
+            var actionBg;
+            switch (changeAction) {
+                case "":
+                case " ":
+                case this.diffViewChangeActions["changeActionBlank"]:
+                case this.diffViewChangeActions["changeActionModified"]:
+                    actionBg = "";
+                    break;
+                default:
+                    actionBg = this.diffViewChangeActionBgColor;
+                    break;
+            }
+            if (actionBg !== "") {
+                var gridCell = this.grid.cells(rowId, this.changeActionColumnNo);
+				//if (this.isTreeGrid) {gridCell.setBgColor(actionBg);}
+				//else {gridCell.SetBgColor_Experimental(actionBg);}
+				//#TODO - replace _Experimental call# else {gridCell.SetBgColor(actionBg);}
+				gridCell.SetBgColor_Experimental(actionBg);
+            }
+        }
+    },
+
+    //--- API
+	/// <summary>
+	///
+	/// </summary>
+    setChangeActionInRow: function (rowId, changeAction) {
+        this.gridSetCellValue(rowId, this.changeActionColumnNo, changeAction);
+        this.setGridRowUserData(rowId, "rowChangeAction", changeAction);
+
+        // also clear some cell values for added rows	
+        if (changeAction === this.diffViewChangeActions["changeActionAdded"]) {
+            var array = this.diffViewAddedRowColsToClear.split(",");
+            for (var i = 0; i < array.length; i++) {
+                var col = this.getIndexOfVisibleColumnByName(array[i]);
+                if (col >= 0) { this.gridSetCellValue(rowId, col, ""); }  // clear cell in this column
+            }
+        }
+        return;
+    },
+
+    //--- API
+	/// <summary>
+	///
+	/// </summary>
+    getIndexOfVisibleColumnByName: function (columnName) {
+        for (var idx = 0; idx < this.gridVisibleColumns.length; idx++) {
+            if (this.gridVisibleColumns[idx].Name === columnName) { return idx; }
+        }
+        return -1;
+    },
+
+    //--- API
+	/// <summary>
+	///
+	/// </summary>
+    setBackgroundColorOfRow: function (rowId, colorCode) {
+        fn_SetBackgroundColorOfCellsInRow(this.grid, rowId, 0, this.numberOfGridColumns - 1, colorCode, this.isTreeGrid);
+    },
+	
+    //--- API
+	/// <summary>
+	///
+	/// </summary>
+    setBackgroundColorOfFlatRow: function (rowId, colorCode) {
+        fn_SetBackgroundColorOfCellsInRow(this.grid, rowId, 0, this.numberOfGridColumns - 1, colorCode, this.isTreeGrid);
+    },
+
+    //--- API
+	/// <summary>
+	///
+	/// </summary>
+    setBackgroundColorOfRow_ex: function (rowId, colorCode, applyToParentRow, applyUpToRoot, excludeRootRows, excludePhantomRows) {
+        if (!applyToParentRow || applyToParentRow === undefined) { applyToParentRow = false; }
+        if (!applyUpToRoot || applyUpToRoot === undefined) { applyUpToRoot = false; }
+        if (!excludeRootRows || excludeRootRows === undefined) { excludeRootRows = false; }
+		
+        var startCell = 0;
+        var endCell = this.numberOfGridColumns - 1;
+
+        fn_SetBackgroundColorOfCellsInRow(this.grid, rowId, startCell, endCell, colorCode);
+
+        // include one parent level
+        if (applyToParentRow && !applyUpToRoot) {
+            var parent_row_id = this.grid.getParentId(rowId);
+            if (parent_row_id && this.grid.getParentId(parent_row_id)) { fn_SetBackgroundColorOfCellsInRow(this.grid, parent_row_id, startCell, endCell, colorCode, this.isTreeGrid); }
+        }
+        if (!applyUpToRoot) { return; }
+        parent_row_id = this.grid.getParentId(rowId);
+        while (parent_row_id) {
+            if (this.grid.getParentId(parent_row_id) || !excludeRootRows) { // exclude root row
+                fn_SetBackgroundColorOfCellsInRow(this.grid, parent_row_id, startCell, endCell, colorCode, this.isTreeGrid);
+            }
+            parent_row_id = this.grid.getParentId(parent_row_id);
+        }
+        return;
+    }
+};
+
+// MISC GRID HELPER FUNCTIONS
+//==================================
+fn_initDefaultIcons = function (gridCtxt) {
+	if (gridCtxt.use_svg_icons) {
+		gridCtxt.icons["locked"] = 		"../images/LockedByMe.svg";
+		gridCtxt.icons["locked_else"] = "../images/LockedByOthers.svg";
+		gridCtxt.icons["item_chk0"] = 	"../images/checkbox-unchecked.svg";
+		gridCtxt.icons["item_chk1"] = 	"../images/checkbox-checked.svg";
+		gridCtxt.icons["newerItemGen"] = "../images/UpArrow.svg";
+		
+		//icon of item types of standard Aras Solutions
+		gridCtxt.icons["CAD"] = 		"../images/CAD.svg";
+		gridCtxt.icons["Document"] = 	"../images/Document.svg";
+		gridCtxt.icons["Part"] = 		"../images/Part.svg";
+	}
+};
+
+fn_setConditonOnItem = function (itm, amlConditions) {
+    var conditions = amlConditions.split(";");
+    for (var c = 0; c < conditions.length; c++) {
+        var pos = conditions[c].indexOf(">");
+        var pos2 = conditions[c].indexOf("</");
+        if (pos >= 0) {
+            var propName = conditions[c].substring(1, pos);
+            var propVal = conditions[c].substring(pos + 1, pos2);
+            itm.setProperty(propName, propVal);
+        }
+    }
+};
+
+fn_getItemByConfigId = function (itemType, configId, generation, isReleased, selectProps) {
+	// if generation is set, ignore the rest of the args
+	var aml = '<Item type="'+itemType+'" action="get" >';
+	aml += '<config_id>'+configId+'</config_id>';
+	if (generation && generation !== undefined && generation !== "") {
+		aml += '<generation>'+generation+'</generation>';
+	}
+	else {
+		if (isReleased) {
+			aml += '<is_released>1</is_released>';	
+		}
+		else {
+			aml += '<is_current>1</is_current>';
+		}
+	}
+	aml += '</Item>';
+	var itm = top.aras.newIOMItem("");
+	itm.loadAML(aml);
+	if (selectProps && selectProps !== undefined && selectProps !== "") {
+		itm.setAttribute("select",selectProps);
+	}
+	itm.setAttribute("orderBy","generation");
+	itm = itm.apply();
+	if (itm.isError()) {return itm;}
+	
+	return itm.getItemByIndex(itm.getItemCount()-1);
+};
+
+fn_IsCurrUserMemberOfIdentityId = function (identity_id_to_check) {
+    if (!identity_id_to_check || identity_id_to_check === undefined || identity_id_to_check === "") { return false; }
+
+    var sessionIdentitites_array = top.aras.getIdentityList().split(",");
+    // now we have all identities the current user (session) is member of
+    // scan if given identity is in the list - if yes, return true
+    for (var i = 0; i < sessionIdentitites_array.length; i++) {
+        if (identity_id_to_check == sessionIdentitites_array[i]) { return true; }
+    }
+    return false;
+};
+
+fn_GetSmallIconFormatOfItemType = function (itemType) {
+    // retrieving ICONs - get the small icon from item types "Part"
+    var qryIcon = top.aras.newIOMItem();
+    qryIcon.loadAML("<Item type='ItemType' action='get' select='name,open_icon'><name>" + itemType + "</name></Item>");
+    qryIcon = qryIcon.apply();
+	var smallIcon = "../images/ArrowRight.svg";
+    if (qryIcon.getItemCount() === 1) { smallIcon = qryIcon.getProperty("open_icon", smallIcon); }
+    return smallIcon;
+};
+
+//-----------------
+fn_showFormInModalDialog = function (formName, title, itemTypeName, param) {
+  var formNd = top.aras.getItemByName("Form", formName, 0);
+  var res = null;
+  if (formNd)
+  {
+    var thisParam;
+	if (param) { thisParam = param;}
+	else {thisParam	= {};}
+    thisParam.title = title;
+    thisParam.formId = formNd.getAttribute("id");
+    thisParam.aras = top.aras;
+    thisParam.itemTypeName = itemTypeName;
+
+    var width = top.aras.getItemProperty(formNd, "width");
+    var height = top.aras.getItemProperty(formNd, "height");
+
+    res = showModalDialog("ShowFormAsADialog.html", thisParam,"dialogHeight:"+height+"px; dialogWidth:"+width+"px; " +  "status:0; help:0; resizable:1; scroll:0;");
+  }
+  return res;
+};
+
+//=========================
+fn_SetBackgroundColorOfCellsInRow = function (gridCtrl, row, colStart, colEnd, bgColor, isTreeGrid) {
+    var rowBg = [];
+    for (c = colStart; c < colEnd + 1; c++) {
+		if (isTreeGrid) {rowBg.push(bgColor);}
+		else { gridCtrl.cells(row, c).SetBgColor_Experimental(bgColor);}
+    }
+	if (isTreeGrid) {gridCtrl.setRowBgColor(row, rowBg.join("|"));}
+	//##TODO - fix when supported for flat grids##  else {gridCtrl.SetRowBgColor(row, rowBg.join("|"));}
+};
+
+//==================================
+fn_LockThisItem = function (itemType, itemId) {
+    var itm = top.aras.newIOMItem(itemType, "get");
+    itm.setID(itemId);
+    itm.loadAML("<Item type='" + itemType + "' action='lock' id='" + itemId + "' />");
+    itm = itm.apply();
+    return itm;
+};
+
+//==================================
+fn_UnLockThisItem = function (itemType, itemId) {
+    var itm = top.aras.newIOMItem(itemType, "get");
+    itm.setID(itemId);
+    itm.loadAML("<Item type='" + itemType + "' action='unlock' id='" + itemId + "' />");
+    itm = itm.apply();
+    return itm;
+};
+fn_getToolbarElementChoice = function (toolbarCtrl, choiceElementId) {
+    if (!toolbarCtrl) { return; }
+    var AT = toolbarCtrl.getActiveToolbar();
+    try {
+        var tbi = AT.getElement(choiceElementId);
+        if (tbi) {
+            return tbi.getSelectedItem();
+        }
+    }
+    catch (excep) { top.aras.AlertError(top.aras.getResource("CommonUtilities","commonUtilities.message.utils_exception_toolbar_item_get_choice").format(choiceElementId));}
+    return "";
+};
+fn_setToolbarElementChoice = function (toolbarCtrl, choiceElementId, choiceItemId) {
+    if (!toolbarCtrl) { return; }
+    var AT = toolbarCtrl.getActiveToolbar();
+    try {
+        var tbi = AT.getElement(choiceElementId);
+        if (tbi) {
+            tbi.setSelected(choiceItemId); // select this item of dropdown list
+            return choiceItemId;
+        }
+    }
+    catch (excep) { top.aras.AlertError(top.aras.getResource("CommonUtilities","commonUtilities.message.utils_exception_toolbar_item_set_choice").format(choiceElementId));}
+    return "";
+};
+fn_setToolbarElementText = function (toolbarCtrl, textElementId, textVal) {
+    if (!toolbarCtrl) { return; }
+    var AT = toolbarCtrl.getActiveToolbar();
+    try {
+        var tbi = AT.getElement(textElementId);
+        if (tbi) {
+            tbi.setText(textVal);
+            return;
+        }
+    }
+    catch (excep) { top.aras.AlertError(top.aras.getResource("CommonUtilities","commonUtilities.message.utils_exception_toolbar_item_set").format(textElementId));}
+    return;
+};
+fn_getToolbarElementText = function (toolbarCtrl, textElementId) {
+    if (!toolbarCtrl) { return; }
+    var AT = toolbarCtrl.getActiveToolbar();
+    try {
+        var tbi = AT.getElement(textElementId);
+        if (tbi) {return tbi.getText(textVal);}
+    }
+    catch (excep) { top.aras.AlertError(top.aras.getResource("CommonUtilities","commonUtilities.message.utils_exception_toolbar_item_get").format(textElementId));}
+    return "";
+};
+
+// =============================
+fn_enableToolbarElement = function (toolbarCtrl, tbElementName, doEnable, hideWhenDisabled) {
+    if (!toolbarCtrl) { return; }
+
+    if (doEnable === undefined) { doEnable = true; }
+    else { doEnable = Boolean(doEnable); }
+    if (!hideWhenDisabled || hideWhenDisabled === undefined) { hideWhenDisabled = false; }
+    else { hideWhenDisabled = Boolean(hideWhenDisabled); }
+
+    var AT = toolbarCtrl.getActiveToolbar();
+    try {
+        var tbi = AT.getElement(tbElementName);
+        if (!tbi) { return; }
+
+        tbi.setEnabled(doEnable);
+        if (!doEnable && hideWhenDisabled) {
+            AT.hideItem(tbElementName);
+        }
+        else {
+            AT.showItem(tbElementName);
+        }
+    }
+    catch (excep) { top.aras.AlertError(top.aras.getResource("CommonUtilities","commonUtilities.message.utils_exception_enable_element").format(tbElementName));}
+};
+
+//==================================
+fn_GetLockedStatusOfItemFromServer = function (itemType, itemId) {
+    //to avoid 2 requests to server, get locked_by_id and determine lock status
+    //locked_by_id not set --> lockStatus = 0
+    //locked_by_id = current User  --> lockStatus = 1,  else  --> lockStatus = 2
+    var itm = top.aras.newIOMItem(itemType, "get");
+    itm.setID(itemId);
+    itm.loadAML("<Item type='" + itemType + "' action='get' select='locked_by_id' id='" + itemId + "' serverEvents='0' />");
+    itm = itm.apply();
+    if (itm.isError()) { return 0; }
+    var lockUser = itm.getProperty("locked_by_id", "");
+    if (lockUser === "") { return 0; }
+    if (lockUser === top.aras.getUserID()) { return 1; }
+    return 2;
+};
+//==================================
+fn_LockThisItem = function (itemType, itemId) {
+    var itm = top.aras.newIOMItem(itemType, "get");
+    itm.setID(itemId);
+    itm.loadAML("<Item type='" + itemType + "' action='lock' id='" + itemId + "' />");
+    itm = itm.apply();
+    return itm;
+};
+//==================================
+fn_UnLockThisItem = function (itemType, itemId) {
+    var itm = top.aras.newIOMItem(itemType, "get");
+    itm.setID(itemId);
+    itm.loadAML("<Item type='" + itemType + "' action='unlock' id='" + itemId + "' />");
+    itm = itm.apply();
+    return itm;
+};
+//==================================
+fn_GetItemsOfCurrentGeneration = function (itemType, itemIds, selectProperties) {
+    //add single quotes to ids list, if needed
+    var idCondition;
+    if (itemIds.indexOf(",") > 0) { //multiple ids
+        if (itemIds.indexOf("'") < 0) { itemIds = "'" + itemIds.replace(/,/g, "','") + "'"; }
+        idCondition = "<id condition='in'>" + itemIds + "</id>";
+    }
+    else { //single id passed in
+        idCondition = "<id>" + itemIds + "</id>";
+    }
+
+    var itm = top.aras.newIOMItem(itemType, "get");
+    itm.loadAML("<Item type='" + itemType + "' action='Get Current Items By IDs' select='" + selectProperties + "' >" + idCondition + "</Item>");
+    itm = itm.apply();
+    return itm;
+};
+//==================================
+fn_GetItemsOfReleasedGeneration = function (itemType, itemIds, selectProperties) {
+    //add single quotes to ids list, if needed
+    var idCondition;
+    if (itemIds.indexOf(",") > 0) { //multiple ids
+        if (itemIds.indexOf("'") < 0) { itemIds = "'" + itemIds.replace(/,/g, "','") + "'"; }
+        idCondition = "<id condition='in'>" + itemIds + "</id>";
+    }
+    else { //single id passed in
+        idCondition = "<id>" + itemIds + "</id>";
+    }
+
+    var itm = top.aras.newIOMItem(itemType, "get");
+    itm.loadAML("<Item type='" + itemType + "' action='Get Latest Released Items By IDs' select='" + selectProperties + "' >" + idCondition + "</Item>");
+    itm = itm.apply();
+    return itm;
+};
+
+///==================================================================================
+///=========ROW CLASS ===============================================================
+///==================================================================================
+
+//-------- local row class
+RowClass = function (gridCtxt, data, gridColumnsDef, rowCellValueClasses ) {
+	this.gridCtxt = gridCtxt;
+	this.data = data;
+
+	this.cells = [];
+	this.length = gridColumnsDef.length; //all cols of grid
+	
+	for(var cellIndex = 0; cellIndex < gridColumnsDef.length; cellIndex++) {		
+		var cellName = gridColumnsDef[cellIndex].Name;
+		var column = rowCellValueClasses[cellName];
+		
+		var cell;
+		if(column) {
+		    if (column.Class) {
+				cell = new column.Class();
+			}
+			else {
+			   cell = new DefaultCellClass();
+			}
+		    cell.initialize(cellIndex, cellName, this.gridCtxt, this, column.PropName, column.isRelProp, column.CellValueType, column.CellStaticValue, column.CellBg, column.CellLinkKey);
+		}
+		else {
+			cell = new DefaultCellClass();
+		    cell.initialize(cellIndex, cellName, this.gridCtxt, this);
+		}
+
+		this.cells[cellName] = cell;
+	}
+};
+
+RowClass.prototype = {
+	gridCtxt: null,
+	cells: [],
+	length: 0,
+	data: null,
+	
+    //--- API
+	/// <summary>
+	///
+	/// </summary>
+	getValues: function() {
+		var rowText = [];
+		for(var cellName in this.cells)
+		{
+			var cell = this.cells[cellName];
+			var domValue = cell.getValueFromDom();
+			if (!domValue || domValue === undefined) {domValue="";}
+			var uiValue="";
+			if (domValue || domValue ==="") {uiValue = cell.convertValueForUI(domValue);}
+			rowText.push(uiValue);
+		}
+		
+		return rowText.join("|");
+	},
+	
+    //--- API
+	/// <summary>
+	///
+	/// </summary>
+	setGridRowUserData : function(rowId,itemType,itemId) {
+		if (!rowId || rowId === "") {return;}
+		if (!this.gridCtxt.gridRowUserData[rowId] && this.gridCtxt.gridRowUserData[rowId] === undefined) {this.gridCtxt.gridRowUserData[rowId] = [];}
+
+		this.gridCtxt.gridRowUserData[rowId]["rowItemType"] =  itemType;
+		this.gridCtxt.gridRowUserData[rowId]["rowItemID"] =  itemId;
+	},
+	
+    //--- API
+	/// <summary>
+	///
+	/// </summary>
+	bind: function(rowId,rowDefaultBg,itemType,itemId) {  //add links and bg colors
+	  return this.bindWithColors(rowId,null,rowDefaultBg,itemType,itemId);
+	},
+	
+    //--- API
+	/// <summary>
+	///
+	/// </summary>
+	bindWithColors: function(rowId,rowDefaultTextColor,rowDefaultBg,itemType,itemId) {  //add links and bg colors
+		if (itemType && itemId) {
+			if (!rowId || rowId === "") {return;}
+			if (!this.gridCtxt.gridRowUserData[rowId] && this.gridCtxt.gridRowUserData[rowId] === undefined) {this.gridCtxt.gridRowUserData[rowId] = [];}
+
+			this.gridCtxt.gridRowUserData[rowId]["rowItemType"] =  itemType;
+			this.gridCtxt.gridRowUserData[rowId]["rowItemID"] =  itemId;
+		}
+		var col=0;
+		for(var cellName in this.cells) {
+			var cell = this.cells[cellName];
+			if(cell.cellLinkKey) {
+				var linkPropName = cell.propname;
+				var linkKey = cell.cellLinkKey;
+				if (linkKey.indexOf(":") > 0) { // other property is specified for link
+					linkKey = cell.cellLinkKey.split(":")[0];
+					linkPropName = cell.cellLinkKey.split(":")[1];
+				}
+				this.gridCtxt.setLink(rowId, cell.columnIndex, linkKey, linkPropName, cell.getValueFromDom(linkPropName));
+			}
+			
+			var BgColor = cell.getBackgroundColor();
+			if (rowDefaultBg && rowDefaultBg !== undefined && !BgColor) {BgColor = rowDefaultBg;}
+			var gridCell = this.gridCtxt.grid.cells(rowId, col);
+			if (BgColor !== "") {
+				//if (this.gridCtxt.isTreeGrid) {gridCell.setBgColor(BgColor);}
+				//else {gridCell.SetBgColor_Experimental(BgColor);}
+				//#TODO - replace _Experimental call# else {gridCell.SetBgColor(BgColor);}
+				gridCell.SetBgColor_Experimental(BgColor);
+			}
+			if (rowDefaultTextColor && rowDefaultTextColor !== undefined && rowDefaultTextColor !== "") {
+				if (this.gridCtxt.isTreeGrid) {gridCell.setTextColor(rowDefaultTextColor);}
+				else {gridCell.SetCellTextColor(rowDefaultTextColor);}
+			}
+			col++;
+		}
+	}
+};
+
+// default cell class used if not overwritten by column definitions
+DefaultCellClass = function() {
+};
+
+DefaultCellClass.prototype = {
+	gridCtxt: null,
+	columnIndex: null,
+	row: null,
+
+	initialize: function(columnIndex, columnName, gridCtxt, row, propname, isRelProp, cellValueType, cellStaticValue, cellBg, cellLinkKey) {
+		this.gridCtxt = gridCtxt;
+		this.row = row;
+		this.columnIndex = columnIndex;
+		this.name = columnName;
+		this.propname = propname;
+		this.isRelProp = isRelProp;
+		this.cellValueType = cellValueType;
+		this.cellStaticValue = cellStaticValue;
+		this.cellBg = cellBg;
+		this.cellLinkKey = cellLinkKey;
+	},
+
+	getBackgroundColor: function() {
+	    if (!this.cellBg) {
+		  return "";
+		}
+		// Resolve cellBg keywords
+		var cellBg = this.cellBg.split("+");
+		if (cellBg[0] === "{propCSS}") {
+		  var propName = this.propname;
+		  var css = "";
+	      if (this.isRelProp) {
+		    if (this.row.data.relationshipNode) {css = this.row.data.relationshipNode.getProperty("css","");}
+	      }
+	      else {
+	       if(this.row.data.itemNode) {css = this.row.data.itemNode.getProperty("css","");}
+	      }
+		  var colVal = "";
+		  if (css !== "") {
+		   if (propName.indexOf("state") >=0 ) {propNmae = "state";}
+           var pos1 = css.indexOf("."+propName);
+	       if (pos1 >=0) {
+	        var cssSub = css.substring(pos1,css.length);
+	        var pos2 = cssSub.indexOf("}");
+	        if (pos2 > 0) {
+	         cssSub = cssSub.substring(0,pos2);
+		     pos1 = cssSub.indexOf("background-color");
+	         if (pos1 >=0) {
+		      cssSub = cssSub.substring(pos1,cssSub.length);
+	          pos2 = cssSub.indexOf("#");
+		      if (pos2 > 0) {
+		       colVal = cssSub.substring(pos2,pos2+7);
+		      }
+		     }
+	        } 
+	       }
+          }
+		  if (colVal !== "") {return colVal;}
+		  if (cellBg.length === 2) {return cellBg[1];}
+		  return "";
+		}
+	    // assume cellBg has valid color value (i.e. "#ff0000" )
+		return cellBg[0];
+	},
+	
+	getLink: function() {
+	  if (this.cellLinkKey) {  //## no longer in use
+		return null;	
+	  }
+	  return null;
+	},
+
+	convertValueForUI: function(value) {
+	    if (this.isRelProp) {
+			value = fn_formatCellValueByValueType (this.gridCtxt, value, this.cellValueType, this.propname, this.row.data.relationshipNode, this.row.data.rowIcon);
+	    }
+	    else {
+			value = fn_formatCellValueByValueType (this.gridCtxt, value, this.cellValueType, this.propname, this.row.data.itemNode, this.row.data.rowIcon);
+	    }
+		// replace pipe character in value as it is not allowed because it is used as internal delimiter in grid's definition
+		//## grid delimiter may need to change in the future !!!
+		value = value.replace(/\|/g,":");
+		return value;
+	},
+
+	getValueFromDom: function(propName) {
+	 if (this.cellStaticValue) {
+	   return this.cellStaticValue;
+	 }
+	if (!propName || propName === undefined) {
+		propName = this.propname;
+	 }
+	 if(propName) {
+	  propName = propName.replace(/ /g,"");  // strip spaces
+
+	  // evaluate concatenation rule of properties within the same item type
+	  var propNames = [];
+	  if (propName.indexOf("+") > 0) {
+	    propNames = propName.split("+");
+	  }
+	  else {
+	    propNames[0] = propName;
+	  }
+
+	  var propValue = "";
+	  var sep = "";
+	  // loop - concatenated props
+	  for (var i=0;i<propNames.length; i++) {
+	    var isRelProp = false;
+		
+		propName = propNames[i];
+	 
+		if (propName.indexOf("rel.") >=0) {
+		  isRelProp = true;
+		  propName = propName.replace(/rel./,"");
+		}
+		else {
+	      isRelProp = this.isRelProp;
+		}
+	    var val;
+	    if (isRelProp) {
+		  if (this.row.data.relationshipNode) {val = this.row.data.relationshipNode.getProperty(propName,"");}
+	    }
+	    else {
+	     if(this.row.data.itemNode) {val = this.row.data.itemNode.getProperty(propName,"");}
+	    }
+		if (this.cellValueType === "class_leaf") {
+		  val = fn_GetClassLeafFromClassPath(propName,val);
+	    }
+		if (!val || val === undefined) {val="";}
+		propValue += sep + val;
+		sep = " - ";
+	  }
+	  if (this.row.data.itemNode && this.cellValueType === "append_rev_gen") {
+	     propValue += " (" + this.row.data.itemNode.getProperty("major_rev","") + "." + this.row.data.itemNode.getProperty("generation","") + ")";
+	  }
+	  return propValue;
+	 }
+	 else {
+	  return "";
+	 }
+	 return "";
+	}
+};
+
+fn_formatCellValueByValueType = function(gridCntxt, cellValue, cellValueType, propName, dataItem, rowIcon)
+{
+  if (!cellValueType || cellValueType === undefined) {return cellValue;}
+
+  if (cellValueType.indexOf("trueImage:") >= 0 || cellValueType.indexOf("falseImage:") >= 0) {
+  	cellValue = fn_GetTrueOrFalseImage(cellValueType,cellValue);
+  }
+  else {
+    switch(cellValueType)
+	{
+	case "row_icon":
+	  //cellValue = rowIcon;
+	  cellValue = "<img src='"+rowIcon+"' />";
+	  break;
+	case "lock":
+	  cellValue = fn_GetLockedCellFormatFromLockedById(gridCntxt,cellValue);
+	  break;
+	case "check":
+	  cellValue = fn_GetCheckBoxCellFormat(gridCntxt,cellValue);
+	  break;
+	case "not_current_gen":
+	  cellValue = fn_GetNotCurrentGenImageFormat(gridCntxt,cellValue);
+	  break;
+	case "image":
+	  cellValue = "<img src='"+cellValue+"' />";
+	  break;
+	case "date":
+	  cellValue = fn_GetI18NShortDate(cellValue,"--");
+	  break;
+	case "decimal":
+	  cellValue = fn_GetI18NDecimal(cellValue,"--","decimal");
+	  break;
+	case "float":
+	  cellValue = fn_GetI18NDecimal(cellValue,"--","float");
+	  break;
+	case "keyed_name":
+	case "item(keyed_name)":
+	  cellValue = dataItem.getPropertyAttribute(propName,"keyed_name","");
+	  break;  
+	}
+  }
+  return cellValue;
+};	  
+
+// MISC ROW HELPER FUNCTIONS
+
+//==================================
+//injects .trim method to String class, if browser does not support it
+if(!String.prototype.trim) {  
+  String.prototype.trim = function () {  
+	return this.replace(/^[ ]+|[ ]+$/g,'');  
+  };  
+} 
+
+//==================================
+fn_GetTrueOrFalseImage = function (cellValueType,cellValue)   {
+	// expects cellValue to be from boolean property with "0" or "1" set.
+    // syntax to parse:  "trueImage: filename ; falseImage: filename"
+	var arr = cellValueType.split(";");
+	if (arr[0]==="") {return cellValue;}
+	for (var i=0; i<arr.length; i++) {
+		var rule = arr[i].trim();
+		var ruleA = rule.split(":");
+		rule = ruleA[0].trim();
+		var imgVal = "";
+		if (ruleA.length === 2) {imgVal = ruleA[1].trim();}
+		if (rule === "trueImage" && cellValue === "1") {return "<img src='"+imgVal+"' />";}
+		if (rule === "falseImage" && (cellValue === "0" || cellValue === "")) {return "<img src='"+imgVal+"' />";}
+	}
+	return ""; //no image
+};
+//==================================
+fn_GetCheckBoxCellFormat = function (gridCntxt, on_off_value)   {
+  var checked_icon = "<img src='"+gridCntxt.icons["item_chk0"]+"' />";
+  if (on_off_value === "1") {checked_icon = "<img src='"+gridCntxt.icons["item_chk1"]+"' />";}
+  return checked_icon;
+};
+//==================================
+fn_GetNotCurrentGenImageFormat = function (gridCntxt,on_off_value)   {
+  var newer_gen_icon = "";
+  if (on_off_value === "0") {newer_gen_icon = "<img src='"+gridCntxt.icons["newerItemGen"]+"' />";}
+  return newer_gen_icon;
+};
+//==================================
+fn_GetI18NShortDate = function (dateString, defaultVal)   {
+  if (dateString && dateString !== "" && dateString !== defaultVal) {
+	   return I18Ncntx.ConvertFromNeutral(dateString,"date","short_date");
+  }
+  else {
+    return defaultVal;
+  }
+};
+fn_GetI18NDecimal = function (decimalString, defaultVal, fromType)   {
+  if (decimalString && decimalString !== "" && decimalString !== defaultVal) {
+	   return I18Ncntx.ConvertFromNeutral(decimalString,fromType);
+  }
+  else {
+    return defaultVal;
+  }
+};
+//==================================
+fn_GetOpenIconOfItemType = function (itemType)   {
+  var qryIcon = top.aras.newIOMItem();
+  qryIcon.loadAML("<Item type='ItemType' action='get' select='name,open_icon'><name>"+itemType+"</name></Item>");
+  qryIcon = qryIcon.apply();
+  var smallIcon = "";
+  if (qryIcon.getItemCount() === 1) {smallIcon = qryIcon.getProperty("open_icon",smallIcon);}
+  return smallIcon;
+};
+//==================================
+fn_GetLockedCellFormatFromLockedById = function (gridCntxt,lockedById)   {
+	if (!lockedById || typeof(lockedById) == "undefined" || lockedById === "") {
+	   return "";
+	}
+    var currUserId = top.aras.getUserID();
+	if (lockedById === currUserId) {
+	   return "<img src='"+gridCntxt.icons["locked"]+"' />"; // locked by this user
+	}
+    return "<img src='"+gridCntxt.icons["locked_else"]+"' />"; // locked by other  user
+};
+//==================================
+fn_GetClassLeafFromClassPath = function (propName,classPath)   {
+	if (!classPath || typeof(classPath) == "undefined" || classPath === "") {
+	   return "";
+	}
+	if (propName !== "classification") {return classPath;}
+    var pos1 = classPath.lastIndexOf("/");
+	if (pos1 >= 0) {
+		var val = classPath.substring(pos1+1,classPath.length);
+		return val;
+	}
+    return classPath;
+};
+//===OLD============================
+fn_GetLockedCellFormatByStatusCode = function (gridCntxt, statusCode)   {
+  switch (statusCode)
+  {
+   case 0:
+     return "";
+   case 1:
+     return "<img src='"+gridCntxt.icons["locked"]+"' />";
+  }
+  return "<img src='"+gridCntxt.icons["locked_else"]+"' />";
+};
+//==================================
+fn_GetLockedCellIconFormatByStatusCode = function (icons, statusCode)   {
+  switch (statusCode)
+  {
+   case 0:
+     return "";
+   case 1:
+     return "<img src='"+icons["locked"]+"' />";
+  }
+  return "<img src='"+icons["locked_else"]+"' />";
+};
+
+
+//==================================================================================
+//==================================================================================
+//==================================================================================
+
+// include modules from Aras Code Tree
+var includeScript = document.createElement('script');
+includeScript.src = "../javascript/include.aspx?classes=Dependencies";
+document.head.appendChild(includeScript);
+
+// - CLASS for action handling
+BaseMenuActionHandler = function (menuId) {
+ this.contextMenuId = menuId;
+};
+
+/* eActionArgs context can be:
+	eActionArgs.isStartedFromTab			--> identifies that grid is displayed on a tab
+	eActionArgs.effectivityMode				--> holds the current effectivity setting the grid is in "current_config or latest_released"
+	eActionArgs.gridIsEditable				--> identifies that grid is editable
+	eActionArgs.userIsOwnerOfContextItem	--> identifies that current user is owner of context item the grid was started from
+	eActionArgs.userIsManagerOfContextItem	--> identifies that current user is manager of context item the grid was started from
+	eActionArgs.userIsOwnerOfRowItem		--> identifies that current user is owner of row related item the action was started from
+	eActionArgs.userIsOwnerOrManagerOfRowItem	--> identifies that current user is owner or manager of row related item the action was started from
+	eActionArgs.lockStatus					--> holds the current lock status of the row related item
+	eActionArgs.rowOfGroupName				--> holds the name of the group under which this row is listed
+	eActionArgs.rowItemType					--> holds the current item Type name of the row related item
+	eActionArgs.rowItemId					--> holds the current id of the row related item
+	eActionArgs.rowItemIsReleased			--> true if current row related item is released (is_released property = "1")
+	eActionArgs.isPhantomRow				--> identifies that row the action was started from is a phantom row (goup row)
+	eActionArgs.updateItemToCurrentVersion	--> tells that row related item must be updated to current version before starting the action
+  	eActionArgs.gridHandler					--> references the grid handler object
+	eActionArgs.rowId						--> holds the current id of the grid row
+	
+  menuAction context can be:
+	menuAction.name 			 			--> name (actionId) of the menu action to be started
+	menuAction.label 			 			--> language specific label of the menu action to be started
+	menuAction.relQueryName 				--> group Name this action is valid for (check against eActionArgs.rowOfGroupName)
+	menuAction.allowOnGroupRows  			--> Allow action for listed group rows (if isPhantomRow then check against eActionArgs.rowItemType == groupName)
+	menuAction.executeThisAction			--> Name of system action to execute with row item's context
+	menuAction.ifStartedFromTab  			--> if true, only allow, if started from Tab  			(check: eActionArgs.isStartedFromTab)
+	menuAction.ifGridIsEditable				--> if true, only allow, if grid if editable			(check: eActionArgs.gridIsEditable)
+	menuAction.ifUserIsOwnerOfContextItem	--> if true, only allow, if user is owner of context	(check: eActionArgs.userIsOwnerOfContextItem)
+	menuAction.ifUserIsManagerOfContextItem	--> if true, only allow, if user is owner of context	(check: eActionArgs.userIsOwnerOfContextItem)
+	menuAction.ifUserIsOwnerOfRowItem		--> if true, only allow, if user is owner of row item	(check: eActionArgs.userIsOwnerOfRowItem)
+	menuAction.ifUserIsOwnerOrManagerOfRowItem	-> if true, only allow, if user is owner or manager of row item	(check: eActionArgs.userIsOwnerOrManagerOfRowItem)
+	menuAction.ifIsGroupRow					--> if true, only allow, if row is a group row			(check: eActionArgs.isPhantomRow)
+	menuAction.ifItemIsCurrentVersion		--> if true, check if row item is current version, if not do not execute action
+	menuAction.ifEffectivityMode			--> if true, only allow, if right effectivity set		(check against eActionArgs.effectivityMode)
+	menuAction.applyToParentItem			--> if true, only allow, get parent row context before applying action .executeThisAction
+	menuAction.ifRowItemIsReleased			--> if true, only allow, if row item has released condition (check against eActionArgs.rowItemIsReleased)
+	menuAction.ifRowItemIsLocked			--> if true, only allow, if row item is locked by user (check eActionArgs.lockStatus = 1)
+	menuAction.separator					--> if true, this is not an action
+*/
+
+BaseMenuActionHandler.prototype = {
+	//== API
+  setCustomMenuActionHandler: function(customMenuHandler) {
+	this.customMenuHandler = customMenuHandler;
+  },
+    //--- API
+	/// <summary>
+	///
+	/// </summary>
+  executeAction: function(eActionArgs, menuAction) {
+	//debugger;
+	// if system action defined, no validations needed. Start this action
+	if (menuAction.executeThisAction && menuAction.executeThisAction !== "") {
+		fn_executeConfiguredMenuAction(menuAction.executeThisAction, eActionArgs);
+		return "";
+	}
+	//returns "" if execution was done. Else the function returns an Error message.
+	var checkMsg = this.validateAction(eActionArgs, menuAction);
+	if (checkMsg !== "") {return checkMsg;}
+
+	this.handleExecuteAction(eActionArgs, menuAction.name);
+	return "";
+  },
+
+    //--- API
+	/// <summary>
+	///
+	/// </summary>
+  validateAction: function(eActionArgs, menuAction) {
+	//returns "" if validations are OK. Else the function returns an Error message.
+	return this.handleValidateAction(eActionArgs, menuAction);
+  },
+    //--- API
+	/// <summary>
+	///
+	/// </summary>
+  executeLink: function(eActionArgs, linkInfo, cellVal) {
+  	var linkActionElements = linkInfo.split("+");  //0=key, 1=itemType, 2=propName, 3=propValue
+	var linkActionKey = linkActionElements[0];
+
+	switch (linkActionKey) {
+		case "{OpenRowItem}":
+		case "{OpenNewRowItem}":
+			if (linkActionKey === "{OpenNewRowItem}") {
+				eActionArgs.checkForNewerVersionOfItem = true;
+				eActionArgs.rowItemId = eActionArgs.rowNewItemId;
+			}
+			var menuAction= "view_item";
+			eActionArgs.actionSource = "hyperlink";
+			this.handleExecuteAction(eActionArgs, "view_item");
+			break;
+
+		case "{OpenFilesOfRowItem}":
+			this.handleExecuteAction(eActionArgs, "view_attached_files");
+			break;
+
+		case "{OpenURL}":
+			if (cellVal && cellVal !== "") {
+				var pos = cellVal.indexOf("http");
+				if (pos !== 0) {top.aras.AlertError(top.aras.getResource("CommonUtilities","commonUtilities.message.utils_execute_link_format_not_http").format(cellVal));}
+				window.open(cellVal,'_blank','toolbar=no,scrollbars=yes,resizable=yes,top=10,left=10,status=yes');
+				//window.open(cellVal);
+			}
+			break;
+
+		case "{OpenPropertyItem}":
+			if (cellVal && cellVal !== "") {
+				var itemType = linkActionElements[1];
+				var propName = linkActionElements[2];
+				var propValue = linkActionElements[3];
+				//alert(itemType+"-"+propValue);
+				top.aras.uiShowItem(itemType, propValue);
+			}
+			break;
+		default:
+	}
+  },
+  //--- copied 1:1 from ActionBase class in method "BaseTreeGrid"
+  searchItem: function (itemTypeName, width, height) {
+    if (!width) {width = 700;}
+    if (!height) {height = 500;}
+	var param = { aras: top.aras, itemtypeName: itemTypeName, multiselect: false };
+	var options = { dialogHeight: height, dialogWidth: width, resizable:true};
+
+	var dlgRes = top.aras.modalDialogHelper.show('DefaultModal', window, param, options, 'searchDialog.html');
+	
+	if(!dlgRes) {return null;}
+	return dlgRes.item;
+  },
+  
+  getContextMenuItemOfMenuIndex: function (gridContextMenu, menuIndex) {
+	var idx = -1;
+	for (var i = 0; i < gridContextMenu.length && idx < 0; i++) {
+		if (gridContextMenu[i].menuindex === parseInt(menuIndex)) {idx = i;}
+	}
+	if (idx < 0) {return null;}
+	return gridContextMenu[idx];
+  },
+	//== API
+  getContextMenuItemOfOpenItemAction: function(gridContextMenu, relQueryName) {
+	var idx = -1;
+	var viewItemAction = this.getOpenItemMenuAction();
+	for (var i = 0; i < gridContextMenu.length && idx < 0; i++) {
+	  if (gridContextMenu[i].name === viewItemAction && gridContextMenu[i].relQueryName === relQueryName)
+		{idx = i;}
+	}
+	if (idx === -1) {
+	  for (i = 0; i < gridContextMenu.length && idx < 0; i++) {
+		if (gridContextMenu[i].name === viewItemAction && gridContextMenu[i].relQueryName === "default")
+		{idx = i;}
+	  }
+	}
+	if (idx < 0) {return null;}
+	return gridContextMenu[idx];
+  },
+  
+  updateActionContextArgsForRowId: function(eActionArgs, rowId) {
+	eActionArgs.rowId = rowId;
+	eActionArgs.rowItemType = eActionArgs.gridHandler.getGridRowUserData(rowId,"rowItemType");
+	eActionArgs.rowOfGroupName = eActionArgs.gridHandler.getGridRowUserData(rowId,"rowOfGroupName");
+	eActionArgs.rowItemId = eActionArgs.gridHandler.getGridRowUserData(rowId,"rowItemID");
+	eActionArgs.isPhantomRow =  (eActionArgs.gridHandler.getGridRowUserData(rowId,"isPhantomRow") === "1");
+
+	//get Item details from server
+	if (!eActionArgs.isPhantomRow) {
+	  var rowItem = top.aras.newIOMItem(eActionArgs.rowItemType,"get");
+	  rowItem.setID(eActionArgs.rowItemId);
+	  rowItem.setAttribute("select","state,owned_by_id,managed_by_id,team_id,is_released,is_current,locked_by_id");
+	  rowItem = rowItem.apply();
+	  if (!rowItem.isError()) {
+		eActionArgs.rowItemIsReleased = (rowItem.getProperty("is_released","0") === "1");
+		eActionArgs.userIsOwnerOfRowItem = fn_IsCurrUserMemberOfIdentityId(rowItem.getProperty("owned_by_id",""));
+		eActionArgs.userIsOwnerOrManagerOfRowItem = fn_IsCurrUserMemberOfIdentityId(rowItem.getProperty("owned_by_id",""));
+		if (eActionArgs.userIsOwnerOrManagerOfRowItem === false) 
+		  {eActionArgs.userIsOwnerOrManagerOfRowItem = fn_IsCurrUserMemberOfIdentityId(rowItem.getProperty("managed_by_id",""));}
+			// define lock status
+		var lckId = rowItem.getProperty("locked_by_id","");
+		eActionArgs.lockStatus = 0; //not locked
+		if (top.aras.getUserID() === lckId) {eActionArgs.lockStatus = 1;} // locked by user
+		else {if (lckId !== "") {eActionArgs.lockStatus = 2;}} // locked by other
+	  }
+	}
+  },
+    //--- API
+	/// <summary>
+	///
+	/// </summary>
+  buildContextMenuForThisRow: function(menuItems, gridContextMenu, id_array, eActionArgs) {
+	//menuItems = array of menu items to be displayed.  (passed in from calling function) => will get updated here
+	//gridContextMenu = array of all menu action to be filtered here 
+	var enableAction = true;
+	var prevActionIsSeparator = false;
+	var menuItemCount = 0;
+	var lastMenuItemIndex = 0;
+	var lastSepIndex = 0;
+	
+	//build dynamic context menu items (the tricky part is to avoid duplicate separators or separators at first and last position !!)
+	//assumes menu actions got initialized by calling method
+	for (var i = 0; i < gridContextMenu.length; i++) {
+		if (!gridContextMenu[i].isDisabled) {
+		  if (!gridContextMenu[i].separator) {
+			eActionArgs.actionId = gridContextMenu[i].name;
+			
+			// check if menu action is allowed on group rows
+			if (gridContextMenu[i].allowOnGroupRows && eActionArgs.isPhantomRow) {
+				var selectedId = eActionArgs.gridHandler.grid.getParentId(eActionArgs.rowId);
+				if (!selectedId) {return false;}
+				// set as if menu was initialized from parent row
+				if (selectedId && selectedId !== undefined) {
+					eActionArgs.startedFromGroupName = eActionArgs.rowItemType;
+					this.updateActionContextArgsForRowId(eActionArgs, selectedId);
+				}
+			}
+		
+			if (this.isShowOnMenu(eActionArgs, gridContextMenu[i])) {
+				prevActionIsSeparator = false;
+				var menuItemName = gridContextMenu[i].name;
+				if (this.contextMenuId) {menuItemName = this.contextMenuId +"."+ menuItemName;}
+				menuItems.push({
+					name: menuItemName,
+					label: gridContextMenu[i].label,
+					enabled: enableAction
+				});
+				gridContextMenu[i].menuindex = menuItemCount;
+				lastMenuItemIndex = i;
+				menuItemCount++;
+			} else {
+				gridContextMenu[i].menuindex = -1;
+			}
+		  }
+		  else {
+			if (prevActionIsSeparator === false) {
+				menuItems.push(gridContextMenu[i]);
+				menuItemCount++;
+				lastSepIndex = i;
+			}
+			prevActionIsSeparator = true;
+			gridContextMenu[i].menuindex = -1;
+		  }
+		}
+	}
+	if (menuItems.length === 0) {return false;} // no menuItems got added
+	
+	//clean single separator on menu
+	if (menuItemCount === 1 && gridContextMenu[lastSepIndex].separator === true) {return false;} //show no menu
+	//clean separator on top of menu
+	if (menuItems[0].separator === true) {
+		menuItems.splice(0,1);menuItemCount--;
+		for ( i = 0; i < gridContextMenu.length; i++) {
+			if (gridContextMenu[i].menuindex !== -1) {gridContextMenu[i].menuindex = gridContextMenu[i].menuindex-1;}
+		}
+	}
+	//clean separator at bottom of menu
+	if (menuItems[menuItemCount-1].separator === true) {
+		menuItems.splice(menuItemCount-1,1);menuItemCount--;
+		gridContextMenu[lastMenuItemIndex].menuindex=menuItemCount-1;
+	}
+	return true;
+  },
+
+    //--- API
+	/// <summary>
+	///
+	/// </summary>
+  isShowOnMenu: function(eActionArgs, menuAction) {
+	//+++++ Common Rules ...
+
+//debugger;
+	// 1st detect if started from group row
+	if (eActionArgs.startedFromGroupName) {
+     if (!menuAction.allowOnGroupRows || menuAction.allowOnGroupRows === undefined || menuAction.allowOnGroupRows.indexOf(eActionArgs.startedFromGroupName) < 0) {return false;}
+	}
+	
+	// 2nd apply filter by relQueryName
+	if (menuAction.relQueryName !== "default" && menuAction.relQueryName !== eActionArgs.rowOfGroupName) {return false;}
+	
+	// then apply rules from menu config
+	if (eActionArgs.isStartedFromTab !== undefined && menuAction.ifStartedFromTab !== undefined && menuAction.ifStartedFromTab !== eActionArgs.isStartedFromTab) {return false;}
+
+	if (eActionArgs.gridIsEditable !== undefined && menuAction.ifGridIsEditable !== undefined && menuAction.ifGridIsEditable !== eActionArgs.gridIsEditable) {return false;}
+
+	if (eActionArgs.userIsOwnerOfContextItem !== undefined && menuAction.ifUserIsOwnerOfContextItem !== undefined && menuAction.ifUserIsOwnerOfContextItem !== eActionArgs.userIsOwnerOfContextItem) {return false;}
+
+	if (eActionArgs.userIsManagerOfContextItem !== undefined && menuAction.ifUserIsManagerOfContextItem !== undefined && menuAction.ifUserIsManagerOfContextItem !== eActionArgs.userIsManagerOfContextItem) {return false;}
+
+	if (eActionArgs.userIsOwnerOfRowItem !== undefined && menuAction.ifUserIsOwnerOfRowItem !== undefined && menuAction.ifUserIsOwnerOfRowItem !== eActionArgs.userIsOwnerOfRowItem) {return false;}
+	
+	if (eActionArgs.userIsOwnerOrManagerOfRowItem !== undefined && menuAction.ifUserIsOwnerOrManagerOfRowItem !== undefined && menuAction.ifUserIsOwnerOrManagerOfRowItem !== eActionArgs.userIsOwnerOrManagerOfRowItem) {return false;}
+	
+	if (eActionArgs.isPhantomRow !== undefined && menuAction.ifIsGroupRow !== undefined && menuAction.ifIsGroupRow !== eActionArgs.isPhantomRow) {return false;}
+
+	if (eActionArgs.rowItemIsReleased !== undefined && menuAction.ifRowItemIsReleased !== undefined && menuAction.ifRowItemIsReleased !== eActionArgs.rowItemIsReleased) {return false;}
+	
+	if (eActionArgs.lockStatus !== undefined && menuAction.ifRowItemIsLocked !== undefined && menuAction.ifRowItemIsLocked === true && eActionArgs.lockStatus !== 1) {return false;}
+
+	if (eActionArgs.lockStatus !== undefined && menuAction.ifRowItemIsLocked !== undefined && menuAction.ifRowItemIsLocked === false && eActionArgs.lockStatus !== 0) {return false;}
+	
+	if (eActionArgs.effectivityMode !== undefined && menuAction.ifEffectivityMode !== undefined && menuAction.ifEffectivityMode !== eActionArgs.effectivityMode) {return false;}
+
+	var menuActionName = menuAction.name;
+	// check for core actions (not allowed on phantom rows)
+	if (!menuAction.ifIsGroupRow) {
+		if (menuActionName === "view_item") {return true;}
+		if (menuActionName === "where_used") {return true;}
+		if (menuActionName === "structure_browser") {return true;}
+		if (menuActionName === "add_to_change") {return true;}
+		if (eActionArgs.effectivityMode === "current_config" || eActionArgs.effectivityMode === "is_current") {
+			if (menuActionName === "lock" && eActionArgs.lockStatus === 0) {return true;}
+			if (menuActionName === "unlock" && eActionArgs.lockStatus === 1) {return true;}
+		}
+	}
+	// is system action to execute defined ?
+	if (menuAction.executeThisAction && menuAction.executeThisAction !== "") {return true;}
+	//^^^^^ Common Rules
+	
+	//+++++ Custom Rules
+	if (this.customMenuHandler && this.customMenuHandler.isShowOnMenuCustom) {return this.customMenuHandler.isShowOnMenuCustom (eActionArgs, menuAction);}
+	
+	return false;	
+  },
+
+  handleValidateAction: function(eActionArgs, menuAction) {
+    var callCustomHandler = true;
+	
+	//+++ your custom actions
+	if (callCustomHandler && this.customMenuHandler && this.customMenuHandler.validateAction) {return this.customMenuHandler.validateAction (eActionArgs, menuAction);}
+	return "";
+  },
+
+  handleExecuteAction: function(eActionArgs, menuActionName) {
+   // dispatches the menu action to local handlers
+   //debugger;
+   var actionId = eActionArgs.actionSource + "." + menuActionName;
+   // maps doubleclick action
+   if (eActionArgs.actionSource === "doubleclick") {actionId = "doubleclick.view_item";}
+    var callCustomHandler = false;
+	switch(actionId)
+	{
+	  //+++ core actions
+	  case "hyperlink.view_item":
+	  case "doubleclick.view_item":
+	  case "toolbar.view_item":
+	  case "menu.view_item":
+	     fn_onOpenRowItem(eActionArgs);
+	  	 break;
+	  case "menu.where_used":
+		 Dependencies.View(eActionArgs.rowItemType, eActionArgs.rowItemId, true); // true = where used 
+	  	 break;
+	  case "menu.structure_browser":
+		 Dependencies.View(eActionArgs.rowItemType, eActionArgs.rowItemId, false); // false = structure browser 
+	  	 break;
+	  case "menu.lock":
+	     fn_onLockThisItem (eActionArgs);
+	  	 break;
+	  case "menu.unlock":
+	     fn_onUnLockThisItem (eActionArgs);
+	  	 break;
+	  default:
+		 callCustomHandler = true;
+	  //^^^ core actions
+	}
+	//+++ your custom actions
+	if (callCustomHandler && this.customMenuHandler && this.customMenuHandler.executeAction) {this.customMenuHandler.executeAction (eActionArgs, menuActionName);}
+  },
+
+  handleDummy: function() {}
+};
+
+// =======  Menu Action Handlers Functions ========
+fn_executeConfiguredMenuAction = function (configuredActionName, eRowArgs) {
+	var itemToDoActionOnId = eRowArgs.rowItemId;
+	var itemToDoActionOnType = eRowArgs.rowItemType;
+
+	if (configuredActionName.indexOf("(") > 0 ) {
+		var actionParams = configuredActionName.split("(")[1];
+		actionParams = actionParams.replace(/\)/g,"");
+		configuredActionName = configuredActionName.split("(")[0];
+		if (actionParams.indexOf(",") > 0) {
+			itemToDoActionOnType = actionParams.split(",")[1];
+			var idPropName = actionParams.split(",")[0];
+			var rowItem = innovator.getItemById(eRowArgs.rowItemType,eRowArgs.rowItemId);
+			if (rowItem.isError()) {return;}
+			itemToDoActionOnId = rowItem.getProperty(idPropName, "");
+			if (itemToDoActionOnId === "") {return;}
+		}	
+	}
+
+	var action = top.aras.newIOMItem('Action','get');
+	action.setProperty("name",configuredActionName);
+	action.setAttribute("select","name,method(name,method_type,method_code),type,target,location,body,on_complete(name,method_type,method_code),item_query");
+	action = action.apply();
+	if (!action.isError()) {
+		var itemTypeItem = top.aras.newIOMItem('ItemType','get');
+		itemTypeItem.setProperty("name",itemToDoActionOnType);
+		itemTypeItem.setAttribute("select","id");
+		itemTypeItem = itemTypeItem.apply();
+
+		var actType = action.getProperty('type');
+		var itID = itemTypeItem.getProperty('id',"");
+		
+		if (itemToDoActionOnId === "" || actType === 'generic' || actType === 'itemtype') {
+			if (itID === "") {
+				top.aras.invokeAction(action.node, undefined, '');}
+			else {
+				top.aras.invokeAction(action.node, itID, '');}
+		}
+		else {
+			top.aras.invokeAction(action.node, itID, itemToDoActionOnId);
+		}
+	}
+};
+
+//+++ local action handlers for menu or toolbar clicks
+fn_onOpenRowItem = function (eRowArgs) {
+  //debugger;
+  if ( eRowArgs.isPhantomRow){return;}
+ 
+  top.aras.uiShowItem(eRowArgs.rowItemType, eRowArgs.rowItemId);
+};
+
+fn_onLockThisItem = function (eRowArgs) {
+    fn_LockThisItem (eRowArgs.rowItemType, eRowArgs.rowItemId);
+	
+	// update lock cell of row 
+    var col = eRowArgs.gridHandler.lockIconColumnNo;
+	if (col && col !== undefined)
+      {eRowArgs.gridHandler.gridSetCellValue(eRowArgs.rowId,col,fn_GetLockedCellIconFormatByStatusCode(eRowArgs.gridHandler.icons,1));}
+};
+
+fn_onUnLockThisItem = function (eRowArgs) {
+    fn_UnLockThisItem (eRowArgs.rowItemType, eRowArgs.rowItemId);
+	
+	// update lock cell of row 
+    var col = eRowArgs.gridHandler.lockIconColumnNo;
+	if (col && col !== undefined)
+      {eRowArgs.gridHandler.gridSetCellValue(eRowArgs.rowId,col,fn_GetLockedCellIconFormatByStatusCode(eRowArgs.gridHandler.icons,0));}
+};
+
+]]></method_code>
+  <method_type>JavaScript</method_type>
+  <name>CommonBase GridUtilities</name>
+ </Item>
+</AML>

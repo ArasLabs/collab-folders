@@ -1,0 +1,26 @@
+﻿<AML>
+ <Item type="List" id="74B520B68ED1446D8090F104B4B3A84E" action="add">
+  <description></description>
+  <name>tgc_Column Alignments</name>
+  <Relationships>
+   <Item type="Value" id="495FC847AABB44BABD108F600E2BA8E7" action="add">
+    <label xml:lang="en">Left</label>
+    <sort_order>10</sort_order>
+    <source_id keyed_name="tgc_Column Alignments" type="List">74B520B68ED1446D8090F104B4B3A84E</source_id>
+    <value>l</value>
+   </Item>
+   <Item type="Value" id="59D5F8DA7FD6440FAC09FF4F4CC8C6D3" action="add">
+    <label xml:lang="en">Right</label>
+    <sort_order>20</sort_order>
+    <source_id keyed_name="tgc_Column Alignments" type="List">74B520B68ED1446D8090F104B4B3A84E</source_id>
+    <value>r</value>
+   </Item>
+   <Item type="Value" id="115465A72278437CB43885CDB52EF979" action="add">
+    <label xml:lang="en">Center</label>
+    <sort_order>30</sort_order>
+    <source_id keyed_name="tgc_Column Alignments" type="List">74B520B68ED1446D8090F104B4B3A84E</source_id>
+    <value>c</value>
+   </Item>
+  </Relationships>
+ </Item>
+</AML>

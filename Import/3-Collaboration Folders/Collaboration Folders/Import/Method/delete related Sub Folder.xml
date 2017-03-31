@@ -8,7 +8,7 @@
 Dim relFolderId As String = Me.getProperty("related_id","")
 
 If (relFolderId <> "") Then
-  Dim SQLstr As String = "DELETE [Item_Folder] WHERE [Item_Folder].id='" & relFolderId & "'"
+  Dim SQLstr As String = "DELETE [cFolder] WHERE [cFolder].id='" & relFolderId & "'"
   Dim res As Item = Me.getInnovator().applySQL(SQLStr)
   If res.isError() Then Return res
 End If

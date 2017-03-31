@@ -1,0 +1,9 @@
+﻿<AML>
+ <Item type="ItemType" id="4D5FB24117B040F484D2ACA7BED6C2B2" action="add">
+  <instance_data>CFOLDER_TEMPLATE</instance_data>
+  <name>cFolder Template</name>
+ </Item>
+ <Item type="View" action="delete" where="source_id='4D5FB24117B040F484D2ACA7BED6C2B2'" />
+ <Item type="Form" action="delete" where="name='cFolder Template'" />
+
+</AML>

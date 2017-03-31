@@ -22,6 +22,7 @@ Function Main() As Item
  '==== AfterDelete
  If action = "delete" Then
   relItemId = Me.getAttribute("relatedItemId","")
+  If relItemId = "" Then return Me 'cannot process data on related item 
   relItemType = Me.getAttribute("relatedItemType","")
   relItemTeamId = Me.getAttribute("relatedItemTeamId","")
   relItemAllowTeamChange = (Me.getAttribute("relatedItemAllowTeamChange","0") = "1")

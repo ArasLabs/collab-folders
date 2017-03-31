@@ -1,0 +1,150 @@
+Open a Folder - View Navigator Tab
+
+Toolbar Action:  Expand All
+
+Toolbar Action:  Collapse All
+
+Toolbar Action:  Refresh All
+
+Toolbar Action:  View Item (Folder, File, Document)
+
+Lock top Folder:  (starts refesh action)
+
+Toolbar effectivity mode
+- Current  -> Refreshes grid and shows current versions of documents (preliminary, etc)
+- Released -> Refreshes griod and shows latest released versions of documents (Released) - based on flag "is_released"
+
+Navigator Context Menu
+  On selected folder row - must list:
+    Lock							--> (if not locked AND user is owner of top item AND effectivity = "current_config")
+	Unlock							--> (if locked by user AND user is owner of top item AND effectivity = "current_config")
+    ---
+	View Folder
+    Where Used
+    ---
+	Add Folder Related Item			--> (New) (if user is owner or manager of folder AND folder is locked)
+	Add Folder Related Item (Pick) 	--> (if user is owner or manager of folder AND folder is locked)
+	Add new File to Folder			--> (if user is owner or manager of folder AND folder is locked)
+    ---
+    Promote to Active 				--> (if user is owner of folder AND folder is unlocked)
+    Promote to Archived				--> (if user is owner of folder AND folder is unlocked)
+
+  On selected File row - must list:
+	View File
+
+  On selected Document or CAD row - must list:
+    Lock							--> (if not locked AND user is owner of top item AND effectivity = "current_config")
+	Unlock							--> (if locked by user AND user is owner of top item AND effectivity = "current_config")
+    ---
+	View Item
+    Where Used
+	
+if Context Menu Action: Add Related Item (new),  new Item "radio buttons" for:
+  -Document
+  -Part
+  -CAD
+
+if Context Menu Action: Add Controlled Item (pick), Search Dialog must start to search for:
+  -Document
+  -Part
+  -CAD
+
+if Context Menu Action: Add File to Folder, Dialog to select local file must start
+
+if Context Menu Action: Add Subfolder, Dialog with new folder name, order number, description must start.
+
+
+Navigator Context Menu Action: Promote to 'Active'
+
+
+Navigator Context Menu Action: Promote to 'Archived'
+
+
+## does not work with Aras 10 yet !!! ##
+Drag File to Folder Naviator tab - onto "unlocked" folder row
+  --> error
+
+
+Drag File to Folder Naviator tab - onto "locked" folder row
+  --> must attach file
+##---##
+
+
+Create new folder from main grid - no template
+
+
+Create new folder from main grid - from template
+  - folder structure copied
+  - any attached files copied (not referenced)
+  - any attached controlled items copied (not referenced)
+
+Create new folder template
+  - Does template "label"  show on form ?
+  - Does Allow Subfolders flag show on form ?
+  - Does Allowed Relationships list show on form ?
+
+
+on Top Folders - "Related Project" field is editable, if empty.
+   - if value entered field must be disabled.
+
+on Sub Folders - "Related Project" field must be disabled.
+
+
+On template folders set Allowed Relationships mode:
+  - if set to "Allow Files Only" --> on derived folder "Controlled Item tab" is hidden - and action "Add Controlled Item (new,pick)" throws error.
+  - if set to "Allow Controlled Items Only" --> on derived folder "Attachments tab" is hidden - and action "Add File .." (and drop File) throws error.
+  - if set to "Allow Files and Controlled Items" --> on derived folder both Attachments and Contolled Items can be added.
+
+
+On template folders set mode:  Allow Subfolders
+  - if not set --> on folder "Sub Folder tab" is hidden - and action "Add Sub Folder" throws error.
+
+
+Create Folder Team
+  - if no team set, link "create new" must show on form.
+  - if team set,  link "create new" must not show on form.
+  - on Update - same team is pushed to all sub folders  (and to controlled items that have "allow_team_update" flag set)
+
+
+Folders connected to Projects
+----------------------------
+
+On Project form "top folder" link must show
+
+On Project form "Team access" link must show
+
+On Project form - Tab "Folders" is added
+
+On New Project form - "Folder Template" select must show.
+
+Create New Project - no Folder template
+  - "Private" team assigned to project (same as project number+name) will get created ?
+  - Top folder with name of project gets created automatically (Project: prefix). Folder also uses the project team (Team Access) ?
+  - "Related Team" field on top folder gets set to project's keyed_name ?
+
+Create New Project - with Folder template 
+  (must have 4 sub folders: one that does not allow sub folders, one that allows attachments only, one that allows controlled items only;
+   also must have at least 1 controlled item (i.e. a document on one folder to test cloning of controlled items from folder template)
+  - same as above ?
+  - after inital save the folder struct from template got copied ?
+  - all sub folders must also have field "Related Project"  set to the same as on top folder !
+  - controlled item from template folders got created as copies ? and the "Related Projects" field on controlled items (i.e. document) 
+    must show the "Related Project" from its parent folder !
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+

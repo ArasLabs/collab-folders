@@ -1,0 +1,150 @@
+﻿<AML>
+ <Item type="RelationshipType" id="31C360FAEEA5463282A57A5939C7BA18" action="add" dependencyLevel="0">
+  <auto_search>1</auto_search>
+  <behavior>float</behavior>
+  <copy_permissions>0</copy_permissions>
+  <create_related>0</create_related>
+  <hide_in_all>0</hide_in_all>
+  <inc_rel_key_name>1</inc_rel_key_name>
+  <inc_related_key_name>1</inc_related_key_name>
+  <is_list_type>0</is_list_type>
+  <label xml:lang="en">URLs</label>
+  <new_show_related>0</new_show_related>
+  <related_notnull>0</related_notnull>
+  <related_option>2</related_option>
+  <relationship_id keyed_name="cFolder URL" type="ItemType" name="cFolder URL">
+   <Item type="ItemType" id="DAF4EBBB8761414585CDCCABE3B3886F" action="add">
+    <allow_private_permission>1</allow_private_permission>
+    <auto_search>0</auto_search>
+    <enforce_discovery>0</enforce_discovery>
+    <hide_where_used>0</hide_where_used>
+    <implementation_type>table</implementation_type>
+    <instance_data>CFOLDER_URL</instance_data>
+    <is_dependent>0</is_dependent>
+    <is_relationship>1</is_relationship>
+    <is_versionable>0</is_versionable>
+    <revisions keyed_name="Default" type="Revision">7FE395DD8B9F4E1090756A34B733D75E</revisions>
+    <show_parameters_tab>1</show_parameters_tab>
+    <unlock_on_logout>0</unlock_on_logout>
+    <use_src_access>1</use_src_access>
+    <name>cFolder URL</name>
+    <Relationships>
+     <Item type="Property" id="27DB4608A7A949B3B9A705C7D86E1048" action="add">
+      <column_alignment>left</column_alignment>
+      <column_width>300</column_width>
+      <data_type>string</data_type>
+      <is_hidden>0</is_hidden>
+      <is_hidden2>0</is_hidden2>
+      <is_indexed>0</is_indexed>
+      <is_keyed>0</is_keyed>
+      <is_multi_valued>0</is_multi_valued>
+      <is_required>0</is_required>
+      <label xml:lang="en">Description</label>
+      <range_inclusive>0</range_inclusive>
+      <readonly>0</readonly>
+      <sort_order>20</sort_order>
+      <source_id keyed_name="cFolder URL" type="ItemType" name="cFolder URL">DAF4EBBB8761414585CDCCABE3B3886F</source_id>
+      <stored_length>255</stored_length>
+      <track_history>0</track_history>
+      <name>description</name>
+     </Item>
+     <Item type="Property" id="26F1BCB680BD4D97902D34F8F4D5C90E" action="add">
+      <column_alignment>left</column_alignment>
+      <column_width>150</column_width>
+      <data_type>string</data_type>
+      <is_hidden>0</is_hidden>
+      <is_hidden2>0</is_hidden2>
+      <is_indexed>0</is_indexed>
+      <is_keyed>0</is_keyed>
+      <is_multi_valued>0</is_multi_valued>
+      <is_required>0</is_required>
+      <label xml:lang="en">Name</label>
+      <range_inclusive>0</range_inclusive>
+      <readonly>0</readonly>
+      <sort_order>10</sort_order>
+      <source_id keyed_name="cFolder URL" type="ItemType" name="cFolder URL">DAF4EBBB8761414585CDCCABE3B3886F</source_id>
+      <stored_length>64</stored_length>
+      <track_history>0</track_history>
+      <name>name</name>
+     </Item>
+     <Item type="Property" id="2874D9361ACE4AFFB6148BC16A0E005B" action="add">
+      <column_alignment>left</column_alignment>
+      <column_width>300</column_width>
+      <data_type>string</data_type>
+      <is_hidden>0</is_hidden>
+      <is_hidden2>0</is_hidden2>
+      <is_indexed>0</is_indexed>
+      <is_keyed>0</is_keyed>
+      <is_multi_valued>0</is_multi_valued>
+      <is_required>0</is_required>
+      <label xml:lang="en">URL</label>
+      <range_inclusive>0</range_inclusive>
+      <readonly>0</readonly>
+      <sort_order>11</sort_order>
+      <source_id keyed_name="cFolder URL" type="ItemType" name="cFolder URL">DAF4EBBB8761414585CDCCABE3B3886F</source_id>
+      <stored_length>255</stored_length>
+      <track_history>0</track_history>
+      <name>url</name>
+     </Item>
+     <Item type="View" id="E84B228DC27E4B9386298EA271C98EA3" action="add">
+      <client>js</client>
+      <related_id keyed_name="cFolder URL" type="Form">E6C3BABF246E48DABD8FDC9F96DB418B</related_id>
+      <role keyed_name="World" type="Identity">
+       <Item type="Identity" action="get" select="id">
+        <name>World</name>
+       </Item>
+      </role>
+      <sort_order>128</sort_order>
+      <source_id keyed_name="cFolder URL" type="ItemType" name="cFolder URL">DAF4EBBB8761414585CDCCABE3B3886F</source_id>
+      <type>default</type>
+     </Item>
+     <Item type="Server Event" id="D59E3E7E0360455A9421484D7527F629" action="add">
+      <related_id keyed_name="Set Templ Flag on Folder Rel" type="Method">
+       <Item type="Method" action="get" select="id">
+        <name>Set Templ Flag on Folder Rel</name>
+       </Item>
+      </related_id>
+      <server_event>onAfterAdd</server_event>
+      <sort_order>5</sort_order>
+      <source_id keyed_name="cFolder URL" type="ItemType" name="cFolder URL">DAF4EBBB8761414585CDCCABE3B3886F</source_id>
+     </Item>
+     <Item type="Server Event" id="F971DC3C6BF34FB2A7BFC3C5F9518AF0" action="add">
+      <related_id keyed_name="Increment SortOrder BeforeAdd" type="Method">
+       <Item type="Method" action="get" select="id">
+        <name>Increment SortOrder BeforeAdd</name>
+       </Item>
+      </related_id>
+      <server_event>onBeforeAdd</server_event>
+      <sort_order>10</sort_order>
+      <source_id keyed_name="cFolder URL" type="ItemType" name="cFolder URL">DAF4EBBB8761414585CDCCABE3B3886F</source_id>
+     </Item>
+    </Relationships>
+   </Item>
+  </relationship_id>
+  <sort_order>30</sort_order>
+  <source_id keyed_name="cFolder" type="ItemType" name="cFolder">C0C8138AB15C41F59FA629EB8EAE2DC2</source_id>
+  <name>cFolder URL</name>
+ </Item>
+ <Item type="ItemType" id="DAF4EBBB8761414585CDCCABE3B3886F" action="edit">
+  <Relationships>
+   <Item type="Property" action="edit" where="source_id='DAF4EBBB8761414585CDCCABE3B3886F' and name='sort_order'">
+    <column_alignment>left</column_alignment>
+    <column_width>50</column_width>
+    <data_type>integer</data_type>
+    <is_hidden>1</is_hidden>
+    <is_hidden2>0</is_hidden2>
+    <is_indexed>0</is_indexed>
+    <is_keyed>0</is_keyed>
+    <is_multi_valued>0</is_multi_valued>
+    <is_required>0</is_required>
+    <label xml:lang="en">Pos</label>
+    <range_inclusive>0</range_inclusive>
+    <readonly>0</readonly>
+    <sort_order>5</sort_order>
+    <source_id keyed_name="cFolder URL" type="ItemType" name="cFolder URL">DAF4EBBB8761414585CDCCABE3B3886F</source_id>
+    <track_history>0</track_history>
+    <name>sort_order</name>
+   </Item>
+  </Relationships>
+ </Item>
+</AML>

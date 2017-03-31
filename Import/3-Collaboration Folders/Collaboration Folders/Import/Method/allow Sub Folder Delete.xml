@@ -8,12 +8,12 @@ Dim thisItem As Item = inn.getItemById(Me.GetType(),Me.GetID())
 Dim relFolderId As String = thisItem.getProperty("related_id","")
 If (relFolderId = "") Then Return Me  ' nothing to do
 
-' get the related item (Item Folder) and 
+' get the related item (cFolder) and 
 'check If it has related Attachments Or controlled Items
 Dim qry As Item
 
 ' check if any relationship exists
-qry = Me.newItem("Item Folder Controlled Item","get")
+qry = Me.newItem("cFolder Controlled Item","get")
 qry.setAttribute("serverEvents","0")
 qry.setAttribute("select","id,related_id(keyed_name)")
 qry.setProperty("source_id",relFolderId)
@@ -23,8 +23,8 @@ If (qry.getItemCount() >0) Then
   Return inn.newError("Cannot Delete Sub Folder! This Sub Folder still has related 'Controlled Items'. Remove them first and try again.")
 End If
 
-' get relationship "Item Folder File"
-qry = Me.newItem("Item Folder File","get")
+' get relationship "cFolder File"
+qry = Me.newItem("cFolder File","get")
 qry.setAttribute("serverEvents","0")
 qry.setAttribute("select","id,related_id(keyed_name)")
 qry.setProperty("source_id",relFolderId)

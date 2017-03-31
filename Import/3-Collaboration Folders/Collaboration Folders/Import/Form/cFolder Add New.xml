@@ -1,0 +1,124 @@
+﻿<AML>
+ <Item type="Form" id="BF7A7C71D5214CA09FDADB5A46C42D37" action="add">
+  <category_form>0</category_form>
+  <height>234</height>
+  <stylesheet><![CDATA[../styles/default.css]]></stylesheet>
+  <width>699</width>
+  <name>cFolder Add New</name>
+  <Relationships>
+   <Item type="Body" id="F2121BD8EB964535AE3D07D93A5BE0C3" action="add">
+    <bg_attach>scroll</bg_attach>
+    <bg_color>#FFFFFF</bg_color>
+    <bg_image>../images/Backgrounds/wvleft.gif</bg_image>
+    <bg_repeat>no-repeat</bg_repeat>
+    <sort_order>128</sort_order>
+    <source_id keyed_name="cFolder Add New" type="Form">BF7A7C71D5214CA09FDADB5A46C42D37</source_id>
+    <Relationships>
+     <Item type="Field" id="E618AA174B574F79AF2773EC53986C50" action="add">
+      <bg_color>#FFFFFF</bg_color>
+      <border_width>0</border_width>
+      <display_length>30</display_length>
+      <display_length_unit>ex</display_length_unit>
+      <field_type>item</field_type>
+      <font_color>#000000</font_color>
+      <font_family>arial, helvetica, sans-serif</font_family>
+      <font_size>8pt</font_size>
+      <font_weight>bold</font_weight>
+      <is_disabled>0</is_disabled>
+      <is_visible>1</is_visible>
+      <label xml:lang="en">Select a Folder Template</label>
+      <label_position>top</label_position>
+      <list_no_blank>0</list_no_blank>
+      <propertytype_id keyed_name="cfolder_template_id" type="Property">1AAC981DBD4B453DB9A7B2E5AB0E1DB5</propertytype_id>
+      <sort_order>256</sort_order>
+      <source_id keyed_name="F2121BD8EB964535AE3D07D93A5BE0C3" type="Body">F2121BD8EB964535AE3D07D93A5BE0C3</source_id>
+      <tab_index>6372</tab_index>
+      <tab_stop>1</tab_stop>
+      <x>365</x>
+      <y>100</y>
+      <name>cfolder_template_id</name>
+     </Item>
+     <Item type="Field" id="A87C0014A7D24B31B569C75B4A4A106E" action="add">
+      <bg_color>#FFFFFF</bg_color>
+      <border_width>0</border_width>
+      <field_type>textarea</field_type>
+      <font_color>#000000</font_color>
+      <font_family>arial, helvetica, sans-serif</font_family>
+      <font_size>8pt</font_size>
+      <font_weight>bold</font_weight>
+      <is_disabled>0</is_disabled>
+      <is_visible>1</is_visible>
+      <label xml:lang="en">Description</label>
+      <label_position>top</label_position>
+      <list_no_blank>0</list_no_blank>
+      <propertytype_id keyed_name="description" type="Property">E86E53FBF5CE4D5BB295B76EFA6EC5C9</propertytype_id>
+      <sort_order>384</sort_order>
+      <source_id keyed_name="F2121BD8EB964535AE3D07D93A5BE0C3" type="Body">F2121BD8EB964535AE3D07D93A5BE0C3</source_id>
+      <tab_index>20</tab_index>
+      <tab_stop>1</tab_stop>
+      <textarea_cols>60</textarea_cols>
+      <textarea_rows>3</textarea_rows>
+      <x>11</x>
+      <y>55</y>
+      <name>description</name>
+     </Item>
+     <Item type="Field" id="85D6D39D588E40649FA3F876CD076258" action="add">
+      <bg_color>beige  </bg_color>
+      <border_width>0</border_width>
+      <display_length>60</display_length>
+      <field_type>text</field_type>
+      <font_color>#000000</font_color>
+      <font_family>arial, helvetica, sans-serif</font_family>
+      <font_size>8pt</font_size>
+      <font_weight>bold</font_weight>
+      <is_disabled>0</is_disabled>
+      <is_visible>1</is_visible>
+      <label xml:lang="en">Name</label>
+      <label_position>top</label_position>
+      <list_no_blank>0</list_no_blank>
+      <propertytype_id keyed_name="name" type="Property">5F604A856E604189AFEEFAF88EC957CC</propertytype_id>
+      <sort_order>128</sort_order>
+      <source_id keyed_name="F2121BD8EB964535AE3D07D93A5BE0C3" type="Body">F2121BD8EB964535AE3D07D93A5BE0C3</source_id>
+      <tab_index>10</tab_index>
+      <tab_stop>1</tab_stop>
+      <x>10</x>
+      <y>10</y>
+      <name>name</name>
+     </Item>
+     <Item type="Field" id="075511D6733445ACBE93EF337E97289C" action="add">
+      <bg_color>#FFFFFF</bg_color>
+      <border_width>0</border_width>
+      <display_length>30</display_length>
+      <display_length_unit>ex</display_length_unit>
+      <field_type>item</field_type>
+      <font_color>#000000</font_color>
+      <font_family>tahoma, arial, helvetica, sans-serif</font_family>
+      <font_size>8pt</font_size>
+      <font_weight>bold</font_weight>
+      <is_disabled>0</is_disabled>
+      <is_visible>1</is_visible>
+      <label xml:lang="en">Owner</label>
+      <label_position>top</label_position>
+      <list_no_blank>0</list_no_blank>
+      <sort_order>512</sort_order>
+      <source_id keyed_name="F2121BD8EB964535AE3D07D93A5BE0C3" type="Body">F2121BD8EB964535AE3D07D93A5BE0C3</source_id>
+      <tab_index>10213</tab_index>
+      <tab_stop>1</tab_stop>
+      <x>365</x>
+      <y>10</y>
+      <name>owned_by_id</name>
+     </Item>
+    </Relationships>
+   </Item>
+  </Relationships>
+ </Item>
+ <Item type="Field" id="075511D6733445ACBE93EF337E97289C" action="edit">
+  <!-- Please note: this AML depends on the "cFolder" ItemType. Please make sure it exists before running this. -->
+  <propertytype_id>
+   <Item type="Property" action="get" select="id">
+    <name>owned_by_id</name>
+    <source_id type="ItemType" keyed_name="cFolder">C0C8138AB15C41F59FA629EB8EAE2DC2</source_id>
+   </Item>
+  </propertytype_id>
+ </Item>
+</AML>

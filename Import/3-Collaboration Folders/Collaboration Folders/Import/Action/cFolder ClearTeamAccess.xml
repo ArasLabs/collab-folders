@@ -1,0 +1,15 @@
+﻿<AML>
+ <Item type="Action" id="C41267CD2385462C99867A6C870D6272" action="add">
+  <item_query>&lt;Item type="{@type}" id="{@id}" levels= "1" action="get" /&gt;</item_query>
+  <label xml:lang="en">Clear Team Access</label>
+  <location>client</location>
+  <method keyed_name="cFolder ClearTeamAccess_A" type="Method">
+   <Item type="Method" action="get" select="id">
+    <name>cFolder ClearTeamAccess_A</name>
+   </Item>
+  </method>
+  <target>none</target>
+  <type>item</type>
+  <name>cFolder ClearTeamAccess</name>
+ </Item>
+</AML>

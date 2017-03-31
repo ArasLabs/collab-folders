@@ -1,0 +1,819 @@
+﻿<AML>
+ <Item type="Method" id="226369A462964B6ABC146012FEDE614D" action="add">
+  <execution_allowed_to keyed_name="World" type="Identity">A73B655731924CD0B027E4F4D5FCC0A9</execution_allowed_to>
+  <method_code><![CDATA[// =======================================================
+// JavaScript Method to "handle" grid menu custom actions on Folder Tree Grid
+//
+// is loaded with Form "configStructure Grid" 
+//   "CommonBase GridUtiltities"
+//   "CommonBase GridConfiguration"
+//   must be loaded before method "configStructure GridHandler"
+//  
+// If you want to create your own specialized menu actions logic, you can CLONE this JS method and then
+// modify its logic to be used instead.
+// Then you must replace the grid event on Form "configStructure Grid" with your new method.
+//
+// Rolf Laudenbach
+// 2015
+// =======================================================
+
+//+++++  BEGIN: Custom Menu Actions Handler
+//-----------------
+customMenuAction = function customMenuActionFunc() {
+};
+
+// NOTE: to add your new action, you must add logic in 3 places:
+//        ShowOnMenuCustom, ValidateAction, ExecuteAction
+
+customMenuAction.prototype.isShowOnMenuCustom = function customMenuAction_isShowOnMenuCustom(eActionArgs, menuAction) {
+	// this logic must return true, if menu action is to be shown on context menu
+	//      or false, if menu action should is not to be shown.
+
+	// determine to show custom actions on menu that are row type independent here (if required)
+	if (menuAction.name === "xx_action_show_always") {return true;}
+
+	// determine to show custom actions on menu that are fired from phantom rows
+	if (eActionArgs.isPhantomRow) {
+		switch (menuAction.name) {
+			case "xx_action":
+				return true;
+				//break;
+		}
+	}
+	
+	// determine to show custom actions on menu that are row type specific here (if required)
+    switch(eActionArgs.rowItemType)
+	{
+	case "cFolder":
+		switch (menuAction.name) {
+			case "refresh_this_row":
+			case "add_controlled_item_new":
+			case "add_controlled_item_pick":
+			case "add_new_file":
+			case "add_sub_folder":
+			case "delete_sub_folder":
+			case "delete_root_folder":
+			case "save_structure_to_root_folder":
+			case "promote_folder_to_active_down":
+			case "promote_folder_to_archived_down":
+			case "add_new_url":
+			case "expand_sub_folders":
+			case "cut_folder":
+			case "paste_folder":
+			case "save_structure_to_root_folder":
+				return true;
+				//break;
+		}
+		break;
+
+	case "cFolder URL":
+		switch (menuAction.name) {
+			case "delete_url":
+				return true;
+		}
+		break;
+
+	case "File":
+		switch (menuAction.name) {
+			case "delete_file":
+				return true;
+				//break;
+		}
+		break;
+	default:
+		switch (menuAction.name) {
+			case "delete_controlled_item":
+			case "remove_controlled_item":
+				return true;
+				//break;
+		}
+		break;
+	}
+	return false;	
+};
+
+/* see documentation on context for eActionArgs and menuAction in  method "CommonBase GridUtilities"
+*/
+customMenuAction.prototype.executeAction = function customMenuAction_executeAction(eActionArgs, menuActionName) {
+  eActionArgs.baseMenuActionHandler = 	eActionArgs.gridHandler.baseMenuActionHandler;
+  fn_onToolbarAndMenuClickLocalAction(eActionArgs, menuActionName, this);
+  return "";
+};
+customMenuAction.prototype.validateAction = function customMenuAction_validateAction(eActionArgs, menuAction) {
+  //returns "" if validations are OK. Else the function returns an Error message.
+  return fn_ValidateActionRequest(eActionArgs, menuAction, this);
+};
+//^^^^^  END: Custom Menu Actions Handler
+
+//+++++  BEGIN: local helper functions
+
+//+++++ custom validation functions
+fn_ValidateActionRequest = function (eActionArgs, menuAction) {
+  // run various custom checks specific to action
+  // this logic must return "" if validations are ok.
+  // or an error message, if validations ar NOT ok.
+  //debugger;
+  
+  // check actions that do not require a selected row
+  var checkForRowType = true;
+  if (eActionArgs.actionSource === "toolbar") {
+	  switch (menuAction.name)
+	  {
+	  	  case "create_root_folder":
+			return ""; // no further checks
+			
+	  	  case "delete_root_folder":
+			checkForRowType = false;
+			break;
+	  }
+  }
+
+  // continue with check actions that do require selected row
+  if (eActionArgs.rowId === undefined || eActionArgs.rowId === "") {
+		return top.aras.AlertError(top.aras.getResource("ItemFolders", "itemfoldertreegrid.message.error_row_must_be_selected_for_action"));
+  }
+  
+  if (checkForRowType && (!menuAction.allowOnGroupRows || menuAction.allowOnGroupRows === undefined) && menuAction.relQueryName !== "default" && menuAction.relQueryName !== eActionArgs.rowOfGroupName) {
+    return top.aras.getResource("CommonUtilities","commonUtilities.message.action_not_allowed_on_rows_of_this_type");
+  }
+  
+  var checkForNewerVersionOfItem = false;
+  if ((eActionArgs.checkForNewerVersionOfItem && eActionArgs.checkForNewerVersionOfItem === true) || (eActionArgs.checkForNewerVersionOfItem !== undefined && eActionArgs.effectivityMode === "current_config"))
+	{checkForNewerVersionOfItem = true;}
+	
+  //## tbd  - check if flag "is_current" is set on row item, if not --> error
+  //if (menuAction.ifItemIsCurrentVersion) {
+  //
+  //}
+	
+  var disallowOnRootItems = false; 
+  var onRootItemsOnly = false; 
+  var itemId, rowId;
+  var checkMsg = "";  
+  switch (menuAction.name)
+  {
+    // add additional validation logic for your custom actions
+	case "add_sub_folder":
+		checkForNewerVersionOfItem =false;
+		checkMsg = fn_checkIfSubFoldersOnThisFolderAllowed(eActionArgs.rowItemId);
+		if (checkMsg !== "") {return checkMsg;}
+	  break;
+
+	case "delete_sub_folder":
+		checkForNewerVersionOfItem =false;
+		disallowOnRootItems = true;
+	  break;
+
+    case "delete_root_folder":
+		checkForNewerVersionOfItem =false;
+		onRootItemsOnly = true;
+	  break;
+
+	case "add_new_file":
+		checkForNewerVersionOfItem =false;
+		
+		rowId = fn_getValidFolderRowId (eActionArgs);
+		if (!rowId) {top.aras.AlertError(top.aras.getResource("ItemFolders", "itemfoldertreegrid.message.error_getting_parent_of_grid_row")); return;}
+
+		itemId = eActionArgs.gridHandler.getGridRowUserData(rowId,"rowItemID");
+		checkMsg = fn_checkIfAttachmentsOnThisFolderAllowed(itemId);
+		if (checkMsg !== "") {top.aras.AlertError(checkMsg);return;}
+ 	  break;
+
+    case "delete_file":
+	case "add_new_url":
+	case "delete_url":
+		checkForNewerVersionOfItem =false;
+	  break;
+
+	case "add_controlled_item_new":
+	case "add_controlled_item_pick":
+		checkForNewerVersionOfItem =false;
+		
+		rowId = fn_getValidFolderRowId (eActionArgs);
+		if (!rowId) {top.aras.AlertError(top.aras.getResource("ItemFolders", "itemfoldertreegrid.message.error_getting_parent_of_grid_row")); return;}
+
+		itemId = eActionArgs.gridHandler.getGridRowUserData(rowId,"rowItemID");
+		checkMsg = fn_checkIfControlledItemsOnThisFolderAllowed(itemId);
+		if (checkMsg !== "") {top.aras.AlertError(checkMsg);return;}
+	  break;
+	  
+	}
+  if (checkForNewerVersionOfItem) { //## to be fixed
+    var itm = fn_GetItemsOfCurrentGeneration(eActionArgs.rowItemType,eActionArgs.rowItemId,"id");
+	if (itm.getID() != eActionArgs.rowItemId)
+        {return top.aras.getResource("CommonUtilities","commonUtilities.message.newer_item_version_found_refresh_grid_first");}
+  }
+  if (onRootItemsOnly) {
+    // check selected rowId
+    if (eActionArgs.gridHandler.grid.getParentId(eActionArgs.rowId))
+      {return top.aras.getResource("CommonUtilities","commonUtilities.message.action_only_allowed_on_root_rows");}
+  }
+  if (disallowOnRootItems) {
+    // check selected rowId
+    if (!eActionArgs.gridHandler.grid.getParentId(eActionArgs.rowId))
+      {return top.aras.getResource("CommonUtilities","commonUtilities.message.action_not_allowed_on_root_rows");}
+  }
+  // success
+  return "";
+};
+
+//---------------
+fn_checkIfAttachmentsOnThisFolderAllowed = function (folderItemId) {
+  var itm = top.aras.newIOMItem("","");
+  itm.loadAML("<Item type='cFolder' action='get' serverEvents='0' id='"+folderItemId+"' select='status,allow_sub_folder,allowed_relationships' />");
+  itm = itm.apply();
+  
+  var allowedRelsMode = itm.getProperty("allowed_relationships","attachments_and_controlled_items");  //if prop not set use this default
+  
+  if (allowedRelsMode !== "" && allowedRelsMode.indexOf("attachments") >= 0) {return "";}  // is allowed
+  
+  return top.aras.getResource("ItemFolders", "itemfoldertreegrid.message.adding_files_to_folder_not_allowed");
+};
+
+//---------------
+fn_checkIfControlledItemsOnThisFolderAllowed = function (folderItemId) {
+  var itm = top.aras.newIOMItem("","");
+  itm.loadAML("<Item type='cFolder' action='get' serverEvents='0' id='"+folderItemId+"' select='status,allow_sub_folders,allowed_relationships' />");
+  itm = itm.apply();
+  
+  var allowedRelsMode = itm.getProperty("allowed_relationships","attachments_and_controlled_items");  //if prop not set use this default
+  
+  if (allowedRelsMode !== "" && allowedRelsMode.indexOf("controlled_items") >= 0) {return "";}  // is allowed
+  
+  return top.aras.getResource("ItemFolders", "itemfoldertreegrid.message.adding_ctrld_items_to_folder_not_allowed");
+};
+
+//---------------
+fn_checkIfSubFoldersOnThisFolderAllowed = function (folderItemId) {
+  var itm = top.aras.newIOMItem("","");
+  itm.loadAML("<Item type='cFolder' action='get' serverEvents='0' id='"+folderItemId+"' select='status,allow_sub_folders,allowed_relationships' />");
+  itm = itm.apply();
+
+  var allowSubFolders = itm.getProperty("allow_sub_folders","");
+  if (allowSubFolders === "") {allowSubFolders = "1";}  // if prop not set, then allow subfolders
+  
+  if (allowSubFolders === "1") {return "";}  // is allowed
+  
+  return top.aras.getResource("ItemFolders", "itemfoldertreegrid.message.adding_sub_folder_not_allowed");
+};
+
+//^^^^^ Custom validation functions
+
+//+++++ Custom menu actions
+fn_onToolbarAndMenuClickLocalAction = function (eActionArgs, menuActionName, menuActionHandler) {
+	// dispatches the menu action to local handlers
+	//debugger;
+	var actionId = eActionArgs.actionSource + "." + menuActionName;
+	var plannedAction = "";
+	var showDoRefreshMessage = false;
+
+     // NOTE: toolbar actions like : expand, collapse, refresh are covered directly by toolbar click event
+	switch(actionId)
+	{
+	  //+++ your custom action cases ...
+
+	  case "toolbar.create_root_folder":
+		if (fn_onCreateRootFolder(eActionArgs)) {showDoRefreshMessage = true;}
+	  	break;
+	  case "toolbar.delete_root_folder":
+		//(validations ensure that selected row is a root row)
+		fn_onDeleteFolderWithSubFolders(eActionArgs, top.aras.getResource("ItemFolders", "itemfoldertreegrid.message.confirm_delete_folder_with_sub_folders"));
+	  	break;
+	  case "menu.save_structure_to_root_folder":
+		if (fn_onSaveFolderStructToNewRootFolder(eActionArgs)) {showDoRefreshMessage = true;}
+	  	break;
+	  case "menu.refresh_this_row":
+		alert("Menu Action '"+actionId+"' id not implemented, yet");
+	  	break;
+	  case "menu.add_controlled_item_new":
+	  case "menu.g_add_controlled_item_new":
+		if (fn_onAddControlledItem(eActionArgs, true)) {showDoRefreshMessage = true;}
+	  	break;
+	  case "menu.add_controlled_item_pick":
+	  case "menu.g_add_controlled_item_pick":
+		if (fn_onAddControlledItem(eActionArgs, false)) {showDoRefreshMessage = true;}
+	  	break;
+	  case "menu.delete_controlled_item":
+	    fn_onDeleteFolderRelatedItem(eActionArgs, "cFolder Controlled Item", false, top.aras.getResource("ItemFolders", "itemfoldertreegrid.message.confirm_delete_ctrld_item_and_remove_from_folder"), true, true);
+	  	break;
+	  case "menu.remove_controlled_item":
+	    fn_onDeleteFolderRelatedItem(eActionArgs, "cFolder Controlled Item", false, top.aras.getResource("ItemFolders", "itemfoldertreegrid.message.confirm_remove_ctrld_item_from_this_folder"), false);
+	  	break;
+	  case "menu.add_new_file":
+	     if (fn_onAddFileToFolder(eActionArgs)) {showDoRefreshMessage = true;}
+	  	break;
+	  case "menu.delete_file":
+	    fn_onDeleteFolderRelatedItem(eActionArgs, "cFolder File", false, top.aras.getResource("ItemFolders", "itemfoldertreegrid.message.confirm_delete_file_from_this_folder"), true);
+	  	break;
+	  case "menu.add_new_url":
+	     if (fn_onAddURLtoFolder(eActionArgs)) {showDoRefreshMessage = true;}
+	  	break;
+	  case "menu.delete_url":
+		fn_onDeleteFolderRelatedItem(eActionArgs, "cFolder URL", true, top.aras.getResource("ItemFolders", "itemfoldertreegrid.message.confirm_delete_url_from_this_folder"), false);
+	  	break;
+	  case "menu.add_sub_folder":
+		if (fn_onAddSubFolder(eActionArgs)) {showDoRefreshMessage = true;}
+	  	break;
+	  case "menu.delete_sub_folder":
+		fn_onDeleteFolderWithSubFolders(eActionArgs, top.aras.getResource("ItemFolders", "itemfoldertreegrid.message.confirm_delete_folder_with_sub_folders"));
+	    //##cannot have files,or controlled items -- fn_onDeleteFolderRelatedItem(eActionArgs, "Sub cFolder", false, top.aras.getResource("ItemFolders", "itemfoldertreegrid.message.confirm_delete_sub_folder_from_this_folder"), true);
+	  	break;
+	  case "menu.promote_folder_to_active_down":
+	    fn_onPromoteFoldersDown(eActionArgs, "Active");
+	  	break;
+	  case "menu.promote_folder_to_archived_down":
+	    fn_onPromoteFoldersDown(eActionArgs, "Archived");
+	  	break;
+	  case "menu.expand_sub_folders":
+		var childIds = eActionArgs.gridHandler.grid.getChildItemsId(eActionArgs.rowId, true, "|").split("|");
+		var numNodes = eActionArgs.gridHandler.CONFIG.getValue("expandFolderWarningNodes","20");
+		if (childIds.length > parseInt(numNodes)) {
+			if (!confirm(top.aras.getResource("ItemFolders", "itemfoldertreegrid.message.confirm_expand_all_subfolders_N").format(childIds.length)))
+				{return;}
+		}
+		eActionArgs.gridHandler.grid.openItem(eActionArgs.rowId);
+	    fn_onExpandSubFolders(eActionArgs.gridHandler.grid,childIds);
+	  	break;
+
+	  default:
+		alert("Menu Action '"+actionId+"' id not implemented, yet");
+	  	break;
+	}
+	//^^^ your custom actions
+	if (showDoRefreshMessage) {
+		top.aras.AlertSuccess(top.aras.getResource("CommonUtilities","commonUtilities.message.refreh_grid_to_see_results"));
+	}
+};
+
+//-----------------
+fn_myActionHandler = function (eActionArgs) {
+	alert ("execute my_menu_action");
+  return;
+};
+
+//-----------------
+fn_onCreateRootFolder = function (eActionArgs) {
+	// Do a client-side add of the folder item. The new item will not be in the database until the user saves it
+	var item = top.aras.newItem("cFolder");
+	top.aras.itemsCache.addItem(item);
+	var folderId = item.getAttribute("id");
+	top.aras.uiReShowItemEx(folderId, item, "tab view");
+	top.aras.uiShowItemEx(item, "tab view");
+	return true;
+};
+
+//-----------------
+fn_onSaveFolderStructToNewRootFolder = function (eActionArgs) {
+	var includeRels = true;
+	if (!top.aras.confirm(top.aras.getResource("ItemFolders", "itemfoldertreegrid.message.confirm_save_folder_to_new_root_folder_with_rels"))) {includeRels=false;}
+
+	// Do a client-side add of the folder item. The new item will not be in the database until the user saves it
+	var item = top.aras.newItem("cFolder");
+	top.aras.itemsCache.addItem(item);
+    var selectedFolderItemId = eActionArgs.gridHandler.getGridRowUserData(eActionArgs.rowId,"rowItemID");
+	top.aras.setItemProperty(item,"copied_from_folder_ref",selectedFolderItemId);
+	
+	if (includeRels) {
+		var folderItemRelNames = eActionArgs.gridHandler.CONFIG.getGridStructureRowRelShipDefinitions(eActionArgs.gridHandler.viewName);
+		var folderRelationships = "",sep="";
+		for (var relQueryName in folderItemRelNames) {folderRelationships += sep + folderItemRelNames[relQueryName].relationshipName; sep=",";}
+		item.setAttribute("folderRelationshipsToCopy",folderRelationships);
+	}
+	var folderId = item.getAttribute("id");
+	top.aras.uiReShowItemEx(folderId, item, "tab view");
+	top.aras.uiShowItemEx(item, "tab view");
+	return true;
+};
+
+//-----------------
+fn_onDeleteFolderWithSubFolders = function (eActionArgs, confirmMsg) {
+	// fetch selected item from server
+	if (!top.aras.confirm(confirmMsg)) {return;}
+
+	var folderItem = innovator.getItemById(eActionArgs.rowItemType, eActionArgs.rowItemId);
+
+	var folderItemRelNames = eActionArgs.gridHandler.CONFIG.getGridStructureRowRelShipDefinitions(eActionArgs.gridHandler.viewName);
+	var folderRelationships = "",sep="";
+	for (var relQueryName in folderItemRelNames) {folderRelationships += sep + folderItemRelNames[relQueryName].relationshipName; sep=",";}
+	
+	//call server method to do the work.
+	folderItem.setAttribute("folderRelationships",folderRelationships);
+	folderItem = folderItem.apply("Delete cFolder with SubFolders");
+	
+	if (folderItem.isError()) {
+		var msg = folderItem.getErrorString();
+		if (folderItem.getErrorString() === "Some folders are still locked") {
+		  msg = top.aras.getResource("ItemFolders", "itemfoldertreegrid.message.error_some_folders_still_locked");
+
+		}
+		top.aras.AlertError(msg); return false;
+	}
+	
+	//remove rows from grid
+	var childIds = eActionArgs.gridHandler.grid.getChildItemsId(eActionArgs.rowId, true, "|").split("|");
+	for (var i=0; i<childIds.length; i++) {
+		eActionArgs.gridHandler.grid.deleteRow(childIds[i]);
+	}	
+	eActionArgs.gridHandler.grid.deleteRow(eActionArgs.rowId);
+
+	return true;
+};
+
+//-----------------
+fn_onAddSubFolder = function (eActionArgs) {
+	if (!eActionArgs.rowId) {return;}
+
+	var res = fn_showFormInModalDialog("cFolder Add SubFolder", "Add New Sub Folder", eActionArgs.rowItemType);
+	if (!res) {return;}
+	
+	gridHandler = eActionArgs.gridHandler;
+	folderRowId = eActionArgs.rowId;
+	folderItemId = eActionArgs.rowItemId;
+
+	// Create new SubFolder Rel and new Folder Item
+	var folderItemRel = top.aras.newIOMItem("Sub cFolder","add");
+	if (res.org_number && res.org_number !== "") {folderItemRel.setProperty("org_number", res.org_number);}
+	folderItemRel.setProperty("source_id", folderItemId);
+	var subFolderItem = top.aras.newIOMItem("cFolder","add");
+	subFolderItem.setProperty("name",res.name);
+	if (res.description && res.description !== "") {subFolderItem.setProperty("description",res.description);}
+	folderItemRel.setRelatedItem(subFolderItem);
+ 
+	folderItemRel = folderItemRel.apply(); //add new relationship on server
+	if (folderItemRel.isError()) {
+		top.aras.AlertError(top.aras.getResource("ItemFolders", "itemfoldertreegrid.message.add_sub_folder_error") + folderItemRel.getErrorString());
+		return;
+	}
+
+	// retrieve new relationship with more details from server
+	var amlQry = gridHandler.CONFIG.buildGridDataRelShipQueryAML(gridHandler.viewName, "Sub cFolder", folderItemId, subFolderItem.getID(), false, true);  // false = isReleased, true = isStructureRel
+	var qry = top.aras.newIOMItem("","");
+	qry.loadAML(amlQry); 
+	folderItemRel = qry.apply();
+	if (folderItemRel.getItemCount() <=0) { // error: no controlled items for this folder 
+		top.aras.AlertError(top.aras.getResource("ItemFolders", "itemfoldertreegrid.message.add_sub_folder_error") + folderItemRel.getErrorString());
+		return;
+	}
+	folderItemRel = folderItemRel.getItemByIndex(0);
+	subFolderItem = folderItemRel.getRelatedItem();
+	parentFolderItem = folderItemRel.getPropertyItem("source_id");
+	parentItemConfigId = parentFolderItem.getProperty("config_id");
+
+	// Draw new sub folder row
+  	var rowConfig = {};
+	rowConfig.rowIcon = gridHandler.CONFIG.getGridStructureRowIcon();
+ 	var rowId = gridHandler.DrawStructureRow (gridHandler.structureRelName, subFolderItem, folderItemRel, parentItemConfigId, folderRowId, rowConfig, false); 
+
+	// expand folder to see new row
+	setTimeout(function(){
+	try {
+		} finally {
+			gridHandler.grid.openItem(rowId); //Root Item
+	}} , 200);
+  
+	return;
+};
+
+//-----------------
+fn_onAddControlledItem = function (eActionArgs, isNew) {
+  var rowId = eActionArgs.rowId;
+  
+  var phantomGroupRowId = null;
+  if (eActionArgs.isPhantomRow) {phantomGroupRowId=rowId; rowId=eActionArgs.gridHandler.grid.getParentId(rowId);}
+  if (!rowId) {top.aras.AlertError(top.aras.getResource("ItemFolders", "itemfoldertreegrid.message.error_getting_parent_of_grid_row")); return false;}
+  
+  var folderItemId = eActionArgs.gridHandler.getGridRowUserData(rowId,"rowItemID");
+
+  var ctrldItem;
+  if (isNew) {
+    // Create temporary Item
+    ctrldItem = top.aras.newItem("Folder Controlled Item", "add");
+  }
+  else {
+/*	var param = { aras: top.aras, itemtypeName: "Folder Controlled Item", multiselect: false };
+	var options = { dialogHeight:450, dialogWidth:700, resizable:true};
+
+	var dlgRes = top.aras.modalDialogHelper.show('DefaultModal', window, param, options, 'searchDialog.html');
+	
+	if(!dlgRes) {return false;}
+	ctrldItem = dlgRes.item;
+*/	
+	ctrldItem = eActionArgs.baseMenuActionHandler.searchItem("Folder Controlled Item");
+  }
+  if(!ctrldItem) {return false;} // cancelled or no item selected
+  
+  ctrldItem = fn_AddNewControlledItemToFolder(eActionArgs.gridHandler, rowId, folderItemId, ctrldItem,isNew, phantomGroupRowId);
+  if (ctrldItem.isError()) {top.aras.AlertError(top.aras.getResource("ItemFolders", "itemfoldertreegrid.message.add_ctrld_item_error") + ctrldItem.getErrorString()); return false;} 
+   
+  return true;
+};
+fn_AddNewControlledItemToFolder = function (gridHandler, folderRowId, folderItemId, newCtrldItem, isNew, phantomGroupRowId)
+{
+	var ctrldItemType;
+	if (isNew)
+	{
+	  //do auto numbers (like on folder Template
+	  ctrldItemType = newCtrldItem.getAttribute("type");
+	  var methodName = "";
+	  switch (ctrldItemType)
+	  {
+	  case "Document":
+		methodName = "Folder Template Default DocNum";
+		break;
+	  case "CAD":
+		methodName = "Folder Template Default CADNum";
+		break;
+	  case "Part":
+		methodName = "Folder Template Default PartNum";
+		break;
+	  }
+	  if (methodName === "") {return innovator.newError("Auto number logic for new items not defined for type '"+ctrldItemType+"' !");}
+	  
+	  var runMethod = top.aras.newIOMItem(ctrldItemType,methodName);
+	  runMethod = runMethod.apply();
+	  if (runMethod.isError()) {return innovator.newError("Cannot create auto number for type '"+ctrldItemType+"' !");}
+
+	  //## .getResult() does no longer exist in Aras10 API
+	  top.aras.setItemProperty(newCtrldItem,"item_number",runMethod.getResult());
+	  //top.aras.uiShowItemEx(newCtrldItem);
+	  //top.aras.itemsCache.addItem(newCtrldItem);
+
+	//## TODO - add new item and relationship in cache instead of server - like standard "create related" on relationships ???
+
+	}
+ 
+	//add the new relationship on server
+	var relName = "cFolder Controlled Item";
+	var ctrldItemsGroupsNodeId;
+	var folderItemRel;
+	var parentFolderId = folderItemId;
+	folderItemRel = top.aras.newIOMItem(relName,"add");
+	folderItemRel.setProperty("source_id", parentFolderId);
+	var ctrldItem = top.aras.newIOMItem("Folder Controlled Item");
+	ctrldItem.loadAML(newCtrldItem.xml);
+	folderItemRel.setRelatedItem(ctrldItem);
+ 
+	folderItemRel = folderItemRel.apply(); 
+	if (folderItemRel.isError()) {return folderItemRel;}
+
+	// retrieve new relationship with more details from server and draw row on grid
+	var relQueryName = "cFolder Ctrld Items";
+	folderItemRel = fn_fetchFolderRelationshipAndDrawAsChildRowOnGrid (gridHandler, folderRowId, folderItemRel.getID(), relQueryName, false, phantomGroupRowId); // false = is not isStructureRel
+
+  return folderItemRel;
+};
+//-----------------
+fn_onAddFileToFolder = function (eActionArgs) {
+  var rowId = eActionArgs.rowId;
+  var phantomGroupRowId = null;
+  if (eActionArgs.isPhantomRow) {phantomGroupRowId=rowId; rowId=eActionArgs.gridHandler.grid.getParentId(rowId);}
+  if (!rowId) {top.aras.AlertError(top.aras.getResource("ItemFolders", "itemfoldertreegrid.message.error_getting_parent_of_grid_row")); return false;}
+
+  var fileItem = top.aras.newItem('File');
+  //top.aras.itemsCache.addItem(fileItem);
+      
+  eActionArgs.gridHandler.grid.requestFocus();
+  if (!fileItem) {return false;}
+
+  //debugger;
+  var qryItm = top.aras.newIOMItem(eActionArgs.rowItemType,"get");
+  qryItm.setID(eActionArgs.rowItemId);
+  qryItm.setAttribute("select",eActionArgs.gridHandler.CONFIG.getGridStructureNodeItemSelect());
+  var folderItem = qryItm.apply();
+
+  fileItem = fn_AddNewFileToFolder(eActionArgs.gridHandler,rowId,folderItem,fileItem, phantomGroupRowId);
+  if (fileItem.isError()) {top.aras.AlertError(top.aras.getResource("ItemFolders", "itemfoldertreegrid.message.add_file_error") + fileItem.getErrorString()); return false;}
+
+  return true;
+};
+
+fn_AddNewFileToFolder = function (gridHandler, folderRowId, folderItem, newFileItem, phantomGroupRowId) {
+  var parentFolderId = folderItem.getID();
+  var folderFileRel = top.aras.newIOMItem("cFolder File","add");
+  
+  folderFileRel.setProperty("source_id", parentFolderId);
+  var fileItem = top.aras.newIOMItem("File");
+  fileItem.loadAML(newFileItem.xml);
+  folderFileRel.setRelatedItem(fileItem);
+  folderFileRel = folderFileRel.apply(); //triggers upload to vault.
+  if (folderFileRel.isError()) {return folderFileRel;}
+
+ 	// retrieve new relationship with more details from server and draw row on grid
+	var relQueryName = "cFolder Attachments";
+	folderFileRel = fn_fetchFolderRelationshipAndDrawAsChildRowOnGrid (gridHandler, folderRowId, folderFileRel.getID(), relQueryName, false, phantomGroupRowId); // false = is not isStructureRel
+ 
+	return folderFileRel;
+};
+
+//-----------------
+fn_onAddURLtoFolder = function (eActionArgs) {
+	if (!eActionArgs.rowId) {return;}
+	
+	var res = fn_showFormInModalDialog("cFolder Add URL", "Add New URL", eActionArgs.rowItemType);
+	if (!res) {return;}
+
+	if (res.url.indexOf("http") !== 0) {
+		if (!top.aras.confirm(top.aras.getResource("ItemFolders", "itemfoldertreegrid.message.confirm_add_http_to_url"))) {return false;}
+		res.url = "http://"+res.url;
+	}
+
+	var rowId = eActionArgs.rowId;
+	var parentFolderId = eActionArgs.rowItemId;
+	var phantomGroupRowId = null;
+	if (eActionArgs.isPhantomRow) {
+		phantomGroupRowId=rowId;
+		rowId=eActionArgs.gridHandler.grid.getParentId(rowId);
+		parentFolderId = eActionArgs.gridHandler.getGridRowUserData(rowId, "rowItemID");
+	}
+	if (!rowId) {top.aras.AlertError(top.aras.getResource("ItemFolders", "itemfoldertreegrid.message.error_getting_parent_of_grid_row")); return false;}
+
+	// Create new SubFolder Rel and new Folder Item (is NULL relationship)
+	var folderItemRel = top.aras.newIOMItem("cFolder URL","add");
+	folderItemRel.setProperty("source_id", parentFolderId);
+	folderItemRel.setProperty("name",res.name);
+	folderItemRel.setProperty("url",res.url);
+	if (res.description && res.description !== "") {folderItemRel.setProperty("description",res.description);}
+ 
+	folderItemRel = folderItemRel.apply(); //add new relationship on server
+	if (folderItemRel.isError()) {
+		top.aras.AlertError(top.aras.getResource("ItemFolders", "itemfoldertreegrid.message.add_url_folder_error") + folderItemRel.getErrorString());
+		return false;
+	}
+
+ 	// retrieve new relationship with more details from server and draw row on grid
+	var relQueryName = "cFolder URLs";
+	folderItemRel = fn_fetchFolderRelationshipAndDrawAsChildRowOnGrid (eActionArgs.gridHandler, rowId, folderItemRel.getID(), relQueryName, false, phantomGroupRowId); // false = is not isStructureRel
+
+	return true;
+};
+//-----------------
+fn_onPromoteFoldersDown = function (eActionArgs, targetState) {
+  if (eActionArgs.rowItemType !== "cFolder"){top.aras.AlertError(top.aras.getResource("ItemFolders","itemfoldertreegrid.message.action_not_valid_on_folder_rows"));return;}
+
+  var lockStatus = fn_GetLockedStatusOfItemFromServer(eActionArgs.rowItemType, eActionArgs.rowItemId); 
+  if (lockStatus > 0) {
+    top.aras.AlertError(top.aras.getResource("ItemFolders", "itemfoldertreegrid.message.folder_locked_by_you_or_other_please_unlock"));
+    return;
+  }
+
+  if (targetState === "Archived"){if(!top.aras.confirm(top.aras.getResource("ItemFolders", "itemfoldertreegrid.message.confirm_promote_to_archived"))){return;}}
+  if (targetState === "Active")  {if(!top.aras.confirm(top.aras.getResource("ItemFolders", "itemfoldertreegrid.message.confirm_promote_to_active"))){return;}}
+
+  var argsItem = innovator.newItem(eActionArgs.rowItemType,"get");
+  argsItem.setAttribute("select","id,name,state,owned_by_id,managed_by_id,team_id");
+  argsItem.setID(eActionArgs.rowItemId);
+  argsItem = argsItem.apply();
+
+  var folderCurState = argsItem.getProperty("state","");
+  if (folderCurState === targetState) {
+    top.aras.AlertError(top.aras.getResource("ItemFolders", "itemfoldertreegrid.message.folder_already_in_status_x")+targetState+" !");
+    return;
+  }
+  if (targetState === "Active" && folderCurState !== "Planning") {
+    top.aras.AlertError(top.aras.getResource("ItemFolders", "itemfoldertreegrid.message.folder_must_be_in_status_planning"));
+    return;
+  }
+  if (targetState === "Archived" && folderCurState !== "Active") {
+    top.aras.AlertError(top.aras.getResource("ItemFolders", "itemfoldertreegrid.message.folder_must_be_in_status_active"));
+    return;
+  }
+
+  argsItem.setProperty("state",targetState); // state to promote to
+  top.aras.evalMethod ("cFolders Promote DownA",argsItem.dom.xml);
+  
+  return;
+};
+//-----------------
+fn_onExpandSubFolders = function (grid, childIds) {
+	//remove rows from grid
+	for (var i=0; i<childIds.length; i++) {
+		grid.openItem(childIds[i]);
+	}	
+	for (i=0; i<childIds.length; i++) {
+		fn_onExpandSubFolders(grid,grid.getChildItemsId(childIds[i], true, "|").split("|"));
+	}	
+};
+
+//^^^^^ Custom menu actions
+
+//--- helper ------
+fn_getValidFolderRowId = function (eActionArgs) {
+	var rowId = eActionArgs.rowId;
+	if (eActionArgs.isPhantomRow) {
+		rowId = eActionArgs.gridHandler.grid.getParentId(rowId);
+	}
+	return rowId;
+};
+
+//-----------------
+fn_onDeleteFolderRelatedItem = function (eActionArgs, relshipName, isNullRel, confirmMsg, isDeleteRelatedItem, isDeleteWhereUsedFirst) {
+	if (!top.aras.confirm(confirmMsg)) {return;}
+	if (!isDeleteWhereUsedFirst || isDeleteWhereUsedFirst === undefined) {isDeleteWhereUsedFirst = false;}
+	if (isDeleteRelatedItem && isDeleteWhereUsedFirst) {
+		//call Server Method to handle the delete (will also delete relationships to all cFolders with this item)
+		var itm = innovator.getItemById(eActionArgs.rowItemType, eActionArgs.rowItemId);
+		if (itm) {
+			itm.setAttribute("checkWhereUsed","1");  // 
+			var check = itm.apply("Del RelatedItem in All cFolders");
+			if (check.getItemCount() > 1) {
+				if (!top.aras.confirm(top.aras.getResource("ItemFolders", "itemfoldertreegrid.message.confirm_delete_ctrld_item_and_remove_from_other_folders"))) {return;}
+			}
+			itm.removeAttribute("checkWhereUsed");
+			itm = itm.apply("Del RelatedItem in All cFolders");
+			if (itm.isError()) {top.aras.AlertError(top.aras.getResource("ItemFolders", "itemfoldertreegrid.message.cannot_delete_ctrld_item")+itm.getErrorString() ); return;}
+			
+			// remove folder from grid (delete row)
+			eActionArgs.gridHandler.grid.deleteRow(eActionArgs.rowId);
+		}
+		return;
+	}
+		
+	// get relationship to parent folder and then delete it
+	var parentFolderRowId = eActionArgs.gridHandler.grid.getParentId(eActionArgs.rowId);
+	if (eActionArgs.gridHandler.getGridRowUserData(parentFolderRowId,"isPhantomRow") === "1") {
+		parentFolderRowId = eActionArgs.gridHandler.grid.getParentId(parentFolderRowId);  // go up one more level
+	}
+  
+	var parentFolderId = eActionArgs.gridHandler.getGridRowUserData(parentFolderRowId,"rowItemID");
+	var delCmd = top.aras.newIOMItem("");
+
+	var relId;
+	if (isNullRel) {
+		relId = eActionArgs.rowItemId;
+	}
+	else {
+		delCmd.loadAML("<Item type='"+relshipName+"' action='get' ><source_id>"+parentFolderId+"</source_id><related_id>"+eActionArgs.rowItemId+"</related_id></Item>");
+		delCmd = delCmd.apply();
+		if (delCmd.isError()) {top.aras.AlertError(top.aras.getResource("ItemFolders", "itemfoldertreegrid.message.cannot_delete_relationship_to_parent_folder")+delCmd.getErrorString() ); return;}
+		relId = delCmd.getID();
+	}
+	delCmd.loadAML("<Item type='"+relshipName+"' action='delete' id='"+relId+"' />");
+	delCmd = delCmd.apply();
+	if (delCmd.isError()) {top.aras.AlertError(top.aras.getResource("ItemFolders", "itemfoldertreegrid.message.cannot_delete_relationship_to_parent_folder")+delCmd.getErrorString() ); return;}
+  
+	// remove folder from grid (delete row)
+	eActionArgs.gridHandler.grid.deleteRow(eActionArgs.rowId);
+
+	// now delete the related item, as well
+	if (isDeleteRelatedItem && !isNullRel) {
+		delCmd.loadAML("<Item type='"+eActionArgs.rowItemType+"' action='delete' id='"+eActionArgs.rowItemId+"' />");
+		delCmd = delCmd.apply(a);
+		if (delCmd.isError()) {top.aras.AlertError(top.aras.getResource("ItemFolders", "itemfoldertreegrid.message.cannot_delete_ctrld_item")+delCmd.getErrorString() ); return;}
+		//if (delCmd.isError()) {top.aras.AlertError("Cannot delete item ("+eActionArgs.rowItemType+") - "+delCmd.getErrorString() ); return;}
+	}
+};
+//-----------------
+fn_fetchFolderRelationshipAndDrawAsChildRowOnGrid = function (gridHandler, folderRowId, reshipId, relQueryName, isStructureRel, phantomGroupRowId) {
+	var amlQry = gridHandler.CONFIG.buildGridDataRelShipQueryAMLbyId(gridHandler.viewName, relQueryName, reshipId, false, isStructureRel);  // false = is not isReleased
+	if (!amlQry) {return innovator.newError("RelShipQueryAML for relQueryName '"+relQueryName+"' failed. It is likely not defined in the grid configuration. Please see your System Administrator");}
+	var qry = top.aras.newIOMItem("","");
+
+	qry.loadAML(amlQry); 
+	folderRelatedItemRel = qry.apply();
+	if (folderRelatedItemRel.getItemCount() <=0) {return folderRelatedItemRel;}  // error: no controlled items for this folder 
+	folderRelatedItemRel = folderRelatedItemRel.getItemByIndex(0);
+	var parentFolderItem = folderRelatedItemRel.getPropertyItem("source_id");
+	var parentItemId = folderRelatedItemRel.getProperty("source_id","invalid");
+	var parentItemConfigId = parentFolderItem.getProperty("config_id");
+	
+	var structItemRelShipConfig = {}; // allocate before setting the values;
+	structItemRelShipConfig.relQueryName = relQueryName;
+    structItemRelShipConfig.relName = gridHandler.structureRowRelDefinitions[relQueryName].relationshipName;
+    structItemRelShipConfig.groupRowId = "";
+    structItemRelShipConfig.groupName = gridHandler.structureRowRelDefinitions[relQueryName].groupName;
+    structItemRelShipConfig.groupLabel = gridHandler.structureRowRelDefinitions[relQueryName].groupLabel;
+    structItemRelShipConfig.groupIcon = gridHandler.structureRowRelDefinitions[relQueryName].groupIcon;
+    structItemRelShipConfig.rowIcon = gridHandler.structureRowRelDefinitions[relQueryName].rowIcon;
+    structItemRelShipConfig.groupRowBgColor = gridHandler.structureRowRelDefinitions[relQueryName].groupRowBgColor;
+    structItemRelShipConfig.rowBgColor = gridHandler.structureRowRelDefinitions[relQueryName].rowBgColor;
+    structItemRelShipConfig.isReverseQuery = false;
+    structItemRelShipConfig.relatedItemReleasedCondition = "";
+    structItemRelShipConfig.relatedItemCondition = "";
+	structItemRelShipConfig.isApplyChildBgColorUpToRoot = gridHandler.CONFIG.isApplyChildBgColorUpToRoot();
+	structItemRelShipConfig.bgColorOfStructItemWithChildren = gridHandler.CONFIG.getBgColorOfStructItemWithChildren();
+	structItemRelShipConfig.doNotColorRootRows = !gridHandler.isStartedFromTOCview;
+	
+ 	var dataItem = top.aras.newIOMItem("","");
+	dataItem.loadAML("<Item type='cFolder' action='get' id='"+parentItemId+"' ><config_id>"+parentItemConfigId+"</config_id></Item>");
+	dataItem.addRelationship(folderRelatedItemRel);
+
+	//###TODO### this call seems to work - but new rows are not shown on grid after this call ???
+	gridHandler.DrawStructureRowRelationshipsGroupRows(gridHandler.structureRelName, parentItemId, parentItemConfigId, dataItem, folderRowId, structItemRelShipConfig, false, "");
+/*
+	// expand rows to see new rows
+	setTimeout(function(){
+	try {
+		} finally {
+			gridHandler.grid.openItem(folderRowId); //Root Item
+			if (phantomGroupRowId) {gridHandler.grid.openItem(phantomGroupRowId); }
+
+	}} , 200);
+*/
+	return folderRelatedItemRel;
+};
+]]></method_code>
+  <method_type>JavaScript</method_type>
+  <name>cFolder Struct GridMenu Handler</name>
+ </Item>
+</AML>

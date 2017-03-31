@@ -67,26 +67,6 @@
     <track_history>0</track_history>
     <name>related_projects</name>
    </Item>
-   <Item type="Server Event" id="209A3F4588904414A37553AE83DD4CE9" action="add">
-    <related_id keyed_name="Show Doc Grid Icons" type="Method">
-     <Item type="Method" action="get" select="id">
-      <name>Show Doc Grid Icons</name>
-     </Item>
-    </related_id>
-    <server_event>onAfterGet</server_event>
-    <sort_order>1536</sort_order>
-    <source_id keyed_name="Document" type="ItemType" name="Document">B88C14B99EF449828C5D926E39EE8B89</source_id>
-   </Item>
-   <Item type="Server Event" id="92F0A53B16844C23B267D4D8EFE797EF" action="add">
-    <related_id keyed_name="Select Doc Grid Icon Props" type="Method">
-     <Item type="Method" action="get" select="id">
-      <name>Select Doc Grid Icon Props</name>
-     </Item>
-    </related_id>
-    <server_event>onBeforeGet</server_event>
-    <sort_order>5</sort_order>
-    <source_id keyed_name="Document" type="ItemType" name="Document">B88C14B99EF449828C5D926E39EE8B89</source_id>
-   </Item>
   </Relationships>
  </Item>
 </AML>

@@ -1,0 +1,11 @@
+You can remove these elments, in case you still have these from older versions of Grid Utitlities
+-------------------------------------------------------------------------------------------------
+
+Methods:
+---------------------
+CommonBase GridFuncs
+CommonBase GridRowFuncs
+commonBase TreeGrid LoadConfig
+commonBase TreeGridConfig
+CommonBaseTreeGridFuncs
+CommonDojoBaseTreeGridFuncs

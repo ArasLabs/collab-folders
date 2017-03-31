@@ -1,0 +1,42 @@
+﻿<AML>
+ <Item type="Method" id="6BB75572EFAB4AF5AE291311B8D3B923" action="add">
+  <execution_allowed_to keyed_name="World" type="Identity">A73B655731924CD0B027E4F4D5FCC0A9</execution_allowed_to>
+  <method_code><![CDATA[// this context must be "Part"
+// this is wrapper method calling another client method
+var thisItem = this;
+
+var formName = "Configurable Structure Grid"; // generic grid handling (from Common GridUtilities)
+var formNd = top.aras.getItemByName("Form", formName, 0);
+if (formNd)
+{
+    var param = new Object();
+
+    param.title = formName +": "+thisItem.getProperty("item_number","invalid")+
+							"- "+thisItem.getProperty("name",""); // to be shown in the blue bar at top of window
+	
+    param.formId = formNd.getAttribute("id");
+    param.aras = top.aras;
+  	param.item = thisItem;  // in the opened dialog context this item will be accessible in 'document.thisItem'
+  	param.itemType = thisItem.getType();
+    var width = top.aras.getItemProperty(formNd, "width");
+    var height = top.aras.getItemProperty(formNd, "height");
+	var options = { dialogHeight:height, dialogWidth:width, resizable:true, scroll:true};
+
+	if (top.aras.Browser.isIe()) {
+		if (top.aras.modelessDialogHelper) {
+			top.aras.modelessDialogHelper.show('DefaultModeless', window, param, options, 'ShowFormAsADialog.html');
+		}
+		else {
+			top.aras.modalDialogHelper.show('DefaultModal', window, param, options, 'ShowFormAsADialog.html');
+		}
+	}
+	else {
+		//if (top.aras.Browser.isFf())
+		top.aras.modalDialogHelper.show('DefaultModal', window, param, options, 'ShowFormAsADialog.html');
+	}
+}
+return;]]></method_code>
+  <method_type>JavaScript</method_type>
+  <name>configStructure Open Dialog</name>
+ </Item>
+</AML>

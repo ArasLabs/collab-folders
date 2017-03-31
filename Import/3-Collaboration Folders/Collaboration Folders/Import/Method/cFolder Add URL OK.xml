@@ -1,0 +1,32 @@
+﻿<AML>
+ <Item type="Method" id="C79F5A41B9F84FE1A4D56B3CEFF8EAA1" action="add">
+  <execution_allowed_to keyed_name="World" type="Identity">A73B655731924CD0B027E4F4D5FCC0A9</execution_allowed_to>
+  <method_code><![CDATA[var result = new Object();
+
+//result.url = document.getElementsByName("folder_name")[0].value;
+//result.description = document.getElementsByName("folder_description")[0].value;
+
+//## new Aras10 compliant code
+result.url = this.form.url.value;
+result.description = this.form.url_description.value;
+result.name = this.form.name.value;
+
+if (!result.name || result.name === "") {
+  top.aras.AlertError("Name must be set !");
+  return;
+}
+if (!result.url || result.url === "") {
+  top.aras.AlertError("URL must be set !");
+  return;
+}
+//return values in result object
+if (!top.setReturnValue) {top.returnValue = result;}
+else {top.setReturnValue(result);}
+
+//close the window
+top.window.close();
+]]></method_code>
+  <method_type>JavaScript</method_type>
+  <name>cFolder Add URL OK</name>
+ </Item>
+</AML>

@@ -1,0 +1,37 @@
+﻿<AML>
+ <Item type="List" id="85821BDCC1B549A5AC92D74AEBE6A414" action="add">
+  <name>tgc_LinkKey Types</name>
+  <Relationships>
+   <Item type="Value" id="84C85F6813B749C0A78D089B68222843" action="add">
+    <label xml:lang="en">OpenRowItem</label>
+    <sort_order>10</sort_order>
+    <source_id keyed_name="tgc_LinkKey Types" type="List">85821BDCC1B549A5AC92D74AEBE6A414</source_id>
+    <value>OpenRowItem</value>
+   </Item>
+   <Item type="Value" id="2DC3C8598EC14A54BE41A574F12AF2E3" action="add">
+    <label xml:lang="en">OpenNewRowItem</label>
+    <sort_order>20</sort_order>
+    <source_id keyed_name="tgc_LinkKey Types" type="List">85821BDCC1B549A5AC92D74AEBE6A414</source_id>
+    <value>OpenNewRowItem</value>
+   </Item>
+   <Item type="Value" id="DF2D227386B24F9C9A6CE3A08200FDB8" action="add">
+    <label xml:lang="en">OpenPropertyItem --&gt;</label>
+    <sort_order>30</sort_order>
+    <source_id keyed_name="tgc_LinkKey Types" type="List">85821BDCC1B549A5AC92D74AEBE6A414</source_id>
+    <value>OpenPropertyItem</value>
+   </Item>
+   <Item type="Value" id="7DEF415AE01E4BF59FEC88C3553A12C6" action="add">
+    <label xml:lang="en">OpenURL</label>
+    <sort_order>40</sort_order>
+    <source_id keyed_name="tgc_LinkKey Types" type="List">85821BDCC1B549A5AC92D74AEBE6A414</source_id>
+    <value>OpenURL</value>
+   </Item>
+   <Item type="Value" id="F00DE93F93FE4D9495F7823EF142AEFA" action="add">
+    <label xml:lang="en">OpenFilesOfRowItem</label>
+    <sort_order>100</sort_order>
+    <source_id keyed_name="tgc_LinkKey Types" type="List">85821BDCC1B549A5AC92D74AEBE6A414</source_id>
+    <value>OpenFilesOfRowItem</value>
+   </Item>
+  </Relationships>
+ </Item>
+</AML>

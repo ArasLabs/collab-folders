@@ -1,0 +1,93 @@
+﻿<AML>
+ <Item type="Method" id="CE56727260CA4A538A2B2B88711A1E67" action="add">
+  <comments>called from grid or action - promotes Folders including all sub folders</comments>
+  <execution_allowed_to keyed_name="World" type="Identity">A73B655731924CD0B027E4F4D5FCC0A9</execution_allowed_to>
+  <method_code><![CDATA[' this method must be called from an item action
+' from ItemTypes: "cFolder"
+' property "state" must contain the target status to promote all to.
+
+'System.Diagnostics.Debugger.Break()
+Dim thisItemType As String = Me.GetType()
+Dim thisItemId As String = Me.GetID()
+Dim targetStatus As String = Me.getProperty("state","")
+
+Dim inn As Innovator = Me.getInnovator()
+Dim isPromoteAsArasPLM As Boolean = (Me.getAttribute("promoteAsArasPLM","0") = "1")
+
+' run some checks first ...
+If (thisItemType = "") Then
+  Return inn.newError("Item type '" & thisItemType & "' in context not allowd. Must be of type 'cFolder'")
+End If
+If (targetStatus = "") Then
+  Return inn.newError("Property 'state' missing for cFolder ('" & thisItemId & "')")
+End If
+' Make sure the current user Is In the Owner identity (if promote as ArasPLM is off)
+Dim ownedById As String = Me.getProperty("owned_by_id")
+If (Not isPromoteAsArasPLM And Not CCO.Permissions.IdentityListHasId(Aras.Server.Security.Permissions.Current.IdentitiesList, ownedById)) Then
+  Return inn.newError(CCO.ErrorLookup.Lookup("PE_ManualRelease_YouMustBeAMember", Me.getPropertyAttribute("owned_by_id","keyed_name","Owner")))
+End If
+
+'Call utitity method To traverse Class hierarchy
+Dim qryItem As Item  = Me.newItem("cFolder","Get ItemIDs of Structure Down")
+qryItem.setAttribute("relationshipName","Sub cFolder")
+qryItem.setID(thisItemId)
+qryItem.setAttribute("stopAtLevel","-1")
+qryItem = qryItem.apply()
+Dim folderIdsList As String = qryItem.getResult()
+' add this folder id to list
+If folderIdsList = "" Then
+  folderIdsList = thisItemId
+Else
+  folderIdsList = thisItemId & "," & folderIdsList
+End If
+
+' loop through all ids and try to promote these folders
+Dim suIdentityWasGranted As Boolean = False
+Dim suIdentity As Aras.Server.Security.Identity = Nothing
+If (isPromoteAsArasPLM) Then
+' do a promoteItem with role of identity "Aras PLM"
+  suIdentity = Aras.Server.Security.Identity.GetByName("Aras PLM")
+  suIdentityWasGranted = Aras.Server.Security.Permissions.GrantIdentity(suIdentity)
+End If
+Dim folderIds As String() = folderIdsList.split(",")
+Dim i As Integer
+Dim warningMsg As String = ""
+Dim warningFolderNames As String = ""
+For i=0 To folderIds.Length-1
+
+  Dim thisItem As Item = Me.newItem(thisItemType,"get")
+  thisItem.SetID(folderIds(i))
+  thisItem.setAttribute("serverEvents","0")
+  thisItem.setAttribute("select","name,locked_by_id,owned_by_id,managed_by_id,team_id,state")
+  thisItem = thisItem.apply()
+  
+  ' run some checks
+  Dim doPromote As Boolean = True
+  If thisItem.getProperty("locked_by_id","") <> "" Then doPromote = False
+  ownedById = thisItem.getProperty("owned_by_id")
+  If (Not CCO.Permissions.IdentityListHasId(Aras.Server.Security.Permissions.Current.IdentitiesList, ownedById)) Then doPromote = False
+
+  If Not doPromote Then warningFolderNames = warningFolderNames & "," & thisItem.getProperty("name","")
+  
+  ' do the promote
+  If (warningFolderNames = "" And thisItem.getProperty("state","") <> targetStatus) Then
+    thisItem.setAction("promoteItem")
+    thisItem.setProperty("state",targetStatus)
+    thisItem = thisItem.apply()
+    If thisItem.isError() Then
+      If suIdentityWasGranted Then Aras.Server.Security.Permissions.RevokeIdentity(suIdentity)
+      Return thisItem
+    End If
+  End If
+
+Next i
+
+If suIdentityWasGranted Then Aras.Server.Security.Permissions.RevokeIdentity(suIdentity)
+
+If warningFolderNames <> "" Then Return inn.newResult("Some folders are locked or you are not the owner (" & warningFolderNames & "). Promote action was skipped for these folders !")
+
+Return inn.newResult("")]]></method_code>
+  <method_type>VB</method_type>
+  <name>cFolders Promote Down</name>
+ </Item>
+</AML>

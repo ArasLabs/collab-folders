@@ -1,0 +1,119 @@
+﻿<AML>
+ <Item type="Method" id="FEBCBA385EF24ACA84C7D790F924F485" action="add">
+  <comments>Forces delete of subFolders. Runs as "Super User"</comments>
+  <execution_allowed_to keyed_name="World" type="Identity">A73B655731924CD0B027E4F4D5FCC0A9</execution_allowed_to>
+  <method_code><![CDATA[/// Generic Method. called from client method (folder Menu Handler action)
+/// 
+/// custom item attributes on context item:
+///  folderRelationships="rel1,rel2..."   holds a comma separated list of the folder outgoing relationships to copy
+
+//System.Diagnostics.Debugger.Break();
+string folderRelationships = this.getAttribute("folderRelationships","");
+if (folderRelationships == "") {return this.getInnovator().newError("Item attribute 'folderRelationships' is missing!");}  // return error
+
+// Grant 'Super User' permissions - calling method must have validated "delete" permission on context item (cFolder) !!!
+Aras.Server.Security.Identity plmIdentity = Aras.Server.Security.Identity.GetByName("Super User");
+bool PermissionWasSet = Aras.Server.Security.Permissions.GrantIdentity(plmIdentity); 
+
+List<string> cFolderIdsList = new List<string>();
+
+// get folder whereUsed
+string aml = "";
+aml += "<Item type='Sub cFolder' action='get' select='id' >";
+aml += " <related_id>"+this.getID()+"</related_id>";
+aml += "</Item>";
+Item queryRes = this.newItem("");
+queryRes.loadAML(aml);
+queryRes = queryRes.apply();
+for (int i=0; i<queryRes.getItemCount(); i++) {cFolderIdsList.Add(queryRes.getItemByIndex(i).getID());}
+
+// get folder structure of folder to delete
+aml = "<Item type='cFolder' action='GetItemRepeatConfig' select='name,id,related_id,locked_by_id' id='"+this.getID()+"' >";
+aml +=	"<Relationships>";
+aml +=	"	<Item type='Sub cFolder' action='get' repeatProp='related_id' repeatTimes='0' select='id,related_id,locked_by_id' />";
+
+string[] relNames = folderRelationships.Split(',');
+for (int r=0; r<relNames.Length; r++) {
+	aml += 		"<Item type='"+relNames[r]+"' action='get' select='id,related_id,locked_by_id' />";
+}
+
+aml +=	"</Relationships>";
+aml += "</Item>";
+queryRes = this.newItem("");
+queryRes.loadAML(aml);
+queryRes = queryRes.apply();
+if (queryRes.isError()) {return queryRes;}
+Item copyFromFolderItem = queryRes.getItemByIndex(0);
+
+// check for locked foldersExpand any truncated branches
+Item folderStructItems = queryRes.getItemsByXPath("//Item[@type='cFolder' and locked_by_id != '']");
+if (folderStructItems.getItemCount() > 0) {return this.getInnovator().newError("Some folders are still locked");}
+
+// Expand any truncated branches
+folderStructItems = queryRes.getItemsByXPath("//Item[related_id[not(Item)]]");
+Item tmpItem;
+for (int i=0; i<folderStructItems.getItemCount(); i++) {
+	tmpItem = folderStructItems.getItemByIndex(i);
+	Item expRelItem = queryRes.getItemsByXPath("//Item[@id='"+tmpItem.getProperty("related_id")+"']");
+	if (expRelItem.getItemCount() > 1) {
+		tmpItem.setRelatedItem(expRelItem.getItemByIndex(0));
+	}
+}
+
+// get all ids of relationships in structure
+folderStructItems = queryRes.getItemsByXPath("//Item");
+
+string deleteRelshipsAML = "";
+string deleteItemsAML = "";
+folderRelationships = ","+folderRelationships+",";
+for (int i=0; i<folderStructItems.getItemCount(); i++)
+{
+	tmpItem = folderStructItems.getItemByIndex(i);
+	string tmpId = tmpItem.getID();
+	string tmpType = tmpItem.getType();
+
+	// if a relationship node
+	if (tmpType == "Sub cFolder") {
+		cFolderIdsList.Add(tmpId);
+	}
+	if (folderRelationships.IndexOf(","+tmpType+",") >= 0) {
+		deleteRelshipsAML += "<Item type='"+tmpType+"' action='delete' id='"+tmpId+"' serverEvents='0' />";
+	}
+	// if defined item nodes
+	if (tmpType == "cFolder") {
+			deleteItemsAML += "<Item type='"+tmpType+"' action='delete' id='"+tmpId+"' serverEvents='0' />";
+	}
+	if (tmpType == "File") {
+		//special procesing for files
+		// file could be referenced from multiple folder (copy folder action does this !!!)
+		// must check every file for where used. Only if count is 1, delete the file
+		Item fileWhereUsed = this.newItem("cFolder File","get");
+		fileWhereUsed.setProperty("related_id",tmpId);
+		fileWhereUsed = fileWhereUsed.apply();
+		if (fileWhereUsed.getItemCount() == 1) {
+			deleteItemsAML += "<Item type='"+tmpType+"' action='delete' id='"+tmpId+"' serverEvents='0' />";
+		}
+	}
+	//ignore others
+}
+
+// force delete of Sub cFolder rels (because it has a onBeforeDelete event checking for next level folders,  serverEvents='0' doe not disable it !!!)
+queryRes = this.getInnovator().applySQL("DELETE [Sub_cFolder] WHERE [Sub_cFolder].id in ('"+string.Join("','",cFolderIdsList)+"')");
+if (queryRes.isError()) {return queryRes;}
+
+// delete relationships, first
+// then delete cFolder and File Items
+aml = "<AML>";
+aml += deleteRelshipsAML;
+aml += deleteItemsAML;
+aml += "</AML>";
+
+queryRes = this.getInnovator().applyAML(aml);
+if (PermissionWasSet) {Aras.Server.Security.Permissions.RevokeIdentity(plmIdentity);} // Revoke 'Aras PLM' permissions
+if (queryRes.isError()) {return queryRes;}
+
+return this;]]></method_code>
+  <method_type>C#</method_type>
+  <name>Delete cFolder with SubFolders</name>
+ </Item>
+</AML>

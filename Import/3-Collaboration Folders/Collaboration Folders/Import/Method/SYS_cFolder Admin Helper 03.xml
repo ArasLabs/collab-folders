@@ -1,0 +1,28 @@
+﻿<AML>
+ <Item type="Method" id="F22FDF2A14494FCBB85C0CBBDD2DCF03" action="add">
+  <comments>cFolder - sets defaults to allow_sub_folders and allowed_relaionships rules. - SQL</comments>
+  <execution_allowed_to keyed_name="Administrators" type="Identity">2618D6F5A90949BAA7E920D1B04C7EE1</execution_allowed_to>
+  <method_code><![CDATA[' Use Run Method action
+
+' Data Administration tool
+Dim SQLstr As String = ""
+Dim inn As Innovator = Me.getInnovator()
+'System.Diagnostics.Debugger.Break()
+
+' select Sub cFolder relationship
+SQLstr = "UPDATE [cFolder] SET [cFolder].allow_sub_folders = '1'"
+SQLstr = SQLstr & " WHERE [cFolder].allow_sub_folders is Null"
+Dim res As Item = inn.applySQL(SQLstr)
+If res.isError() Then Return inn.newError(res.getErrorString())
+
+' select Sub cFolder relationship
+SQLstr = "UPDATE [cFolder] SET [cFolder].allowed_relationships = 'attachments_and_controlled_items'"
+SQLstr = SQLstr & " WHERE [cFolder].allowed_relationships is Null"
+res = inn.applySQL(SQLstr)
+If res.isError() Then Return inn.newError(res.getErrorString())
+
+Return inn.newResult("DONE")]]></method_code>
+  <method_type>VB</method_type>
+  <name>SYS_cFolder Admin Helper 03</name>
+ </Item>
+</AML>

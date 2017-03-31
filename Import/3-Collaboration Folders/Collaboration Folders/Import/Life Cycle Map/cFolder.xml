@@ -1,0 +1,137 @@
+﻿<AML>
+ <Item type="Life Cycle Map" id="A52B3836764945E8A487434CFBBB0ECD" action="add">
+  <start_state keyed_name="Planning" type="Life Cycle State">806CE9B144B64444A1E3DC9A1FE0CF4B</start_state>
+  <name>cFolder</name>
+  <Relationships>
+   <Item type="Life Cycle State" id="52A14059A3534F61BFD3D992311B3377" action="add">
+    <image>../Images/InBasketAction.svg</image>
+    <item_behavior>float</item_behavior>
+    <set_is_released>1</set_is_released>
+    <set_not_lockable>0</set_not_lockable>
+    <sort_order>384</sort_order>
+    <source_id keyed_name="cFolder" type="Life Cycle Map">A52B3836764945E8A487434CFBBB0ECD</source_id>
+    <state_permission_id keyed_name="cFolder Active" type="Permission">E178977849A643F597F4446BC8D038D6</state_permission_id>
+    <x>187</x>
+    <y>63</y>
+    <name>Active</name>
+   </Item>
+   <Item type="Life Cycle State" id="FF5BFE3EF9CE4B1BAFB3B186F9B28755" action="add">
+    <image>../Images/LifeCycleState.svg</image>
+    <item_behavior>fixed</item_behavior>
+    <set_is_released>1</set_is_released>
+    <set_not_lockable>0</set_not_lockable>
+    <sort_order>256</sort_order>
+    <source_id keyed_name="cFolder" type="Life Cycle Map">A52B3836764945E8A487434CFBBB0ECD</source_id>
+    <state_permission_id keyed_name="cFolder Archived" type="Permission">CDC29DEAE0F649C2B5332F3CC04F10B7</state_permission_id>
+    <x>345</x>
+    <y>62</y>
+    <name>Archived</name>
+   </Item>
+   <Item type="Life Cycle State" id="806CE9B144B64444A1E3DC9A1FE0CF4B" action="add">
+    <image>../Images/WorkflowStart.svg</image>
+    <item_behavior>float</item_behavior>
+    <set_is_released>0</set_is_released>
+    <set_not_lockable>0</set_not_lockable>
+    <sort_order>128</sort_order>
+    <source_id keyed_name="cFolder" type="Life Cycle Map">A52B3836764945E8A487434CFBBB0ECD</source_id>
+    <state_permission_id keyed_name="cFolder Planning" type="Permission">A1A0285C53274487861ED9C4D5680DEA</state_permission_id>
+    <x>33</x>
+    <y>62</y>
+    <name>Planning</name>
+   </Item>
+   <Item type="Life Cycle Transition" id="4CC5813446D04ED9AC974A15B5A733FE" action="add">
+    <from_state keyed_name="Active" type="Life Cycle State">52A14059A3534F61BFD3D992311B3377</from_state>
+    <get_comment>0</get_comment>
+    <role keyed_name="Owner" type="Identity">
+     <Item type="Identity" action="get" select="id">
+      <name>Owner</name>
+     </Item>
+    </role>
+    <segments>114,127</segments>
+    <sort_order>512</sort_order>
+    <source_id keyed_name="cFolder" type="Life Cycle Map">A52B3836764945E8A487434CFBBB0ECD</source_id>
+    <to_state keyed_name="Planning" type="Life Cycle State">806CE9B144B64444A1E3DC9A1FE0CF4B</to_state>
+    <x>-63</x>
+    <y>44</y>
+   </Item>
+   <Item type="Life Cycle Transition" id="5594D6C1824349449C084D79258BA6C2" action="add">
+    <from_state keyed_name="Active" type="Life Cycle State">52A14059A3534F61BFD3D992311B3377</from_state>
+    <get_comment>0</get_comment>
+    <role keyed_name="Owner" type="Identity">
+     <Item type="Identity" action="get" select="id">
+      <name>Owner</name>
+     </Item>
+    </role>
+    <segments></segments>
+    <sort_order>256</sort_order>
+    <source_id keyed_name="cFolder" type="Life Cycle Map">A52B3836764945E8A487434CFBBB0ECD</source_id>
+    <to_state keyed_name="Archived" type="Life Cycle State">FF5BFE3EF9CE4B1BAFB3B186F9B28755</to_state>
+    <x>45</x>
+    <y>-2</y>
+   </Item>
+   <Item type="Life Cycle Transition" id="8E6917842C0546729F97A061DDE1714D" action="add">
+    <from_state keyed_name="Active" type="Life Cycle State">52A14059A3534F61BFD3D992311B3377</from_state>
+    <get_comment>0</get_comment>
+    <role keyed_name="Aras PLM" type="Identity">56A96DA9E981481688563E2D14D5D878</role>
+    <segments></segments>
+    <sort_order>768</sort_order>
+    <source_id keyed_name="cFolder" type="Life Cycle Map">A52B3836764945E8A487434CFBBB0ECD</source_id>
+    <to_state keyed_name="Archived" type="Life Cycle State">FF5BFE3EF9CE4B1BAFB3B186F9B28755</to_state>
+    <x>44</x>
+    <y>14</y>
+   </Item>
+   <Item type="Life Cycle Transition" id="386B65649784465395E1D6C4EC309D33" action="add">
+    <from_state keyed_name="Planning" type="Life Cycle State">806CE9B144B64444A1E3DC9A1FE0CF4B</from_state>
+    <get_comment>0</get_comment>
+    <role keyed_name="Owner" type="Identity">
+     <Item type="Identity" action="get" select="id">
+      <name>Owner</name>
+     </Item>
+    </role>
+    <segments>113,21|316,21</segments>
+    <sort_order>384</sort_order>
+    <source_id keyed_name="cFolder" type="Life Cycle Map">A52B3836764945E8A487434CFBBB0ECD</source_id>
+    <to_state keyed_name="Archived" type="Life Cycle State">FF5BFE3EF9CE4B1BAFB3B186F9B28755</to_state>
+    <x>77</x>
+    <y>-38</y>
+   </Item>
+   <Item type="Life Cycle Transition" id="C29C08E497634A68BFA8068B42E6D4D7" action="add">
+    <from_state keyed_name="Planning" type="Life Cycle State">806CE9B144B64444A1E3DC9A1FE0CF4B</from_state>
+    <get_comment>0</get_comment>
+    <role keyed_name="Owner" type="Identity">
+     <Item type="Identity" action="get" select="id">
+      <name>Owner</name>
+     </Item>
+    </role>
+    <segments></segments>
+    <sort_order>128</sort_order>
+    <source_id keyed_name="cFolder" type="Life Cycle Map">A52B3836764945E8A487434CFBBB0ECD</source_id>
+    <to_state keyed_name="Active" type="Life Cycle State">52A14059A3534F61BFD3D992311B3377</to_state>
+    <x>62</x>
+    <y>0</y>
+   </Item>
+   <Item type="Life Cycle Transition" id="FFA04420A4724E5B85E580A56A3E54BE" action="add">
+    <from_state keyed_name="Planning" type="Life Cycle State">806CE9B144B64444A1E3DC9A1FE0CF4B</from_state>
+    <get_comment>0</get_comment>
+    <role keyed_name="Aras PLM" type="Identity">56A96DA9E981481688563E2D14D5D878</role>
+    <segments></segments>
+    <sort_order>640</sort_order>
+    <source_id keyed_name="cFolder" type="Life Cycle Map">A52B3836764945E8A487434CFBBB0ECD</source_id>
+    <to_state keyed_name="Active" type="Life Cycle State">52A14059A3534F61BFD3D992311B3377</to_state>
+    <x>45</x>
+    <y>14</y>
+   </Item>
+   <Item type="Life Cycle Transition" id="9F79F696198A425881117A80629D9A4A" action="add">
+    <from_state keyed_name="Archived" type="Life Cycle State">FF5BFE3EF9CE4B1BAFB3B186F9B28755</from_state>
+    <get_comment>0</get_comment>
+    <role keyed_name="Administrators" type="Identity">2618D6F5A90949BAA7E920D1B04C7EE1</role>
+    <segments>275,38</segments>
+    <sort_order>896</sort_order>
+    <source_id keyed_name="cFolder" type="Life Cycle Map">A52B3836764945E8A487434CFBBB0ECD</source_id>
+    <to_state keyed_name="Active" type="Life Cycle State">52A14059A3534F61BFD3D992311B3377</to_state>
+    <x>-137</x>
+    <y>-31</y>
+   </Item>
+  </Relationships>
+ </Item>
+</AML>

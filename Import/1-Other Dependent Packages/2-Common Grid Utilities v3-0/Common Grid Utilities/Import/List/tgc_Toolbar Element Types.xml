@@ -1,0 +1,31 @@
+﻿<AML>
+ <Item type="List" id="020922885E7546378D3779CE1F35CE70" action="add">
+  <name>tgc_Toolbar Element Types</name>
+  <Relationships>
+   <Item type="Value" id="1D9EECE50EA84D75BF27E74735BA85B6" action="add">
+    <label xml:lang="en">separator</label>
+    <sort_order>128</sort_order>
+    <source_id keyed_name="tgc_Toolbar Element Types" type="List">020922885E7546378D3779CE1F35CE70</source_id>
+    <value>separator</value>
+   </Item>
+   <Item type="Value" id="B03800D8822742F49914C90DEC16DF98" action="add">
+    <label xml:lang="en">button</label>
+    <sort_order>256</sort_order>
+    <source_id keyed_name="tgc_Toolbar Element Types" type="List">020922885E7546378D3779CE1F35CE70</source_id>
+    <value>button</value>
+   </Item>
+   <Item type="Value" id="E8968867DAD04375A11C217995754A47" action="add">
+    <label xml:lang="en">choice</label>
+    <sort_order>384</sort_order>
+    <source_id keyed_name="tgc_Toolbar Element Types" type="List">020922885E7546378D3779CE1F35CE70</source_id>
+    <value>choice</value>
+   </Item>
+   <Item type="Value" id="8F9C1B596DAE4C749028B897BAA84F88" action="add">
+    <label xml:lang="en">edit</label>
+    <sort_order>512</sort_order>
+    <source_id keyed_name="tgc_Toolbar Element Types" type="List">020922885E7546378D3779CE1F35CE70</source_id>
+    <value>edit</value>
+   </Item>
+  </Relationships>
+ </Item>
+</AML>

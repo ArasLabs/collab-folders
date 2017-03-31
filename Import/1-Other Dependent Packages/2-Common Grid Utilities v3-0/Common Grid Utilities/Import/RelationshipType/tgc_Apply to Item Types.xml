@@ -1,0 +1,230 @@
+﻿<AML>
+ <Item type="RelationshipType" id="345563CAE8BB4AEB969DE46731F963DF" action="add" dependencyLevel="0">
+  <auto_search>1</auto_search>
+  <behavior>float</behavior>
+  <copy_permissions>0</copy_permissions>
+  <create_related>0</create_related>
+  <hide_in_all>0</hide_in_all>
+  <inc_rel_key_name>1</inc_rel_key_name>
+  <inc_related_key_name>1</inc_related_key_name>
+  <is_list_type>0</is_list_type>
+  <label xml:lang="en">Apply to Item Types</label>
+  <new_show_related>0</new_show_related>
+  <related_notnull>0</related_notnull>
+  <related_option>2</related_option>
+  <relationship_id keyed_name="tgc_Apply to Item Types" type="ItemType" name="tgc_Apply to Item Types">
+   <Item type="ItemType" id="05C4CD82B1E14A34877A28ECD4FD9768" action="add">
+    <allow_private_permission>1</allow_private_permission>
+    <auto_search>0</auto_search>
+    <enforce_discovery>0</enforce_discovery>
+    <hide_where_used>0</hide_where_used>
+    <implementation_type>table</implementation_type>
+    <instance_data>TGC_APPLY_TO_ITEM_TYPES</instance_data>
+    <is_dependent>0</is_dependent>
+    <is_relationship>1</is_relationship>
+    <is_versionable>0</is_versionable>
+    <revisions keyed_name="Default" type="Revision">7FE395DD8B9F4E1090756A34B733D75E</revisions>
+    <show_parameters_tab>1</show_parameters_tab>
+    <structure_view>tabs off</structure_view>
+    <unlock_on_logout>0</unlock_on_logout>
+    <use_src_access>1</use_src_access>
+    <name>tgc_Apply to Item Types</name>
+    <Relationships>
+     <Item type="Property" id="64C31122E9A34E0CA45689173A30225F" action="add">
+      <column_alignment>left</column_alignment>
+      <column_width>300</column_width>
+      <data_type>string</data_type>
+      <is_hidden>0</is_hidden>
+      <is_hidden2>0</is_hidden2>
+      <is_indexed>0</is_indexed>
+      <is_keyed>0</is_keyed>
+      <is_multi_valued>0</is_multi_valued>
+      <is_required>0</is_required>
+      <label xml:lang="en">Description</label>
+      <range_inclusive>0</range_inclusive>
+      <readonly>0</readonly>
+      <sort_order>30</sort_order>
+      <source_id keyed_name="tgc_Apply to Item Types" type="ItemType" name="tgc_Apply to Item Types">05C4CD82B1E14A34877A28ECD4FD9768</source_id>
+      <stored_length>128</stored_length>
+      <track_history>0</track_history>
+      <name>description</name>
+     </Item>
+     <Item type="Property" id="D3464816EF3240748FC74967C57F658F" action="add">
+      <column_alignment>center</column_alignment>
+      <column_width>60</column_width>
+      <data_type>boolean</data_type>
+      <is_hidden>0</is_hidden>
+      <is_hidden2>0</is_hidden2>
+      <is_indexed>0</is_indexed>
+      <is_keyed>0</is_keyed>
+      <is_multi_valued>0</is_multi_valued>
+      <is_required>0</is_required>
+      <range_inclusive>0</range_inclusive>
+      <readonly>0</readonly>
+      <sort_order>6</sort_order>
+      <source_id keyed_name="tgc_Apply to Item Types" type="ItemType" name="tgc_Apply to Item Types">05C4CD82B1E14A34877A28ECD4FD9768</source_id>
+      <track_history>0</track_history>
+      <name>is_disabled</name>
+     </Item>
+     <Item type="Property" id="A5881B8A53484D4A82E5D85DEB6365F5" action="add">
+      <column_alignment>center</column_alignment>
+      <column_width>100</column_width>
+      <data_type>boolean</data_type>
+      <is_hidden>0</is_hidden>
+      <is_hidden2>0</is_hidden2>
+      <is_indexed>0</is_indexed>
+      <is_keyed>0</is_keyed>
+      <is_multi_valued>0</is_multi_valued>
+      <is_required>0</is_required>
+      <label xml:lang="en">Use with TOC view</label>
+      <range_inclusive>0</range_inclusive>
+      <readonly>0</readonly>
+      <sort_order>19</sort_order>
+      <source_id keyed_name="tgc_Apply to Item Types" type="ItemType" name="tgc_Apply to Item Types">05C4CD82B1E14A34877A28ECD4FD9768</source_id>
+      <track_history>0</track_history>
+      <name>is_used_with_toc_view</name>
+     </Item>
+     <Item type="Property" id="ED5A5CC1E058483D90E3FBB2558A558E" action="add">
+      <column_alignment>left</column_alignment>
+      <column_width>200</column_width>
+      <data_type>string</data_type>
+      <is_hidden>0</is_hidden>
+      <is_hidden2>0</is_hidden2>
+      <is_indexed>0</is_indexed>
+      <is_keyed>0</is_keyed>
+      <is_multi_valued>0</is_multi_valued>
+      <is_required>0</is_required>
+      <label xml:lang="en">Item Type Name</label>
+      <range_inclusive>0</range_inclusive>
+      <readonly>0</readonly>
+      <sort_order>10</sort_order>
+      <source_id keyed_name="tgc_Apply to Item Types" type="ItemType" name="tgc_Apply to Item Types">05C4CD82B1E14A34877A28ECD4FD9768</source_id>
+      <stored_length>32</stored_length>
+      <track_history>0</track_history>
+      <name>item_type_name</name>
+     </Item>
+     <Item type="Property" id="B13A55A5197B46E3BDDE8CA24DC691D7" action="add">
+      <column_alignment>left</column_alignment>
+      <column_width>200</column_width>
+      <data_type>string</data_type>
+      <is_hidden>0</is_hidden>
+      <is_hidden2>0</is_hidden2>
+      <is_indexed>0</is_indexed>
+      <is_keyed>0</is_keyed>
+      <is_multi_valued>0</is_multi_valued>
+      <is_required>0</is_required>
+      <label xml:lang="en">ConfigId of Structure Root Item</label>
+      <range_inclusive>0</range_inclusive>
+      <readonly>0</readonly>
+      <sort_order>21</sort_order>
+      <source_id keyed_name="tgc_Apply to Item Types" type="ItemType" name="tgc_Apply to Item Types">05C4CD82B1E14A34877A28ECD4FD9768</source_id>
+      <stored_length>32</stored_length>
+      <track_history>0</track_history>
+      <name>root_item_config_id</name>
+     </Item>
+     <Item type="Property" id="DC5301BDBF9748F38AAC12BC0F259CB4" action="add">
+      <column_alignment>left</column_alignment>
+      <column_width>150</column_width>
+      <data_type>string</data_type>
+      <is_hidden>0</is_hidden>
+      <is_hidden2>0</is_hidden2>
+      <is_indexed>0</is_indexed>
+      <is_keyed>0</is_keyed>
+      <is_multi_valued>0</is_multi_valued>
+      <is_required>0</is_required>
+      <label xml:lang="en">Effectivity (current or latest_released)</label>
+      <range_inclusive>0</range_inclusive>
+      <readonly>0</readonly>
+      <sort_order>23</sort_order>
+      <source_id keyed_name="tgc_Apply to Item Types" type="ItemType" name="tgc_Apply to Item Types">05C4CD82B1E14A34877A28ECD4FD9768</source_id>
+      <stored_length>40</stored_length>
+      <track_history>0</track_history>
+      <name>root_item_effectivity</name>
+     </Item>
+     <Item type="Property" id="0BE70E0BC46543BC893F6BE353A0B659" action="add">
+      <column_alignment>center</column_alignment>
+      <column_width>150</column_width>
+      <data_type>integer</data_type>
+      <is_hidden>0</is_hidden>
+      <is_hidden2>0</is_hidden2>
+      <is_indexed>0</is_indexed>
+      <is_keyed>0</is_keyed>
+      <is_multi_valued>0</is_multi_valued>
+      <is_required>0</is_required>
+      <label xml:lang="en">Gen (if empty, use current)</label>
+      <range_inclusive>0</range_inclusive>
+      <readonly>0</readonly>
+      <sort_order>22</sort_order>
+      <source_id keyed_name="tgc_Apply to Item Types" type="ItemType" name="tgc_Apply to Item Types">05C4CD82B1E14A34877A28ECD4FD9768</source_id>
+      <track_history>0</track_history>
+      <name>root_item_generation</name>
+     </Item>
+     <Item type="Property" id="77A4068EB797427FA867D315983E1E5F" action="add">
+      <column_alignment>left</column_alignment>
+      <column_width>150</column_width>
+      <data_type>string</data_type>
+      <default_value xml:lang="en"></default_value>
+      <is_hidden>0</is_hidden>
+      <is_hidden2>0</is_hidden2>
+      <is_indexed>0</is_indexed>
+      <is_keyed>0</is_keyed>
+      <is_multi_valued>0</is_multi_valued>
+      <is_required>0</is_required>
+      <label xml:lang="en">Property holding Root Item Id</label>
+      <range_inclusive>0</range_inclusive>
+      <readonly>0</readonly>
+      <sort_order>15</sort_order>
+      <source_id keyed_name="tgc_Apply to Item Types" type="ItemType" name="tgc_Apply to Item Types">05C4CD82B1E14A34877A28ECD4FD9768</source_id>
+      <stored_length>32</stored_length>
+      <track_history>0</track_history>
+      <name>root_item_property_name</name>
+     </Item>
+     <Item type="Property" id="A786E5BC35E04B648B897C777146A94B" action="add">
+      <column_alignment>left</column_alignment>
+      <data_type>string</data_type>
+      <is_hidden>0</is_hidden>
+      <is_hidden2>0</is_hidden2>
+      <is_indexed>0</is_indexed>
+      <is_keyed>0</is_keyed>
+      <is_multi_valued>0</is_multi_valued>
+      <is_required>0</is_required>
+      <label xml:lang="en">Root Item Type</label>
+      <range_inclusive>0</range_inclusive>
+      <readonly>0</readonly>
+      <sort_order>20</sort_order>
+      <source_id keyed_name="tgc_Apply to Item Types" type="ItemType" name="tgc_Apply to Item Types">05C4CD82B1E14A34877A28ECD4FD9768</source_id>
+      <stored_length>32</stored_length>
+      <track_history>0</track_history>
+      <name>root_item_type</name>
+     </Item>
+    </Relationships>
+   </Item>
+  </relationship_id>
+  <sort_order>512</sort_order>
+  <source_id keyed_name="tgc_Configuration" type="ItemType" name="tgc_Configuration">F656F94B1F2B46F5A25E9B32FAACF776</source_id>
+  <name>tgc_Apply to Item Types</name>
+ </Item>
+ <Item type="ItemType" id="05C4CD82B1E14A34877A28ECD4FD9768" action="edit">
+  <Relationships>
+   <Item type="Property" action="edit" where="source_id='05C4CD82B1E14A34877A28ECD4FD9768' and name='sort_order'">
+    <column_alignment>left</column_alignment>
+    <data_type>integer</data_type>
+    <is_hidden>1</is_hidden>
+    <is_hidden2>1</is_hidden2>
+    <is_indexed>0</is_indexed>
+    <is_keyed>0</is_keyed>
+    <is_multi_valued>0</is_multi_valued>
+    <is_required>0</is_required>
+    <label xml:lang="en">Pos</label>
+    <range_inclusive>0</range_inclusive>
+    <readonly>0</readonly>
+    <sort_order>3328</sort_order>
+    <source_id keyed_name="tgc_Apply to Item Types" type="ItemType" name="tgc_Apply to Item Types">05C4CD82B1E14A34877A28ECD4FD9768</source_id>
+    <track_history>0</track_history>
+    <name>sort_order</name>
+   </Item>
+  </Relationships>
+ </Item>
+ <Item type="View" action="delete" where="source_id='05C4CD82B1E14A34877A28ECD4FD9768'" />
+ <Item type="Form" action="delete" where="name='tgc_Apply to Item Types'" />
+</AML>

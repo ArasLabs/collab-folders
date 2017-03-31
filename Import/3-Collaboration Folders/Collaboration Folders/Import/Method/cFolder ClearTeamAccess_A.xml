@@ -1,0 +1,34 @@
+﻿<AML>
+ <Item type="Method" id="08E06496373C4CC787637561ED005B74" action="add">
+  <execution_allowed_to keyed_name="World" type="Identity">A73B655731924CD0B027E4F4D5FCC0A9</execution_allowed_to>
+  <method_code><![CDATA[// cannot be locked for this action
+if(!confirm(top.aras.getResource("ItemFolders", "itemfoldertreegrid.message.confirm_clear_folder_team"))) { return;}
+
+if (document.isEditMode) {
+  top.aras.AlertError(top.aras.getResource("ItemFolders", "itemfoldertreegrid.message.item_must_be_locked_for_action"));
+  return;
+}
+
+// user must be owner
+var ownerIdentId = this.getProperty("owned_by_id","");
+var sessionIdentitites_array = top.aras.getIdentityList().split(",");
+// now we have all identities the current user (session) is member of
+// scan if given identity is in the list - if yes, return true
+var isOwner = false;
+for (var i=0;i<sessionIdentitites_array.length;i++) {
+  if (ownerIdentId == sessionIdentitites_array[i]) {isOwner=true;}
+}
+if (!isOwner) {
+  top.aras.AlertError(top.aras.getResource("ItemFolders", "itemfoldertreegrid.message.user_must_be_owner_of_item_for_action"));
+  return;
+}
+
+//clear client side (triggers onPopulate event)
+this.setProperty("team_id","");
+
+return;
+]]></method_code>
+  <method_type>JavaScript</method_type>
+  <name>cFolder ClearTeamAccess_A</name>
+ </Item>
+</AML>

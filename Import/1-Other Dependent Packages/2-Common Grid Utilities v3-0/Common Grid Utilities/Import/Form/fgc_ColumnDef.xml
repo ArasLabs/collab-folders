@@ -1,0 +1,40 @@
+﻿<AML>
+ <Item type="Form" id="DF5503D37B574DE4B0FC95C94581FBA9" action="add">
+  <category_form>0</category_form>
+  <height>234</height>
+  <stylesheet><![CDATA[../styles/default.css]]></stylesheet>
+  <width>699</width>
+  <name>fgc_ColumnDef</name>
+  <Relationships>
+   <Item type="Body" id="6DB9724C32074FFD902A8D2EFAECC715" action="add">
+    <bg_color>#FFFFFF</bg_color>
+    <sort_order>128</sort_order>
+    <source_id keyed_name="fgc_ColumnDef" type="Form">DF5503D37B574DE4B0FC95C94581FBA9</source_id>
+    <Relationships>
+     <Item type="Field" id="97AD820276F74DC38E58C964C5DF780E" action="add">
+      <bg_color>#FFFFFF</bg_color>
+      <display_length_unit>px</display_length_unit>
+      <field_type>html</field_type>
+      <html_code><![CDATA[<span id='ITEM_INFO_INTERNAL_SPAN'/>
+<script>
+  populate_ITEM_INFO_INTERNAL_SPAN = function()
+  {
+    document.getElementById('ITEM_INFO_INTERNAL_SPAN').innerHTML = top.aras.uiGetItemInfoTable(document.itemType);
+  }
+  window.addEventListener('load', populate_ITEM_INFO_INTERNAL_SPAN);
+</script>]]></html_code>
+      <is_disabled>0</is_disabled>
+      <is_visible>1</is_visible>
+      <list_no_blank>0</list_no_blank>
+      <sort_order>128</sort_order>
+      <source_id keyed_name="6DB9724C32074FFD902A8D2EFAECC715" type="Body">6DB9724C32074FFD902A8D2EFAECC715</source_id>
+      <tab_stop>0</tab_stop>
+      <x>0</x>
+      <y>0</y>
+      <name>item_info</name>
+     </Item>
+    </Relationships>
+   </Item>
+  </Relationships>
+ </Item>
+</AML>

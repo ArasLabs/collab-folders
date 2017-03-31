@@ -10,8 +10,8 @@
 	<resource key="itemfoldertreegrid.contextmenu.refresh_this_row" value="Refresh this Folder"/>
 	<resource key="itemfoldertreegrid.contextmenu.lock_row_item" value="Lock"/>
 	<resource key="itemfoldertreegrid.contextmenu.unlock_row_item" value="Unlock"/>
-	<resource key="itemfoldertreegrid.contextmenu.add_new_controlled_item" value="Add Controlled Item to Folder (new)..."/>
-	<resource key="itemfoldertreegrid.contextmenu.add_existing_controlled_item" value="Add Controlled Item to Folder (pick)..."/>
+	<resource key="itemfoldertreegrid.contextmenu.add_folder_related_item_new" value="Add Related Item to Folder (new)..."/>
+	<resource key="itemfoldertreegrid.contextmenu.add_folder_related_item_existing" value="Add Related Item to Folder (pick)..."/>
 	<resource key="itemfoldertreegrid.contextmenu.add_new_file_to_folder" value="Add File to Folder..."/>
 	<resource key="itemfoldertreegrid.contextmenu.add_sub_folder" value="Add Sub Folder..."/>
 	<resource key="itemfoldertreegrid.contextmenu.promote_folders_to_active_down" value="Promote Folders to Active (down)"/>
@@ -23,10 +23,27 @@
 	<resource key="itemfoldertreegrid.message.loading_next_level_please_wait" value="Loading next Level, Please wait ..."/>
 	
 	<resource key="itemfoldertreegrid.message.confirm_expanding_all_large_struture" value="For large structures expanding all can take considerable time. Do you want to continue ?"/>
+	<resource key="itemfoldertreegrid.message.confirm_expand_all_subfolders_N" value="Expanding {0} nodes. Please wait for it to finish ! Do you want to continue ?"/>
+	
 	<resource key="itemfoldertreegrid.message.confirm_promote_to_archived" value="This action will promote this folder and all sub folders to 'Archived'. Do you want to continue ?"/>
 	<resource key="itemfoldertreegrid.message.confirm_promote_to_active" value="This action will promote this folder and all sub folders to 'Active'. Do you want to continue ?"/>
 	<resource key="itemfoldertreegrid.message.confirm_clear_folder_team" value="Are you sure you want to clear this folder's team access ?"/>
 
+	<resource key="itemfoldertreegrid.message.confirm_delete_ctrld_item_and_remove_from_folder" value="Do you want to delete this item ?"/>
+	<resource key="itemfoldertreegrid.message.confirm_delete_ctrld_item_and_remove_from_other_folders" value="Item is also used in other Folders. Do you want to continue delete action and remove it from all other Folders ? "/>
+	<resource key="itemfoldertreegrid.message.cannot_delete_ctrld_item" value="Cannot delete this item ! - "/>
+
+	<resource key="itemfoldertreegrid.message.confirm_remove_ctrld_item_from_this_folder" value="Do you want to remove this item from this folder ? The item itself will not be deleted. "/>
+	<resource key="itemfoldertreegrid.message.confirm_delete_file_from_this_folder" value="Do you want to delete this file from this folder ?"/>
+	<resource key="itemfoldertreegrid.message.confirm_delete_url_from_this_folder" value="Do you want to delete this URL from this folder ?"/>
+	<resource key="itemfoldertreegrid.message.confirm_delete_sub_folder_from_this_folder" value="Do you want to delete this sub folder ? The folder must be empty before it can be deleted!"/>
+	<resource key="itemfoldertreegrid.message.confirm_delete_folder_with_sub_folders" value="Do you want to delete this folder with all its sub folders ? (Controlled Items will not be deleted) !"/>
+	<resource key="itemfoldertreegrid.message.confirm_save_folder_to_new_root_folder_with_rels" value="Do you want to include copies of all folder realtionsships ?"/>
+	<resource key="itemfoldertreegrid.message.error_row_must_be_selected_for_action" value="A row must be selected for this action!"/>
+	<resource key="itemfoldertreegrid.message.error_some_folders_still_locked" value="Some folders are still locked and cannot be deleted ! Unlock all sub folders and try again."/>
+
+	<resource key="itemfoldertreegrid.message.confirm_add_http_to_url" value="URL must start with http:// Do you want to add it ?"/>
+	
 	<resource key="itemfoldertreegrid.message.unknown_error" value="An unknown error has occurred. Please contact your System Administrator"/>
 	<resource key="itemfoldertreegrid.message.undefined" value="Undefined error message !"/>
 	<resource key="itemfoldertreegrid.message.user_must_be_owner_of_item_for_action" value="User must be Owner for this action !"/>

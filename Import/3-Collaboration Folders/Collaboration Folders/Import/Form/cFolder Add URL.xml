@@ -1,0 +1,156 @@
+﻿<AML>
+ <Item type="Form" id="E11DA244B86143F49936D8E241D4415C" action="add">
+  <category_form>0</category_form>
+  <height>150</height>
+  <stylesheet><![CDATA[../styles/default.css]]></stylesheet>
+  <width>750</width>
+  <name>cFolder Add URL</name>
+  <Relationships>
+   <Item type="Body" id="BF98E0106CD84D2A95A23263DB95C561" action="add">
+    <sort_order>128</sort_order>
+    <source_id keyed_name="cFolder Add URL" type="Form">E11DA244B86143F49936D8E241D4415C</source_id>
+    <Relationships>
+     <Item type="Field" id="50B0FD88AC7F4DC59C2020B86D32995A" action="add">
+      <bg_color>#4a75c0</bg_color>
+      <border_width>0</border_width>
+      <css>{$this field rule} input
+{
+  width: 80px;
+}</css>
+      <field_type>button</field_type>
+      <font_color>#000000</font_color>
+      <font_family>arial, helvetica, sans-serif</font_family>
+      <font_size>8pt</font_size>
+      <font_weight>bold</font_weight>
+      <is_disabled>0</is_disabled>
+      <is_visible>1</is_visible>
+      <label xml:lang="en">Add</label>
+      <label_position>top</label_position>
+      <list_no_blank>0</list_no_blank>
+      <sort_order>640</sort_order>
+      <source_id keyed_name="BF98E0106CD84D2A95A23263DB95C561" type="Body">BF98E0106CD84D2A95A23263DB95C561</source_id>
+      <tab_stop>1</tab_stop>
+      <x>570</x>
+      <y>15</y>
+      <name>btn_add</name>
+      <Relationships>
+       <Item type="Field Event" id="0562859656CE4225822DDB802CC42AEA" action="add">
+        <field_event>onclick</field_event>
+        <related_id keyed_name="cFolder Add URL OK" type="Method">
+         <Item type="Method" action="get" select="id">
+          <name>cFolder Add URL OK</name>
+         </Item>
+        </related_id>
+        <sort_order>128</sort_order>
+        <source_id keyed_name="btn_add" type="Field">50B0FD88AC7F4DC59C2020B86D32995A</source_id>
+       </Item>
+      </Relationships>
+     </Item>
+     <Item type="Field" id="E1A478DC06FD488580768A6279870932" action="add">
+      <bg_color>#4a75c0</bg_color>
+      <border_width>0</border_width>
+      <css>{$this field rule} input
+{
+  width: 80px;
+}</css>
+      <field_type>button</field_type>
+      <font_color>#000000</font_color>
+      <font_family>arial, helvetica, sans-serif</font_family>
+      <font_size>8pt</font_size>
+      <font_weight>bold</font_weight>
+      <is_disabled>0</is_disabled>
+      <is_visible>1</is_visible>
+      <label xml:lang="en">Cancel</label>
+      <label_position>top</label_position>
+      <list_no_blank>0</list_no_blank>
+      <sort_order>512</sort_order>
+      <source_id keyed_name="BF98E0106CD84D2A95A23263DB95C561" type="Body">BF98E0106CD84D2A95A23263DB95C561</source_id>
+      <tab_stop>1</tab_stop>
+      <x>570</x>
+      <y>55</y>
+      <name>btn_cancel</name>
+      <Relationships>
+       <Item type="Field Event" id="6CA18E0B3F9640D0AF5DD9AA6D17B29A" action="add">
+        <field_event>onclick</field_event>
+        <related_id keyed_name="cFolder TopWinClose" type="Method">
+         <Item type="Method" action="get" select="id">
+          <name>cFolder TopWinClose</name>
+         </Item>
+        </related_id>
+        <sort_order>128</sort_order>
+        <source_id keyed_name="btn_cancel" type="Field">E1A478DC06FD488580768A6279870932</source_id>
+       </Item>
+      </Relationships>
+     </Item>
+     <Item type="Field" id="038517EB37C84B598EACC68AC89C1694" action="add">
+      <bg_color>#ffffdd</bg_color>
+      <border_width>0</border_width>
+      <display_length>75</display_length>
+      <display_length_unit>ex</display_length_unit>
+      <field_type>text</field_type>
+      <font_color>#000000</font_color>
+      <font_family>tahoma, arial, helvetica, sans-serif</font_family>
+      <font_size>8pt</font_size>
+      <font_weight>bold</font_weight>
+      <is_disabled>0</is_disabled>
+      <is_visible>1</is_visible>
+      <label xml:lang="en">Name</label>
+      <label_position>top</label_position>
+      <list_no_blank>0</list_no_blank>
+      <sort_order>768</sort_order>
+      <source_id keyed_name="BF98E0106CD84D2A95A23263DB95C561" type="Body">BF98E0106CD84D2A95A23263DB95C561</source_id>
+      <tab_stop>1</tab_stop>
+      <x>5</x>
+      <y>5</y>
+      <name>name</name>
+     </Item>
+     <Item type="Field" id="C3B340BE768F40BB84110575267681C6" action="add">
+      <bg_color>#ffffdd</bg_color>
+      <border_width>0</border_width>
+      <display_length>100</display_length>
+      <display_length_unit>ex</display_length_unit>
+      <field_type>text</field_type>
+      <font_color>#000000</font_color>
+      <font_family>arial, helvetica, sans-serif</font_family>
+      <font_size>8pt</font_size>
+      <font_weight>bold</font_weight>
+      <is_disabled>1</is_disabled>
+      <is_visible>1</is_visible>
+      <label xml:lang="en">URL</label>
+      <label_position>top</label_position>
+      <list_no_blank>0</list_no_blank>
+      <sort_order>256</sort_order>
+      <source_id keyed_name="BF98E0106CD84D2A95A23263DB95C561" type="Body">BF98E0106CD84D2A95A23263DB95C561</source_id>
+      <tab_stop>1</tab_stop>
+      <x>10</x>
+      <y>110</y>
+      <name>url</name>
+     </Item>
+     <Item type="Field" id="AB0E89BD767644F5A794552C2E3A0A8C" action="add">
+      <bg_color>#FFFFFF</bg_color>
+      <border_width>0</border_width>
+      <display_length_unit>ex</display_length_unit>
+      <field_type>textarea</field_type>
+      <font_color>#000000</font_color>
+      <font_family>arial, helvetica, sans-serif</font_family>
+      <font_size>8pt</font_size>
+      <font_weight>bold</font_weight>
+      <is_disabled>1</is_disabled>
+      <is_visible>1</is_visible>
+      <label xml:lang="en">Description</label>
+      <label_position>top</label_position>
+      <list_no_blank>0</list_no_blank>
+      <sort_order>384</sort_order>
+      <source_id keyed_name="BF98E0106CD84D2A95A23263DB95C561" type="Body">BF98E0106CD84D2A95A23263DB95C561</source_id>
+      <tab_stop>1</tab_stop>
+      <textarea_cols>75</textarea_cols>
+      <textarea_rows>7</textarea_rows>
+      <x>5</x>
+      <y>40</y>
+      <name>url_description</name>
+     </Item>
+    </Relationships>
+   </Item>
+  </Relationships>
+ </Item>
+</AML>

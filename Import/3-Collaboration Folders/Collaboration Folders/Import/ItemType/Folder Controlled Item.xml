@@ -1,0 +1,258 @@
+﻿<AML>
+ <Item type="ItemType" id="B8F0C719176942BFBC6716F72E28750C" action="add">
+  <allow_private_permission>1</allow_private_permission>
+  <auto_search>0</auto_search>
+  <enforce_discovery>1</enforce_discovery>
+  <hide_where_used>0</hide_where_used>
+  <implementation_type>polymorphic</implementation_type>
+  <instance_data>FOLDER_CONTROLLED_ITEM</instance_data>
+  <is_dependent>0</is_dependent>
+  <is_relationship>0</is_relationship>
+  <is_versionable>1</is_versionable>
+  <label xml:lang="en">Folder Controlled Item</label>
+  <label_plural xml:lang="en">Folder Controlled Items</label_plural>
+  <manual_versioning>0</manual_versioning>
+  <open_icon>../images/Icons/16x16/16x16_forms.gif</open_icon>
+  <revisions keyed_name="Default2" type="Revision">4662A0D8F5BA46FAA5548A019AFD330D</revisions>
+  <show_parameters_tab>1</show_parameters_tab>
+  <unlock_on_logout>0</unlock_on_logout>
+  <use_src_access>0</use_src_access>
+  <name>Folder Controlled Item</name>
+  <Relationships>
+   <Item type="Property" id="E3A60CCADD854A05A013514B8454A425" action="add">
+    <column_alignment>left</column_alignment>
+    <column_width>80</column_width>
+    <data_type>string</data_type>
+    <is_hidden>0</is_hidden>
+    <is_hidden2>0</is_hidden2>
+    <is_indexed>0</is_indexed>
+    <is_keyed>0</is_keyed>
+    <is_multi_valued>0</is_multi_valued>
+    <is_required>0</is_required>
+    <label xml:lang="en">Number</label>
+    <range_inclusive>0</range_inclusive>
+    <readonly>0</readonly>
+    <sort_order>10</sort_order>
+    <source_id keyed_name="Folder Controlled Item" type="ItemType" name="Folder Controlled Item">B8F0C719176942BFBC6716F72E28750C</source_id>
+    <stored_length>20</stored_length>
+    <track_history>0</track_history>
+    <name>item_number</name>
+   </Item>
+   <Item type="Property" id="67F38B5EE0C84382B8725BB5E97D3353" action="add">
+    <column_alignment>left</column_alignment>
+    <column_width>150</column_width>
+    <data_type>string</data_type>
+    <is_hidden>0</is_hidden>
+    <is_hidden2>0</is_hidden2>
+    <is_indexed>0</is_indexed>
+    <is_keyed>0</is_keyed>
+    <is_multi_valued>0</is_multi_valued>
+    <is_required>0</is_required>
+    <label xml:lang="en">Name</label>
+    <range_inclusive>0</range_inclusive>
+    <readonly>0</readonly>
+    <sort_order>20</sort_order>
+    <source_id keyed_name="Folder Controlled Item" type="ItemType" name="Folder Controlled Item">B8F0C719176942BFBC6716F72E28750C</source_id>
+    <stored_length>80</stored_length>
+    <track_history>0</track_history>
+    <name>name</name>
+   </Item>
+   <Item type="Server Event" id="89BB9C1A057144179514E0A7766D2ADD" action="add">
+    <related_id keyed_name="polymorphic_item_onBeforeAdd" type="Method">
+     <Item type="Method" action="get" select="id">
+      <name>polymorphic_item_onBeforeAdd</name>
+     </Item>
+    </related_id>
+    <server_event>onBeforeAdd</server_event>
+    <sort_order>768</sort_order>
+    <source_id keyed_name="Folder Controlled Item" type="ItemType" name="Folder Controlled Item">B8F0C719176942BFBC6716F72E28750C</source_id>
+   </Item>
+   <Item type="Server Event" id="FBE2858144E548D792B7BCA94BC659F4" action="add">
+    <related_id keyed_name="polymorphic_item_onBeforeCopy" type="Method">
+     <Item type="Method" action="get" select="id">
+      <name>polymorphic_item_onBeforeCopy</name>
+     </Item>
+    </related_id>
+    <server_event>onBeforeCopy</server_event>
+    <sort_order>896</sort_order>
+    <source_id keyed_name="Folder Controlled Item" type="ItemType" name="Folder Controlled Item">B8F0C719176942BFBC6716F72E28750C</source_id>
+   </Item>
+   <Item type="Server Event" id="FC818EA5DBA04268ACE255D41F51BB03" action="add">
+    <related_id keyed_name="polymorphic_item_onBeforeDelete" type="Method">
+     <Item type="Method" action="get" select="id">
+      <name>polymorphic_item_onBeforeDelete</name>
+     </Item>
+    </related_id>
+    <server_event>onBeforeDelete</server_event>
+    <sort_order>128</sort_order>
+    <source_id keyed_name="Folder Controlled Item" type="ItemType" name="Folder Controlled Item">B8F0C719176942BFBC6716F72E28750C</source_id>
+   </Item>
+   <Item type="Server Event" id="ED70C7B4867E492D9401FEC96D22A38F" action="add">
+    <related_id keyed_name="polymorphic_item_onBeforeLock" type="Method">
+     <Item type="Method" action="get" select="id">
+      <name>polymorphic_item_onBeforeLock</name>
+     </Item>
+    </related_id>
+    <server_event>onBeforeLock</server_event>
+    <sort_order>256</sort_order>
+    <source_id keyed_name="Folder Controlled Item" type="ItemType" name="Folder Controlled Item">B8F0C719176942BFBC6716F72E28750C</source_id>
+   </Item>
+   <Item type="Server Event" id="238AA9B9343D446A9E6BB646B297FCC9" action="add">
+    <related_id keyed_name="polymorphic_item_onBeforeUnlock" type="Method">
+     <Item type="Method" action="get" select="id">
+      <name>polymorphic_item_onBeforeUnlock</name>
+     </Item>
+    </related_id>
+    <server_event>onBeforeUnlock</server_event>
+    <sort_order>384</sort_order>
+    <source_id keyed_name="Folder Controlled Item" type="ItemType" name="Folder Controlled Item">B8F0C719176942BFBC6716F72E28750C</source_id>
+   </Item>
+   <Item type="Server Event" id="03DBFD2135824F04BB0A68E41930774F" action="add">
+    <related_id keyed_name="polymorphic_item_onBeforeUpdate" type="Method">
+     <Item type="Method" action="get" select="id">
+      <name>polymorphic_item_onBeforeUpdate</name>
+     </Item>
+    </related_id>
+    <server_event>onBeforeUpdate</server_event>
+    <sort_order>640</sort_order>
+    <source_id keyed_name="Folder Controlled Item" type="ItemType" name="Folder Controlled Item">B8F0C719176942BFBC6716F72E28750C</source_id>
+   </Item>
+   <Item type="Server Event" id="7B02FED62592484B88211AE315038408" action="add">
+    <related_id keyed_name="polymorphic_item_onBeforeVersion" type="Method">
+     <Item type="Method" action="get" select="id">
+      <name>polymorphic_item_onBeforeVersion</name>
+     </Item>
+    </related_id>
+    <server_event>onBeforeVersion</server_event>
+    <sort_order>512</sort_order>
+    <source_id keyed_name="Folder Controlled Item" type="ItemType" name="Folder Controlled Item">B8F0C719176942BFBC6716F72E28750C</source_id>
+   </Item>
+  </Relationships>
+ </Item>
+ <Item type="ItemType" id="B8F0C719176942BFBC6716F72E28750C" action="edit">
+  <Relationships>
+   <Item type="Property" action="edit" where="source_id='B8F0C719176942BFBC6716F72E28750C' and name='generation'">
+    <column_alignment>left</column_alignment>
+    <column_width>40</column_width>
+    <data_type>integer</data_type>
+    <is_hidden>0</is_hidden>
+    <is_hidden2>0</is_hidden2>
+    <is_indexed>0</is_indexed>
+    <is_keyed>0</is_keyed>
+    <is_multi_valued>0</is_multi_valued>
+    <is_required>0</is_required>
+    <label xml:lang="en">Gen</label>
+    <range_inclusive>0</range_inclusive>
+    <readonly>1</readonly>
+    <sort_order>15</sort_order>
+    <source_id keyed_name="Folder Controlled Item" type="ItemType" name="Folder Controlled Item">B8F0C719176942BFBC6716F72E28750C</source_id>
+    <track_history>0</track_history>
+    <name>generation</name>
+   </Item>
+   <Item type="Property" action="edit" where="source_id='B8F0C719176942BFBC6716F72E28750C' and name='major_rev'">
+    <column_alignment>left</column_alignment>
+    <column_width>40</column_width>
+    <data_type>string</data_type>
+    <is_hidden>0</is_hidden>
+    <is_hidden2>0</is_hidden2>
+    <is_indexed>0</is_indexed>
+    <is_keyed>0</is_keyed>
+    <is_multi_valued>0</is_multi_valued>
+    <is_required>0</is_required>
+    <label xml:lang="en">Rev</label>
+    <range_inclusive>0</range_inclusive>
+    <readonly>0</readonly>
+    <sort_order>14</sort_order>
+    <source_id keyed_name="Folder Controlled Item" type="ItemType" name="Folder Controlled Item">B8F0C719176942BFBC6716F72E28750C</source_id>
+    <stored_length>8</stored_length>
+    <track_history>0</track_history>
+    <name>major_rev</name>
+   </Item>
+   <Item type="Property" action="edit" where="source_id='B8F0C719176942BFBC6716F72E28750C' and name='minor_rev'">
+    <column_alignment>left</column_alignment>
+    <column_width>40</column_width>
+    <data_type>string</data_type>
+    <is_hidden>1</is_hidden>
+    <is_hidden2>1</is_hidden2>
+    <is_indexed>0</is_indexed>
+    <is_keyed>0</is_keyed>
+    <is_multi_valued>0</is_multi_valued>
+    <is_required>0</is_required>
+    <label xml:lang="en">SubRev</label>
+    <range_inclusive>0</range_inclusive>
+    <readonly>0</readonly>
+    <sort_order>15</sort_order>
+    <source_id keyed_name="Folder Controlled Item" type="ItemType" name="Folder Controlled Item">B8F0C719176942BFBC6716F72E28750C</source_id>
+    <stored_length>8</stored_length>
+    <track_history>0</track_history>
+    <name>minor_rev</name>
+   </Item>
+   <Item type="Property" action="edit" where="source_id='B8F0C719176942BFBC6716F72E28750C' and name='state'">
+    <column_alignment>left</column_alignment>
+    <column_width>80</column_width>
+    <data_type>string</data_type>
+    <is_hidden>0</is_hidden>
+    <is_hidden2>0</is_hidden2>
+    <is_indexed>0</is_indexed>
+    <is_keyed>0</is_keyed>
+    <is_multi_valued>0</is_multi_valued>
+    <is_required>0</is_required>
+    <label xml:lang="en">Status</label>
+    <range_inclusive>0</range_inclusive>
+    <readonly>1</readonly>
+    <sort_order>25</sort_order>
+    <source_id keyed_name="Folder Controlled Item" type="ItemType" name="Folder Controlled Item">B8F0C719176942BFBC6716F72E28750C</source_id>
+    <stored_length>32</stored_length>
+    <track_history>0</track_history>
+    <name>state</name>
+   </Item>
+   <Item type="Property" action="edit" where="source_id='B8F0C719176942BFBC6716F72E28750C' and name='superseded_date'">
+    <column_alignment>left</column_alignment>
+    <data_type>date</data_type>
+    <is_hidden>1</is_hidden>
+    <is_hidden2>1</is_hidden2>
+    <is_indexed>0</is_indexed>
+    <is_keyed>0</is_keyed>
+    <is_multi_valued>0</is_multi_valued>
+    <is_required>0</is_required>
+    <label xml:lang="en">Superseded Date</label>
+    <pattern>short_date_time</pattern>
+    <range_inclusive>0</range_inclusive>
+    <readonly>0</readonly>
+    <sort_order>3328</sort_order>
+    <source_id keyed_name="Folder Controlled Item" type="ItemType" name="Folder Controlled Item">B8F0C719176942BFBC6716F72E28750C</source_id>
+    <track_history>0</track_history>
+    <name>superseded_date</name>
+   </Item>
+  </Relationships>
+ </Item>
+ <Item type="View" action="delete" where="source_id='B8F0C719176942BFBC6716F72E28750C'" />
+ <Item type="Form" action="delete" where="name='Folder Controlled Item'" />
+ <Item type="ItemType" id="B8F0C719176942BFBC6716F72E28750C" action="edit">
+  <Relationships>
+   <Item type="Morphae" id="C8C1B0CA8A0E4F868F53B361E227E017" action="add">
+    <related_id keyed_name="Document" type="ItemType" name="Document">B88C14B99EF449828C5D926E39EE8B89</related_id>
+    <sort_order>128</sort_order>
+    <source_id keyed_name="Folder Controlled Item" type="ItemType" name="Folder Controlled Item">B8F0C719176942BFBC6716F72E28750C</source_id>
+   </Item>
+  </Relationships>
+ </Item>
+ <Item type="ItemType" id="B8F0C719176942BFBC6716F72E28750C" action="edit">
+  <Relationships>
+   <Item type="Morphae" id="DDA885749EB24F1686E8DB3674A2F2DE" action="add">
+    <related_id keyed_name="Part" type="ItemType" name="Part">4F1AC04A2B484F3ABA4E20DB63808A88</related_id>
+    <sort_order>256</sort_order>
+    <source_id keyed_name="Folder Controlled Item" type="ItemType" name="Folder Controlled Item">B8F0C719176942BFBC6716F72E28750C</source_id>
+   </Item>
+  </Relationships>
+ </Item>
+ <Item type="ItemType" id="B8F0C719176942BFBC6716F72E28750C" action="edit">
+  <Relationships>
+   <Item type="Morphae" id="DE26246C91AB4C6EA00520D09C05FB29" action="add">
+    <related_id keyed_name="CAD" type="ItemType" name="CAD">CCF205347C814DD1AF056875E0A880AC</related_id>
+    <sort_order>256</sort_order>
+    <source_id keyed_name="Folder Controlled Item" type="ItemType" name="Folder Controlled Item">B8F0C719176942BFBC6716F72E28750C</source_id>
+   </Item>
+  </Relationships>
+ </Item>
+</AML>

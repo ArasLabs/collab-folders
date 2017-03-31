@@ -7,21 +7,21 @@ If Me.getProperty("name","") = "" Then
   Return Me.getInnovator().newError("Program name is missing")
 End If
 
-Dim folderTemplId As String = Me.getProperty("item_folder_template_id","")
+Dim folderTemplId As String = Me.getProperty("cfolder_template_id","")
 
 
-Dim newFolder As Item = Me.newItem("Item Folder","add")
+Dim newFolder As Item = Me.newItem("cFolder","add")
 newFolder.setProperty("name",Me.GetType() & ":" & Me.getProperty("name",""))
 
 If folderTemplId <> "" Then 'set same folder template link on new top folder
-  newFolder.setProperty("item_folder_template_id",folderTemplId)
+  newFolder.setProperty("cfolder_template_id",folderTemplId)
 End If
 
 newFolder = newFolder.apply() 
 If newFolder.isError() Then Return newFolder
 
 ' link new folder to this item (Program, Project ...)
-Me.setProperty("top_item_folder_id",newFolder.GetID())
+Me.setProperty("top_cfolder_id",newFolder.GetID())
 
 Return Me
 ]]></method_code>

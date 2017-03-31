@@ -1,0 +1,26 @@
+﻿<AML>
+ <Item type="List" id="4A4AD00980B14F3184D03C2263685451" action="add">
+  <description></description>
+  <name>tgc_Column Edit Types</name>
+  <Relationships>
+   <Item type="Value" id="D2678BEEAB87481BB78A0EEAB796FA05" action="add">
+    <label xml:lang="en">No Edit</label>
+    <sort_order>10</sort_order>
+    <source_id keyed_name="tgc_Column Edit Types" type="List">4A4AD00980B14F3184D03C2263685451</source_id>
+    <value>NOEDIT</value>
+   </Item>
+   <Item type="Value" id="01B7A4B727E64023B0C1DA207A40FF6E" action="add">
+    <label xml:lang="en">Field</label>
+    <sort_order>20</sort_order>
+    <source_id keyed_name="tgc_Column Edit Types" type="List">4A4AD00980B14F3184D03C2263685451</source_id>
+    <value>FIELD</value>
+   </Item>
+   <Item type="Value" id="194AFA985EF245D3941F1049CF1BBEDE" action="add">
+    <label xml:lang="en">Combo</label>
+    <sort_order>30</sort_order>
+    <source_id keyed_name="tgc_Column Edit Types" type="List">4A4AD00980B14F3184D03C2263685451</source_id>
+    <value>COMBO</value>
+   </Item>
+  </Relationships>
+ </Item>
+</AML>
