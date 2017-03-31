@@ -1,33 +1,31 @@
 # Collaboration Folders
+####*Manage Files and Items in ML-Structs*
 
-Adds handling of multi-level Folder structures.
-
-## Project Details
-
-See [TESTSTATUS file](./TESTSTATUS.md) for latest testing information.
-
-#### Built Using:
-Aras 11.0 SP7
-
-#### Versions Tested:
-Aras 11.0 SP7, Aras 11.0 SP5 (open release)
-
-#### Browsers Tested:
-Internet Explorer 11, Firefox 38 ESR, Chrome
-
-> Though built and tested using Aras 11.0 SP7, this project should function in older releases of Aras 11.0 and Aras 10.0.
-
-## How It Works
+Adds handling of multi-level Folder structures. (new Item Types, see data model). On top of Aras Solutions "Product Engineering" and "Program Management"
 
 Each Folder can list simple attachments (files) or controlled (related) items, like Documents or Parts (Poly Item List).
 
-Multi-level folder tree grid allows droping files onto folder rows. And it provides actions to view,lock/unlock items. And actions to add controlled items or sub folders to folder rows
+Multi-level folder tree grid allows dropping files onto folder rows. And it provides actions to view, lock/unlock items. And actions to add controlled items or sub folders to folder rows
 
 Folder Templates: Allow creating pre-defined folder structures with pre-defined files or controlled items linked. These get copied to folders created from a template.
 
-Team access: Enables collaboration on data managed in folders by allowing access permissions to team members with roles: Manager, Member, Guest. The entire folder sturcture or sub structures can have their own "private" teams.
+Team access: Enables collaboration on data managed in folders by allowing access permissions to team members with roles: Manager, Member, Guest. The entire folder structure or sub structures can have their own "private" teams.
 
-Folder structure or sub-structures can have their own "private" teams.
+folder structure or sub structures can have their own "private" teams.
+
+## History
+
+This project and the following release notes have been migrated from the old Aras Projects page. Unlike community projects that have been migrated and archived, this project will be updated for compatibility with the latest release of Aras Innovator.
+
+Release | Notes
+--------|--------
+[v1.5](https://github.com/ArasLabs/collab-folders/releases/tag/v1.5) | Item Folders Add-On Package. Displays folder related documents before sub folders in Navigator, now.
+
+#### Supported Aras Versions
+
+Project | Aras
+--------|------
+[v1.5](https://github.com/ArasLabs/collab-folders/releases/tag/v1.5) | 9.3
 
 ## Installation
 
@@ -36,65 +34,28 @@ Folder structure or sub-structures can have their own "private" teams.
 
 ### Pre-requisites
 
-1. Aras Innovator installed (version 11.0 SPx preferred)
+1. Aras Innovator installed
 2. Aras Package Import tool
-3. Collaboration Folders Import Packages
+3. **collab-folders** import packages
+4. **collab-folders** code tree overlay
 
 ### Install Steps
 
-1. Backup your database and store the BAK file in a safe place.
-2. Open up the Aras Package Import tool.
-3. Enter your login credentials and click **Login**
+1. Backup your code tree and store the backup in a safe place.
+2. Copy the Innovator folder from the project's CodeTree subdirectory.
+3. Paste the Innovator folder into the root directory of your Aras installation.
+  * Tip: This is the same directory that contains the InnovatorServerConfig.xml file.
+4. Backup your database and store the BAK file in a safe place.
+5. Open up the Aras Package Import tool.
+6. Enter your login credentials and click **Login**
   * _Note: You must login as root for the package import to succeed!_
-4. Enter the package name in the TargetRelease field.
-  * Optional: Enter a description in the Description field.
-5. Enter the path to your local `..\CollaborationFolders\Import\1_CommonUtilities\imports.mf` file in the Manifest File field.
-6. Select **aras.labs.CommonUtilities** in the Available for Import field.
-7. Select Type = **Merge** and Mode = **Thorough Mode**.
-8. Click **Import** in the top left corner.
-
-Repeat steps 5-8 for each of the following packages:
-
-* Package 2
-  * Path: `..\CollaborationFolders\Import\2_CommonGridUtilities\imports.mf`
-  * Available to Import: Common Grid Utilities
-* Package 3
-  * Path: `..\CollaborationFolders\Import\3_InnovatorPLM\imports.mf`
-  * Available to Import: com.aras.innovator.solution.PLM
-* Package 4
-  * Path: `..\CollaborationFolders\Import\4_InnovatorCore\imports.mf`
-  * Available to Import: com.aras.innovator.core
-* Package 5
-  * Path: `..\CollaborationFolders\Import\5_RenameCollaborationFolders\imports.mf`
-  * Available to Import: Collaboration Folders
-* Package 6
-  * Path: `..\CollaborationFolders\Import\6_CollaborationFolders\imports.mf`
-  * Available to Import: Collaboration Folders
-* Package 7
-  * Path: `..\CollaborationFolders\Import\7_Optional_CollaborationFoldersOnTOC\imports.mf`
-  * Available to Import: Collaboration Folders
-* Package 8
-  * Path: `..\CollaborationFolders\Import\8_ConfigurationData\imports.mf`
-  * Available to Import: Collaboration Folders
-* Package 9
-  * Path: `..\CollaborationFolders\Import\9_Optional_FoldersOnProgram\imports.mf`
-  * Available to Import: Collaboration Folders
-* Package 10
-  * Path: `..\CollaborationFolders\Import\10_Optional_FoldersOnProject\imports.mf`
-  * Available to Import: com.aras.innovator.solution.Project
-* Package 11
-  * Path: `..\CollaborationFolders\Import\11_Optional_FoldersAddToProject\imports.mf`
-  * Available to Import: Collaboration Folders
-* Package 12
-  * Path: `..\CollaborationFolders\Import\12_Optional_FoldersProject\imports.mf`
-  * Available to Import: com.aras.innovator.solution.Project
-* Package 13
-  * Path: `..\CollaborationFolders\Import\13_Optional_SetPackageVersion\imports.mf`
-  * Available to Import: Collaboration Folders
+7. Follow the instructions in [Import/READ_ME.txt](./Import/READ_ME.txt) for importing packages.
 
 ## Usage
 
-TODO: Write usage instructions
+See [Item Folders Concept v1-4.pdf](./Documentation/Item%20Folders%20Concept%20v1-4.pdf) for more information on using this project.
+
+![Screenshot of Collaboration Folders](./Screenshots/Item%20Folders%20Screen1.jpg)
 
 ## Contributing
 
@@ -108,9 +69,7 @@ For more information on contributing to this project, another Aras Labs project,
 
 ## Credits
 
-Original author: Rolf Laudenbach at Aras Corporation.
-
-Updated for 11.0 SP5/SP7 and published to Github by Eli Donahue. @elijdonahue
+Created by Rolf Laudenbach, Aras Corporation.
 
 ## License
 

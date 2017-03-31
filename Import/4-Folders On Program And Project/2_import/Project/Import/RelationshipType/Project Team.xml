@@ -1,0 +1,81 @@
+﻿<AML>
+ <Item type="RelationshipType" id="EC1AF9ACA692494D85A7D0A52E6B98E8" action="add" dependencyLevel="0">
+  <name>Project Team</name>
+  <relationship_id keyed_name="Project Team" type="ItemType" name="Project Team">
+   <Item type="ItemType" id="AC44772E2C0E486AAD22503F27761EAF" action="add">
+    <name>Project Team</name>
+    <Relationships>
+     <Item type="Property" id="50FACD909DB74D2B88C5CFEB57AD5534" action="add">
+      <column_alignment>left</column_alignment>
+      <data_type>string</data_type>
+      <is_hidden>1</is_hidden>
+      <is_hidden2>1</is_hidden2>
+      <is_indexed>0</is_indexed>
+      <is_keyed>0</is_keyed>
+      <is_multi_valued>0</is_multi_valued>
+      <is_required>0</is_required>
+      <label xml:lang="en">team_identity_relship_id</label>
+      <name>team_identity_relship_id</name>
+      <range_inclusive>0</range_inclusive>
+      <readonly>0</readonly>
+      <sort_order>3584</sort_order>
+      <source_id keyed_name="Project Team" type="ItemType" name="Project Team">AC44772E2C0E486AAD22503F27761EAF</source_id>
+      <stored_length>32</stored_length>
+      <track_history>0</track_history>
+     </Item>
+     <Item type="Property" id="8114F17B998C40B0AAE1FD891457B907" action="add">
+      <column_alignment>left</column_alignment>
+      <data_source keyed_name="Team Tab  Roles">47356087E58B41D6B47AEC538F301EE1</data_source>
+      <data_type>list</data_type>
+      <is_hidden>0</is_hidden>
+      <is_hidden2>0</is_hidden2>
+      <is_indexed>0</is_indexed>
+      <is_keyed>0</is_keyed>
+      <is_multi_valued>0</is_multi_valued>
+      <is_required>0</is_required>
+      <label xml:lang="en">Folder Access Role</label>
+      <name>team_role</name>
+      <range_inclusive>0</range_inclusive>
+      <readonly>0</readonly>
+      <sort_order>3712</sort_order>
+      <source_id keyed_name="Project Team" type="ItemType" name="Project Team">AC44772E2C0E486AAD22503F27761EAF</source_id>
+      <track_history>0</track_history>
+     </Item>
+     <Item type="Server Event" id="4B94333C925945869A14AEBD54D57B0C" action="add">
+      <related_id keyed_name="Synch from TeamTab  Merge Member" type="Method">
+       <Item type="Method" action="get" select="id">
+        <name>Synch from TeamTab  Merge Member</name>
+       </Item>
+      </related_id>
+      <server_event>onAfterAdd</server_event>
+      <sort_order>384</sort_order>
+      <source_id keyed_name="Project Team" type="ItemType" name="Project Team">AC44772E2C0E486AAD22503F27761EAF</source_id>
+     </Item>
+     <Item type="Server Event" id="44C310D426A146B793616175595DAA6B" action="add">
+      <related_id keyed_name="Synch from TeamTab  Del Member" type="Method">
+       <Item type="Method" action="get" select="id">
+        <name>Synch from TeamTab  Del Member</name>
+       </Item>
+      </related_id>
+      <server_event>onAfterDelete</server_event>
+      <sort_order>640</sort_order>
+      <source_id keyed_name="Project Team" type="ItemType" name="Project Team">AC44772E2C0E486AAD22503F27761EAF</source_id>
+     </Item>
+     <Item type="Server Event" id="10EEA14E44BC4B04A33A85D479494D9A" action="add">
+      <related_id keyed_name="Synch from TeamTab  Merge Member" type="Method">
+       <Item type="Method" action="get" select="id">
+        <name>Synch from TeamTab  Merge Member</name>
+       </Item>
+      </related_id>
+      <server_event>onAfterUpdate</server_event>
+      <sort_order>512</sort_order>
+      <source_id keyed_name="Project Team" type="ItemType" name="Project Team">AC44772E2C0E486AAD22503F27761EAF</source_id>
+     </Item>
+    
+    </Relationships>
+   </Item>
+  </relationship_id>
+  <sort_order>3</sort_order>
+  <source_id keyed_name="Project" type="ItemType" name="Project">02184EDAA80D499CB6EC94B159966DBE</source_id>
+ </Item>
+</AML>

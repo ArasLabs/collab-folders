@@ -1,0 +1,802 @@
+﻿<AML>
+ <Item type="Method" id="08048745D5EF4837AB0FBFDD87C238FC" action="add">
+  <comments></comments>
+  <execution_allowed_to keyed_name="World" type="Identity">A73B655731924CD0B027E4F4D5FCC0A9</execution_allowed_to>
+  <method_code><![CDATA[var gridRowIconOpen;
+var isLoadReleasedStructure;
+
+// =============================
+fn_setTbControlEnabled = function (ctrlName, b) {
+  if (toolbar1_Control) {
+	  var AT = toolbar1_Control.getActiveToolbar();
+	  if (b === undefined) {b = true;}
+	  else {b = Boolean(b);}
+		  try
+	  {
+		 var tbi  = AT.getElement(ctrlName);
+		 if (tbi) {tbi.setEnabled(b);}
+	  }
+	  catch (excep) {top.aras.AlertError('exception during fn_setTbControlEnabled()');}
+	}
+};
+
+fn_GetAllItemTypeProperties = function (typeName)
+{
+  var amlStr = "<Item type='Property' action='get' select='source_id(name),name,label' >";
+	amlStr += "<source_id><Item type='ItemType' action='get' select='id' >";
+	amlStr += "<name>" + typeName + "</name></Item></source_id>";
+	amlStr += "</Item>";
+
+	var props = top.aras.newIOMItem("", "");
+	props.loadAML(amlStr);
+	props = props.apply();
+	return props;
+};
+
+fn_topArasNewError_withAlert = function (errMsg) {
+  top.aras.AlertError(errMsg);
+  var innov = new top.Innovator();
+  return innov.newError(errMsg);
+};
+
+fn_topArasNewResult = function (result) {
+  var innov = new top.Innovator();
+  return innov.newResult(result);
+};
+
+fn_setResultsCountOnStatusBar = function (numOfRows) {
+  var sb=top.statusbar;
+  if (sb) {sb.setStatus(1, numOfRows + " Items");}
+};
+
+fn_clearResultsOnStatusBar = function () {
+  var sb=top.statusbar;
+  if (sb) {sb.setStatus(1, "");}
+};
+
+fn_GetColumnLabelOfItemTypeByName = function (props, propName)
+{
+  if (props.isError()) {return propName;}
+    if (propName.indexOf("<empty>") >=0) {return "";}
+	var propItem = props.getItemsByXPath("/*/*/Result/Item[@type='Property' and name='" + propName + "']").node;
+    var label = top.aras.getItemProperty(propItem, 'label');
+    if (label === undefined || label === "") {label=propName;}
+
+	return label;  // if label is empty return propName
+};
+
+// =============================
+fn_GenerateTableHeadingsXML = function (itemType,relType,columnProperties)
+{
+  // prop names can contain a "."
+  // then the format is  item|rel.<propertyName>
+  // if "item." then use arg itemType for lookup
+  // if "rel." then use arg relType for lookup
+  var itmPropsLoaded = false;
+  var itmPprops;
+  var relPropsLoaded = false;
+  var relPprops;
+  var resStr = "";
+  var props_array = columnProperties.split(",");
+  for (i = 0 ; props_array[0] !== "" && i < props_array.length ; i++)
+  {
+	var propName ="";
+    var pos1;
+	var propSource = "";
+	
+    if (props_array[i].indexOf("+") >= 0) {props_array[i] = props_array[i].split("+")[1];}
+	pos1 = props_array[i].indexOf(".");
+	if (pos1 > 0) {
+	  propName = props_array[i].substring(pos1+1,props_array[i].length);
+	  propSource =  props_array[i].substring(0,pos1);
+	}
+	else {
+	  propName = props_array[i];
+	  propSource = "item";
+    }
+    var colLabel = "";
+    if (propName === "locked_by_id") {
+       colLabel = "Lck";
+    }
+    pos1=propName.indexOf("$");
+    if (pos1===0) { // for props staring with $ use propName - no lookup necessary
+	  colLabel = propName.substring(1,propName.length);
+    }
+    if (colLabel === "") {
+      colLabel = propName;
+      if (propSource === "item") {
+        if (!itmPropsLoaded) {
+          itmPprops = fn_GetAllItemTypeProperties(itemType);
+          itmPropsLoaded = true;
+        }
+        colLabel = fn_GetColumnLabelOfItemTypeByName(itmPprops, propName);
+      }
+      if (propSource === "rel") {
+        if (!relPropsLoaded) {
+          relProps = fn_GetAllItemTypeProperties(relType);
+          relPropsLoaded = true;
+        }
+        colLabel = fn_GetColumnLabelOfItemTypeByName(relProps, propName);
+      }
+    }
+    resStr += '<th align="c">' + colLabel + '</th>';
+  }
+  return resStr; 
+};
+
+// =============================
+fn_GenerateTableColumnsXML = function (columnWidth,columnAlign)
+{
+  var resStr = "";
+  var width_array = columnWidth.split(",");
+  var align_array = columnAlign.split(",");
+  for (i = 0 ; width_array[0] !== "" && i < width_array.length ; i++)
+  {
+    resStr += '<column width="' + width_array[i] + '" edit="NOEDIT" align="' + align_array[i] + '" order="' + i + '" />';
+  }
+  return resStr; 
+};
+
+//==================================
+fn_ChangeTextColorOfRow = function (gridCtrl, row, txtColor, cols)  {
+  for (var c=0; c<cols;c++) {
+    gridCtrl.cells(row, c).setTextColor(txtColor);
+  }
+  return;
+};
+
+//==================================
+fn_HighlightCellAsLink = function (gridCtrl,row, col, cellValue)   {
+ if (cellValue !== "") {
+   gridCtrl.cells(row,col).setLink(cellValue);
+   gridCtrl.cells(row,col).setTextColor("#0000ff");   // blue
+   //gridCtrl.cells(row,col).setFont("Microsoft Sans Serif-italic-8");
+ }
+};
+
+//=========================
+fn_SetBackgroundColorOfCellsInRow = function(gridCtrl, row, colStart, colEnd, bgColor)
+{
+	for (c = colStart; c < colEnd + 1; c++)
+	{
+		if (gridCtrl.cells(row,c).getBgColor() === "#ffffff") {
+		  gridCtrl.cells(row, c).setBgColor(bgColor);
+		}
+	}
+};
+
+//==================================
+fn_GetCheckBoxCellFormat = function (on_off_value)   {
+  var checked_icon = "<img src='icons/item_chk0.gif' />";
+  if (on_off_value === "1") {checked_icon = "<img src='icons/item_chk1.gif' />";}
+  return checked_icon;
+};
+
+//==================================
+fn_GetLockedCellFormatFromLockedById = function (lockedById)   {
+	if (!lockedById || typeof(lockedById) == "undefined" || lockedById === "") {
+	   return "";
+	}
+    var currUserId = top.aras.getUserID();
+	if (lockedById === currUserId) {
+	   return "<img src='icons/locked.gif' />"; // locked by this user
+	}
+    return "<img src='icons/locked_else.gif' />"; // locked by other  user
+};
+
+//==================================
+fn_GetSmallIconFormatOfItemType = function (itemType)   {
+  // retrieving ICONs - get the small icon from item types "Part"
+  var qryIcon = top.aras.newIOMItem();
+  qryIcon.loadAML("<Item type='ItemType' action='get' select='name,open_icon'><name>"+itemType+"</name></Item>");
+  qryIcon = qryIcon.apply();
+  var smallIcon = "../images/Icons/16x16/16x16_relationship1.gif";
+  if (qryIcon.getItemCount() === 1) {smallIcon = qryIcon.getProperty("open_icon",smallIcon);}
+  return smallIcon;
+};
+
+//==================================
+fn_ColorCodeState = function (gridCtrl, rowId, col, dataItem, isRelationship)   {
+  var css = "";
+  
+  if (isRelationship === undefined) {isRelationship=false;}
+  if (isRelationship) {
+    css = dataItem.getPropertyItem("related_id").getProperty("css","");
+  }
+  else {
+    css = dataItem.getProperty("css","");
+  }
+
+  if (css !== "") {
+     var pos1 = css.indexOf(".state");
+	 if (pos1 >=0) {
+	   var cssSub = css.substring(pos1,css.length);
+	   var pos2 = cssSub.indexOf("}");
+	   if (pos2 > 0) {
+	     cssSub = cssSub.substring(0,pos2);
+		 pos1 = cssSub.indexOf("background-color");
+	     if (pos1 >=0) {
+		   cssSub = cssSub.substring(pos1,cssSub.length);
+	       pos2 = cssSub.indexOf("#");
+		   if (pos2 > 0) {
+		     var colVal = cssSub.substring(pos2,pos2+7);
+			 gridCtrl.cells(rowId,col).setBgColor(colVal);
+		   }
+		 }
+	   }
+	 }
+  }
+};
+
+//     call from other modules to load tree data
+//
+// Parameters:
+//   rootItemId        = item id of root item or tree structure (i.e. a part assembly)
+//   showWithRootItem  = true or false. true = the root item will be displayed as top level in the tree grid
+//   itemType          = name of the item type of the node elements of the tree (i.e. "Part", "CAD_Document")
+//   itemProperties    = comma separated list of property names of properties of the item to fetch (i.e. "item_number,name,state" etc.)
+//   relType           = name of the item to item relationship (i.e. "Part BOM")
+//   relProperties     = comma separated list of property names of properties of the relationship to fetch (i.e. "sort_order,quantity" etc.)
+//   columnProperties  = comma separated list of property names to display in tree grid's columns (must match the tree grid layout)
+//                       coded prefixeds "item." or "rel." are used to identify whether use a property from list "itemProperties" or from "relProperties" 
+//   columnDataTypes   = comma separated list of display types for each property listed in columnProperties. first column must always be "tree".
+//                       for other columns use "text" or "lock" or "check" or "date" or "keyed_name". 
+//                       if "text" is used, the property values is used as is
+//                       if "lock" is used, the property must be the locked_by_id or an item - then the lock icon will be displayed
+//                       if "check" is used, the property must be a boolean or 1-character string with values "1" or "0" - then a checkbox will be displayed
+//                       if "date" is used, I18N format is applied
+//                       if "keyed_name" is used, property value is expeted to be an item id, its keyed_name is read from AML.
+//
+//  Example:  to load a "Part BOM" the parmeters could be like this:
+//
+//            fn_MultiLevelItems_LoadFullStructureToTreeGrid ( <partID>, "Part", false, 
+//                                                          "item_number,name,state,major_rev,locked_by_id",
+// 															"Part BOM", "quantity,sort_order",
+//															"item.item_number,rel.sort_order,rel.quantity,item.locked_by_id,item.name,item.major_rev,item.state",
+//														    "tree,text,text,lock,text,text,text");
+//
+// ==================================================
+fn_MultiLevelItems_LoadFullStructureToTreeGrid = function (gridCtrl, rootItemId, showWithRootItem, itemType, itemProperties, relType, relProperties, columnProperties,columnDataTypes) {
+
+  return fn_MultiLevelItems_LoadInitalStructureLevelsToTreeGrid (gridCtrl, rootItemId, showWithRootItem,itemType,itemProperties,relType,relProperties,columnProperties,columnDataTypes, -1);
+};
+
+//==================================
+fn_MultiLevelItems_LoadInitalStructureLevelsToTreeGrid = function (gridCtrl, rootItemId, showWithRootItem, itemType, itemProperties, relType, relProperties, columnProperties,columnDataTypes, levelsToLoad, iconClosed, iconOpened, loadReleasedStructure) {
+  // gridRowIcon and gridRowIconOpen are global variables
+  if (iconClosed !== undefined) {gridRowIcon = iconClosed;}
+  else {gridRowIcon = fn_GetSmallIconFormatOfItemType(itemType);}
+  if (iconOpened !== undefined) {gridRowIconOpen = iconOpened;}
+  if (iconOpened !== undefined) {isLoadReleasedStructure = loadReleasedStructure;}
+  else {isLoadReleasedStructure=false;} 
+
+  //debugger;
+  var newNodeId = "";
+  if (showWithRootItem === true) {
+    // for root item released condition must be ignored.
+    var qry = "<Item type='"+ itemType +"' action='get' doGetItem='0' ";
+    qry += "select='" +itemProperties+ "' >";
+    qry += "<id>" + rootItemId + "</id>";
+    //if (isLoadReleasedStructure !== undefined && isLoadReleasedStructure) {qry += "<is_released>1</is_released>";}
+    qry += "</Item>";
+    var rootItem = new Item(itemType,"");
+    rootItem.loadAML(qry);
+    rootItem = rootItem.apply();
+
+    newNodeId = "ROOT-" + rootItemId;
+    fn_MultiLevelItems_AddRowToGrid (gridCtrl, "ROOT",newNodeId,
+       columnProperties, columnDataTypes,gridRowIcon, rootItem, false);
+
+	gridCtrl.setUserData(newNodeId,"gridData_rowItemType",itemType );
+	gridCtrl.setUserData(newNodeId,"gridData_rowItemID",rootItem.getID() );	
+	
+    //debugger;
+    //check if custom method is registered to add related Items to this row first
+    if (top.fn_addRelatedItemsToThisNodeLevel !== undefined && top.fn_addRelatedItemsToThisNodeLevel)
+    {
+      top.fn_addRelatedItemsToThisNodeLevel(gridCtrl, newNodeId, rootItem.getID());
+    }
+  }
+  
+  fn_MultiLevelItems_setLoadStartTreeLevel(gridCtrl, newNodeId);
+ 
+  return fn_MultiLevelItems_AddNextLevelsToGrid (gridCtrl, newNodeId, rootItemId, itemType, itemProperties, relType, relProperties, columnProperties, columnDataTypes, levelsToLoad,isLoadReleasedStructure);
+};
+
+//==================================
+fn_MultiLevelItems_LoadNextLevelsForThisNodeToTreeGrid = function (gridCtrl,gridNodeId,itemType,itemProperties,relType,relProperties,columnProperties,columnDataTypes,levelsToLoad) {
+  var itemId = gridCtrl.getUserData(gridNodeId,"gridData_rowItemID");
+  if (!itemId || itemId === undefined) {
+    return fn_topArasNewError_withAlert("This row does not have 'gridData_rowItemID' set. Next levels cannot be loaded!");
+  }
+
+  fn_MultiLevelItems_setLoadStartTreeLevel(gridCtrl, gridNodeId);
+
+  if (window.LoadStartedAtTreeLevel === "-1") {
+    return fn_topArasNewError_withAlert("Invalid NodeId '" + gridNodeId + "'.  Next levels cannot be loaded!");
+  }
+
+  return fn_MultiLevelItems_AddNextLevelsToGrid (gridCtrl, gridNodeId, itemId, itemType, itemProperties, relType, relProperties, columnProperties, columnDataTypes, levelsToLoad);
+};
+
+//==================================
+fn_MultiLevelItems_setLoadStartTreeLevel = function (gridCtrl, nodeId) {
+ var lvlStr;
+ if (nodeId === undefined || nodeId === ""){lvlStr="-1";}
+ else {lvlStr = gridCtrl.getUserData(nodeId,"gridData_level");}
+
+ if (!lvlStr || lvlStr === undefined) {lvlStr="-1";}
+
+ // set global variable
+ window.LoadStartedAtTreeLevel = lvlStr;
+ return Number(lvlStr);
+};
+
+//==================================
+fn_MultiLevelItems_AddNextLevelsToGrid = function ( gridCtrl, parentNodeId, parentItemId, itemType, itemProperties, relType, relProperties, columnProperties, columnDataTypes, levelsToLoad) {
+  if (parentItemId === "") {
+	parentNodeId = "ROOT";
+  }
+  var newNodeId,relId,nodeLevel;
+  var existingChildIds = gridCtrl.GetChildItemsId(parentNodeId,false,"|");
+  if (!existingChildIds || existingChildIds === undefined){ existingChildIds = "";}
+
+  var id_array = existingChildIds.split("|");
+  
+  var hasSubItemsLoaded = false;
+  for (var x = 0 ; x < id_array.length && !hasSubItemsLoaded ; x++) {
+     relItemType = gridCtrl.getUserData(id_array[x],"gridData_rowItemType");
+     if (relItemType === itemType) { hasSubItemsLoaded=true;}
+  }
+  if (hasSubItemsLoaded)
+  {
+    for (x = 0 ; x < id_array.length ; x++) {
+  	  newNodeId = id_array[x];
+	  // recursion up to 'levelsToLoad' - if set to "-1" load all levels
+	  nodeLevel = gridCtrl.getUserData(newNodeId,"gridData_level");
+      relItemType = gridCtrl.getUserData(newNodeId,"gridData_rowItemType");
+	  if (nodeLevel && nodeLevel !== undefined && relItemType === itemType) {
+       if (levelsToLoad == -1 || Number(nodeLevel) < Number(window.LoadStartedAtTreeLevel)+levelsToLoad)
+       {
+	    relId = gridCtrl.getUserData(newNodeId,"gridData_rowItemID");
+        fn_MultiLevelItems_AddNextLevelsToGrid (gridCtrl, newNodeId, relId, itemType, itemProperties, relType, relProperties, columnProperties, columnDataTypes, levelsToLoad);
+       }
+      }
+    }
+  }
+  else {
+    // query the server to load child items
+    var qry = "<Item type='"+ relType +"' action='get' doGetItem='0' serverEvents='0' ";
+    qry += "select='" +relProperties+ ",id,source_id,related_id' >";
+    qry += "<source_id>" + parentItemId + "</source_id>";
+    qry += "<related_id><Item type='"+itemType+"' action='get' select='id,"+ itemProperties + ",item_type,is_released'>";
+    if (isLoadReleasedStructure !== undefined && isLoadReleasedStructure) {
+      qry += "<is_released>1</is_released>";
+    }
+    qry += "</Item></related_id></Item>";
+  
+    var childItemRels = new Item(relType, "");
+    childItemRels.loadAML(qry);
+    childItemRels = childItemRels.apply();
+
+    if (childItemRels.getItemCount() === 0) {return fn_topArasNewResult("OK");}
+    if (childItemRels.isError()) {return childItemRels;}
+
+    for (var i=0; i < childItemRels.getItemCount(); i++) {
+
+ 	  var thisRel = childItemRels.getItemByIndex(i);
+	  var srcId = thisRel.getProperty("source_id",""); 
+	  relId = thisRel.getProperty("related_id",""); 
+      newNodeId = srcId + "-" + relId;
+
+      // now add hierachy node
+	  fn_MultiLevelItems_AddRowToGrid (gridCtrl,parentNodeId,newNodeId,columnProperties, columnDataTypes, gridRowIcon, thisRel, true);
+
+	  gridCtrl.setUserData(newNodeId,"gridData_parentItemId",srcId );
+	  gridCtrl.setUserData(newNodeId,"gridData_rowItemType",itemType );
+	  gridCtrl.setUserData(newNodeId,"gridData_rowItemID",relId );
+
+  	  //debugger;
+      //check if custom method is registered to add related Items to this row first
+      if (top.fn_addRelatedItemsToThisNodeLevel !== undefined && top.fn_addRelatedItemsToThisNodeLevel)
+      {
+        top.fn_addRelatedItemsToThisNodeLevel(gridCtrl, newNodeId, relId);
+      }
+
+	  // recursion up to 'levelsToLoad' - if set to "-1" load all levels
+	  nodeLevel = gridCtrl.getUserData(newNodeId,"gridData_level");
+	  if (nodeLevel && nodeLevel !== undefined) {
+       if (levelsToLoad == -1 || Number(nodeLevel) < Number(window.LoadStartedAtTreeLevel)+levelsToLoad)
+       {
+        res = fn_MultiLevelItems_AddNextLevelsToGrid (gridCtrl, newNodeId, relId, itemType, itemProperties, relType, relProperties, columnProperties, columnDataTypes, levelsToLoad);
+        if (res.isError()) {return res;}
+       }
+      }
+    }
+  }
+  return fn_topArasNewResult("OK");
+};
+
+//==================================
+fn_getCellValueFromPropName = function (propSourceAndName, dataItem, isRelationship) {
+  var propName = "";
+  var propSource = "";
+  var c="";
+  
+  if (propSourceAndName === "<empty>") {return c;}
+  
+  // split into propname and propsource
+  var p1 = propSourceAndName.indexOf(".");
+  if (p1 >= 0) {
+    propName = propSourceAndName.substring(p1+1,propSourceAndName.length);
+	propSource =  propSourceAndName.substring(0,p1);
+  }
+  else {
+    propName = propSourceAndName;
+	propSource =  "item";
+  }
+  switch (propSource) {
+    case "item":
+	    if (isRelationship) {
+	      c = dataItem.getPropertyItem("related_id").getProperty(propName,"");
+		}
+		else {
+	      c = dataItem.getProperty(propName,"");
+		}
+      break;
+	case "rel":
+	    if (isRelationship) {
+	      c = dataItem.getProperty(propName,"");
+		}
+		else {
+	      c = "";
+		}
+	  break;
+    default:
+  }
+  return c;
+};
+
+//==================================
+fn_MultiLevelItems_AddRowToGrid = function ( gridCtrl, parentNodeId, newNodeId, columnProperties,columnDataTypes, gridRowIcon, dataItem, isRelationship) {
+  if (gridRowIconOpen === undefined) {gridRowIconOpen = gridRowIcon;}
+  if (!gridRowIconOpen && gridRowIconOpen === "") {gridRowIconOpen = gridRowIcon;}
+
+  return fn_MultiLevelItems_AddRowWithIconToGrid (gridCtrl,parentNodeId,newNodeId,columnProperties,columnDataTypes,gridRowIcon,gridRowIconOpen,dataItem,isRelationship);
+};
+
+fn_MultiLevelItems_AddRowWithIconToGrid = function ( gridCtrl, parentNodeId, newNodeId, columnProperties,columnDataTypes, gridRowIcon, gridRowIconOpen, dataItem, isRelationship) {
+  if (isRelationship === undefined) {isRelationship=false;}
+
+  var props_array = columnProperties.replace(/ /g,"").split(",");
+  var colTypes_array = columnDataTypes.replace(/ /g,"").split(",");
+  var gridRow = "";
+  var propsWithBgColor="";
+  var cellValuesAsLink ="";
+
+  for (i = 0 ; props_array[0] !== "" && i < props_array.length ; i++) {
+    var pos1;
+    var colTypeMode ="";
+	var propName =props_array[i];
+    var hasBgColor = false;
+    var highlightTextAsLink = false;
+	var colType = colTypes_array[i];
+	colType = colType.replace(/ /g,"");
+    
+    // get colTypeMode, if it exists (separator = ":"
+	pos1 = colType.indexOf(":");
+	if (pos1 > 0) {
+	  colTypeMode = colType.substring(pos1+1,colType.length);
+	  colType =  colType.substring(0,pos1);
+	  if (colTypeMode === "bg_color") {
+	    hasBgColor = true;
+	  }
+	  if (colTypeMode === "as_link") {
+	    highlightTextAsLink = true;
+	  }
+	}
+	// if type mode contains #, then cell value will be static text passed within typeMode
+	var cellValue = "";
+	if (colTypeMode.indexOf("#") >= 0)	{
+	  cellValue = colTypeMode.replace(/\#/g,"");
+	}
+	var propName2 = "";
+	if (colType === "tree++") {
+	   // propname is expected to have speparator '+' - then split this prop name into 2
+	   propName2 = propName.split("+")[1];
+	   if (!propName2 && typeof(propName2) == "undefined") {propName2="";}
+	   propName = propName.split("+")[0];
+	}
+	if (cellValue === "") {
+	
+	  cellValue = fn_getCellValueFromPropName(propName,dataItem,isRelationship);
+	  if (propName2 !== "") {cellValue=cellValue+" - "+fn_getCellValueFromPropName(propName2,dataItem,isRelationship);}
+	}	
+    // remove propSource from PropName
+    if (propName.indexOf(".") > 0) {propName=propName.split(".")[1];}
+
+    // do addtional formatting of cellValue, if neeeded
+	if (cellValue !== "" && colType === "lock") {
+	  cellValue = fn_GetLockedCellFormatFromLockedById(cellValue);
+	}
+	if (cellValue !== "" && colType === "check") {
+	  cellValue = fn_GetCheckBoxCellFormat(cellValue);
+	}
+	if (cellValue !== "" && colType === "image") {
+	  cellValue = "<img src='"+cellValue+"' />";
+	}
+	if (cellValue !== "" && colType === "date") {
+	  cellValue = fn_GetI18NShortDate(cellValue,"--");
+	}
+	if (cellValue !== "" && (colType === "keyed_name" || colType === "item(keyed_name)")) {
+	  if (isRelationship) {
+	    cellValue = dataItem.getPropertyItem("related_id").getPropertyAttribute(propName,"keyed_name","");
+	  }
+	  else {
+	    cellValue = dataItem.getPropertyAttribute(propName,"keyed_name","");
+	  }
+	}
+	if (hasBgColor || propName === "state" ) { // if prop = "state" always assume bg_colors
+      propsWithBgColor += propName + ",";
+	}
+	else {
+      propsWithBgColor += "" + ",";
+	}
+	if (highlightTextAsLink) {
+      cellValuesAsLink += cellValue + ",";
+	}
+	else {
+      cellValuesAsLink += "" + ",";
+	}
+	
+	// build row with cell values
+	gridRow += cellValue + "|";
+  }
+
+  // insert new row  
+  gridRow = gridRow.substring(0,(gridRow.length-1));
+
+  // special rule if icon is 'folder'
+  if (gridRowIcon.indexOf("folder") >=0) 
+  {
+    if (gridRowIcon.indexOf("32x32") >=0)
+    {
+      gridRowIcon="../images/Icons/32x32/32x32_folder_closed.gif";
+      gridRowIconOpen="../images/Icons/32x32/32x32_folder_opened.gif";
+    }
+    else
+    {
+      gridRowIcon="../images/Icons/16x16/16x16_folder_closed.gif";
+      gridRowIconOpen="../images/Icons/16x16/16x16_folder_open.gif";
+    }
+  }
+
+  if (parentNodeId === "" || parentNodeId === "ROOT") {
+	  gridCtrl.InsertRoot( newNodeId, gridRow, newNodeId,gridRowIcon,gridRowIconOpen);
+  }
+  else {
+	  gridCtrl.InsertNewChild( parentNodeId,newNodeId, gridRow, newNodeId,gridRowIcon,gridRowIconOpen);
+  }
+
+  // maintain tree level as grid user data
+  if (gridCtrl.GetParentId(newNodeId)) {
+	var tmp = gridCtrl.getUserData(gridCtrl.GetParentId(newNodeId),"gridData_level");
+    if (tmp && tmp !== undefined) {
+      var lvl = Number(tmp)+1;
+	  gridCtrl.setUserData(newNodeId,"gridData_level",String(lvl));
+    } 
+  }
+  else {
+	gridCtrl.setUserData(newNodeId,"gridData_level","0"); // root level
+  }
+  
+  // color code bg color of cells of new row
+  // NOTE: this assumes that the "onGet logic" had embedded the bg_colors into CSS !!!
+  propsWithBgColor = propsWithBgColor.substring(0,(propsWithBgColor.length-1));
+  var tmp_prop_array = propsWithBgColor.split(",");
+  if (tmp_prop_array.length > 0) {
+    var css = "";
+    if (isRelationship) {
+      css = dataItem.getPropertyItem("related_id").getProperty("css","");
+    }
+    else {
+      css = dataItem.getProperty("css","");
+    }
+    if (css !== "") {
+      for (i = 0 ; i < tmp_prop_array.length ; i++) {
+        fn_ColorCodeCellFromCSS (gridCtrl, newNodeId, i, css, tmp_prop_array[i]);
+      }
+    }
+  }
+
+  // highlight cells as Link
+  cellValuesAsLink = cellValuesAsLink.substring(0,(cellValuesAsLink.length-1));
+  tmp_prop_array = cellValuesAsLink.split(",");
+  if (tmp_prop_array.length > 0) {
+    for (i = 0 ; i < tmp_prop_array.length ; i++) {
+      if (tmp_prop_array[i] !== "") {
+        fn_HighlightCellAsLink (gridCtrl, newNodeId, i, tmp_prop_array[i]);
+      }
+    }
+  }
+};	  
+
+//==================================
+fn_FlatGrid_AddRowToGrid = function ( gridCtrl, newNodeId, columnProperties,columnDataTypes, gridRowIcon, dataItem, isRelationship) {
+  if (isRelationship === undefined) {isRelationship=false;}
+
+  var props_array = columnProperties.replace(/ /g,"").split(",");
+  var colTypes_array = columnDataTypes.replace(/ /g,"").split(",");
+  var gridRow = "";
+  var propsWithBgColor="";
+  var cellValuesAsLink="";
+
+  for (i = 0 ; props_array[0] !== "" && i < props_array.length ; i++) {
+    var pos1;
+    var colTypeMode ="";
+	var propName ="";
+	var propSource = "item";
+    var hasBgColor = false;
+    var highlightTextAsLink = false;
+	var colType = colTypes_array[i];
+	colType = colType.replace(/ /g,"");
+    
+    // get colTypeMode, if it exists (separator = ":"
+	pos1 = colType.indexOf(":");
+	if (pos1 > 0) {
+	  colTypeMode = colType.substring(pos1+1,colType.length);
+	  colType =  colType.substring(0,pos1);
+	  if (colTypeMode === "bg_color") {
+	    hasBgColor = true;
+	  }
+	  if (colTypeMode === "as_link") {
+	    highlightTextAsLink = true;
+	  }
+	}
+    // split into propname and propsource
+	pos1 = props_array[i].indexOf(".");
+	if (pos1 > 0) {
+	  propName = props_array[i].substring(pos1+1,props_array[i].length);
+	  propSource =  props_array[i].substring(0,pos1);
+	}
+	else
+	{
+	  propName = props_array[i];
+	}
+	// if type mode contains #, then cell value will be static text passed within typeMode
+	var cellValue = "";
+	if (colTypeMode.indexOf("#") >= 0)	{
+	  cellValue = colTypeMode.replace(/\#/g,"");
+	}
+	if (propName.indexOf("empty") < 0 && cellValue === "") {
+	 switch (propSource) {
+	  case "item":
+	    if (isRelationship) {
+	      cellValue = dataItem.getPropertyItem("related_id").getProperty(propName,"");
+		}
+		else {
+	      cellValue = dataItem.getProperty(propName,"");
+		}
+	    break;
+	  case "rel":
+	    if (isRelationship) {
+	      cellValue = dataItem.getProperty(propName,"");
+		}
+		else {
+	      cellValue = "";
+		}
+	    break;
+      default:
+	 }	
+	}
+	if (cellValue === "" && colType === "icon") {
+	  cellValue = "<img src='" + gridRowIcon + "' />";
+	}
+	if (cellValue !== "" && colType === "lock") {
+	  cellValue = fn_GetLockedCellFormatFromLockedById(cellValue);
+	}
+	if (cellValue !== "" && colType === "check") {
+	  cellValue = fn_GetCheckBoxCellFormat(cellValue);
+	}
+	if (cellValue !== "" && colType === "image") {
+	  cellValue = "<img src='"+cellValue+"' />";
+	}
+	if (cellValue !== "" && colType === "date") {
+	  cellValue = fn_GetI18NShortDate(cellValue,"--");
+	}
+	if (cellValue !== "" && (colType === "keyed_name" || colType === "item(keyed_name)")) {
+	  if (isRelationship) {
+	    cellValue = dataItem.getPropertyItem("related_id").getPropertyAttribute(propName,"keyed_name","");
+	  }
+	  else {
+	    cellValue = dataItem.getPropertyAttribute(propName,"keyed_name","");
+	  }
+	}
+	if (hasBgColor || propName === "state" ) { // if prop = "state" always assume bg_colors
+      propsWithBgColor += propName + ",";
+	}
+	else {
+      propsWithBgColor += "" + ",";
+	}
+	if (highlightTextAsLink) {
+      cellValuesAsLink += cellValue + ",";
+	}
+	else {
+      cellValuesAsLink += "" + ",";
+	}
+	// build row with cell values
+	gridRow += cellValue + "|";
+  }
+
+  // insert new row  
+  gridRow = gridRow.substring(0,(gridRow.length-1));
+  flatGrid1_Control.AddRow( newNodeId, gridRow, newNodeId);
+ 
+  // color code bg color of cells of new row
+  // NOTE: this assumes that the "onGet logic" had embedded the bg_colors into CSS !!!
+  propsWithBgColor = propsWithBgColor.substring(0,(propsWithBgColor.length-1));
+  var tmp_prop_array = propsWithBgColor.split(",");
+  if (tmp_prop_array.length > 0) {
+    var css = "";
+    if (isRelationship) {
+      css = dataItem.getPropertyItem("related_id").getProperty("css","");
+    }
+    else {
+      css = dataItem.getProperty("css","");
+    }
+    if (css !== "") {
+      for (i = 0 ; i < tmp_prop_array.length ; i++) {
+        fn_ColorCodeCellFromCSS (gridCtrl, newNodeId, i, css, tmp_prop_array[i]);
+      }
+    }
+  }
+  
+  // highlight cells as Link
+  cellValuesAsLink = cellValuesAsLink.substring(0,(cellValuesAsLink.length-1));
+  tmp_prop_array = cellValuesAsLink.split(",");
+  if (tmp_prop_array.length > 0) {
+    for (i = 0 ; i < tmp_prop_array.length ; i++) {
+      if (tmp_prop_array[i] !== "") {
+        fn_HighlightCellAsLink (gridCtrl, newNodeId, i, tmp_prop_array[i]);
+      }
+    }
+  }
+
+};	  
+
+//==================================
+fn_GetI18NShortDate = function (dateString, defaultVal)   {
+  if (dateString && dateString !== "" && dateString !== defaultVal) {
+	   return I18Ncntx.ConvertFromNeutral(dateString,"date","short_date");
+  }
+  else {
+    return defaultVal;
+  }
+};
+
+//==================================
+fn_ColorCodeCellFromCSS = function (gridCtrl, rowId, col, css, cssPropName)   {
+  if (cssPropName !== "") {
+     var pos1 = css.indexOf("."+cssPropName);
+	 if (pos1 >=0) {
+	   var cssSub = css.substring(pos1,css.length);
+	   var pos2 = cssSub.indexOf("}");
+	   if (pos2 > 0) {
+	     cssSub = cssSub.substring(0,pos2);
+		 pos1 = cssSub.indexOf("background-color");
+	     if (pos1 >=0) {
+		   cssSub = cssSub.substring(pos1,cssSub.length);
+	       pos2 = cssSub.indexOf("#");
+		   if (pos2 > 0) {
+		     var colVal = cssSub.substring(pos2,pos2+7);
+			 gridCtrl.cells(rowId,col).setBgColor(colVal);
+		   }
+		 }
+	   }
+	 }
+  }
+};]]></method_code>
+  <method_type>JavaScript</method_type>
+  <name>Common Grid Handler Funcs</name>
+ </Item>
+</AML>

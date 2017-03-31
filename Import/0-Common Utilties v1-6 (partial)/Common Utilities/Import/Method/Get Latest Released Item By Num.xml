@@ -1,0 +1,34 @@
+﻿<AML>
+ <Item type="Method" id="95E18878792045DD87711140FF80AAB4" action="add">
+  <comments>generic method called from other methods - assumes property 'item_number' exists.</comments>
+  <execution_allowed_to keyed_name="World" type="Identity">A73B655731924CD0B027E4F4D5FCC0A9</execution_allowed_to>
+  <method_code><![CDATA[Dim itemType As String = Me.GetType()
+Dim itemNum As String = Me.getProperty("item_number","invalid")
+  Dim tableName As String = "[" & CCO.DB.GenerateTableName(itemType) & "]"
+  Dim SQLstr As String = "SELECT TOP 1 " & tableName & ".id"
+  
+  SQLstr = SQLstr & " FROM " & tableName
+  SQLstr = SQLstr & " WHERE " & tableName & ".config_id IN "
+  SQLstr = SQLstr & "(SELECT " & tableName & ".config_id FROM " & tableName
+  SQLstr = SQLstr & " WHERE " & tableName & ".item_number='" & itemNum & "')"
+  SQLstr = SQLstr & " AND " & tableName & ".generation like '%'"
+  SQLstr = SQLstr & " AND " & tableName & ".is_released='1'"
+  SQLstr = SQLstr & " ORDER BY " & tableName & ".generation DESC"
+
+Dim latestGenItem As Item = Me.getInnovator().applySQL(SQLstr)
+If latestGenItem.isError() Then Return latestGenItem
+
+If latestGenItem.getItemCount() = 1 Then
+  Me.setID(latestGenItem.getProperty("id","invalid"))
+  Me.setAction("get")
+  Return Me.apply()
+Else
+  Return Me.getInnovator().newError("No released generation of item '" & itemType & "' with item_number '" & itemNum & "' found !")
+End If
+
+Return Me
+]]></method_code>
+  <method_type>VB</method_type>
+  <name>Get Latest Released Item By Num</name>
+ </Item>
+</AML>

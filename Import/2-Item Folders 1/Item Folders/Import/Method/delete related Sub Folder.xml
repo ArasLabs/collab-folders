@@ -1,0 +1,19 @@
+﻿<AML>
+ <Item type="Method" id="4B82EC444AEF419B98E90F9EF2BB96E3" action="add">
+  <execution_allowed_to keyed_name="World" type="Identity">A73B655731924CD0B027E4F4D5FCC0A9</execution_allowed_to>
+  <method_code><![CDATA[' call onAfterDelete
+'
+' removes the related sub folder
+'System.Diagnostics.Debugger.Break()
+Dim relFolderId As String = Me.getProperty("related_id","")
+
+If (relFolderId <> "") Then
+  Dim SQLstr As String = "DELETE [Item_Folder] WHERE [Item_Folder].id='" & relFolderId & "'"
+  Dim res As Item = Me.getInnovator().applySQL(SQLStr)
+  If res.isError() Then Return res
+End If
+Return Me]]></method_code>
+  <method_type>VB</method_type>
+  <name>delete related Sub Folder</name>
+ </Item>
+</AML>

@@ -1,0 +1,59 @@
+﻿<AML>
+ <Item type="Method" id="931E51CBE11F4C2BAAB66119995799C6" action="add">
+  <comments>use with onAfterGet on Document ItemType</comments>
+  <execution_allowed_to keyed_name="World" type="Identity">A73B655731924CD0B027E4F4D5FCC0A9</execution_allowed_to>
+  <method_code><![CDATA[' sets various icons on the Document item grids
+' called onAfterGet
+' By Rolf Laudenbach 4/2012 extended logic to include more icons.
+' cloned from method from Nate Brown 3/20/2012
+
+'MethodTemplateName=VBMain;
+
+Function Main() As Item
+ 'System.Diagnostics.Debugger.Break()
+
+  Dim myItems As Item = Me.getItemsByXPath("//Result/Item")
+  Dim I As Integer
+  If myItems.getItemByIndex(0).getAttribute("type","") <> "Document" Then Return Me 'nothing to do
+ 
+  For i=0 To myItems.getItemCount()-1
+ 	Dim myItem As Item = myItems.getItemByIndex(I)
+ 	' -- has changes icon
+ 	If Not myItem.getProperty("has_change_pending") Is Nothing Then
+ 	
+ 	  Dim hasChange As String = myItem.getProperty("has_change_pending")
+ 	  myItem.setProperty("has_change_icon",fn_GetHasChangeIcon(hasChange))
+ 	  
+    End If
+
+ 	' -- has Files icon
+ 	If Not myItem.getProperty("has_files") Is Nothing Then
+ 	
+ 	  Dim hasFiles As String = myItem.getProperty("has_files")
+ 	  myItem.setProperty("has_files_icon",fn_GetHasFilesIcon(hasFiles))
+ 	  
+    End If
+
+ Next
+ 
+ Return Me
+End Function
+
+'-------------
+Private Function fn_GetHasChangeIcon (hasChangeValue As String) As String
+  Dim IconName As String = "<img src=''/>"
+  If hasChangeValue = "1" Then IconName = "<img src='../images/icons/GridIcons/has_changes.gif'/>"
+  Return IconName
+End Function
+
+'-------------
+Private Function fn_GetHasFilesIcon (hasFilesValue As String) As String
+  Dim IconName As String = "<img src=''/>"
+  If hasFilesValue = "1" Then IconName = "<img src='../images/icons/GridIcons/has_files.gif'/>"
+  Return IconName
+End Function
+	]]></method_code>
+  <method_type>VB</method_type>
+  <name>Show Doc Grid Icons</name>
+ </Item>
+</AML>

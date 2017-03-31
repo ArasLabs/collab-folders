@@ -1,0 +1,25 @@
+﻿<AML>
+ <Item type="ItemType" id="4F1AC04A2B484F3ABA4E20DB63808A88" action="add">
+  <name>Part</name>
+  <Relationships>
+   <Item type="Property" id="E7E8C4B32871423F998E6EA9CF966A79" action="add">
+    <column_alignment>center</column_alignment>
+    <data_type>boolean</data_type>
+    <default_value xml:lang="en">1</default_value>
+    <is_hidden>1</is_hidden>
+    <is_hidden2>1</is_hidden2>
+    <is_indexed>0</is_indexed>
+    <is_keyed>0</is_keyed>
+    <is_multi_valued>0</is_multi_valued>
+    <is_required>0</is_required>
+    <label xml:lang="en">Allow Team Change</label>
+    <name>allow_team_change_logic</name>
+    <range_inclusive>0</range_inclusive>
+    <readonly>0</readonly>
+    <sort_order>98456</sort_order>
+    <source_id keyed_name="Part" type="ItemType" name="Part">4F1AC04A2B484F3ABA4E20DB63808A88</source_id>
+    <track_history>0</track_history>
+   </Item>
+  </Relationships>
+ </Item>
+</AML>

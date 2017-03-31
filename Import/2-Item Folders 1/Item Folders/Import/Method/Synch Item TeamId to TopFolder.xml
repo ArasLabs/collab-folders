@@ -1,0 +1,57 @@
+﻿<AML>
+ <Item type="Method" id="8842963A648D4D2E8558A705792C6023" action="add">
+  <execution_allowed_to keyed_name="World" type="Identity">A73B655731924CD0B027E4F4D5FCC0A9</execution_allowed_to>
+  <method_code><![CDATA['MethodTemplateName=VBMain;
+' called onAfterAdd/Update of item with team relationship (i.e. Program)
+Dim inn As Innovator = Me.getInnovator()
+  
+Function Main() As Item
+  'System.Diagnostics.Debugger.Break()
+
+  Dim thisItem As Item = Me.newItem(Me.GetType(),"get")
+  thisItem.setID(Me.getID())
+  thisItem.setAttribute("select","team_id,keyed_name,top_item_folder_id(team_id,locked_by_id)")
+  thisItem.setAttribute("serverEvents","0")
+  thisItem = thisItem.apply()
+  If thisItem.isError() Then Return thisItem
+
+  Dim topFolderId As String = thisItem.getProperty("top_item_folder_id","")
+  If topFolderId = ""  Then
+    Return Me ' nothing to do
+  End If
+  
+  
+  Dim topFolderTeamId As String = thisItem.getPropertyItem("top_item_folder_id").getProperty("team_id","")
+  Dim topFolderLockedBy As String = thisItem.getPropertyItem("top_item_folder_id").getProperty("locked_by_id","")
+  Dim thisItemTeamId As String = thisItem.getProperty("team_id","")
+
+  If thisItemTeamId = "" Or thisItemTeamId = topFolderTeamId Then
+    Return Me ' nothing to do
+  End If
+
+  ' overwrite teamId on Folder 
+  Dim aml As Item = inn.newItem("Item Folder","")
+  If topFolderLockedBy = "" Then aml.setAction("edit")
+  If topFolderLockedBy = inn.getUserId() Then aml.setAction("update")
+
+  aml.setID(topFolderId)
+  aml.setProperty("team_id",thisItemTeamId)
+  aml = aml.apply()
+  If aml.isError() Then Return aml
+
+  ' ensure team_id is copied to sub folders, as well
+  ' this method is only available
+  Try
+    aml = aml.apply("Copy FolderTeam To SubStructure")
+  Catch ex As Exception
+    Return Me
+  End Try
+
+  If aml.isError() Then Return aml
+
+  Return Me  
+End Function]]></method_code>
+  <method_type>VB</method_type>
+  <name>Synch Item TeamId to TopFolder</name>
+ </Item>
+</AML>

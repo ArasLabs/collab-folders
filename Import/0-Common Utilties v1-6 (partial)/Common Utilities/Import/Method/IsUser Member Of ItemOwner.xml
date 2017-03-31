@@ -1,0 +1,47 @@
+﻿<AML>
+ <Item type="Method" id="56AB20F042F54D6CB3AF71BDF319303F" action="add">
+  <comments>Common Utilities - generic method - called from Client side methods</comments>
+  <execution_allowed_to keyed_name="World" type="Identity">A73B655731924CD0B027E4F4D5FCC0A9</execution_allowed_to>
+  <method_code><![CDATA[// owned_by_id of this item (context) will be checked
+
+//debugger;
+// Load the incoming dom into a new item
+var thisItem = this.newItem("","");
+thisItem.loadAML(this.dom.xml);
+
+// ---------- helper functions ------------
+fn_isCurrUserMemberOfIdentityId = function (identity_to_check) {
+  if (identity_to_check === "") {return false;}
+    
+  var sessionIdentitites_array = top.aras.getIdentityList().split(",");
+  // now we have all identities the current user (session) is member of
+  // scan if given identity is in the list - if yes, return true
+  for (var i=0;i<sessionIdentitites_array.length;i++) {
+    if (identity_to_check == sessionIdentitites_array[i]) {return true;}
+  }
+  return false;
+};
+// ----------- Main --------
+var inn = this.getInnovator();
+var itemId = thisItem.getID();
+var itemType = thisItem.getType();
+thisItem = top.aras.newIOMItem(itemType,"get");
+thisItem.setAttribute("select","keyed_name,owned_by_id(keyed_name)");
+thisItem.setID(itemId);
+thisItem = thisItem.apply();
+if (thisItem.isError()) {return inn.newError("Failed to get item "+itemType+"("+itemId+") from server !");}
+
+// Test if user is member of owner ? - If not exit
+var ownerId = thisItem.getProperty("owned_by_id","");
+if ( ownerId === "") {
+  return inn.newError("Owner not set on this item "+itemType+"("+thisItem.getProperty("keyed_name","--")+") !");
+}
+if (!fn_isCurrUserMemberOfIdentityId(ownerId)) {
+  return inn.newError("You are not a member of Owner '"+thisItem.getPropertyAttribute("owned_by_id","keyed_name","--")+"' of item "+itemType+"("+thisItem.getProperty("keyed_name","--")+") !");
+}
+return inn.newResult("OK");
+]]></method_code>
+  <method_type>JavaScript</method_type>
+  <name>IsUser Member Of ItemOwner</name>
+ </Item>
+</AML>

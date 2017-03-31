@@ -1,0 +1,64 @@
+﻿<AML>
+ <Item type="Method" id="594837C4CF49465A9F66509C1A73093D" action="add">
+  <comments>use onAfterAdd/Update of realtionships</comments>
+  <execution_allowed_to keyed_name="World" type="Identity">A73B655731924CD0B027E4F4D5FCC0A9</execution_allowed_to>
+  <method_code><![CDATA['MethodTemplateName=VBMain;
+Dim inn As Innovator = Me.getInnovator()
+Dim res As Item
+
+' called onAfterAdd/Update of realtionships:
+'
+Function Main() As Item
+  'System.Diagnostics.Debugger.Break()
+  Dim thisRelatedItemRel As Item = Me.newItem(Me.GetType(),"get")
+  thisRelatedItemRel.setID(Me.getID())
+  thisRelatedItemRel.setAttribute("select","team_id,source_id(team_id,config_id,name),related_id(team_id,config_id,keyed_name,allow_team_change_logic)")
+  thisRelatedItemRel.setAttribute("serverEvents","0")
+  thisRelatedItemRel = thisRelatedItemRel.apply()
+
+  If thisRelatedItemRel.isError() Then Return thisRelatedItemRel
+
+  Dim sourceItemTeamId As String = thisRelatedItemRel.getPropertyItem("source_id").getProperty("team_id","")
+
+  Dim relItemId As String = thisRelatedItemRel.getProperty("related_id","")
+  If  (relItemId <> "") Then
+  	Dim relShipTeamId As String = thisRelatedItemRel.getProperty("team_id","")
+    Dim relItemTeamId As String = thisRelatedItemRel.getPropertyItem("related_id").getProperty("team_id","empty")
+    Dim relItemType As String = thisRelatedItemRel.getPropertyItem("related_id").getAttribute("type","")
+    Dim relItemAllowTeamChange As Boolean = (thisRelatedItemRel.getPropertyItem("related_id").getProperty("allow_team_change_logic","0") = "1")
+
+    ' also set team id on the relionship item (since this is not controlled by 'SrcAcess' core logic)
+    If sourceItemTeamId <> relShipTeamId Then
+      res = updateTeamIdOnItem(Me.GetType(),Me.getID(),sourceItemTeamId)
+      If res.isError() Then Return res
+    End If
+    ' set team id on the related item, if not set already
+    If relItemAllowTeamChange And sourceItemTeamId <> relItemTeamId And relItemTeamId = "empty" Then
+      res = updateTeamIdOnItem(relItemType,relItemId,sourceItemTeamId)
+      If res.isError() Then Return res
+    End If
+
+  End If
+
+  Return Me
+End Function  
+
+'-----------------------------
+Private Function updateTeamIdOnItem (relItemType As String, relItemId As String, newTeamId As String) As Item
+  Dim typeTable As String = relItemType.Replace(" " ,"_")
+  
+  'link teamId to project space
+  If newTeamId <> "" Then  
+    Dim SQLstr As String = "UPDATE [" & typeTable & "]"
+    SQLstr = SQLstr & " SET [" & typeTable & "].team_id='" & newTeamId & "'"
+    SQLstr = SQLstr & " WHERE [" & typeTable & "].id='" & relItemId & "'"
+    res = inn.applySQL(SQLstr)
+    Return res
+  End If
+  Return Me
+End Function
+]]></method_code>
+  <method_type>VB</method_type>
+  <name>Copy srcItem Team to relItm</name>
+ </Item>
+</AML>

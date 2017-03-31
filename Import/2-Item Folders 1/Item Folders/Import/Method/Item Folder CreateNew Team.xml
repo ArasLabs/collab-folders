@@ -1,0 +1,44 @@
+﻿<AML>
+ <Item type="Method" id="A2B85BAAFB674DDABBD8874E79FF7ED4" action="add">
+  <execution_allowed_to keyed_name="World" type="Identity">A73B655731924CD0B027E4F4D5FCC0A9</execution_allowed_to>
+  <method_code><![CDATA['MethodTemplateName=VBMain;
+Dim inn As Innovator = Me.getInnovator()
+  
+Function Main() As Item
+  'System.Diagnostics.Debugger.Break()
+  Dim amlCmd As Item = inn.newItem("Team","add")
+  Dim val As String = Me.getProperty("name","")
+  amlCmd.setProperty("name",val)
+  val = Me.getProperty("private_team_item_id_string","")
+  amlCmd.setProperty("private_team_item_id_string",val)
+  
+  'add current User (alias Id) as team member with role taamManager
+  Dim amlRelItem As Item = inn.newItem("Team Identity","add")
+  Dim aliasId As String = inn.getUserAliases()
+  If (aliasId <> "") Then
+    aliasId = aliasId.Substring(0,32)
+    Dim AliasItem As Item = inn.getItemById("Identity", aliasId)
+    
+    amlRelItem.setProperty("team_role","60EBF9D1BB584921A73FA2F8D74DAF80") 'id of identitty "Team Manager"
+    amlRelItem.setRelatedItem(AliasItem)
+    amlCmd.addRelationship(amlRelItem)
+
+  End If
+  ' run under different identity  
+  Dim plmIdentity As Aras.Server.Security.Identity  = Aras.Server.Security.Identity.GetByName("Super User")
+  Dim PermissionWasSet As Boolean  = Aras.Server.Security.Permissions.GrantIdentity(plmIdentity)
+
+  amlCmd = amlCmd.apply()
+
+  ' Revoke 'Aras PLM' permissions
+  If (PermissionWasSet) Then Aras.Server.Security.Permissions.RevokeIdentity(plmIdentity)
+
+  Return amlCmd
+  
+End Function
+
+]]></method_code>
+  <method_type>VB</method_type>
+  <name>Item Folder CreateNew Team</name>
+ </Item>
+</AML>

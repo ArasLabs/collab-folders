@@ -1,0 +1,42 @@
+﻿<AML>
+ <Item type="Method" id="71FD4D25FEA3495DB003716BD5080A22" action="add">
+  <execution_allowed_to keyed_name="World" type="Identity">A73B655731924CD0B027E4F4D5FCC0A9</execution_allowed_to>
+  <method_code><![CDATA['System.Diagnostics.Debugger.Break()
+Dim inn As Innovator = Me.getInnovator()
+
+Dim thisItem As Item = inn.getItemById(Me.GetType(),Me.GetID())
+Dim relFolderId As String = thisItem.getProperty("related_id","")
+If (relFolderId = "") Then Return Me  ' nothing to do
+
+' get the related item (Item Folder) and 
+'check If it has related Attachments Or controlled Items
+Dim qry As Item
+
+' check if any relationship exists
+qry = Me.newItem("Item Folder Controlled Item","get")
+qry.setAttribute("serverEvents","0")
+qry.setAttribute("select","id,related_id(keyed_name)")
+qry.setProperty("source_id",relFolderId)
+qry = qry.apply()
+
+If (qry.getItemCount() >0) Then
+  Return inn.newError("Cannot Delete Sub Folder! This Sub Folder still has related 'Controlled Items'. Remove them first and try again.")
+End If
+
+' get relationship "Item Folder File"
+qry = Me.newItem("Item Folder File","get")
+qry.setAttribute("serverEvents","0")
+qry.setAttribute("select","id,related_id(keyed_name)")
+qry.setProperty("source_id",relFolderId)
+qry = qry.apply()
+
+If (qry.getItemCount() >0) Then
+  Return inn.newError("Cannot Delete Sub Folder! This Sub Folder still has files attached. Remove them first and try again.")
+End If
+
+Me.setProperty("related_id",relFolderId)
+Return Me]]></method_code>
+  <method_type>VB</method_type>
+  <name>allow Sub Folder Delete</name>
+ </Item>
+</AML>

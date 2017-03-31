@@ -1,0 +1,68 @@
+﻿<AML>
+ <Item type="Form" id="D6ED1AD062B94678859CB6E87E2E5E5B" action="add">
+  <name>Folder Related Item</name>
+  <stylesheet><![CDATA[../styles/default.css]]></stylesheet>
+  <Relationships>
+   <Item type="Body" id="1E042BA0C5114F64B0116C104613DFB1" action="add">
+    <bg_attach>scroll</bg_attach>
+    <bg_color>#FFFFFF</bg_color>
+    <bg_image>../images/Backgrounds/wvleft.gif</bg_image>
+    <bg_repeat>no-repeat</bg_repeat>
+    <sort_order>128</sort_order>
+    <source_id keyed_name="Folder Related Item" type="Form">D6ED1AD062B94678859CB6E87E2E5E5B</source_id>
+    <Relationships>
+     <Item type="Field" id="A3372FE1973D4326A66FE71D5D6010D4" action="add">
+      <bg_color>#FFFFFF</bg_color>
+      <field_type>html</field_type>
+      <html_code><![CDATA[<span id='ITEM_INFO_INTERNAL_SPAN'/>
+<script>
+  populate_ITEM_INFO_INTERNAL_SPAN = function()
+  {
+    document.getElementById('ITEM_INFO_INTERNAL_SPAN').innerHTML = top.aras.uiGetItemInfoTable(document.itemType);
+  }
+  window.attachEvent('onload', populate_ITEM_INFO_INTERNAL_SPAN);
+</script>]]></html_code>
+      <is_disabled>0</is_disabled>
+      <is_visible>1</is_visible>
+      <list_no_blank>0</list_no_blank>
+      <name>item_info</name>
+      <sort_order>256</sort_order>
+      <source_id keyed_name="1E042BA0C5114F64B0116C104613DFB1" type="Body">1E042BA0C5114F64B0116C104613DFB1</source_id>
+      <tab_stop>0</tab_stop>
+      <x>0</x>
+      <y>0</y>
+     </Item>
+     <Item type="Field" id="FDB7A2265F05441697E512DBF3E95AC6" action="add">
+      <bg_color>#FFFFFF</bg_color>
+      <border_width>0</border_width>
+      <field_type>dropdown</field_type>
+      <font_color>#000000</font_color>
+      <font_family>arial, helvetica, sans-serif</font_family>
+      <font_size>8pt</font_size>
+      <font_weight>bold</font_weight>
+      <is_disabled>0</is_disabled>
+      <is_visible>1</is_visible>
+      <label xml:lang="en">ItemType</label>
+      <label_position>top</label_position>
+      <list_no_blank>0</list_no_blank>
+      <name>itemtype</name>
+      <sort_order>128</sort_order>
+      <source_id keyed_name="1E042BA0C5114F64B0116C104613DFB1" type="Body">1E042BA0C5114F64B0116C104613DFB1</source_id>
+      <tab_index>128</tab_index>
+      <tab_stop>1</tab_stop>
+      <x>190</x>
+      <y>10</y>
+     </Item>
+    </Relationships>
+   </Item>
+  </Relationships>
+ </Item>
+ <Item type="Field" id="FDB7A2265F05441697E512DBF3E95AC6" action="edit">
+  <propertytype_id>
+   <Item type="Property" action="get" select="id">
+    <name>itemtype</name>
+    <source_id type="ItemType" keyed_name="Folder Controlled Item">B8F0C719176942BFBC6716F72E28750C</source_id>
+   </Item>
+  </propertytype_id>
+ </Item>
+</AML>

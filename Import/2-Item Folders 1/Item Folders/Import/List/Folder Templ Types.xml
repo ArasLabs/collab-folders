@@ -1,0 +1,19 @@
+﻿<AML>
+ <Item type="List" id="B0E93B2046174AB59B47F8C380E86152" action="add">
+  <name>Folder Templ Types</name>
+  <Relationships>
+   <Item type="Value" id="BADC44BC943D42A9AB4B49FB31B1B6A6" action="add">
+    <label xml:lang="en">Folder Structure1</label>
+    <sort_order>128</sort_order>
+    <source_id keyed_name="Folder Templ Types" type="List">B0E93B2046174AB59B47F8C380E86152</source_id>
+    <value>Folder Structure1</value>
+   </Item>
+   <Item type="Value" id="1C2BFD8CA1DC49DD831144D9E4C2976E" action="add">
+    <label xml:lang="en">Folder Structure2</label>
+    <sort_order>256</sort_order>
+    <source_id keyed_name="Folder Templ Types" type="List">B0E93B2046174AB59B47F8C380E86152</source_id>
+    <value>Folder Structure2</value>
+   </Item>
+  </Relationships>
+ </Item>
+</AML>

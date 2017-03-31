@@ -1,0 +1,41 @@
+﻿<AML>
+ <Item type="Permission" id="95475AE006E7415794BDC93808DC04D2" action="add">
+  <is_private>0</is_private>
+  <name>Released Part</name>
+  <Relationships>
+   <Item type="Access" id="3861EB2CCBC2431AB97B08F89760AB2C" action="add">
+    <can_change_access>0</can_change_access>
+    <can_delete>0</can_delete>
+    <can_discover>1</can_discover>
+    <can_get>1</can_get>
+    <can_update>0</can_update>
+    <related_id keyed_name="All Employees" type="Identity">B32BD81D1AD04207BF1E61E39A4E0E13</related_id>
+    <show_permissions_warning>0</show_permissions_warning>
+    <sort_order>128</sort_order>
+    <source_id keyed_name="Released Part" type="Permission">95475AE006E7415794BDC93808DC04D2</source_id>
+   </Item>
+   <Item type="Access" id="9F425D7C89F04C2EA7A4B7A229E0923D" action="add">
+    <can_change_access>1</can_change_access>
+    <can_delete>1</can_delete>
+    <can_discover>1</can_discover>
+    <can_get>1</can_get>
+    <can_update>1</can_update>
+    <related_id keyed_name="Aras PLM" type="Identity">56A96DA9E981481688563E2D14D5D878</related_id>
+    <show_permissions_warning>0</show_permissions_warning>
+    <sort_order>256</sort_order>
+    <source_id keyed_name="Released Part" type="Permission">95475AE006E7415794BDC93808DC04D2</source_id>
+   </Item>
+   <Item type="Access" id="EAC907EB4A024614A01B831327C9E335" action="add">
+    <can_change_access>0</can_change_access>
+    <can_delete>0</can_delete>
+    <can_discover>1</can_discover>
+    <can_get>1</can_get>
+    <can_update>0</can_update>
+    <related_id keyed_name="Team" type="Identity">275764859FDE49AF817571E8BFD8CBB5</related_id>
+    <show_permissions_warning>0</show_permissions_warning>
+    <sort_order>384</sort_order>
+    <source_id keyed_name="Released Part" type="Permission">95475AE006E7415794BDC93808DC04D2</source_id>
+   </Item>
+  </Relationships>
+ </Item>
+</AML>

@@ -1,0 +1,24 @@
+﻿<AML>
+ <Item type="Method" id="53FA6D4D3537433694BDF7D8467C86E1" action="add">
+  <comments>common utilities</comments>
+  <execution_allowed_to keyed_name="World" type="Identity">A73B655731924CD0B027E4F4D5FCC0A9</execution_allowed_to>
+  <method_code><![CDATA[Dim itemType As String = Me.GetType()
+Dim itemId As String = Me.GetID()
+
+  Dim tableName As String = itemType.Replace(" ","_")
+  Dim SQLstr As String = "SELECT TOP 1 " & tableName & ".id"
+  
+  SQLstr = SQLstr & " FROM " & tableName
+  SQLstr = SQLstr & " WHERE " & tableName & ".config_id IN "
+  SQLstr = SQLstr & "(SELECT " & tableName & ".config_id FROM " & tableName
+  SQLstr = SQLstr & " WHERE " & tableName & ".id='" & itemId & "')"
+  SQLstr = SQLstr & " AND " & tableName & ".generation like '%'"
+  SQLstr = SQLstr & " AND " & tableName & ".is_current='1'"
+  SQLstr = SQLstr & " ORDER BY " & tableName & ".generation DESC"
+
+Return Me.getInnovator().applySQL(SQLstr)
+]]></method_code>
+  <method_type>VB</method_type>
+  <name>Get ItemID Of Current Gen</name>
+ </Item>
+</AML>

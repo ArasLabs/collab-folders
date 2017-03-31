@@ -1,0 +1,243 @@
+﻿<AML>
+ <Item type="Method" id="DD140C7820444F2984BABCEE64A57947" action="add">
+  <execution_allowed_to keyed_name="World" type="Identity">A73B655731924CD0B027E4F4D5FCC0A9</execution_allowed_to>
+  <method_code><![CDATA[// Client side Method: Grid1 Handler
+// 
+// load with --> onLoad Event on Form:
+//
+// the variable flatGrid1_Control is defined globally in separate HTML code on form field
+// the variable toolbar1_Control is defined globally in separate HTML code on form field
+//
+//  ---- history -----
+//  rolf  01.11.2010          initial version
+//
+// ====================================================================================================================
+if (OnLoadMethodsLoaded) {return;}
+var result;
+var isStartedFromTab = (top.relationships && top.relationships !== undefined);
+
+// global variables
+var thisItem,thisItemType,thisItemId,thisItemFileRelationship;
+var columnProperties = "";
+var columnDisplayTypes = "";
+var columnWidths = "";
+var columnAlign = "";
+var itemSelectProperties = "";
+var relSelectProperties = "";
+var clickedGridLinkValue;
+var treeGrid1;
+var GridXMLHeader;
+
+
+//--------------
+initGlobalVariables = function () {
+ //debugger;
+ if (isStartedFromTab) 
+ {
+   thisItem = top.frames[1].document.thisItem;
+  }
+  else
+  {
+  }
+
+  thisItemId = thisItem.getAttribute("id","");
+  thisItemType = thisItem.getAttribute("type","");
+  thisItemFileRelationship = thisItem.getProperty("file_relationship","");
+
+  columnProperties = "item.file_type_icon,item.filename,rel.is_shared,item.file_type,item.file_size,item.generation,item.locked_by_id";
+  columnDisplayTypes = "icon,text:as_link,check,keyed_name,text,text,keyed_name";
+  columnWidths = "40,200,40,80,80,40,120";
+  columnAlign = "c,l,c,c,c,c,l";
+  itemSelectProperties = "filename,file_type(keyed_name),file_type:icon,file_size,generation,locked_by_id(keyed_name)";
+  relSelectProperties = "is_shared";
+
+  flatGrid1 = new AttachedFilesGrid;
+};
+
+// ========= MAIN - callbacks for HTML skeleton in HTML field on the Form ========
+// -- callback to populate grid --
+window.RefreshGrid = function(doInit,item)
+{
+  if(doInit === undefined) {doInit = true;}
+  if(item !== undefined) {thisItem = item;}
+
+  initGlobalVariables();
+  	
+//  if(!treeGrid1.Initialized)
+  if(doInit)
+  {
+	flatGrid1.Initialize();
+  }
+  
+  fn_setTbControlEnabled("refresh_all", false);
+  try
+  {
+    flatGrid1.Draw(true);
+  }
+  finally
+  {
+    fn_setTbControlEnabled("refresh_all", true);
+  }
+  fn_initToolbar();
+};
+
+// -- callback to initialize toolbar --
+window.loadGridToolbarHTML = function()
+{
+  var toolbarHTMLstring = '';
+  toolbarHTMLstring += '<toolbarapplet on_click="toolbar1_onToolbarClick" ';
+  toolbarHTMLstring += 'on_load="toobarStart" buttonstyle="windows"  buttonsize="40,22" font="' + "Arial-bold-10" + '" ';
+  toolbarHTMLstring += 'top_border="1"  bottom_border="1"><toolbar id="toolbar"> ';
+  toolbarHTMLstring += '<button text="View File" id="view_item" image="icons/20x20view.gif" tooltip="View File" disabled="true" /> ';
+  toolbarHTMLstring += '<separator/> ';
+  toolbarHTMLstring += '<button text="Refresh" id="refresh_all" image="icons/20x20refresh.gif" tooltip="Refresh" disabled="false" /> ';
+  toolbarHTMLstring += '</toolbar></toolbarapplet>';
+	  
+  toolbar1_Control.loadToolbarFromStr(toolbarHTMLstring);
+//  toolbar1_Control.loadXML(toolbarHTMLstring);
+  return;
+};
+
+//==================== Grid Layout & Style ===================================
+AttachedFilesGrid = function AttachedFilesGridFunc()
+{
+	this.itemType = thisItem.getAttribute("type","");
+};
+
+var standardGridFont= "Microsoft Sans Serif-8";
+var italicGridFont= "Microsoft Sans Serif-italic-8";
+
+//------- Initialize the layout of the Grid
+AttachedFilesGrid.prototype.Initialize = function AttachedFilesGrid_Initialize()
+{
+ //#####  FLAT GRID LIST #####
+
+  GridXMLHeader = '';
+  GridXMLHeader += '<?xml version="1.0"?><table font="' + standardGridFont + '" ';
+  GridXMLHeader += 'backgroundColor="white" ';
+  GridXMLHeader += 'sel_bgColor="steelbue" '; // html predefined
+  GridXMLHeader += 'sel_TextColor="white" ';
+  GridXMLHeader += 'header_BgColor="buttonface" ';
+  GridXMLHeader += 'delim ="|" ';
+  //GridXMLHeader += 'zebra="true" ';
+  GridXMLHeader += 'editable="false" ';
+  GridXMLHeader += 'draw_grid="true" ';
+  GridXMLHeader += 'bgInvert="true" ';    
+  GridXMLHeader += '  column_draggable="true" ';
+  GridXMLHeader += '> ';
+
+  GridXMLHeader += '<thead>';
+  GridXMLHeader += fn_GenerateTableHeadingsXML ("File",thisItemFileRelationship,columnProperties);
+  GridXMLHeader += '</thead>';
+
+  GridXMLHeader += '<columns>';
+  GridXMLHeader += fn_GenerateTableColumnsXML (columnWidths,columnAlign);
+  GridXMLHeader += '</columns>';
+
+  GridXMLHeader += '<menu>';
+  GridXMLHeader += '<emptytag/>';
+  GridXMLHeader += '</menu>';
+  GridXMLHeader += '</table>';
+
+  this.Initialized = true;
+};
+
+//------- populate the Grid
+AttachedFilesGrid.prototype.Draw = function AttachedFilesGrid_Draw(forceGetRelationships)
+{
+  //flatGrid1_Control.RemoveAllRows();
+  flatGrid1_Control.clear();flatGrid1_Control.focus();
+  flatGrid1_Control.InitXml(GridXMLHeader);	
+
+  var qry = top.aras.newIOMItem("","");
+  qry.loadAML("<Item type='" + thisItemFileRelationship + "' action='get' select='source_id,related_id(" + itemSelectProperties + ")," +relSelectProperties+"' />");
+  qry.setProperty("source_id",thisItemId);
+  var itemFileRels = qry.apply();
+ 
+  for (var p=0; p<itemFileRels.getItemCount(); p++) {
+    var fileRelItem = itemFileRels.getItemByIndex(p);
+
+    var fileTypeIcon = "";
+    if (fileRelItem.getProperty("related_id","") !== "")
+    {
+       fileTypeIcon = fileRelItem.getPropertyItem("related_id").getProperty("file_type_icon","");
+    }
+
+    var newNodeId = fileRelItem.getID();
+    fn_FlatGrid_AddRowToGrid( flatGrid1_Control, newNodeId, columnProperties,columnDisplayTypes, fileTypeIcon, fileRelItem, true);
+
+    flatGrid1_Control.setUserData(newNodeId,"gridData_itemID",fileRelItem.getProperty("related_id",""));
+    flatGrid1_Control.setUserData(newNodeId,"gridData_itemtype","File" );
+  }
+
+};
+
+// =============================  Click Handlers ===============================
+fn_initToolbar = function () {
+  fn_setTbControlEnabled("view_item", true);
+
+  var val = (top.aras.getVariable('ShowLabels') == 'true');
+  toolbar1_Control.showLabels(val);
+};
+toolbar1_onToolbarClick = function (item) {
+	flatGrid1_Control.turnEditOff();
+	if (item.getId() == "refresh_all") {flatGrid1_onrefresh_all();}
+    if (item.getId() == "view_item") {flatGrid1_onViewItem();}
+};
+
+flatGrid1_onGridMenuInit = function (row,col,p) {
+	var mnu = flatGrid1_Control.getMenu();
+	mnu.removeAll();
+	mnu.add("view_item","View File");
+//	mnu.addSeparator();
+
+	mnu.show();
+};
+
+flatGrid1_onGridMenuClick = function (menuChoice) {
+  if (menuChoice == "view_item") {flatGrid1_onViewItem();}
+};
+
+flatGrid1_onGridClick = function (row,c) {
+  fn_setTbControlEnabled("view_item", true);
+  // if clicked on a link ?
+  if (clickedGridLinkValue && clickedGridLinkValue !== "")
+  {
+    clickedGridLinkValue = "";
+    flatGrid1_onViewItem();
+  }
+};
+
+flatGrid1_onGridDoubleClick = function (row) {
+  flatGrid1_onViewItem();
+};
+
+flatGrid1_onGridLinkClick = function (strLink) {
+  //assumes only 1 link per row that links to the row's data item
+  clickedGridLinkValue = strLink; 
+};
+
+flatGrid1_onrefresh_all = function () {
+  // read data from form again
+  thisItemId = thisItem.getProperty("id","");
+  thisItemStatus = thisItem.getProperty("state","");
+  thisItemType = thisItem.getAttribute("type","");
+
+  window.RefreshGrid(false);
+};
+
+flatGrid1_onViewItem = function () {
+  var selectedId = flatGrid1_Control.getSelectedId();
+  if (!selectedId) {return;}
+  var my_itemtype = flatGrid1_Control.getUserData(selectedId,"gridData_itemtype");
+  var my_itemid = flatGrid1_Control.getUserData(selectedId,"gridData_itemID");
+  if (my_itemid === "") {return;}
+  if (top.aras.uiFindWindowEx(my_itemid)){return;}
+  window.close();
+  top.aras.uiShowItem(my_itemtype, my_itemid );};
+
+]]></method_code>
+  <method_type>JavaScript</method_type>
+  <name>Item Folder RelFiles GridHandler</name>
+ </Item>
+</AML>

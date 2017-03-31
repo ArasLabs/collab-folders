@@ -1,0 +1,506 @@
+﻿<AML>
+ <Item type="Method" id="226369A462964B6ABC146012FEDE614D" action="add">
+  <execution_allowed_to keyed_name="World" type="Identity">A73B655731924CD0B027E4F4D5FCC0A9</execution_allowed_to>
+  <method_code><![CDATA[// Client side Method: treeGrid1 Handler
+// 
+// load with --> onLoad Event on Form:
+//
+// the variable treeGrid1_Control is defined globally in separate HTML code on form field
+// the variable toolbar1_Control is defined globally in separate HTML code on form field
+//
+//  ---- history -----
+//  RL  15.06.2011          initial version - cloned grid from ML CAD Struct Handler
+//
+// ====================================================================================================================
+if (OnLoadMethodsLoaded) {return;}
+var result;
+var isStartedFromTab = (top.relationships && top.relationships !== undefined);
+
+// other global variables
+var thisItem,thisItemType,thisItemId,thisItemGeneration;
+var thisStructRelType;
+var columnProperties,columnWidths,columnAlign,columnDisplayTypes;
+var itemSelectProperties,relSelectProperties;
+var showRootItem;
+var treeGrid1;
+var GridXMLHeader = '';
+
+//--------------
+initGlobalVariables = function ()
+{
+  //debugger;
+  if (isStartedFromTab) 
+  {
+    thisItem = top.frames[1].document.thisItem;
+    thisItemType = thisItem.getAttribute("type","");
+  }
+  else
+  {
+    thisItemType = thisItem.GetType();
+  }
+
+  switch (thisItemType)
+  {
+    case "Item Folder Template":
+    case "Program":
+    case "Project":
+    case "Project Space":
+    case "PS Phase":
+    case "SND_Customer RFQ":
+       var folderLink = thisItem.getProperty("top_item_folder_id","");
+       if (folderLink === "") {
+         top.aras.AlertError("Property 'top_item_folder_id' not defined or not set on item '"+ thisItem.getProperty("keyed_name","")  +"'");
+         return false;
+       }
+       thisItem = innovator.getItemById("Item Folder", folderLink);
+       thisItemType = thisItem.getAttribute("type","");
+       showRootItem = true;
+       break;
+    case "Item Folder":
+       showRootItem = true;
+       break;
+  }
+  thisItemId = thisItem.getAttribute("id","");
+  thisStructRelType = "Item Sub Folder";
+  
+  columnProperties = "rel.org_number+name,item.locked_by_id,item.has_files_icon,item.state,item.major_rev,item.modified_on,item.description";
+  columnWidths = "280,40,40,80,40,80,200";
+  columnAlign  = "l,c,c,c,c,l,l";
+  // tree++ means the corresponding column property defines 2 properties to concaenate
+  columnDisplayTypes = "tree++,lock,text,text:bg_color,text:#--#,text:#--#,text";
+  itemSelectProperties = "item_number,name,description,state,locked_by_id,classification,major_rev,has_files,has_files_icon";
+  relSelectProperties = "sort_order,org_number";
+  
+  treeGrid1 = new ItemFolderStructGrid;
+  return true;
+};
+
+// ========= MAIN - callbacks for HTML skeleton in HTML field on the Form ========
+// -- callback to populate grid --
+window.RefreshGrid = function(doInit,item)
+{
+  if(doInit === undefined) {doInit = true;}
+  if(item !== undefined) {thisItem = item;}
+
+  if (!initGlobalVariables()){return;}
+    	
+//  if(!treeGrid1.Initialized)
+  if(doInit)
+  {
+	treeGrid1.Initialize();
+  }
+  
+  fn_setTbControlEnabled("refresh_all", false);
+  try
+  {
+    treeGrid1.Draw(true);
+  }
+  finally
+  {
+    fn_setTbControlEnabled("refresh_all", true);
+  }
+  fn_initToolbar();
+  //treeGrid1_Control.SetColumnProperties("sorttype=numeric",2);
+  //treeGrid1_Control.sort(2,true);
+  //treeGrid1_Control.CollapseAll();
+};
+
+// -- callback to initialize toolbar --
+window.loadGridToolbarHTML = function()
+{
+  var toolbarHTMLstring = '';
+  toolbarHTMLstring += '<toolbarapplet on_click="toolbar1_onToolbarClick" ';
+  toolbarHTMLstring += 'on_load="toobarStart" buttonstyle="windows"  buttonsize="40,22" font="' + "Arial-bold-10" + '" ';
+  toolbarHTMLstring += 'top_border="1"  bottom_border="1"><toolbar id="toolbar"> ';
+  toolbarHTMLstring += '<button text="Expand All" id="expandall" image="icons/24x24expandpopnode.gif" tooltip="Expand All" disabled="false" /> ';
+  toolbarHTMLstring += '<button text="Collapse All" id="collapseall" image="icons/24x24collandpopnode.gif" tooltip="Collapse All" disabled="false" /> ';
+  toolbarHTMLstring += '<button text="Refresh" id="refresh_all" image="icons/20x20refresh.gif" tooltip="Refresh Structure" disabled="false" /> ';
+  toolbarHTMLstring += '<separator/> ';
+  toolbarHTMLstring += '<button text="View Item" id="open_row_item" image="icons/20x20view.gif" tooltip="View Item" disabled="false" /> ';
+  toolbarHTMLstring += '</toolbar></toolbarapplet>';
+
+  toolbar1_Control.loadToolbarFromStr(toolbarHTMLstring);
+//  toolbar1_Control.loadXML(toolbarHTMLstring);
+  return;
+};
+
+//==================== Grid Layout & Style ===================================
+ItemFolderStructGrid = function ItemFolderStructGridFunc()
+{
+	this.itemType = thisItemType;
+};
+var standardGridFont= "Microsoft Sans Serif-8";
+var italicGridFont= "Microsoft Sans Serif-italic-8";
+
+//------- Initialize the layout of the Grid
+ItemFolderStructGrid.prototype.Initialize = function ItemFolderStructGrid_Initialize()
+{
+ //debugger;
+  GridXMLHeader = '';
+  GridXMLHeader += '<?xml version="1.0"?><table font="' + standardGridFont + '" ';
+  GridXMLHeader += 'backgroundColor="white" ';
+  GridXMLHeader += 'sel_bgColor="steelbue" '; // html predefined
+  GridXMLHeader += 'sel_TextColor="white" ';
+  GridXMLHeader += 'header_BgColor="buttonface" ';
+  GridXMLHeader += 'delim ="|" ';
+  //GridXMLHeader += 'zebra="true" ';
+  GridXMLHeader += 'editable="false" ';
+  GridXMLHeader += 'draw_grid="true" ';
+  GridXMLHeader += 'multiselect="false" ';
+  GridXMLHeader += 'enableHtml="false" ';
+  GridXMLHeader += 'enterAsTab="false" ';
+  GridXMLHeader += 'bgInvert="true" ';    
+  GridXMLHeader += 'expandroot="true" ';
+  GridXMLHeader += 'expandall="false" ';
+  GridXMLHeader += 'treelines="1" ';
+  GridXMLHeader += 'locale="enUS" ';
+  GridXMLHeader += 'onrowselect="treeGrid1_onGridClick" ';
+  GridXMLHeader += 'onDoubleClick="treeGrid1_onGridDoubleClick" ';
+
+  GridXMLHeader += '  column_draggable="true" ';
+//  GridXMLHeader += '  xmlns:msxsl="urn:schemas-microsoft-com:xslt" ';
+//  GridXMLHeader += '  xmlns:aras="http://www.aras.com" ';
+//  GridXMLHeader += '  xmlns:usr="urn:the-xml-files:xslt" >';
+
+  GridXMLHeader += '> ';
+  // column headings
+  GridXMLHeader += '<thead>';
+  GridXMLHeader += fn_GenerateTableHeadingsXML (thisItemType,thisStructRelType,columnProperties);
+  GridXMLHeader += '</thead>';
+
+  GridXMLHeader += '<columns>';
+  GridXMLHeader += fn_GenerateTableColumnsXML (columnWidths,columnAlign);
+  GridXMLHeader += '</columns>';
+  
+  GridXMLHeader += '<menu>';
+  GridXMLHeader += '<emptytag/>';
+  GridXMLHeader += '</menu>';
+  GridXMLHeader += '</table>';
+
+  this.Initialized = true;
+};
+
+//------- function passed to functions of Common Grid Handler
+//--------------
+top.fn_addRelatedItemsToThisNodeLevel = function(gridCtrl, parent_row_id, sourceItemId)  {
+  fn_addFolderControlledItemsToRow(gridCtrl, parent_row_id, sourceItemId);
+};
+
+//------- populate the Grid
+ItemFolderStructGrid.prototype.Draw = function ItemFolderStructGrid_Draw(forceGetRelationships)
+{
+  //debugger;
+  treeGrid1_Control.clear();treeGrid1_Control.focus();
+  treeGrid1_Control.InitXml(GridXMLHeader);	
+
+// treeGrid1_Control.RowHeight="50";
+// treeGrid1_Control.InputRow="true";
+  
+  //===== call function from "=plme MultiLevelItems Functions" with:
+  
+  //   rootItemId        = item id of root item or tree structure (i.e. a part assembly)
+  //   itemType          = name of the item type of the node elements of the tree (i.e. "Part", "CAD_Document")
+  //   showWithRootItem  = true or false. true = the root item will be displayed as top level in the tree grid
+  //   itemProperties    = comma separated list of property names of properties of the item to fetch (i.e. "item_number,name,state" etc.)
+  //   relType           = name of the item to item relationship (i.e. "Part BOM")
+  //   relProperties     = comma separated list of property names of properties of the relationship to fetch (i.e. "sort_order,quantity" etc.)
+  //   columnProperties  = comma separated list of property names to display in tree grid's columns (must match the tree grid layout)
+  //                       coded prefixeds "item." or "rel." are used to identify whether use a property from list "itemProperties" or from "relProperties" 
+  //   columnDataTypes   = comma separated list of display types for each property listed in columnProperties. first column must alway be "tree".
+  //                       for other columns use "text" or "lock" or "check". 
+  //                       if "lock" is used, the property must be the locked_by_id or an item - then the lock icon will be displayed
+  //                       if "check" is used, the property must be a boolean or 1-character string with values "1" or "0" - then a checkbox will be displayed
+  
+  //==================================
+  treeGrid1_MsgsId = top.aras.showStatusMessage(0, "Loading Structure of " + thisItemType + "...", '../images/Animated/ProgressSmall.gif');
+
+  // check if root item already saved to server, if error just exit
+  var rootItem = innovator.newItem(thisItemType,"get");
+  rootItem.setID(thisItemId);
+  rootItem.setAttribute("select","id");
+  rootItem.setAttribute("serverEvents","0");
+  rootItem = rootItem.apply();
+  if (rootItem.isError()) {return;}
+  
+  fn_MultiLevelItems_LoadInitalStructureLevelsToTreeGrid ( treeGrid1_Control, thisItemId, showRootItem,
+      thisItemType,itemSelectProperties,
+      thisStructRelType,relSelectProperties,
+       columnProperties,columnDisplayTypes,2,
+       "../images/Icons/16x16/16x16_folder_closed.gif",
+       "../images/Icons/16x16/16x16_folder_open.gif");
+       //"../images/Icons/32x32/32x32_folder_closed.gif",
+       //"../images/Icons/32x32/32x32_folder_opended.gif");
+  //==================================
+
+  top.aras.clearStatusMessage(treeGrid1_MsgsId);
+  treeGrid1_MsgsId = top.aras.showStatusMessage(0, "Loading related Items...", '../images/Animated/ProgressSmall.gif');
+
+  top.aras.clearStatusMessage(treeGrid1_MsgsId);
+
+  if (treeGrid1_Control.GetRootItemsCount() === 1) {treeGrid1_Control.openItem("ROOT-"+thisItemId);}
+
+};
+
+//--------------
+fn_addFolderControlledItemsToRow = function(gridCtrl, parent_row_id, sourceItemId)  {
+  var qry = top.aras.newIOMItem("Item Folder Controlled Item","get");
+  qry.setAttribute("select","related_id("+itemSelectProperties+",itemtype),"+relSelectProperties);
+  qry.setProperty("source_id",sourceItemId);
+  var relItemRels = qry.apply();
+  var itemIcon;
+      
+  var folderControlledItemsCount = relItemRels.getItemCount();
+  if (folderControlledItemsCount <=0) {return 0;}
+
+  // loop through query results
+  for (var r = 0 ; r < folderControlledItemsCount ; r++) {
+    var relItemRel = relItemRels.getItemByIndex(r);
+    var relItemId = relItemRel.getProperty("related_id","");
+    var newNodeId = sourceItemId + "-" + relItemId;
+    if (relItemId !== "") {
+       var relItemType = relItemRel.getPropertyItem("related_id").getAttribute("type","");
+       var relFileRelName = "";
+
+       switch (relItemType)
+       {
+         case "Document":
+           relFileRelName = "Document File";
+           itemIcon = fn_GetSmallIconFormatOfItemType(relItemType);
+           break;
+         case "Part":
+           relFileRelName = "Part File";
+           itemIcon = fn_GetSmallIconFormatOfItemType(relItemType);
+           break;
+         default:
+           itemIcon = fn_GetSmallIconFormatOfItemType("Folder Controlled Item");
+           break;
+       }
+                 
+       fn_MultiLevelItems_AddRowWithIconToGrid (treeGrid1_Control, parent_row_id ,newNodeId,
+               "item.item_number,item.locked_by_id,item.has_files_icon,item.state,item.major_rev,item.release_date,item.name",
+               "tree,lock,text,text:bg_color,text,date,text", itemIcon, itemIcon, relItemRel, true);
+
+       treeGrid1_Control.setUserData(newNodeId,"gridData_rowItemType",relItemType );
+       treeGrid1_Control.setUserData(newNodeId,"gridData_rowItemID",relItemId );
+
+       var numOfCols = columnWidths.split(",").length;
+       fn_SetBackgroundColorOfCellsInRow(treeGrid1_Control,parent_row_id,0,numOfCols-1, "#eeeeee");
+       treeGrid1_Control.setUserData(parent_row_id,"gridData_hasFolderDetails","1");
+
+       // add files of controlled Item
+       //fn_addRelatedFileRowsToRow (treeGrid1_Control, newNodeId, relItemId, relFileRelName );
+    }
+  }
+  return folderControlledItemsCount;
+};
+
+//--------------
+fn_addRelatedFileRowsToRow = function(gridCtrl, row_id, fileSourceItemId, fileRelationshipName )  {
+  if (!fileRelationshipName || fileRelationshipName === undefined || fileRelationshipName === "") {return 0;}
+  if (!fileSourceItemId || fileSourceItemId === undefined) {return 0;}
+
+  var parent_row_id = row_id;
+  var createTempFolder = false;
+  if (fileRelationshipName === "Item Folder File") {
+     createTempFolder = true;
+  }
+
+  var dQry = top.aras.newIOMItem("", "get");
+  dQry.loadAML("<Item type='"+ fileRelationshipName +"' action='get' select='sort_order,comments,related_id(itemtype,file_type,filename,generation,locked_by_id,modified_on)' orderBy='sort_order desc' ><source_id>" + fileSourceItemId + "</source_id></Item>");
+  var fileRels = dQry.apply();
+  if (fileRels.isError())  {return 0;}
+
+  for (var p=0; p<fileRels.getItemCount(); p++) {
+	if (createTempFolder) {
+      var ctrlFolderText = "Attachments of:" + treeGrid1_Control.getCellValue(row_id,0);
+      //itemIcon = fn_GetSmallIconFormatOfItemType("Item Folder File");
+      itemIcon = "../images/Icons/16x16/16x16_files.gif";
+   	  parent_row_id = row_id+"ATTACH";
+
+   	  treeGrid1_Control.InsertNewChild( row_id,parent_row_id,ctrlFolderText+"||--",
+      parent_row_id,itemIcon,itemIcon);    	     
+
+      treeGrid1_Control.setUserData(row_id,"gridData_rowItemType","Item Folder");
+      treeGrid1_Control.setUserData(row_id,"gridData_rowItemID",fileSourceItemId);
+      createTempFolder = false;
+	}
+	
+    // debugger;
+  	var fileRel = fileRels.getItemByIndex(p);
+    var fileItem = fileRel.getPropertyItem("related_id");
+	   
+	var newNodeId=fileSourceItemId + "-" + fileRel.getProperty("related_id");  // combine parent & child id - for unique grid-ID
+		
+//	   var fileTypeItem = fileItem.getItemsByXPath("//Item[@type='FileType']");
+//	   var fileType = fileTypeItem.getProperty("keyed_name","-").toLowerCase();
+    var fileType = ""; //##### fix this  later
+
+	fileIcon = getFileIcon(fileType);
+		
+    fn_MultiLevelItems_AddRowToGrid (gridCtrl, parent_row_id, newNodeId, 
+		        "item.filename,item.locked_by_id,<empty>,<empty>,item.generation,item.modified_on,rel.comments", 
+				"tree,lock,text:#--#,text:#--#,text,date,text",
+				fileIcon, fileRel, true,1);
+		
+	gridCtrl.setUserData(newNodeId,"gridData_parentItemId",fileSourceItemId );
+	gridCtrl.setUserData(newNodeId,"gridData_rowItemType","File" );
+	gridCtrl.setUserData(newNodeId,"gridData_rowItemID",fileItem.getId() );
+  }
+  return fileRels.getItemCount();
+};
+
+//--------------
+getFileIcon = function(fileType)  {
+	var fileIcon = fn_GetSmallIconFormatOfItemType("File");
+	if (fileType.indexOf("acrobat") !== -1) {
+	  fileIcon = "icons/16x16_icon_PDF.gif";
+	}
+	if (fileType.indexOf("word") !== -1) {
+	  fileIcon = "icons/16x16_icon_msWord.gif";
+	}
+	if (fileType.indexOf("excel") !== -1) {
+	  fileIcon = "icons/16x16_icon_msExcel.gif.gif";
+	}
+	if (fileType.indexOf("powerpoint") !== -1) {
+	  fileIcon = "icons/16x16_icon_msPPT.gif";
+	}
+    return fileIcon;
+};
+
+// ============================= Click  Handlers ===============================
+fn_initToolbar = function () {
+  fn_setTbControlEnabled("expandall", true);
+  fn_setTbControlEnabled("collapseall", true);
+  fn_setTbControlEnabled("open_row_item", true);
+  fn_setTbControlEnabled("open_change_details", true);
+  fn_setTbControlEnabled("change_status_check", true);
+  var val = (top.aras.getVariable('ShowLabels') == 'true');
+  toolbar1_Control.showLabels(val);
+};
+
+toolbar1_onToolbarClick = function (item) {
+	treeGrid1_Control.turnEditOff();
+	if (item.getId() == "expandall") {treeGrid1_onExpandAll();}
+	if (item.getId() == "collapseall") {treeGrid1_onCollapseAll();}
+	if (item.getId() == "refresh_all") {window.RefreshGrid(true);}
+    if (item.getId() == "open_row_item") {treeGrid1_onOpenRowItem();}
+//	if (item.getId() == "insert_new_row") {treeGrid1_onInsertNewRow();}
+};
+
+treeGrid1_onGridMenuInit = function (row,col,p) {
+	var mnu = treeGrid1_Control.getMenu();
+	mnu.removeAll();
+	mnu.add("open_row_item","View Item");
+	mnu.add("view_realted_files","View Related Files");
+	mnu.show();
+};
+
+treeGrid1_onGridMenuClick = function (menuChoice) {
+  var selectedId = treeGrid1_Control.getSelectedId();
+  if (!selectedId) {return;}
+  
+  if (menuChoice == "open_row_item") {treeGrid1_onOpenRowItem();}
+  if (menuChoice == "view_realted_files") {treeGrid1_onViewRelatedFiles();}
+};
+
+treeGrid1_onTreeGridOpenNode = function (rowId) {
+  var hasSubLevelsLoaded = treeGrid1_Control.getUserData(rowId,"gridData_hasSubLevelsLoaded");
+  if (hasSubLevelsLoaded !== "1") {
+    fn_reloadNextLevelOfThisRow (rowId,2);
+    treeGrid1_Control.setUserData(rowId,"gridData_hasSubLevelsLoaded","1");
+  }
+  fn_setResultsCountOnStatusBar(treeGrid1_Control.GetRowCount());
+
+};
+
+fn_reloadNextLevelOfThisRow = function (rowId, nextLevels) {
+  if (!rowId) {return;}
+  var rowType = treeGrid1_Control.getUserData(rowId,"gridData_rowItemType");
+  if (!rowType || rowType === undefined){ rowType="";}
+  
+  // reload the next 2 levels of this Item Foler  
+  if (rowType === "Item Folder")
+  {
+    treeGrid1_MsgsId = top.aras.showStatusMessage(0, "Loading Next Levels...", '../images/Animated/ProgressSmall.gif');
+
+    fn_MultiLevelItems_LoadNextLevelsForThisNodeToTreeGrid ( treeGrid1_Control,rowId,
+      thisItemType,itemSelectProperties,
+      thisStructRelType,relSelectProperties,
+      columnProperties,columnDisplayTypes,nextLevels);
+
+    top.aras.clearStatusMessage(treeGrid1_MsgsId);
+  }
+};
+
+treeGrid1_onExpandAll = function () {
+//debugger;
+  // get confirmation to load from sercver
+  // else current structure already loaded will be expanded
+  if(confirm("Do you want to load the entire folder structure first ?  For large structures this can take considerable time."))
+  {
+    var rootRowIds = "#" ;
+    id_array = treeGrid1_Control.GetVisibleItemIDs("|").split("|");
+    for (var x = 0 ; x < id_array.length ; x++) {
+        if (!treeGrid1_Control.GetParentId(id_array[x]))
+        {
+          rootRowIds += "," + id_array[x];
+        }
+    }
+    rootRowIds = rootRowIds.replace(/\#,/,"");
+    if (rootRowIds.indexOf(",") < 0) //single root
+    {
+      rootRowIds = treeGrid1_Control.GetChildItemsId(rootRowIds,false,",");
+    }
+    id_array = rootRowIds.split(",");
+    for (x = 0 ; x < id_array.length ; x++) {
+      fn_reloadNextLevelOfThisRow (id_array[x],-1);  // -1 will load all levels down
+    }
+  }
+  fn_setResultsCountOnStatusBar(treeGrid1_Control.GetRowCount());
+
+  treeGrid1_Control.ExpandAll();
+};
+
+treeGrid1_onCollapseAll = function () {
+  treeGrid1_Control.CollapseAll();
+};
+
+treeGrid1_onGridDoubleClick = function (r) {
+  treeGrid1_onOpenRowItem();
+};
+
+treeGrid1_onGridClick = function (row,c) {
+ 	fn_setTbControlEnabled("open", true);
+};
+
+treeGrid1_onOpenRowItem = function () {
+  var selectedId = treeGrid1_Control.getSelectedId();
+  if (!selectedId) {return;}
+  var itemId = treeGrid1_Control.getUserData(selectedId,"gridData_rowItemID");
+  var itemType = treeGrid1_Control.getUserData(selectedId,"gridData_rowItemType");
+
+  top.aras.uiShowItem(itemType, itemId);
+};
+
+treeGrid1_onViewRelatedFiles = function () {
+  //debugger;
+  var selectedId = treeGrid1_Control.getSelectedId();
+  if (!selectedId || typeof(selectedId) == "undefined" || selectedId === "" || selectedId === "NOTHING_MSG") {
+   return;
+  }
+  var itemId = treeGrid1_Control.getUserData(selectedId,"gridData_rowItemID");
+  var itemType = treeGrid1_Control.getUserData(selectedId,"gridData_rowItemType");
+
+  var argsItem = innovator.newItem(itemType,"get");
+  argsItem.setID(itemId);
+
+  var result = top.aras.evalMethod ("Item Folder ViewItemFiles Action",argsItem.dom.xml);
+  if (result.isError ()) {top.aras.AlertError (result);} 
+  return;
+};
+
+]]></method_code>
+  <method_type>JavaScript</method_type>
+  <name>Item Folder Struct Grid Handler</name>
+ </Item>
+</AML>

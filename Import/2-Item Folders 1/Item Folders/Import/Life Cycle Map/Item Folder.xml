@@ -1,0 +1,80 @@
+﻿<AML>
+ <Item type="Life Cycle Map" id="A52B3836764945E8A487434CFBBB0ECD" action="add">
+  <name>Item Folder</name>
+  <start_state keyed_name="Active" type="Life Cycle State">52A14059A3534F61BFD3D992311B3377</start_state>
+  <Relationships>
+   <Item type="Life Cycle State" id="52A14059A3534F61BFD3D992311B3377" action="add">
+    <image>../images/icons/20x20/20x15_lifecycle.gif</image>
+    <name>Active</name>
+    <set_is_released>0</set_is_released>
+    <set_not_lockable>0</set_not_lockable>
+    <sort_order>128</sort_order>
+    <source_id keyed_name="Item Folder" type="Life Cycle Map">A52B3836764945E8A487434CFBBB0ECD</source_id>
+    <state_permission_id keyed_name="Item Folder Active" type="Permission">E178977849A643F597F4446BC8D038D6</state_permission_id>
+    <x>35</x>
+    <y>32</y>
+   </Item>
+   <Item type="Life Cycle State" id="FF5BFE3EF9CE4B1BAFB3B186F9B28755" action="add">
+    <image>../images/icons/20x20/20x15_lifecycle.gif</image>
+    <name>Archived</name>
+    <set_is_released>0</set_is_released>
+    <set_not_lockable>0</set_not_lockable>
+    <sort_order>256</sort_order>
+    <source_id keyed_name="Item Folder" type="Life Cycle Map">A52B3836764945E8A487434CFBBB0ECD</source_id>
+    <state_permission_id keyed_name="Item Folder Archived" type="Permission">CDC29DEAE0F649C2B5332F3CC04F10B7</state_permission_id>
+    <x>225</x>
+    <y>32</y>
+   </Item>
+   <Item type="Life Cycle State" id="806CE9B144B64444A1E3DC9A1FE0CF4B" action="add">
+    <image>../images/icons/20x20/20x15_lifecycle.gif</image>
+    <name>Planning</name>
+    <set_is_released>0</set_is_released>
+    <set_not_lockable>0</set_not_lockable>
+    <sort_order>384</sort_order>
+    <source_id keyed_name="Item Folder" type="Life Cycle Map">A52B3836764945E8A487434CFBBB0ECD</source_id>
+    <state_permission_id keyed_name="Item Folder Planning" type="Permission">A1A0285C53274487861ED9C4D5680DEA</state_permission_id>
+    <x>124</x>
+    <y>75</y>
+   </Item>
+   <Item type="Life Cycle Transition" id="386B65649784465395E1D6C4EC309D33" action="add">
+    <from_state keyed_name="Active" type="Life Cycle State">52A14059A3534F61BFD3D992311B3377</from_state>
+    <get_comment>0</get_comment>
+    <role keyed_name="Owner" type="Identity">
+     <Item type="Identity" action="get" select="id">
+      <name>Owner</name>
+     </Item>
+    </role>
+    <sort_order>384</sort_order>
+    <source_id keyed_name="Item Folder" type="Life Cycle Map">A52B3836764945E8A487434CFBBB0ECD</source_id>
+    <to_state keyed_name="Archived" type="Life Cycle State">FF5BFE3EF9CE4B1BAFB3B186F9B28755</to_state>
+   </Item>
+   <Item type="Life Cycle Transition" id="C29C08E497634A68BFA8068B42E6D4D7" action="add">
+    <from_state keyed_name="Active" type="Life Cycle State">52A14059A3534F61BFD3D992311B3377</from_state>
+    <get_comment>0</get_comment>
+    <role keyed_name="Owner" type="Identity">
+     <Item type="Identity" action="get" select="id">
+      <name>Owner</name>
+     </Item>
+    </role>
+    <segments></segments>
+    <sort_order>128</sort_order>
+    <source_id keyed_name="Item Folder" type="Life Cycle Map">A52B3836764945E8A487434CFBBB0ECD</source_id>
+    <to_state keyed_name="Planning" type="Life Cycle State">806CE9B144B64444A1E3DC9A1FE0CF4B</to_state>
+    <x>21</x>
+    <y>42</y>
+   </Item>
+   <Item type="Life Cycle Transition" id="5594D6C1824349449C084D79258BA6C2" action="add">
+    <from_state keyed_name="Planning" type="Life Cycle State">806CE9B144B64444A1E3DC9A1FE0CF4B</from_state>
+    <get_comment>0</get_comment>
+    <role keyed_name="Owner" type="Identity">
+     <Item type="Identity" action="get" select="id">
+      <name>Owner</name>
+     </Item>
+    </role>
+    <sort_order>256</sort_order>
+    <source_id keyed_name="Item Folder" type="Life Cycle Map">A52B3836764945E8A487434CFBBB0ECD</source_id>
+    <to_state keyed_name="Archived" type="Life Cycle State">FF5BFE3EF9CE4B1BAFB3B186F9B28755</to_state>
+   </Item>
+  </Relationships>
+ </Item>
+</AML>

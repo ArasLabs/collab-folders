@@ -1,0 +1,23 @@
+﻿<AML>
+ <Item type="Method" id="91C2D22560E5465593BBA7BD93F8E48F" action="add">
+  <execution_allowed_to keyed_name="World" type="Identity">A73B655731924CD0B027E4F4D5FCC0A9</execution_allowed_to>
+  <method_code><![CDATA['System.Diagnostics.Debugger.Break()
+' called onBeforeAdd of "Program"
+If Me.getProperty("name","") = "" Then
+  Return Me.getInnovator().newError("Program name is missing")
+End If
+
+Dim newFolder As Item = Me.newItem("Item Folder","add")
+newFolder.setProperty("name",Me.getProperty("name",""))
+newFolder = newFolder.apply()
+  
+If newFolder.isError() Then Return newFolder
+  
+Me.setProperty("top_item_folder_id",newFolder.GetID())
+  
+Return Me
+]]></method_code>
+  <method_type>VB</method_type>
+  <name>Create TopFolder And Link 2 Prog</name>
+ </Item>
+</AML>

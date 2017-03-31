@@ -1,0 +1,73 @@
+﻿<AML>
+ <Item type="ItemType" id="B88C14B99EF449828C5D926E39EE8B89" action="add">
+  <name>Document</name>
+  <Relationships>
+    <Item type="Property" id="B6AEAE8BB23D46F69D25A2818DA1595F" action="add">
+    <column_alignment>center</column_alignment>
+    <data_type>boolean</data_type>
+    <default_value xml:lang="en">1</default_value>
+    <is_hidden>1</is_hidden>
+    <is_hidden2>1</is_hidden2>
+    <is_indexed>0</is_indexed>
+    <is_keyed>0</is_keyed>
+    <is_multi_valued>0</is_multi_valued>
+    <is_required>0</is_required>
+    <label xml:lang="en">Allow Team Change</label>
+    <name>allow_team_change_logic</name>
+    <range_inclusive>0</range_inclusive>
+    <readonly>0</readonly>
+    <sort_order>103456</sort_order>
+    <source_id keyed_name="Document" type="ItemType" name="Document">B88C14B99EF449828C5D926E39EE8B89</source_id>
+    <track_history>0</track_history>
+   </Item>
+   <Item type="Property" id="7928AFC1D8CB4F64B142289B58E79EE8" action="add">
+    <column_alignment>center</column_alignment>
+    <column_width>60</column_width>
+    <is_hidden>1</is_hidden>
+    <is_hidden2>1</is_hidden2>
+    <label xml:lang="en">Files Flag</label>
+    <name>has_files</name>
+    <sort_order>380</sort_order>
+    <source_id keyed_name="Document" type="ItemType" name="Document">B88C14B99EF449828C5D926E39EE8B89</source_id>
+   </Item>
+   <Item type="Property" id="374900FE5437467B95149316893C44D0" action="add">
+    <column_alignment>center</column_alignment>
+    <column_width>60</column_width>
+    <data_type>federated</data_type>
+    <is_hidden>0</is_hidden>
+    <is_hidden2>0</is_hidden2>
+    <is_indexed>0</is_indexed>
+    <is_keyed>0</is_keyed>
+    <is_multi_valued>0</is_multi_valued>
+    <is_required>0</is_required>
+    <label xml:lang="en">Files</label>
+    <name>has_files_icon</name>
+    <range_inclusive>0</range_inclusive>
+    <readonly>0</readonly>
+    <sort_order>380</sort_order>
+    <source_id keyed_name="Document" type="ItemType" name="Document">B88C14B99EF449828C5D926E39EE8B89</source_id>
+    <track_history>0</track_history>
+   </Item>  
+   <Item type="Server Event" id="209A3F4588904414A37553AE83DD4CE9" action="add">
+    <related_id keyed_name="Show Doc Grid Icons" type="Method">
+     <Item type="Method" action="get" select="id">
+      <name>Show Doc Grid Icons</name>
+     </Item>
+    </related_id>
+    <server_event>onAfterGet</server_event>
+    <sort_order>1536</sort_order>
+    <source_id keyed_name="Document" type="ItemType" name="Document">B88C14B99EF449828C5D926E39EE8B89</source_id>
+   </Item>
+   <Item type="Server Event" id="92F0A53B16844C23B267D4D8EFE797EF" action="add">
+    <related_id keyed_name="Select Doc Grid Icon Props" type="Method">
+     <Item type="Method" action="get" select="id">
+      <name>Select Doc Grid Icon Props</name>
+     </Item>
+    </related_id>
+    <server_event>onBeforeGet</server_event>
+    <sort_order>5</sort_order>
+    <source_id keyed_name="Document" type="ItemType" name="Document">B88C14B99EF449828C5D926E39EE8B89</source_id>
+   </Item>
+  </Relationships>
+ </Item>
+</AML>

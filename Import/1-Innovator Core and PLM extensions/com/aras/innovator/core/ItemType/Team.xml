@@ -1,0 +1,25 @@
+﻿<AML>
+ <Item type="ItemType" id="CC23F9130F574E7D99DF9659F27590A6" action="add">
+  <name>Team</name>
+  <Relationships>
+   <Item type="Property" id="EF3B16FA54854458BD1658D74FC2FAB5" action="add">
+    <column_alignment>left</column_alignment>
+    <data_type>string</data_type>
+    <is_hidden>1</is_hidden>
+    <is_hidden2>1</is_hidden2>
+    <is_indexed>0</is_indexed>
+    <is_keyed>0</is_keyed>
+    <is_multi_valued>0</is_multi_valued>
+    <is_required>0</is_required>
+    <label xml:lang="en">keep hidden</label>
+    <name>private_team_item_id_string</name>
+    <range_inclusive>0</range_inclusive>
+    <readonly>0</readonly>
+    <sort_order>3328</sort_order>
+    <source_id keyed_name="Team" type="ItemType" name="Team">CC23F9130F574E7D99DF9659F27590A6</source_id>
+    <stored_length>32</stored_length>
+    <track_history>0</track_history>
+   </Item>
+  </Relationships>
+ </Item>
+</AML>

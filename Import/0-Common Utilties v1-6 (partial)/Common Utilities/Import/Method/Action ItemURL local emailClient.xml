@@ -1,0 +1,247 @@
+﻿<AML>
+ <Item type="Method" id="3685EE1BEAE045289AAB54A5186E26E5" action="add">
+  <execution_allowed_to keyed_name="World" type="Identity">A73B655731924CD0B027E4F4D5FCC0A9</execution_allowed_to>
+  <method_code><![CDATA[// MailTo Actions Handler
+//
+// Called directly from an Action
+//
+// or called from an HTML field on a form.
+// in this case this method must be added the "onLoad" Form Event
+
+//
+// opens the local email client
+// 
+// functions in this module query Innovator for email addresses 
+// and item links (URL) information etc.
+//
+
+// ====== SAMPLE - HTML field Code ==== 
+//
+// On the from create an html field. Then cut and paste this 
+// HTML- code to this link. (remove the comment caracters after pasting !)
+//============================================================
+/*  -- HTML-Code to run the mailTo function form an html field on a form
+<script>
+function openMail() {
+  var thisItem = document.thisItem;
+
+   top.openMailClientWithURL(thisItem);
+
+}
+</script>
+
+<a id="mailto_action" href="javascript:openMail()" ><img src="../images/icons/16x16/16x16_emailMessage.gif" border="0" alt="Open"><font color=#0000ff> Update Notification (mail with local email client)</a></td></tr></table></fieldset></span>
+ --  end of HTML-code   -- */
+ 
+//============================================================
+
+top.openMailClientWithURL = function (thisItem) {
+
+var href_link = 'mailto:${mailto}?subject=${subject}&body=${body}';
+
+var thisItemType = thisItem.getAttribute("type","");
+var thisItemNumber = thisItem.getProperty("item_number","");
+var thisItemName =thisItem.getProperty("name","");
+var thisItemRev = thisItem.getProperty("major_rev","");
+
+//var rtnText = MailTo_Action_GetBlankSendToAddresses();
+var rtnText = MailTo_Action_GetSendToAddressesOfItemIdentity(thisItem,"created_by_id");
+href_link = href_link.replace("${mailto}", rtnText);
+
+rtnText = MailTo_Action_EmailSubject(thisItemType,thisItem);
+href_link = href_link.replace("${subject}", rtnText);
+
+rtnText = MailTo_Action_EmailBody(thisItemType,thisItem);
+href_link = href_link.replace("${body}", rtnText);
+
+var win = window.open(href_link);
+};
+
+//================== Handler Functions ==============================
+MailTo_Action_GetBlankSendToAddresses = function ()
+{
+  return "";
+};
+var sendToAliasIds = "";
+
+//==============
+MailTo_Action_GetSendToAddressesOfItemIdentity = function (thisItem, identity_property_name)
+{
+  // the property defined by 'identity_property_name' must be available for this item !!!
+  // i.e.  "managed_by_id" or "owned_by_id" or "created_by_id"
+  var identityId = thisItem.getProperty(identity_property_name,"");
+  if (typeof(identityId) == "undefined" || identityId === "") {
+    return "";  // empty
+  }
+ 
+  switch (identity_property_name)
+  {
+    case "created_by_id":
+    case "locked_by_id":
+      return getAllEmailAddressOfUser(identityId); // these are user id (not identities)
+
+    default: 
+      return getAllEmailAddressesOfIdentity(identityId, ";");
+
+  }
+  return "";
+};
+
+//==============
+MailTo_Action_EmailSubject = function (thisItemType,thisItem)
+{
+  var subject = 'URL to ARAS Item: ';
+  if (thisItemType.indexOf("Document") >=0 || thisItemType === "Part") {
+	subject += thisItem.getProperty("item_number","") + '-' + thisItem.getProperty("name","") + ' Rev:' + thisItem.getProperty("major_rev","");
+  }
+  else {
+	subject += thisItem.getProperty("keyed_name","");
+  }
+  return subject;
+};
+
+//==============
+MailTo_Action_EmailBody = function (thisItemType,thisItem)
+{
+  var bodyText = 'Hello,%0A%0A';
+  //## use text from resources , if text needs to be localized to multiple languages
+  bodyText += 'This data item has been sent to you for your information. Please click on the link to view more details.%0A%0A';
+
+  if (thisItemType.indexOf("Document") >=0 || thisItemType === "Part") {
+    bodyText += 'Item Number: ' + thisItem.getProperty("item_number","") + '%0A';
+    bodyText += 'Item Name: ' + thisItem.getProperty("name","") + '%0A';
+    bodyText += 'Item Rev: ' + thisItem.getProperty("major_rev","") + '%0A';
+    bodyText += 'Item Type: ' + thisItemType + '%0A';
+    bodyText += 'Item Status: ' + thisItem.getProperty("state","");
+    bodyText += '%0A%0A';
+  }
+  else {
+    bodyText += 'Item: ' + thisItem.getProperty("keyed_name","") + '%0A';
+    bodyText += 'Item Status: ' + thisItem.getProperty("state","") + '%0A';
+    bodyText += 'Item Classification: ' + thisItem.getProperty("classification","") + '%0A';
+    bodyText += '%0A%0A';
+  }
+  bodyText += BuildURL_toItem(thisItemType,thisItem.getProperty("id",""));
+  bodyText += '%0A%0A';
+  
+  bodyText += 'Kind Regards%0A%0A Aras Innovator Admin';
+  
+  return bodyText;
+};
+
+BuildURL_toItem = function (thisItemType,thisItemId) {
+  var serverUrl = top.aras.getServerURL();
+  var pos = serverUrl.indexOf("/Server");
+  var innovatorBaseUrl = serverUrl.substring(0,pos);
+
+  return innovatorBaseUrl+'/Client/default.aspx?StartItem=' + thisItemType + ':' + thisItemId;
+};
+
+function getAliasMembers (identityId, sepChar) {
+    var qry = top.aras.newIOMItem("Member","get");
+    qry.setProperty("source_id",identityId);
+    qry.setAttribute("select","source_id,related_id(name,is_alias)");
+	qry = qry.apply();
+
+	for (var n=0; n < qry.getItemCount(); n++) {
+	  var thisMember = qry.getItemByIndex(n);
+	  var relIdentityId = thisMember.getProperty("related_id","");
+	   //var relIdentity = thisMember.getItemsByXPath("//Item[@type='Identity'][@id='" + relIdentityId + "']");
+	   
+	  if (relIdentityId !== "") {
+  	   var relIdentity = thisMember.getPropertyItem("related_id");
+	   
+       if (relIdentity.getProperty("is_alias","0") === "1") {
+		if (sendToAliasIds === "") {
+           sendToAliasIds += relIdentityId;
+		}
+		else {
+		   if (sendToAliasIds.indexOf(relIdentityId) < 0) {
+ 	         sendToAliasIds += sepChar + relIdentityId;
+		   }
+		}
+	   }
+	   else {
+	     getAliasMembers(relIdentityId, sepChar);  // recursion
+	     return; //### this recursion does to work !!! -- fix it and then remove the return !!
+	   }
+	 }
+   }
+}
+
+function getAllEmailAddressOfUser(UserId) {
+  // query enabled users
+  var qry = new Item("User","get");
+  qry.setID(UserId);
+  qry.setProperty("logon_enabled","1");
+  qry.setAttribute("select","login_name,email,logon_enabled");
+  qry = qry.apply();
+      
+  if (qry.isError()) {return "";}
+  else {
+    return qry.getItemByIndex(0).getProperty("email","");
+  }
+}
+
+function getAllEmailAddressesOfIdentity(topIdentityId, sepChar) {
+  //debugger;
+  // test if this id already is an alias id. (will have no members)
+  var qry = new Item("Identity","get");
+  qry.setProperty("id",topIdentityId);
+  qry.setAttribute("select","id,name,is_alias");
+  qry = qry.apply();
+
+  if (qry.getProperty("is_alias","0") === "1") {
+	  sendToAliasIds = qry.getProperty("id","");
+  }
+  else {
+    // this call recusively sets global list of alias ids  'sendToAliasIds'
+    sendToAliasIds = "";
+    getAliasMembers (topIdentityId,",");
+  }
+  //return sendToAliasIds;
+  var rtn = "";
+
+  //loop through ids and find related user and create list with email addresses separated by 'sepChar'
+  var arrayIds = sendToAliasIds.split(",");
+  for (var idx=0; idx < arrayIds.length; idx++) {
+   // find user details for each
+   qry = new Item("Alias","get");
+   qry.setProperty("related_id",arrayIds[idx]);
+   qry.setAttribute("select","source_id(login_name,email,logon_enabled),related_id");
+   qry = qry.apply();
+   if ( ! qry.isError() ) {
+	 qry = qry.getItemByIndex(0); // can have only 1 user per alias identity
+		 
+	 var thisUser = qry.getItemsByXPath("//Item[@type='User'][@id='" + qry.getProperty("source_id","") + "']");
+	 var thisUserEmail = thisUser.getProperty("email","");
+	 if (thisUserEmail !== "" && thisUser.getProperty("logon_enabled","0") === "1") {
+ 	   if (rtn === "") {
+		  rtn += thisUserEmail;  
+	   }
+	   else {
+	     rtn += sepChar + thisUserEmail;  
+	   }
+	 }
+   }
+  }
+ return rtn;
+}
+
+// ======= MAIN ============   
+if (top.openMailClientWithURL) {
+  var thisId = this.getID();
+  var thisType = this.getAttribute("type","");
+
+  // retrieve Item data
+  var thisItem = top.aras.newIOMItem(thisType,"get");
+  thisItem.setId(thisId);
+  thisItem.setAttribute("select","item_number,name,major_rev,generation,classification,state,keyed_name,created_by_id,locked_by_id,owned_by_id,managed_by_id,team_id");
+  thisItem = thisItem.apply();
+  top.openMailClientWithURL(thisItem);
+}
+return;]]></method_code>
+  <method_type>JavaScript</method_type>
+  <name>Action ItemURL local emailClient</name>
+ </Item>
+</AML>

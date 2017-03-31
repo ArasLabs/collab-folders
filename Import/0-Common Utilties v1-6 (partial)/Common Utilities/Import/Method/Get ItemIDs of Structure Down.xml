@@ -1,0 +1,68 @@
+﻿<AML>
+ <Item type="Method" id="7436B319E38145959F4D4E8179A96B94" action="add">
+  <comments>generic method that traverses the structure of a defined relationship</comments>
+  <execution_allowed_to keyed_name="World" type="Identity">A73B655731924CD0B027E4F4D5FCC0A9</execution_allowed_to>
+  <method_code><![CDATA['defined Releationship must have source and related item of the same type
+
+' Item context is the itemType of the starting item (sourceItem)
+' custom attribute "relationshipName" must be set. It defines the relationships to traverse
+' (optional) custom attribute "isReleased='1'" can be set. To traverse logic will check for latest released child items only
+
+' the methods returns a comma separated list of ids, or an empty result, if nothing found
+' NOTE: the result does not include the id of the starting item ! 
+
+'MethodTemplateName=VBMain;
+Dim res As Item
+Dim inn As Innovator
+Dim IdsList As String
+
+Function Main() As Item
+  'System.Diagnostics.Debugger.Break()
+  inn = Me.getInnovator()
+  
+  'returns a comma separated list of item Ids
+  IdsList = "##"  'reset global variable
+
+  Dim relationshipName As String = Me.getAttribute("relationshipName","")
+  Dim isReleased As Boolean = (Me.getAttribute("isReleased","0") = "1")
+
+  If relationshipName = "" Then Return inn.newError("Method 'Get ItemIDs of Structure Down' failed!. Custom attribute 'relationshipName' not set.") 
+
+  res = fn_traverseStructureDown (Me.GetType(), Me.GetID(),relationshipName, isReleased )
+  If res.isError() Then Return inn.newResult("")
+  If IdsList = "##" Then Return inn.newResult("")
+  
+  Return inn.newResult(IdsList.Replace("##,",""))
+End Function
+
+'-----------
+Private Function fn_traverseStructureDown (startItemType As String, startItemId As String, relationshipName As String, isReleased As Boolean) As Item
+ Dim amlCmd As String = "<Item type='" & relationshipName & "' action='get' serverEvents='0' select='sort_order,source_id(id,name,generation),related_id(id,name,generation)' >"
+ amlCmd = amlCmd & "<source_id>" & startItemId & "</source_id>"
+ amlCmd = amlCmd & "<related_id><Item type='" & startItemType & "' action='get' serverEvents='0' select='id,name,generation)'>"
+ If isReleased Then
+   amlCmd = amlCmd & "<is_released>1</is_released>"
+ End If
+ amlCmd = amlCmd & "</Item></related_id>"
+ amlCmd = amlCmd & "</Item>"
+ 
+ Dim relsItems As Item = inn.newItem("","")
+ relsItems.loadAML(amlCmd)
+ relsItems = relsItems.apply()
+ If relsItems.isError() Then Return relsItems
+ 
+ Dim i As Integer
+ For i=0 To relsItems.getItemCount()-1
+ 	Dim itemId As String = relsItems.getItemByIndex(i).getProperty("related_id","")
+ 	If itemId <> "" Then IdsList = IdsList & "," & itemId
+ 	
+ 	' recursive call
+ 	fn_traverseStructureDown(startItemType,itemId,relationshipName,isReleased)
+ Next i
+ Return Me 
+End Function
+]]></method_code>
+  <method_type>VB</method_type>
+  <name>Get ItemIDs of Structure Down</name>
+ </Item>
+</AML>

@@ -1,0 +1,29 @@
+﻿<AML>
+ <Item type="Method" id="6673A16192584F36B6F841911D680793" action="add">
+  <comments>PLM CommonUtilities</comments>
+  <execution_allowed_to keyed_name="World" type="Identity">A73B655731924CD0B027E4F4D5FCC0A9</execution_allowed_to>
+  <method_code><![CDATA[// client-side method.
+// can be used on any Item Type with the 
+// "OnAfterNew" Event (Client Events tab)
+// will set the owned_by_id to the current user's id (creator)
+//debugger;
+if ("" === this.getProperty("owned_by_id",""))
+{
+  var aliasId = this.getInnovator().getUserAliases();
+  if (aliasId)
+  {
+    aliasId = aliasId.substr(0,32);
+    var alias = this.getInnovator().getItemById("Identity", aliasId);
+    if (alias.getItemCount()==1)
+    {
+      this.setProperty("owned_by_id", alias.getAttribute("id"));
+      this.setPropertyAttribute("owned_by_id", "keyed_name", alias.getProperty("keyed_name", ""));
+    }
+  }
+}
+return this;
+]]></method_code>
+  <method_type>JavaScript</method_type>
+  <name>Set currUser as Owner</name>
+ </Item>
+</AML>

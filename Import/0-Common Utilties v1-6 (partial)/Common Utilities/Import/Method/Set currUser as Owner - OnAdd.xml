@@ -1,0 +1,28 @@
+﻿<AML>
+ <Item type="Method" id="4DB04269E7AD43F7B4B6E6C7102FFDAE" action="add">
+  <comments>PLM CommonUtilities</comments>
+  <execution_allowed_to keyed_name="World" type="Identity">A73B655731924CD0B027E4F4D5FCC0A9</execution_allowed_to>
+  <method_code><![CDATA['System.Diagnostics.Debugger.Break()
+' can be used on any Item Type - Server Side . OnBeforeAdd
+' there is also another client side method for this . 
+' (which will set the value first so server side method will not override user's settings
+
+' will Set the owned_by_id To the current user's id (creator), if not set already
+Dim owner As String = Me.getProperty("owned_by_id","")
+
+If (owner = "") Then
+  Dim aliasId = Me.getInnovator().getUserAliases()
+  If (aliasId <> "") Then
+    aliasId = aliasId.Substring(0,32)
+    Dim AliasItem = Me.getInnovator().getItemById("Identity", aliasId)
+    If (AliasItem.getItemCount() =1) Then
+      Me.setProperty("owned_by_id", AliasItem.getAttribute("id"))
+      Me.setPropertyAttribute("owned_by_id", "keyed_name", AliasItem.getProperty("keyed_name", ""))
+    End If
+  End If
+End If
+Return Me]]></method_code>
+  <method_type>VB</method_type>
+  <name>Set currUser as Owner - OnAdd</name>
+ </Item>
+</AML>

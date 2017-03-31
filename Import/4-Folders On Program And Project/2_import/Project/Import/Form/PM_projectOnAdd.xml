@@ -1,0 +1,33 @@
+﻿<AML>
+ <Item type="Form" id="1CF50C86BD1141A9863451B7634B2F04" action="add">
+  <name>PM_projectOnAdd</name>
+  <Relationships>
+   <Item type="Body" id="2A0A9404985D437D92A5E2ADF27F7B89" action="add">
+    <source_id keyed_name="PM_projectOnAdd" type="Form">1CF50C86BD1141A9863451B7634B2F04</source_id>
+    <Relationships>
+     <Item type="Field" id="CBBD09563A824515BC4C095EFE89C7E0" action="add">
+      <border_width>0</border_width>
+      <field_type>item</field_type>
+      <font_color>#000000</font_color>
+      <font_family>arial, helvetica, sans-serif</font_family>
+      <font_size>8pt</font_size>
+      <font_weight>bold</font_weight>
+      <is_disabled>0</is_disabled>
+      <is_visible>1</is_visible>
+      <label xml:lang="en">Folder Template:   .. </label>
+      <label_position>left</label_position>
+      <list_no_blank>0</list_no_blank>
+      <name>item_folder_template_id</name>
+      <propertytype_id keyed_name="item_folder_template_id" type="Property">201E238393484B93A8EFB03F6DCAE5AC</propertytype_id>
+      <sort_order>2304</sort_order>
+      <source_id keyed_name="2A0A9404985D437D92A5E2ADF27F7B89" type="Body">2A0A9404985D437D92A5E2ADF27F7B89</source_id>
+      <tab_index>14464</tab_index>
+      <tab_stop>1</tab_stop>
+      <x>181</x>
+      <y>115</y>
+     </Item>
+    </Relationships>
+   </Item>
+  </Relationships>
+ </Item>
+</AML>
