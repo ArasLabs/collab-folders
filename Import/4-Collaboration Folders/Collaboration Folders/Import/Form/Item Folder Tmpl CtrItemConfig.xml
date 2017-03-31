@@ -1,7 +1,8 @@
 ﻿<AML>
  <Item type="Form" id="490308325E5D4134B8E75F4CD89FDAE6" action="add">
-  <name>Item Folder Tmpl CtrItemConfig</name>
+  <category_form>0</category_form>
   <stylesheet><![CDATA[../styles/default.css]]></stylesheet>
+  <name>Item Folder Tmpl CtrItemConfig</name>
   <Relationships>
    <Item type="Body" id="336A2123C3934B8196AE8EC1D2F929B8" action="add">
     <bg_attach>scroll</bg_attach>
@@ -23,7 +24,6 @@
       <label xml:lang="en">Auto Number Method</label>
       <label_position>top</label_position>
       <list_no_blank>0</list_no_blank>
-      <name>auto_number_method</name>
       <propertytype_id keyed_name="auto_number_method" type="Property">AAB17F270A42471FBE89B1AE7CB42D6A</propertytype_id>
       <sort_order>384</sort_order>
       <source_id keyed_name="336A2123C3934B8196AE8EC1D2F929B8" type="Body">336A2123C3934B8196AE8EC1D2F929B8</source_id>
@@ -31,6 +31,7 @@
       <tab_stop>1</tab_stop>
       <x>185</x>
       <y>47</y>
+      <name>auto_number_method</name>
      </Item>
      <Item type="Field" id="609C7B05D71E468DAF45444C43FBC88D" action="add">
       <bg_color>beige  </bg_color>
@@ -45,7 +46,6 @@
       <label xml:lang="en">Item Type Name</label>
       <label_position>top</label_position>
       <list_no_blank>0</list_no_blank>
-      <name>controlled_item_type</name>
       <propertytype_id keyed_name="controlled_item_type" type="Property">17A287412CB3474A94927A216ED0B5C4</propertytype_id>
       <sort_order>256</sort_order>
       <source_id keyed_name="336A2123C3934B8196AE8EC1D2F929B8" type="Body">336A2123C3934B8196AE8EC1D2F929B8</source_id>
@@ -53,6 +53,7 @@
       <tab_stop>1</tab_stop>
       <x>185</x>
       <y>10</y>
+      <name>controlled_item_type</name>
      </Item>
      <Item type="Field" id="318EEBB6BC594140B8567CED617F6C3C" action="add">
       <field_type>html</field_type>
@@ -67,12 +68,12 @@
       <is_disabled>0</is_disabled>
       <is_visible>1</is_visible>
       <list_no_blank>0</list_no_blank>
-      <name>item_info</name>
       <sort_order>128</sort_order>
       <source_id keyed_name="336A2123C3934B8196AE8EC1D2F929B8" type="Body">336A2123C3934B8196AE8EC1D2F929B8</source_id>
       <tab_stop>0</tab_stop>
       <x>0</x>
       <y>-50</y>
+      <name>item_info</name>
      </Item>
     </Relationships>
    </Item>

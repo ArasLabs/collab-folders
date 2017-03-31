@@ -9,7 +9,6 @@
   <inc_related_key_name>1</inc_related_key_name>
   <is_list_type>0</is_list_type>
   <label xml:lang="en">Folders</label>
-  <name>Item Folder Template Folders</name>
   <new_show_related>0</new_show_related>
   <related_notnull>0</related_notnull>
   <related_option>2</related_option>
@@ -24,16 +23,17 @@
     <is_dependent>0</is_dependent>
     <is_relationship>1</is_relationship>
     <is_versionable>0</is_versionable>
-    <manual_versioning>0</manual_versioning>
-    <name>Item Folder Template Folders</name>
     <revisions keyed_name="Default" type="Revision">7FE395DD8B9F4E1090756A34B733D75E</revisions>
     <show_parameters_tab>1</show_parameters_tab>
     <unlock_on_logout>0</unlock_on_logout>
     <use_src_access>1</use_src_access>
-    </Item>
+    <name>Item Folder Template Folders</name>
+    <Relationships></Relationships>
+   </Item>
   </relationship_id>
   <sort_order>10</sort_order>
   <source_id keyed_name="Item Folder Template" type="ItemType" name="Item Folder Template">4D5FB24117B040F484D2ACA7BED6C2B2</source_id>
+  <name>Item Folder Template Folders</name>
   <Relationships>
    <Item type="Relationship View" id="EDA3EAB7727246A2B3733BE9758ABD75" action="add">
     <form keyed_name="Item Folder Structure Grid" type="Form">EC9D60083BDB4DA1B57309A931E7B990</form>
@@ -47,26 +47,6 @@
    </Item>
   </Relationships>
  </Item>
- <Item type="ItemType" id="D72DC789EE1B4475853E4990DA6D79F8" action="edit">
-  <Relationships>
-   <Item type="Property" action="edit" where="source_id='D72DC789EE1B4475853E4990DA6D79F8' and name='generation'">
-    <column_alignment>left</column_alignment>
-    <data_type>integer</data_type>
-    <is_hidden>1</is_hidden>
-    <is_hidden2>1</is_hidden2>
-    <is_indexed>0</is_indexed>
-    <is_keyed>0</is_keyed>
-    <is_multi_valued>0</is_multi_valued>
-    <is_required>0</is_required>
-    <name>generation</name>
-    <range_inclusive>0</range_inclusive>
-    <readonly>1</readonly>
-    <sort_order>2432</sort_order>
-    <source_id keyed_name="Item Folder Template Folders" type="ItemType" name="Item Folder Template Folders">D72DC789EE1B4475853E4990DA6D79F8</source_id>
-    <track_history>0</track_history>
-   </Item>
-  </Relationships>
- </Item>
- <Item type="View" action="delete" where="source_id='D72DC789EE1B4475853E4990DA6D79F8'"></Item>
- <Item type="Form" action="delete" where="name='Item Folder Template Folders'"></Item>
+ <Item type="View" action="delete" where="source_id='D72DC789EE1B4475853E4990DA6D79F8'" />
+ <Item type="Form" action="delete" where="name='Item Folder Template Folders'" />
 </AML>

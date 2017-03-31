@@ -18,8 +18,9 @@ Function Main() As Item
   If (aliasId <> "") Then
     aliasId = aliasId.Substring(0,32)
     Dim AliasItem As Item = inn.getItemById("Identity", aliasId)
+
+    amlCmd.setProperty("owned_by_id",aliasId)
     
-    amlRelItem.setProperty("team_role","60EBF9D1BB584921A73FA2F8D74DAF80") 'id of identitty "Team Manager"
     amlRelItem.setRelatedItem(AliasItem)
     amlCmd.addRelationship(amlRelItem)
 
@@ -28,12 +29,15 @@ Function Main() As Item
   Dim plmIdentity As Aras.Server.Security.Identity  = Aras.Server.Security.Identity.GetByName("Super User")
   Dim PermissionWasSet As Boolean  = Aras.Server.Security.Permissions.GrantIdentity(plmIdentity)
 
-  amlCmd = amlCmd.apply()
+  Dim newTeam As Item = amlCmd.apply()
 
   ' Revoke 'Aras PLM' permissions
   If (PermissionWasSet) Then Aras.Server.Security.Permissions.RevokeIdentity(plmIdentity)
 
-  Return amlCmd
+  If newTeam.isError() Then Return newTeam 
+  amlCmd = newTeam.apply("Set Folder privateTeam Perm")
+
+  Return newTeam
   
 End Function
 

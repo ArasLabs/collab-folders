@@ -8,8 +8,8 @@
     <name>Item Folder ClearTeamAccess_A</name>
    </Item>
   </method>
-  <name>Item Folder ClearTeamAccess</name>
   <target>none</target>
   <type>item</type>
+  <name>Item Folder ClearTeamAccess</name>
  </Item>
 </AML>

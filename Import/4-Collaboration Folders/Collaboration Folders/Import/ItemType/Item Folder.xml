@@ -13,42 +13,14 @@
   <label xml:lang="en">Folder</label>
   <label_plural xml:lang="en">Folders</label_plural>
   <large_icon>../images/Icons/32x32/32x32_folder_closed.gif</large_icon>
-  <manual_versioning>0</manual_versioning>
-  <name>Item Folder</name>
   <open_icon>../images/Icons/16x16/16x16_folder_closed.gif</open_icon>
   <revisions keyed_name="Default2" type="Revision">4662A0D8F5BA46FAA5548A019AFD330D</revisions>
   <show_parameters_tab>1</show_parameters_tab>
   <structure_view>tab view</structure_view>
   <unlock_on_logout>0</unlock_on_logout>
   <use_src_access>0</use_src_access>
+  <name>Item Folder</name>
   <Relationships>
-   <Item type="Allowed Permission" id="D97311C56BB94436A29E9A69B763908D" action="add">
-    <is_default>1</is_default>
-    <related_id keyed_name="Item Folder Active" type="Permission">E178977849A643F597F4446BC8D038D6</related_id>
-    <sort_order>128</sort_order>
-    <source_id keyed_name="Item Folder" type="ItemType" name="Item Folder">C0C8138AB15C41F59FA629EB8EAE2DC2</source_id>
-   </Item>
-  
-   <Item type="Can Add" id="B1F4A87D54B54ADD8EA45D078B250597" action="add">
-    <can_add>1</can_add>
-    <related_id keyed_name="World" type="Identity">
-     <Item type="Identity" action="get" select="id">
-      <name>World</name>
-     </Item>
-    </related_id>
-    <sort_order>10</sort_order>
-    <source_id keyed_name="Item Folder" type="ItemType" name="Item Folder">C0C8138AB15C41F59FA629EB8EAE2DC2</source_id>
-   </Item>
-   <Item type="Item Action" id="1658BC74AD994212AA9CE4BB6424E33C" action="add">
-    <related_id keyed_name="Item Folder ClearTeamAccess" type="Action">C41267CD2385462C99867A6C870D6272</related_id>
-    <sort_order>128</sort_order>
-    <source_id keyed_name="Item Folder" type="ItemType" name="Item Folder">C0C8138AB15C41F59FA629EB8EAE2DC2</source_id>
-   </Item>
-   <Item type="ItemType Life Cycle" id="D0FB64DE8568459885ED21CFC9F9CA80" action="add">
-    <related_id keyed_name="Item Folder" type="Life Cycle Map">A52B3836764945E8A487434CFBBB0ECD</related_id>
-    <sort_order>128</sort_order>
-    <source_id keyed_name="Item Folder" type="ItemType" name="Item Folder">C0C8138AB15C41F59FA629EB8EAE2DC2</source_id>
-   </Item>
    <Item type="Property" id="415903D60F614DB7801A15E0B15BC527" action="add">
     <column_alignment>center</column_alignment>
     <column_width>80</column_width>
@@ -61,12 +33,12 @@
     <is_multi_valued>0</is_multi_valued>
     <is_required>0</is_required>
     <label xml:lang="en">Allow SubFolders</label>
-    <name>allow_sub_folders</name>
     <range_inclusive>0</range_inclusive>
     <readonly>0</readonly>
     <sort_order>9445</sort_order>
     <source_id keyed_name="Item Folder" type="ItemType" name="Item Folder">C0C8138AB15C41F59FA629EB8EAE2DC2</source_id>
     <track_history>0</track_history>
+    <name>allow_sub_folders</name>
    </Item>
    <Item type="Property" id="AFB6A041FA2744509A32EF90C01279F3" action="add">
     <column_alignment>center</column_alignment>
@@ -79,12 +51,12 @@
     <is_multi_valued>0</is_multi_valued>
     <is_required>0</is_required>
     <label xml:lang="en">allow_team_change_logic</label>
-    <name>allow_team_change_logic</name>
     <range_inclusive>0</range_inclusive>
     <readonly>0</readonly>
     <sort_order>3172</sort_order>
     <source_id keyed_name="Item Folder" type="ItemType" name="Item Folder">C0C8138AB15C41F59FA629EB8EAE2DC2</source_id>
     <track_history>0</track_history>
+    <name>allow_team_change_logic</name>
    </Item>
    <Item type="Property" id="DA442563782B42F5A439C6FF02DE693C" action="add">
     <column_alignment>left</column_alignment>
@@ -99,12 +71,13 @@
     <is_multi_valued>0</is_multi_valued>
     <is_required>0</is_required>
     <label xml:lang="en">Allowed Relationships</label>
-    <name>allowed_relationships</name>
     <range_inclusive>0</range_inclusive>
     <readonly>0</readonly>
     <sort_order>9444</sort_order>
     <source_id keyed_name="Item Folder" type="ItemType" name="Item Folder">C0C8138AB15C41F59FA629EB8EAE2DC2</source_id>
+    <stored_length>256</stored_length>
     <track_history>0</track_history>
+    <name>allowed_relationships</name>
    </Item>
    <Item type="Property" id="E86E53FBF5CE4D5BB295B76EFA6EC5C9" action="add">
     <column_alignment>left</column_alignment>
@@ -117,13 +90,13 @@
     <is_multi_valued>0</is_multi_valued>
     <is_required>0</is_required>
     <label xml:lang="en">Description</label>
-    <name>description</name>
     <range_inclusive>0</range_inclusive>
     <readonly>0</readonly>
     <sort_order>20</sort_order>
     <source_id keyed_name="Item Folder" type="ItemType" name="Item Folder">C0C8138AB15C41F59FA629EB8EAE2DC2</source_id>
     <stored_length>512</stored_length>
     <track_history>0</track_history>
+    <name>description</name>
    </Item>
    <Item type="Property" id="BA66DFB3AD294627880074AC93A4FA00" action="add">
     <column_alignment>center</column_alignment>
@@ -136,12 +109,12 @@
     <is_multi_valued>0</is_multi_valued>
     <is_required>0</is_required>
     <label xml:lang="en">Ctrld Items</label>
-    <name>has_controlled_items</name>
     <range_inclusive>0</range_inclusive>
     <readonly>0</readonly>
     <sort_order>111</sort_order>
     <source_id keyed_name="Item Folder" type="ItemType" name="Item Folder">C0C8138AB15C41F59FA629EB8EAE2DC2</source_id>
     <track_history>0</track_history>
+    <name>has_controlled_items</name>
    </Item>
    <Item type="Property" id="7E17E7E579D0445687F1E39097B4BE68" action="add">
     <column_alignment>center</column_alignment>
@@ -154,12 +127,12 @@
     <is_multi_valued>0</is_multi_valued>
     <is_required>0</is_required>
     <label xml:lang="en">Files Flag</label>
-    <name>has_files</name>
     <range_inclusive>0</range_inclusive>
     <readonly>0</readonly>
     <sort_order>110</sort_order>
     <source_id keyed_name="Item Folder" type="ItemType" name="Item Folder">C0C8138AB15C41F59FA629EB8EAE2DC2</source_id>
     <track_history>0</track_history>
+    <name>has_files</name>
    </Item>
    <Item type="Property" id="26AF31785D1C4B82866CD85D6381D78E" action="add">
     <column_alignment>center</column_alignment>
@@ -172,12 +145,12 @@
     <is_multi_valued>0</is_multi_valued>
     <is_required>0</is_required>
     <label xml:lang="en">Files</label>
-    <name>has_files_icon</name>
     <range_inclusive>0</range_inclusive>
     <readonly>0</readonly>
     <sort_order>110</sort_order>
     <source_id keyed_name="Item Folder" type="ItemType" name="Item Folder">C0C8138AB15C41F59FA629EB8EAE2DC2</source_id>
     <track_history>0</track_history>
+    <name>has_files_icon</name>
    </Item>
    <Item type="Property" id="A016664AACD3425A90B39B0113885BD2" action="add">
     <column_alignment>center</column_alignment>
@@ -190,12 +163,12 @@
     <is_multi_valued>0</is_multi_valued>
     <is_required>0</is_required>
     <label xml:lang="en">Sub Folders</label>
-    <name>has_sub_folders</name>
     <range_inclusive>0</range_inclusive>
     <readonly>0</readonly>
     <sort_order>112</sort_order>
     <source_id keyed_name="Item Folder" type="ItemType" name="Item Folder">C0C8138AB15C41F59FA629EB8EAE2DC2</source_id>
     <track_history>0</track_history>
+    <name>has_sub_folders</name>
    </Item>
    <Item type="Property" id="96D7173E5E804FA5906F70913E4479B4" action="add">
     <column_alignment>center</column_alignment>
@@ -210,12 +183,12 @@
     <is_multi_valued>0</is_multi_valued>
     <is_required>0</is_required>
     <label xml:lang="en">Top</label>
-    <name>is_root</name>
     <range_inclusive>0</range_inclusive>
     <readonly>1</readonly>
     <sort_order>100</sort_order>
     <source_id keyed_name="Item Folder" type="ItemType" name="Item Folder">C0C8138AB15C41F59FA629EB8EAE2DC2</source_id>
     <track_history>0</track_history>
+    <name>is_root</name>
    </Item>
    <Item type="Property" id="62BF6AB90D844761AC429D281E4B9D7E" action="add">
     <column_alignment>center</column_alignment>
@@ -228,12 +201,12 @@
     <is_multi_valued>0</is_multi_valued>
     <is_required>0</is_required>
     <label xml:lang="en">is Template</label>
-    <name>is_template</name>
     <range_inclusive>0</range_inclusive>
     <readonly>0</readonly>
     <sort_order>101</sort_order>
     <source_id keyed_name="Item Folder" type="ItemType" name="Item Folder">C0C8138AB15C41F59FA629EB8EAE2DC2</source_id>
     <track_history>0</track_history>
+    <name>is_template</name>
    </Item>
    <Item type="Property" id="1AAC981DBD4B453DB9A7B2E5AB0E1DB5" action="add">
     <column_alignment>left</column_alignment>
@@ -247,12 +220,12 @@
     <is_required>0</is_required>
     <item_behavior>float</item_behavior>
     <label xml:lang="en">Folder Template</label>
-    <name>item_folder_template_id</name>
     <range_inclusive>0</range_inclusive>
     <readonly>0</readonly>
     <sort_order>6372</sort_order>
     <source_id keyed_name="Item Folder" type="ItemType" name="Item Folder">C0C8138AB15C41F59FA629EB8EAE2DC2</source_id>
     <track_history>0</track_history>
+    <name>item_folder_template_id</name>
    </Item>
    <Item type="Property" id="5F604A856E604189AFEEFAF88EC957CC" action="add">
     <column_alignment>left</column_alignment>
@@ -266,13 +239,56 @@
     <is_required>1</is_required>
     <keyed_name_order>1</keyed_name_order>
     <label xml:lang="en">Name</label>
-    <name>name</name>
     <range_inclusive>0</range_inclusive>
     <readonly>0</readonly>
     <sort_order>10</sort_order>
     <source_id keyed_name="Item Folder" type="ItemType" name="Item Folder">C0C8138AB15C41F59FA629EB8EAE2DC2</source_id>
     <stored_length>80</stored_length>
     <track_history>0</track_history>
+    <name>name</name>
+   </Item>
+   <Item type="Property" id="4839634E6F784458B74616542D69928B" action="add">
+    <column_alignment>left</column_alignment>
+    <column_width>80</column_width>
+    <data_type>string</data_type>
+    <is_hidden>0</is_hidden>
+    <is_hidden2>0</is_hidden2>
+    <is_indexed>0</is_indexed>
+    <is_keyed>0</is_keyed>
+    <is_multi_valued>0</is_multi_valued>
+    <is_required>0</is_required>
+    <label xml:lang="en">Related Project</label>
+    <range_inclusive>0</range_inclusive>
+    <readonly>0</readonly>
+    <sort_order>1000</sort_order>
+    <source_id keyed_name="Item Folder" type="ItemType" name="Item Folder">C0C8138AB15C41F59FA629EB8EAE2DC2</source_id>
+    <stored_length>64</stored_length>
+    <track_history>0</track_history>
+    <name>related_project_keyed_name</name>
+   </Item>
+   <Item type="View" id="EF2855A4F7C0430EB8B2B0E128E73442" action="add">
+    <client>js</client>
+    <related_id keyed_name="Item Folder Add New" type="Form">BF7A7C71D5214CA09FDADB5A46C42D37</related_id>
+    <role keyed_name="World" type="Identity">
+     <Item type="Identity" action="get" select="id">
+      <name>World</name>
+     </Item>
+    </role>
+    <sort_order>256</sort_order>
+    <source_id keyed_name="Item Folder" type="ItemType" name="Item Folder">C0C8138AB15C41F59FA629EB8EAE2DC2</source_id>
+    <type>add</type>
+   </Item>
+   <Item type="View" id="76FE32CB6ACD4BEFAC60C6ABE302EB33" action="add">
+    <client>js</client>
+    <related_id keyed_name="Item Folder" type="Form">D8A26FDB1ECC4DC19CFCF263713F320C</related_id>
+    <role keyed_name="World" type="Identity">
+     <Item type="Identity" action="get" select="id">
+      <name>World</name>
+     </Item>
+    </role>
+    <sort_order>128</sort_order>
+    <source_id keyed_name="Item Folder" type="ItemType" name="Item Folder">C0C8138AB15C41F59FA629EB8EAE2DC2</source_id>
+    <type>default</type>
    </Item>
    <Item type="Server Event" id="5C21B6FF80D64CA490E8FA8B4DF2B731" action="add">
     <related_id keyed_name="Create Folder Struct from Templ" type="Method">
@@ -302,6 +318,16 @@
     </related_id>
     <server_event>onAfterGet</server_event>
     <sort_order>1000</sort_order>
+    <source_id keyed_name="Item Folder" type="ItemType" name="Item Folder">C0C8138AB15C41F59FA629EB8EAE2DC2</source_id>
+   </Item>
+   <Item type="Server Event" id="BDE97A92898E4D75A48B6B31EE96CB49" action="add">
+    <related_id keyed_name="Copy FolderTeam to SubStructure" type="Method">
+     <Item type="Method" action="get" select="id">
+      <name>Copy FolderTeam to SubStructure</name>
+     </Item>
+    </related_id>
+    <server_event>onAfterUpdate</server_event>
+    <sort_order>10</sort_order>
     <source_id keyed_name="Item Folder" type="ItemType" name="Item Folder">C0C8138AB15C41F59FA629EB8EAE2DC2</source_id>
    </Item>
    <Item type="Server Event" id="E4882FA0E1C04C3EB93C253C68CD48D3" action="add">
@@ -334,66 +360,42 @@
     <sort_order>10</sort_order>
     <source_id keyed_name="Item Folder" type="ItemType" name="Item Folder">C0C8138AB15C41F59FA629EB8EAE2DC2</source_id>
    </Item>
-   <Item type="Server Event" id="BDE97A92898E4D75A48B6B31EE96CB49" action="add">
-    <related_id keyed_name="Copy FolderTeam to SubStructure" type="Method">
-     <Item type="Method" action="get" select="id">
-      <name>Copy FolderTeam to SubStructure</name>
-     </Item>
-    </related_id>
-    <server_event>onBeforeUpdate</server_event>
-    <sort_order>10</sort_order>
+   <Item type="Item Action" id="1658BC74AD994212AA9CE4BB6424E33C" action="add">
+    <related_id keyed_name="Item Folder ClearTeamAccess" type="Action">C41267CD2385462C99867A6C870D6272</related_id>
+    <sort_order>128</sort_order>
+    <source_id keyed_name="Item Folder" type="ItemType" name="Item Folder">C0C8138AB15C41F59FA629EB8EAE2DC2</source_id>
+   </Item>
+   <Item type="ItemType Life Cycle" id="D0FB64DE8568459885ED21CFC9F9CA80" action="add">
+    <related_id keyed_name="Item Folder" type="Life Cycle Map">A52B3836764945E8A487434CFBBB0ECD</related_id>
+    <sort_order>128</sort_order>
     <source_id keyed_name="Item Folder" type="ItemType" name="Item Folder">C0C8138AB15C41F59FA629EB8EAE2DC2</source_id>
    </Item>
    <Item type="TOC Access" id="BE20BFC8F99042D58835F90FB4DD9DF3" action="add">
-    <category>Documents</category>
     <related_id keyed_name="All Employees" type="Identity">B32BD81D1AD04207BF1E61E39A4E0E13</related_id>
     <sort_order>128</sort_order>
     <source_id keyed_name="Item Folder" type="ItemType" name="Item Folder">C0C8138AB15C41F59FA629EB8EAE2DC2</source_id>
+    <category>Documents</category>
    </Item>
-   <Item type="View" id="76FE32CB6ACD4BEFAC60C6ABE302EB33" action="add">
-    <client>js</client>
-    <related_id keyed_name="Item Folder" type="Form">D8A26FDB1ECC4DC19CFCF263713F320C</related_id>
-    <role keyed_name="World" type="Identity">
+   <Item type="Can Add" id="B1F4A87D54B54ADD8EA45D078B250597" action="add">
+    <can_add>1</can_add>
+    <related_id keyed_name="World" type="Identity">
      <Item type="Identity" action="get" select="id">
       <name>World</name>
      </Item>
-    </role>
+    </related_id>
+    <sort_order>10</sort_order>
+    <source_id keyed_name="Item Folder" type="ItemType" name="Item Folder">C0C8138AB15C41F59FA629EB8EAE2DC2</source_id>
+   </Item>
+   <Item type="Allowed Permission" id="D97311C56BB94436A29E9A69B763908D" action="add">
+    <is_default>1</is_default>
+    <related_id keyed_name="Item Folder Planning" type="Permission">A1A0285C53274487861ED9C4D5680DEA</related_id>
     <sort_order>128</sort_order>
     <source_id keyed_name="Item Folder" type="ItemType" name="Item Folder">C0C8138AB15C41F59FA629EB8EAE2DC2</source_id>
-    <type>default</type>
-   </Item>
-   <Item type="View" id="EF2855A4F7C0430EB8B2B0E128E73442" action="add">
-    <client>js</client>
-    <related_id keyed_name="Item Folder Add New" type="Form">BF7A7C71D5214CA09FDADB5A46C42D37</related_id>
-    <role keyed_name="World" type="Identity">
-     <Item type="Identity" action="get" select="id">
-      <name>World</name>
-     </Item>
-    </role>
-    <sort_order>256</sort_order>
-    <source_id keyed_name="Item Folder" type="ItemType" name="Item Folder">C0C8138AB15C41F59FA629EB8EAE2DC2</source_id>
-    <type>add</type>
-   </Item></Relationships>
+	</Item>
+  </Relationships>
  </Item>
  <Item type="ItemType" id="C0C8138AB15C41F59FA629EB8EAE2DC2" action="edit">
   <Relationships>
-   <Item type="Property" action="edit" where="source_id='C0C8138AB15C41F59FA629EB8EAE2DC2' and name='generation'">
-    <column_alignment>left</column_alignment>
-    <data_type>integer</data_type>
-    <is_hidden>1</is_hidden>
-    <is_hidden2>1</is_hidden2>
-    <is_indexed>0</is_indexed>
-    <is_keyed>0</is_keyed>
-    <is_multi_valued>0</is_multi_valued>
-    <is_required>0</is_required>
-    <label xml:lang="en">Gen</label>
-    <name>generation</name>
-    <range_inclusive>0</range_inclusive>
-    <readonly>1</readonly>
-    <sort_order>2442</sort_order>
-    <source_id keyed_name="Item Folder" type="ItemType" name="Item Folder">C0C8138AB15C41F59FA629EB8EAE2DC2</source_id>
-    <track_history>0</track_history>
-   </Item>
    <Item type="Property" id="9D8960CBF3E0461BADE97914752E3614" action="add">
     <column_alignment>left</column_alignment>
     <column_width>80</column_width>
@@ -406,12 +408,29 @@
     <is_multi_valued>0</is_multi_valued>
     <is_required>0</is_required>
     <label xml:lang="en">Number</label>
-    <name>item_number</name>
     <range_inclusive>0</range_inclusive>
     <readonly>0</readonly>
     <sort_order>1000</sort_order>
     <source_id keyed_name="Item Folder" type="ItemType" name="Item Folder">C0C8138AB15C41F59FA629EB8EAE2DC2</source_id>
     <track_history>0</track_history>
+    <name>item_number</name>
+   </Item>
+   <Item type="Property" action="edit" where="source_id='C0C8138AB15C41F59FA629EB8EAE2DC2' and name='generation'">
+    <column_alignment>left</column_alignment>
+    <data_type>integer</data_type>
+    <is_hidden>1</is_hidden>
+    <is_hidden2>1</is_hidden2>
+    <is_indexed>0</is_indexed>
+    <is_keyed>0</is_keyed>
+    <is_multi_valued>0</is_multi_valued>
+    <is_required>0</is_required>
+    <label xml:lang="en">Gen</label>
+    <range_inclusive>0</range_inclusive>
+    <readonly>1</readonly>
+    <sort_order>2442</sort_order>
+    <source_id keyed_name="Item Folder" type="ItemType" name="Item Folder">C0C8138AB15C41F59FA629EB8EAE2DC2</source_id>
+    <track_history>0</track_history>
+    <name>generation</name>
    </Item>
    <Item type="Property" action="edit" where="source_id='C0C8138AB15C41F59FA629EB8EAE2DC2' and name='major_rev'">
     <column_alignment>left</column_alignment>
@@ -423,13 +442,13 @@
     <is_multi_valued>0</is_multi_valued>
     <is_required>0</is_required>
     <label xml:lang="en">Rev</label>
-    <name>major_rev</name>
     <range_inclusive>0</range_inclusive>
     <readonly>0</readonly>
     <sort_order>4964</sort_order>
     <source_id keyed_name="Item Folder" type="ItemType" name="Item Folder">C0C8138AB15C41F59FA629EB8EAE2DC2</source_id>
     <stored_length>8</stored_length>
     <track_history>0</track_history>
+    <name>major_rev</name>
    </Item>
    <Item type="Property" action="edit" where="source_id='C0C8138AB15C41F59FA629EB8EAE2DC2' and name='modified_on'">
     <column_alignment>left</column_alignment>
@@ -442,13 +461,13 @@
     <is_multi_valued>0</is_multi_valued>
     <is_required>0</is_required>
     <label xml:lang="en">Date</label>
-    <name>modified_on</name>
     <pattern>short_date_time</pattern>
     <range_inclusive>0</range_inclusive>
     <readonly>1</readonly>
     <sort_order>200</sort_order>
     <source_id keyed_name="Item Folder" type="ItemType" name="Item Folder">C0C8138AB15C41F59FA629EB8EAE2DC2</source_id>
     <track_history>0</track_history>
+    <name>modified_on</name>
    </Item>
    <Item type="Property" action="edit" where="source_id='C0C8138AB15C41F59FA629EB8EAE2DC2' and name='owned_by_id'">
     <column_alignment>left</column_alignment>
@@ -480,13 +499,13 @@
     <is_multi_valued>0</is_multi_valued>
     <is_required>0</is_required>
     <label xml:lang="en">Status</label>
-    <name>state</name>
     <range_inclusive>0</range_inclusive>
     <readonly>1</readonly>
     <sort_order>15</sort_order>
     <source_id keyed_name="Item Folder" type="ItemType" name="Item Folder">C0C8138AB15C41F59FA629EB8EAE2DC2</source_id>
     <stored_length>32</stored_length>
     <track_history>0</track_history>
+    <name>state</name>
    </Item>
   </Relationships>
  </Item>

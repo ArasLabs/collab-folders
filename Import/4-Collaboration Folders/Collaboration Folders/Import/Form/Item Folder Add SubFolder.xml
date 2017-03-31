@@ -1,9 +1,10 @@
 ﻿<AML>
  <Item type="Form" id="E28865A1CAEC4362A9FFFDAF4FF6E1B9" action="add">
+  <category_form>0</category_form>
   <height>150</height>
-  <name>Item Folder Add SubFolder</name>
   <stylesheet><![CDATA[../styles/default.css]]></stylesheet>
   <width>750</width>
+  <name>Item Folder Add SubFolder</name>
   <Relationships>
    <Item type="Body" id="760D5E9944CC4F34AF739B963FAD7883" action="add">
     <sort_order>128</sort_order>
@@ -25,12 +26,12 @@
       <label xml:lang="en">Add</label>
       <label_position>top</label_position>
       <list_no_blank>0</list_no_blank>
-      <name>btn_add</name>
       <sort_order>640</sort_order>
       <source_id keyed_name="760D5E9944CC4F34AF739B963FAD7883" type="Body">760D5E9944CC4F34AF739B963FAD7883</source_id>
       <tab_stop>1</tab_stop>
       <x>620</x>
       <y>20</y>
+      <name>btn_add</name>
       <Relationships>
        <Item type="Field Event" id="3EE615AED6E44634AC9C0DFAA2D3FAB2" action="add">
         <field_event>onclick</field_event>
@@ -60,12 +61,12 @@
       <label xml:lang="en">Cancel</label>
       <label_position>top</label_position>
       <list_no_blank>0</list_no_blank>
-      <name>btn_cancel</name>
       <sort_order>512</sort_order>
       <source_id keyed_name="760D5E9944CC4F34AF739B963FAD7883" type="Body">760D5E9944CC4F34AF739B963FAD7883</source_id>
       <tab_stop>1</tab_stop>
       <x>620</x>
       <y>55</y>
+      <name>btn_cancel</name>
       <Relationships>
        <Item type="Field Event" id="B69E9461BB8A445282F461BDF44C21C6" action="add">
         <field_event>onclick</field_event>
@@ -91,7 +92,6 @@
       <label xml:lang="en">Description</label>
       <label_position>top</label_position>
       <list_no_blank>0</list_no_blank>
-      <name>description</name>
       <sort_order>384</sort_order>
       <source_id keyed_name="760D5E9944CC4F34AF739B963FAD7883" type="Body">760D5E9944CC4F34AF739B963FAD7883</source_id>
       <tab_stop>1</tab_stop>
@@ -99,6 +99,7 @@
       <textarea_rows>4</textarea_rows>
       <x>140</x>
       <y>45</y>
+      <name>folder_description</name>
      </Item>
      <Item type="Field" id="87B13E5180184EC8943B8715E37E2D27" action="add">
       <bg_color>#ffffdd</bg_color>
@@ -114,12 +115,12 @@
       <label xml:lang="en">Name</label>
       <label_position>top</label_position>
       <list_no_blank>0</list_no_blank>
-      <name>name</name>
       <sort_order>256</sort_order>
       <source_id keyed_name="760D5E9944CC4F34AF739B963FAD7883" type="Body">760D5E9944CC4F34AF739B963FAD7883</source_id>
       <tab_stop>1</tab_stop>
       <x>140</x>
       <y>10</y>
+      <name>folder_name</name>
      </Item>
      <Item type="Field" id="8A85F58FFA4442DDBDDD55034E283127" action="add">
       <bg_color>#ffffff</bg_color>
@@ -134,12 +135,12 @@
       <label xml:lang="en">Org Number</label>
       <label_position>top</label_position>
       <list_no_blank>0</list_no_blank>
-      <name>org_number</name>
       <sort_order>128</sort_order>
       <source_id keyed_name="760D5E9944CC4F34AF739B963FAD7883" type="Body">760D5E9944CC4F34AF739B963FAD7883</source_id>
       <tab_stop>1</tab_stop>
       <x>10</x>
       <y>10</y>
+      <name>org_number</name>
      </Item>
     </Relationships>
    </Item>

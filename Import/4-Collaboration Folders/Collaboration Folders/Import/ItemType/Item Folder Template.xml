@@ -13,33 +13,14 @@
   <label xml:lang="en">Item Folder Template</label>
   <label_plural xml:lang="en">Item Folder Templates</label_plural>
   <large_icon>../images/Icons/32x32/32x32_file_transfer.gif</large_icon>
-  <manual_versioning>0</manual_versioning>
-  <name>Item Folder Template</name>
   <open_icon>../images/Icons/16x16/16x16_folder_closed_img.gif</open_icon>
   <revisions keyed_name="Default2" type="Revision">4662A0D8F5BA46FAA5548A019AFD330D</revisions>
   <show_parameters_tab>1</show_parameters_tab>
   <structure_view>tab view</structure_view>
   <unlock_on_logout>0</unlock_on_logout>
   <use_src_access>0</use_src_access>
+  <name>Item Folder Template</name>
   <Relationships>
-   <Item type="Allowed Permission" id="587FB4E35A7446898FB04E7556A634FA" action="add">
-    <is_default>1</is_default>
-    <related_id keyed_name="Item Folder Template" type="Permission">E2227109B19B45E0B4690EEE5E890FBB</related_id>
-    <sort_order>10</sort_order>
-    <source_id keyed_name="Item Folder Template" type="ItemType" name="Item Folder Template">4D5FB24117B040F484D2ACA7BED6C2B2</source_id>
-   </Item>
-  
-   <Item type="Can Add" id="7893545D8A5746B99030B7B884F68379" action="add">
-    <can_add>1</can_add>
-    <related_id keyed_name="Administrators" type="Identity">2618D6F5A90949BAA7E920D1B04C7EE1</related_id>
-    <sort_order>10</sort_order>
-    <source_id keyed_name="Item Folder Template" type="ItemType" name="Item Folder Template">4D5FB24117B040F484D2ACA7BED6C2B2</source_id>
-   </Item>
-   <Item type="ItemType Life Cycle" id="FBBFE0AD98C04D4395760A72FC13FF99" action="add">
-    <related_id keyed_name="Item Folder Template" type="Life Cycle Map">5F5B671124E542B89EE351914401B775</related_id>
-    <sort_order>128</sort_order>
-    <source_id keyed_name="Item Folder Template" type="ItemType" name="Item Folder Template">4D5FB24117B040F484D2ACA7BED6C2B2</source_id>
-   </Item>
    <Item type="Property" id="5A7E168FEF284C45B161640E04DF3E6E" action="add">
     <column_alignment>left</column_alignment>
     <column_width>300</column_width>
@@ -51,13 +32,13 @@
     <is_multi_valued>0</is_multi_valued>
     <is_required>0</is_required>
     <label xml:lang="en">Description</label>
-    <name>description</name>
     <range_inclusive>0</range_inclusive>
     <readonly>0</readonly>
     <sort_order>6154</sort_order>
     <source_id keyed_name="Item Folder Template" type="ItemType" name="Item Folder Template">4D5FB24117B040F484D2ACA7BED6C2B2</source_id>
     <stored_length>512</stored_length>
     <track_history>0</track_history>
+    <name>description</name>
    </Item>
    <Item type="Property" id="C43BBC41B5FC4517A7C7958F21AEC235" action="add">
     <column_alignment>left</column_alignment>
@@ -71,12 +52,13 @@
     <is_multi_valued>0</is_multi_valued>
     <is_required>0</is_required>
     <label xml:lang="en">Template Type</label>
-    <name>item_folder_template_type</name>
     <range_inclusive>0</range_inclusive>
     <readonly>0</readonly>
     <sort_order>20</sort_order>
     <source_id keyed_name="Item Folder Template" type="ItemType" name="Item Folder Template">4D5FB24117B040F484D2ACA7BED6C2B2</source_id>
+    <stored_length>256</stored_length>
     <track_history>0</track_history>
+    <name>item_folder_template_type</name>
    </Item>
    <Item type="Property" id="AF7FED48EA71486287068A65D9AC9013" action="add">
     <column_alignment>left</column_alignment>
@@ -90,12 +72,24 @@
     <is_required>0</is_required>
     <item_behavior>float</item_behavior>
     <label xml:lang="en">Item Folder</label>
-    <name>top_item_folder_id</name>
     <range_inclusive>0</range_inclusive>
     <readonly>0</readonly>
     <sort_order>3082</sort_order>
     <source_id keyed_name="Item Folder Template" type="ItemType" name="Item Folder Template">4D5FB24117B040F484D2ACA7BED6C2B2</source_id>
     <track_history>0</track_history>
+    <name>top_item_folder_id</name>
+   </Item>
+   <Item type="View" id="FEBF997D2E944DA8A5D25D8ECD951797" action="add">
+    <client>js</client>
+    <related_id keyed_name="Item Folder Template" type="Form">0577BA0456DF4534AE46FA563596D14B</related_id>
+    <role keyed_name="World" type="Identity">
+     <Item type="Identity" action="get" select="id">
+      <name>World</name>
+     </Item>
+    </role>
+    <sort_order>128</sort_order>
+    <source_id keyed_name="Item Folder Template" type="ItemType" name="Item Folder Template">4D5FB24117B040F484D2ACA7BED6C2B2</source_id>
+    <type>default</type>
    </Item>
    <Item type="Server Event" id="997FC7B9A03D4E86A25F62CF31F74467" action="add">
     <related_id keyed_name="Folder Template AddCtrItemConifg" type="Method">
@@ -117,43 +111,33 @@
     <sort_order>128</sort_order>
     <source_id keyed_name="Item Folder Template" type="ItemType" name="Item Folder Template">4D5FB24117B040F484D2ACA7BED6C2B2</source_id>
    </Item>
+   <Item type="ItemType Life Cycle" id="FBBFE0AD98C04D4395760A72FC13FF99" action="add">
+    <related_id keyed_name="Item Folder Template" type="Life Cycle Map">5F5B671124E542B89EE351914401B775</related_id>
+    <sort_order>128</sort_order>
+    <source_id keyed_name="Item Folder Template" type="ItemType" name="Item Folder Template">4D5FB24117B040F484D2ACA7BED6C2B2</source_id>
+   </Item>
    <Item type="TOC Access" id="FF2A469464794C7485EBD0ED289951A4" action="add">
-    <category>Templates</category>
     <related_id keyed_name="Administrators" type="Identity">2618D6F5A90949BAA7E920D1B04C7EE1</related_id>
     <sort_order>128</sort_order>
     <source_id keyed_name="Item Folder Template" type="ItemType" name="Item Folder Template">4D5FB24117B040F484D2ACA7BED6C2B2</source_id>
+    <category>Templates</category>
    </Item>
-   <Item type="View" id="FEBF997D2E944DA8A5D25D8ECD951797" action="add">
-    <client>js</client>
-    <related_id keyed_name="Item Folder Template" type="Form">0577BA0456DF4534AE46FA563596D14B</related_id>
-    <role keyed_name="World" type="Identity">
-     <Item type="Identity" action="get" select="id">
-      <name>World</name>
-     </Item>
-    </role>
-    <sort_order>128</sort_order>
+   <Item type="Can Add" id="7893545D8A5746B99030B7B884F68379" action="add">
+    <can_add>1</can_add>
+    <related_id keyed_name="Administrators" type="Identity">2618D6F5A90949BAA7E920D1B04C7EE1</related_id>
+    <sort_order>10</sort_order>
     <source_id keyed_name="Item Folder Template" type="ItemType" name="Item Folder Template">4D5FB24117B040F484D2ACA7BED6C2B2</source_id>
-    <type>default</type>
-   </Item></Relationships>
+   </Item>
+   <Item type="Allowed Permission" id="587FB4E35A7446898FB04E7556A634FA" action="add">
+    <is_default>1</is_default>
+    <related_id keyed_name="Item Folder Template" type="Permission">E2227109B19B45E0B4690EEE5E890FBB</related_id>
+    <sort_order>10</sort_order>
+    <source_id keyed_name="Item Folder Template" type="ItemType" name="Item Folder Template">4D5FB24117B040F484D2ACA7BED6C2B2</source_id>
+   </Item>
+  </Relationships>
  </Item>
  <Item type="ItemType" id="4D5FB24117B040F484D2ACA7BED6C2B2" action="edit">
   <Relationships>
-   <Item type="Property" action="edit" where="source_id='4D5FB24117B040F484D2ACA7BED6C2B2' and name='generation'">
-    <column_alignment>left</column_alignment>
-    <data_type>integer</data_type>
-    <is_hidden>1</is_hidden>
-    <is_hidden2>1</is_hidden2>
-    <is_indexed>0</is_indexed>
-    <is_keyed>0</is_keyed>
-    <is_multi_valued>0</is_multi_valued>
-    <is_required>0</is_required>
-    <name>generation</name>
-    <range_inclusive>0</range_inclusive>
-    <readonly>1</readonly>
-    <sort_order>2442</sort_order>
-    <source_id keyed_name="Item Folder Template" type="ItemType" name="Item Folder Template">4D5FB24117B040F484D2ACA7BED6C2B2</source_id>
-    <track_history>0</track_history>
-   </Item>
    <Item type="Property" id="151A236B56434C1AAE92AB84F41D25B6" action="add">
     <column_alignment>left</column_alignment>
     <column_width>100</column_width>
@@ -165,13 +149,13 @@
     <is_multi_valued>0</is_multi_valued>
     <is_required>0</is_required>
     <label xml:lang="en">Number</label>
-    <name>item_number</name>
     <range_inclusive>0</range_inclusive>
     <readonly>0</readonly>
     <sort_order>10</sort_order>
     <source_id keyed_name="Item Folder Template" type="ItemType" name="Item Folder Template">4D5FB24117B040F484D2ACA7BED6C2B2</source_id>
     <stored_length>32</stored_length>
     <track_history>0</track_history>
+    <name>item_number</name>
    </Item>
    <Item type="Property" id="572DDDE8543A4325A6F9636494B5F43A" action="add">
     <column_alignment>left</column_alignment>
@@ -185,13 +169,13 @@
     <is_required>1</is_required>
     <keyed_name_order>1</keyed_name_order>
     <label xml:lang="en">Name</label>
-    <name>name</name>
     <range_inclusive>0</range_inclusive>
     <readonly>0</readonly>
     <sort_order>10</sort_order>
     <source_id keyed_name="Item Folder Template" type="ItemType" name="Item Folder Template">4D5FB24117B040F484D2ACA7BED6C2B2</source_id>
     <stored_length>80</stored_length>
     <track_history>0</track_history>
+    <name>name</name>
    </Item>
    <Item type="Property" action="edit" where="source_id='4D5FB24117B040F484D2ACA7BED6C2B2' and name='state'">
     <column_alignment>left</column_alignment>
@@ -204,13 +188,13 @@
     <is_multi_valued>0</is_multi_valued>
     <is_required>0</is_required>
     <label xml:lang="en">Status</label>
-    <name>state</name>
     <range_inclusive>0</range_inclusive>
     <readonly>1</readonly>
     <sort_order>5</sort_order>
     <source_id keyed_name="Item Folder Template" type="ItemType" name="Item Folder Template">4D5FB24117B040F484D2ACA7BED6C2B2</source_id>
     <stored_length>32</stored_length>
     <track_history>0</track_history>
+    <name>state</name>
    </Item>
   </Relationships>
  </Item>

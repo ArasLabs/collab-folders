@@ -5,16 +5,39 @@
   <method_code><![CDATA[// This method refreshes grid on user click "Refresh" button.
 // Solutions install this method to onPopulateEvent of Forms:
 //          Item Folder, Project, Program
+// assumes html field on form with id="arasRelease" is defined
+var el = document.getElementById("arasRelease"); 
+var arasRelease = "";
+if (el) {arasRelease = el.innerHTML;}
 
-for (var tabId in top.document.frames[2].iframesCollection) {
-	var relshipTypeNd = top.aras.getRelationshipType(tabId);
-	var relshipTypeName = top.aras.getItemProperty(relshipTypeNd.node, "name");
+var tabId,relshipTypeNd,relshipTypeName,formFrame;
+
+if (arasRelease === "Aras9") {
+  for (tabId in top.document.frames[2].iframesCollection) {
+	relshipTypeNd = top.aras.getRelationshipType(tabId);
+	relshipTypeName = top.aras.getItemProperty(relshipTypeNd.node, "name");
 	if(relshipTypeName.indexOf("Folder") > 0 && relshipTypeName.indexOf("Structure")) {
-		var formFrame = top.document.frames[2].iframesCollection[tabId].contentWindow.frames['formFrame'];
+		formFrame = top.document.frames[2].iframesCollection[tabId].contentWindow.frames['formFrame'];
 		if(formFrame && formFrame.window.window.RefreshGrid) {
 			formFrame.window.window.RefreshGrid(true);
 		}
 	}
+  }
+}
+else {
+ if(top.frames.relationships){// check "no tabs in tab view" 
+  var iFramesCollection = top.frames.relationships.iframesCollection;	
+  for (tabId in  iFramesCollection) {
+	relshipTypeNd = top.aras.getRelationshipType(tabId);
+	relshipTypeName = top.aras.getItemProperty(relshipTypeNd.node, "name");
+	if(relshipTypeName.indexOf("Folder") > 0 && relshipTypeName.indexOf("Structure")) {
+		formFrame = iFramesCollection[tabId].contentWindow.document.getElementById('formFrame');
+		if(formFrame && formFrame.contentWindow.folderTreeGrid && formFrame.contentWindow.folderTreeGrid.refreshGridWithTimout) {
+			formFrame.contentWindow.folderTreeGrid.refreshGridWithTimout(true);
+		}
+	}
+  }
+ }
 }
 ]]></method_code>
   <method_type>JavaScript</method_type>

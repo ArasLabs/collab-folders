@@ -5,6 +5,7 @@
 
 	<resource key="itemfoldertreegrid.contextmenu.view_item" value="View Item"/>
 	<resource key="itemfoldertreegrid.contextmenu.view_folder" value="View Folder"/>
+	<resource key="itemfoldertreegrid.contextmenu.view_attached_files" value="View Attached Files"/>
 
 	<resource key="itemfoldertreegrid.contextmenu.refresh_this_row" value="Refresh this Folder"/>
 	<resource key="itemfoldertreegrid.contextmenu.lock_row_item" value="Lock"/>

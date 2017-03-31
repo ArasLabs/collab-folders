@@ -10,7 +10,6 @@
   <inc_related_key_name>1</inc_related_key_name>
   <is_list_type>0</is_list_type>
   <label xml:lang="en">Sub Folders (this level)</label>
-  <name>Item Sub Folder</name>
   <new_show_related>0</new_show_related>
   <related_id keyed_name="Item Folder" type="ItemType" name="Item Folder">C0C8138AB15C41F59FA629EB8EAE2DC2</related_id>
   <related_notnull>1</related_notnull>
@@ -26,13 +25,12 @@
     <is_dependent>0</is_dependent>
     <is_relationship>1</is_relationship>
     <is_versionable>0</is_versionable>
-    <manual_versioning>0</manual_versioning>
-    <name>Item Sub Folder</name>
     <open_icon>../images/Icons/16x16/16x16_relationship1.gif</open_icon>
     <revisions keyed_name="Default" type="Revision">7FE395DD8B9F4E1090756A34B733D75E</revisions>
     <show_parameters_tab>1</show_parameters_tab>
     <unlock_on_logout>0</unlock_on_logout>
     <use_src_access>1</use_src_access>
+    <name>Item Sub Folder</name>
     <Relationships>
      <Item type="Property" id="338764473DE949B6A9D6E6A80A749C0C" action="add">
       <column_alignment>right</column_alignment>
@@ -45,13 +43,13 @@
       <is_multi_valued>0</is_multi_valued>
       <is_required>0</is_required>
       <label xml:lang="en">Org/Group</label>
-      <name>org_number</name>
       <range_inclusive>0</range_inclusive>
       <readonly>0</readonly>
       <sort_order>1</sort_order>
       <source_id keyed_name="Item Sub Folder" type="ItemType" name="Item Sub Folder">E79AC539681A49E9A664B3C19B7E5647</source_id>
       <stored_length>10</stored_length>
       <track_history>0</track_history>
+      <name>org_number</name>
      </Item>
      <Item type="Server Event" id="C640E635E71E46039EF3239A6D7244B9" action="add">
       <related_id keyed_name="Copy FolderTeam to SubFolders" type="Method">
@@ -148,25 +146,10 @@
   </relationship_id>
   <sort_order>8</sort_order>
   <source_id keyed_name="Item Folder" type="ItemType" name="Item Folder">C0C8138AB15C41F59FA629EB8EAE2DC2</source_id>
+  <name>Item Sub Folder</name>
  </Item>
  <Item type="ItemType" id="E79AC539681A49E9A664B3C19B7E5647" action="edit">
   <Relationships>
-   <Item type="Property" action="edit" where="source_id='E79AC539681A49E9A664B3C19B7E5647' and name='generation'">
-    <column_alignment>left</column_alignment>
-    <data_type>integer</data_type>
-    <is_hidden>1</is_hidden>
-    <is_hidden2>1</is_hidden2>
-    <is_indexed>0</is_indexed>
-    <is_keyed>0</is_keyed>
-    <is_multi_valued>0</is_multi_valued>
-    <is_required>0</is_required>
-    <name>generation</name>
-    <range_inclusive>0</range_inclusive>
-    <readonly>1</readonly>
-    <sort_order>2432</sort_order>
-    <source_id keyed_name="Item Sub Folder" type="ItemType" name="Item Sub Folder">E79AC539681A49E9A664B3C19B7E5647</source_id>
-    <track_history>0</track_history>
-   </Item>
    <Item type="Property" action="edit" where="source_id='E79AC539681A49E9A664B3C19B7E5647' and name='sort_order'">
     <column_alignment>left</column_alignment>
     <column_width>50</column_width>
@@ -178,15 +161,15 @@
     <is_multi_valued>0</is_multi_valued>
     <is_required>0</is_required>
     <label xml:lang="en">Pos</label>
-    <name>sort_order</name>
     <range_inclusive>0</range_inclusive>
     <readonly>0</readonly>
     <sort_order>1</sort_order>
     <source_id keyed_name="Item Sub Folder" type="ItemType" name="Item Sub Folder">E79AC539681A49E9A664B3C19B7E5647</source_id>
     <track_history>0</track_history>
+    <name>sort_order</name>
    </Item>
   </Relationships>
  </Item>
- <Item type="View" action="delete" where="source_id='E79AC539681A49E9A664B3C19B7E5647'"></Item>
- <Item type="Form" action="delete" where="name='Item Sub Folder'"></Item>
+ <Item type="View" action="delete" where="source_id='E79AC539681A49E9A664B3C19B7E5647'" />
+ <Item type="Form" action="delete" where="name='Item Sub Folder'" />
 </AML>

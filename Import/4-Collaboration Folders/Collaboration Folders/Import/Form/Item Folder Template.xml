@@ -1,7 +1,8 @@
 ﻿<AML>
  <Item type="Form" id="0577BA0456DF4534AE46FA563596D14B" action="add">
-  <name>Item Folder Template</name>
+  <category_form>0</category_form>
   <stylesheet><![CDATA[../styles/default.css]]></stylesheet>
+  <name>Item Folder Template</name>
   <Relationships>
    <Item type="Body" id="AFC22D28FA3344B482477811CA5CCDB5" action="add">
     <bg_attach>scroll</bg_attach>
@@ -23,7 +24,6 @@
       <label xml:lang="en">Description</label>
       <label_position>top</label_position>
       <list_no_blank>0</list_no_blank>
-      <name>description</name>
       <propertytype_id keyed_name="description" type="Property">5A7E168FEF284C45B161640E04DF3E6E</propertytype_id>
       <sort_order>896</sort_order>
       <source_id keyed_name="AFC22D28FA3344B482477811CA5CCDB5" type="Body">AFC22D28FA3344B482477811CA5CCDB5</source_id>
@@ -33,6 +33,27 @@
       <textarea_rows>4</textarea_rows>
       <x>200</x>
       <y>50</y>
+      <name>description</name>
+     </Item>
+     <Item type="Field" id="8418F76C3E0C4DF89B2C672CEB86A144" action="add">
+      <border_width>0</border_width>
+      <field_type>html</field_type>
+      <font_color>#000000</font_color>
+      <font_family>arial, helvetica, sans-serif</font_family>
+      <font_size>8pt</font_size>
+      <font_weight>bold</font_weight>
+      <html_code><![CDATA[<div id="arasRelease">Aras9</div>]]></html_code>
+      <is_disabled>1</is_disabled>
+      <is_visible>0</is_visible>
+      <label xml:lang="en">html1</label>
+      <label_position>top</label_position>
+      <list_no_blank>0</list_no_blank>
+      <sort_order>1024</sort_order>
+      <source_id keyed_name="AFC22D28FA3344B482477811CA5CCDB5" type="Body">AFC22D28FA3344B482477811CA5CCDB5</source_id>
+      <tab_stop>1</tab_stop>
+      <x>0</x>
+      <y>0</y>
+      <name>html_arasRelease</name>
      </Item>
      <Item type="Field" id="64841C9FE4274B86B8EE8FADFE95D84F" action="add">
       <bg_color>#FFFFFF</bg_color>
@@ -48,12 +69,12 @@
       <is_disabled>0</is_disabled>
       <is_visible>1</is_visible>
       <list_no_blank>0</list_no_blank>
-      <name>item_info</name>
       <sort_order>384</sort_order>
       <source_id keyed_name="AFC22D28FA3344B482477811CA5CCDB5" type="Body">AFC22D28FA3344B482477811CA5CCDB5</source_id>
       <tab_stop>0</tab_stop>
       <x>0</x>
       <y>0</y>
+      <name>item_info</name>
      </Item>
      <Item type="Field" id="86912870EA7C456A9D9A0753CEC3E45B" action="add">
       <bg_color>#FFFFFF</bg_color>
@@ -69,7 +90,6 @@
       <label xml:lang="en">Name</label>
       <label_position>top</label_position>
       <list_no_blank>0</list_no_blank>
-      <name>name</name>
       <propertytype_id keyed_name="name" type="Property">572DDDE8543A4325A6F9636494B5F43A</propertytype_id>
       <sort_order>256</sort_order>
       <source_id keyed_name="AFC22D28FA3344B482477811CA5CCDB5" type="Body">AFC22D28FA3344B482477811CA5CCDB5</source_id>
@@ -79,6 +99,7 @@
       <textarea_rows>4</textarea_rows>
       <x>201</x>
       <y>16</y>
+      <name>name</name>
      </Item>
      <Item type="Field" id="380B241B9C6246B1802B655237070530" action="add">
       <bg_color>#FFFFFF</bg_color>
@@ -93,13 +114,13 @@
       <label xml:lang="en">state</label>
       <label_position>top</label_position>
       <list_no_blank>0</list_no_blank>
-      <name>state</name>
       <sort_order>512</sort_order>
       <source_id keyed_name="AFC22D28FA3344B482477811CA5CCDB5" type="Body">AFC22D28FA3344B482477811CA5CCDB5</source_id>
       <tab_index>1418</tab_index>
       <tab_stop>1</tab_stop>
       <x>66</x>
       <y>13</y>
+      <name>state</name>
      </Item>
      <Item type="Field" id="B89421586C1E4319B1A6F99EC5FC51A5" action="add">
       <bg_color>#FFFFFF</bg_color>
@@ -114,7 +135,6 @@
       <label xml:lang="en">Template Top Folder</label>
       <label_position>top</label_position>
       <list_no_blank>0</list_no_blank>
-      <name>top_item_folder_id</name>
       <propertytype_id keyed_name="top_item_folder_id" type="Property">AF7FED48EA71486287068A65D9AC9013</propertytype_id>
       <sort_order>768</sort_order>
       <source_id keyed_name="AFC22D28FA3344B482477811CA5CCDB5" type="Body">AFC22D28FA3344B482477811CA5CCDB5</source_id>
@@ -122,12 +142,14 @@
       <tab_stop>0</tab_stop>
       <x>530</x>
       <y>15</y>
+      <name>top_item_folder_id</name>
      </Item>
     </Relationships>
    </Item>
   </Relationships>
  </Item>
  <Item type="Field" id="380B241B9C6246B1802B655237070530" action="edit">
+  <!-- Please note: this AML depends on the "Item Folder Template" ItemType. Please make sure it exists before running this. -->
   <propertytype_id>
    <Item type="Property" action="get" select="id">
     <name>state</name>

@@ -39,47 +39,6 @@
     <y>62</y>
     <name>Planning</name>
    </Item>
-  <Item type="Life Cycle Transition" id="386B65649784465395E1D6C4EC309D33" action="add">
-    <from_state keyed_name="Planning" type="Life Cycle State">806CE9B144B64444A1E3DC9A1FE0CF4B</from_state>
-    <get_comment>0</get_comment>
-    <role keyed_name="Owner" type="Identity">
-     <Item type="Identity" action="get" select="id">
-      <name>Owner</name>
-     </Item>
-    </role>
-    <segments>113,21|316,21</segments>
-    <sort_order>384</sort_order>
-    <source_id keyed_name="Item Folder" type="Life Cycle Map">A52B3836764945E8A487434CFBBB0ECD</source_id>
-    <to_state keyed_name="Archived" type="Life Cycle State">FF5BFE3EF9CE4B1BAFB3B186F9B28755</to_state>
-    <x>77</x>
-    <y>-38</y>
-   </Item>
-   <Item type="Life Cycle Transition" id="C29C08E497634A68BFA8068B42E6D4D7" action="add">
-    <from_state keyed_name="Planning" type="Life Cycle State">806CE9B144B64444A1E3DC9A1FE0CF4B</from_state>
-    <get_comment>0</get_comment>
-    <role keyed_name="Owner" type="Identity">
-     <Item type="Identity" action="get" select="id">
-      <name>Owner</name>
-     </Item>
-    </role>
-    <segments></segments>
-    <sort_order>128</sort_order>
-    <source_id keyed_name="Item Folder" type="Life Cycle Map">A52B3836764945E8A487434CFBBB0ECD</source_id>
-    <to_state keyed_name="Active" type="Life Cycle State">52A14059A3534F61BFD3D992311B3377</to_state>
-    <x>62</x>
-    <y>0</y>
-   </Item>
-   <Item type="Life Cycle Transition" id="FFA04420A4724E5B85E580A56A3E54BE" action="add">
-    <from_state keyed_name="Planning" type="Life Cycle State">806CE9B144B64444A1E3DC9A1FE0CF4B</from_state>
-    <get_comment>0</get_comment>
-    <role keyed_name="Aras PLM" type="Identity">56A96DA9E981481688563E2D14D5D878</role>
-    <segments></segments>
-    <sort_order>640</sort_order>
-    <source_id keyed_name="Item Folder" type="Life Cycle Map">A52B3836764945E8A487434CFBBB0ECD</source_id>
-    <to_state keyed_name="Active" type="Life Cycle State">52A14059A3534F61BFD3D992311B3377</to_state>
-    <x>45</x>
-    <y>14</y>
-   </Item>
    <Item type="Life Cycle Transition" id="4CC5813446D04ED9AC974A15B5A733FE" action="add">
     <from_state keyed_name="Active" type="Life Cycle State">52A14059A3534F61BFD3D992311B3377</from_state>
     <get_comment>0</get_comment>
@@ -121,6 +80,47 @@
     <x>44</x>
     <y>14</y>
    </Item>
+   <Item type="Life Cycle Transition" id="386B65649784465395E1D6C4EC309D33" action="add">
+    <from_state keyed_name="Planning" type="Life Cycle State">806CE9B144B64444A1E3DC9A1FE0CF4B</from_state>
+    <get_comment>0</get_comment>
+    <role keyed_name="Owner" type="Identity">
+     <Item type="Identity" action="get" select="id">
+      <name>Owner</name>
+     </Item>
+    </role>
+    <segments>113,21|316,21</segments>
+    <sort_order>384</sort_order>
+    <source_id keyed_name="Item Folder" type="Life Cycle Map">A52B3836764945E8A487434CFBBB0ECD</source_id>
+    <to_state keyed_name="Archived" type="Life Cycle State">FF5BFE3EF9CE4B1BAFB3B186F9B28755</to_state>
+    <x>77</x>
+    <y>-38</y>
+   </Item>
+   <Item type="Life Cycle Transition" id="C29C08E497634A68BFA8068B42E6D4D7" action="add">
+    <from_state keyed_name="Planning" type="Life Cycle State">806CE9B144B64444A1E3DC9A1FE0CF4B</from_state>
+    <get_comment>0</get_comment>
+    <role keyed_name="Owner" type="Identity">
+     <Item type="Identity" action="get" select="id">
+      <name>Owner</name>
+     </Item>
+    </role>
+    <segments></segments>
+    <sort_order>128</sort_order>
+    <source_id keyed_name="Item Folder" type="Life Cycle Map">A52B3836764945E8A487434CFBBB0ECD</source_id>
+    <to_state keyed_name="Active" type="Life Cycle State">52A14059A3534F61BFD3D992311B3377</to_state>
+    <x>62</x>
+    <y>0</y>
+   </Item>
+   <Item type="Life Cycle Transition" id="FFA04420A4724E5B85E580A56A3E54BE" action="add">
+    <from_state keyed_name="Planning" type="Life Cycle State">806CE9B144B64444A1E3DC9A1FE0CF4B</from_state>
+    <get_comment>0</get_comment>
+    <role keyed_name="Aras PLM" type="Identity">56A96DA9E981481688563E2D14D5D878</role>
+    <segments></segments>
+    <sort_order>640</sort_order>
+    <source_id keyed_name="Item Folder" type="Life Cycle Map">A52B3836764945E8A487434CFBBB0ECD</source_id>
+    <to_state keyed_name="Active" type="Life Cycle State">52A14059A3534F61BFD3D992311B3377</to_state>
+    <x>45</x>
+    <y>14</y>
+   </Item>
    <Item type="Life Cycle Transition" id="9F79F696198A425881117A80629D9A4A" action="add">
     <from_state keyed_name="Archived" type="Life Cycle State">FF5BFE3EF9CE4B1BAFB3B186F9B28755</from_state>
     <get_comment>0</get_comment>
@@ -132,6 +132,6 @@
     <x>-137</x>
     <y>-31</y>
    </Item>
-   </Relationships>
+  </Relationships>
  </Item>
 </AML>

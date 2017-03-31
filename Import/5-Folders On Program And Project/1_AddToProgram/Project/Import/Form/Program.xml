@@ -1,0 +1,128 @@
+﻿<AML>
+ <Item type="Form" id="5E93287DD73D4E138C101CA2F2363EA9" action="edit">
+  <name>Program</name>
+  <Relationships>
+   <Item type="Body" id="25BE532F03F04380BE1CE414886F5C1F" action="merge">
+    <source_id keyed_name="Program" type="Form">5E93287DD73D4E138C101CA2F2363EA9</source_id>
+    <Relationships>
+     <Item type="Field" id="BE01C95BAD164401899C1576E61F6B4F" action="add">
+      <border_width>0</border_width>
+      <field_type>html</field_type>
+      <font_color>#000000</font_color>
+      <font_family>arial, helvetica, sans-serif</font_family>
+      <font_size>8pt</font_size>
+      <font_weight>bold</font_weight>
+      <html_code><![CDATA[<div id="arasRelease">Aras9</div>]]></html_code>
+      <is_disabled>1</is_disabled>
+      <is_visible>0</is_visible>
+      <label xml:lang="en">html1</label>
+      <label_position>top</label_position>
+      <list_no_blank>0</list_no_blank>
+      <sort_order>1024</sort_order>
+      <source_id keyed_name="25BE532F03F04380BE1CE414886F5C1F" type="Body">25BE532F03F04380BE1CE414886F5C1F</source_id>
+      <tab_stop>1</tab_stop>
+      <x>190</x>
+      <y>180</y>
+      <name>html_arasRelease</name>
+     </Item>
+     <Item type="Field" id="F5F6CCFE609445CCA73943AD8B8959D3" action="merge">
+      <bg_color>#FFFFFF</bg_color>
+      <border_width>0</border_width>
+      <field_type>item</field_type>
+      <font_color>#000000</font_color>
+      <font_family>arial, helvetica, sans-serif</font_family>
+      <font_size>8pt</font_size>
+      <font_weight>bold</font_weight>
+      <is_disabled>0</is_disabled>
+      <is_visible>1</is_visible>
+      <label xml:lang="en">Customer</label>
+      <label_position>top</label_position>
+      <list_no_blank>0</list_no_blank>
+      <name>customer</name>
+      <propertytype_id keyed_name="customer" type="Property">86EC8D85E4C14D30964E6BB3899FA2C5</propertytype_id>
+      <sort_order>512</sort_order>
+      <source_id keyed_name="25BE532F03F04380BE1CE414886F5C1F" type="Body">25BE532F03F04380BE1CE414886F5C1F</source_id>
+      <tab_index>3072</tab_index>
+      <tab_stop>1</tab_stop>
+      <x>322</x>
+      <y>10</y>
+     </Item>
+     <Item type="Field" id="8CF098E03BB9499B9C9F114622DF2CBF" action="add">
+      <border_width>0</border_width>
+      <field_type>item</field_type>
+      <font_color>#000000</font_color>
+      <font_family>arial, helvetica, sans-serif</font_family>
+      <font_size>8pt</font_size>
+      <font_weight>bold</font_weight>
+      <is_disabled>0</is_disabled>
+      <is_visible>1</is_visible>
+      <label xml:lang="en">Program Manager</label>
+      <label_position>top</label_position>
+      <list_no_blank>0</list_no_blank>
+      <sort_order>1152</sort_order>
+      <propertytype_id keyed_name="identity" type="Property">D09088B987024AC4B5E57F7F99D1C3D9</propertytype_id>
+      <source_id keyed_name="25BE532F03F04380BE1CE414886F5C1F" type="Body">25BE532F03F04380BE1CE414886F5C1F</source_id>
+      <tab_index>3840</tab_index>
+      <tab_stop>1</tab_stop>
+      <x>590</x>
+      <y>10</y>
+      <name>owned_by_id</name>
+     </Item>
+     <Item type="Field" id="97B38A08037A4E26B894619C963A5DC7" action="add">
+      <border_width>0</border_width>
+      <field_type>item</field_type>
+      <font_color>#000000</font_color>
+      <font_family>arial, helvetica, sans-serif</font_family>
+      <font_size>8pt</font_size>
+      <font_weight>bold</font_weight>
+      <is_disabled>1</is_disabled>
+      <is_visible>1</is_visible>
+      <label xml:lang="en">Team Access</label>
+      <label_position>top</label_position>
+      <list_no_blank>0</list_no_blank>
+      <sort_order>1024</sort_order>
+      <propertytype_id keyed_name="team" type="Property">C97A012416CF42559BE7A881FDF24C74</propertytype_id>
+      <source_id keyed_name="25BE532F03F04380BE1CE414886F5C1F" type="Body">25BE532F03F04380BE1CE414886F5C1F</source_id>
+      <tab_index>6016</tab_index>
+      <tab_stop>1</tab_stop>
+      <x>590</x>
+      <y>50</y>
+      <name>team_id</name>
+     </Item>
+     <Item type="Field" id="44C782DFB576417E9AB48ED72844F45B" action="add">
+      <bg_color>#FFFFFF</bg_color>
+      <border_width>0</border_width>
+      <field_type>item</field_type>
+      <font_color>#000000</font_color>
+      <font_family>arial, helvetica, sans-serif</font_family>
+      <font_size>8pt</font_size>
+      <font_weight>bold</font_weight>
+      <is_disabled>1</is_disabled>
+      <is_visible>1</is_visible>
+      <label xml:lang="en">Related Folder</label>
+      <label_position>top</label_position>
+      <list_no_blank>0</list_no_blank>
+      <name>top_item_folder_id</name>
+      <propertytype_id keyed_name="top_item_folder_id" type="Property">762C841C61BB43679F4E066B87B2D82F</propertytype_id>
+      <sort_order>640</sort_order>
+      <source_id keyed_name="25BE532F03F04380BE1CE414886F5C1F" type="Body">25BE532F03F04380BE1CE414886F5C1F</source_id>
+      <tab_index>6144</tab_index>
+      <tab_stop>1</tab_stop>
+      <x>590</x>
+      <y>90</y>
+     </Item>
+    </Relationships>
+   </Item>
+   <Item type="Form Event" id="04032167A9C9408CAB01D7707992FB66" action="add">
+    <form_event>onformpopulated</form_event>
+    <related_id keyed_name="ItemFolderStructForceGridRefresh" type="Method">
+     <Item type="Method" action="get" select="id">
+      <name>ItemFolderStructForceGridRefresh</name>
+     </Item>
+    </related_id>
+    <sort_order>200</sort_order>
+    <source_id keyed_name="Program" type="Form">5E93287DD73D4E138C101CA2F2363EA9</source_id>
+   </Item>
+  </Relationships>
+ </Item>
+</AML>

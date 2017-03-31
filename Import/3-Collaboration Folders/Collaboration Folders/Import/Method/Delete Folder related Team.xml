@@ -9,29 +9,29 @@ Dim inn As Innovator = Me.getInnovator()
 Function Main() As Item
   'System.Diagnostics.Debugger.Break()
  
-  Dim thisPS As Item = Me
+  Dim ItemConfigId As String = Me.getProperty("config_id","")
+  Dim ItemId As String = Me.GetID()
 
-  Dim ItemConfigId As String = thisPS.getProperty("config_id","")
-  Dim ItemId As String = thisPS.GetID()
-
-  ' delete the related PS Team Item
+  ' delete the Team Item associated with this folder
   Dim amlCmd As Item = inn.newItem("Team","delete")
   
   Dim whereStr As String = "[Team].description like '%" & ItemConfigId  & "%'"
-  whereStr = whereStr  & " or [Team].description like '%" & ItemId  & "%'"
+  whereStr = whereStr  & " or [Team].private_team_item_id_string like '%" & ItemConfigId  & "%'"
   amlCmd.setAttribute("where",whereStr)
 
-  ' run under different identity  
+  ' run as root
   Dim plmIdentity As Aras.Server.Security.Identity  = Aras.Server.Security.Identity.GetByName("Super User")
   Dim PermissionWasSet As Boolean  = Aras.Server.Security.Permissions.GrantIdentity(plmIdentity)
 
-  amlCmd = amlCmd.apply()
+  Try
+    amlCmd = amlCmd.apply()  'if team still linked to other folders, project, or programs, this may fail
+  Catch ex As Exception
+    Return Me
+  End Try
   
   ' Revoke 'Aras PLM' permissions
   If (PermissionWasSet) Then Aras.Server.Security.Permissions.RevokeIdentity(plmIdentity)
   
-  If amlCmd.isError() Then Return amlCmd
-
   Return Me
 
 End Function

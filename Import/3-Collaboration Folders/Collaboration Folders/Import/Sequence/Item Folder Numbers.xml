@@ -1,10 +1,10 @@
 ﻿<AML>
  <Item type="Sequence" id="DD8672598657480BABBA58AEF1441279" action="add">
   <initial_value>0</initial_value>
-  <name>Item Folder Numbers</name>
   <pad_to>8</pad_to>
   <pad_with>0</pad_with>
   <prefix>IF</prefix>
   <step>1</step>
+  <name>Item Folder Numbers</name>
  </Item>
 </AML>

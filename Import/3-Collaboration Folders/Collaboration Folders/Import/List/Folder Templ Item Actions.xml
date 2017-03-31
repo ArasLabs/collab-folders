@@ -2,18 +2,18 @@
  <Item type="List" id="41B6A4A8343A4FB29FAF8808C3B7D368" action="add">
   <name>Folder Templ Item Actions</name>
   <Relationships>
+   <Item type="Value" id="8640A2D227C341ED93C38FED3F3B6FF1" action="add">
+    <label xml:lang="en">Reference</label>
+    <sort_order>10</sort_order>
+    <source_id keyed_name="Folder Templ Item Actions" type="List">41B6A4A8343A4FB29FAF8808C3B7D368</source_id>
+    <value>Reference</value>
+   </Item>
    <Item type="Value" id="4490A538B2BE48FFA88515D848168371" action="add">
     <label xml:lang="en">Copy</label>
     <sort_order>20</sort_order>
     <source_id keyed_name="Folder Templ Item Actions" type="List">41B6A4A8343A4FB29FAF8808C3B7D368</source_id>
     <value>Copy</value>
    </Item>
-  
-   <Item type="Value" id="8640A2D227C341ED93C38FED3F3B6FF1" action="add">
-    <label xml:lang="en">Reference</label>
-    <sort_order>10</sort_order>
-    <source_id keyed_name="Folder Templ Item Actions" type="List">41B6A4A8343A4FB29FAF8808C3B7D368</source_id>
-    <value>Reference</value>
-   </Item></Relationships>
+  </Relationships>
  </Item>
 </AML>

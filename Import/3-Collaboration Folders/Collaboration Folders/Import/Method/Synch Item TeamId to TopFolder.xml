@@ -10,7 +10,7 @@ Function Main() As Item
 
   Dim thisItem As Item = Me.newItem(Me.GetType(),"get")
   thisItem.setID(Me.getID())
-  thisItem.setAttribute("select","team_id,keyed_name,top_item_folder_id(team_id,locked_by_id)")
+  thisItem.setAttribute("select","team_id,keyed_name,top_item_folder_id(team_id,locked_by_id,related_project_keyed_name)")
   thisItem.setAttribute("serverEvents","0")
   thisItem = thisItem.apply()
   If thisItem.isError() Then Return thisItem
@@ -19,28 +19,35 @@ Function Main() As Item
   If topFolderId = ""  Then
     Return Me ' nothing to do
   End If
-  
-  
+    
+  Dim thisItemTeamId As String = thisItem.getProperty("team_id","")
+  Dim thisItemKN As String = thisItem.getProperty("keyed_name","")
+  If thisItem.GetType() = "Program" Then
+    thisItemKN = "Program:" & thisItemKN
+  End If
+
+  'read values from top folder
   Dim topFolderTeamId As String = thisItem.getPropertyItem("top_item_folder_id").getProperty("team_id","")
   Dim topFolderLockedBy As String = thisItem.getPropertyItem("top_item_folder_id").getProperty("locked_by_id","")
-  Dim thisItemTeamId As String = thisItem.getProperty("team_id","")
-
-  If thisItemTeamId = "" Or thisItemTeamId = topFolderTeamId Then
+  Dim topFolderProjectKN As String = thisItem.getPropertyItem("top_item_folder_id").getProperty("related_project_keyed_name","")
+  
+  If thisItemKN = topFolderProjectKN And thisItemTeamId = topFolderTeamId Then
     Return Me ' nothing to do
   End If
 
-  ' overwrite teamId on Folder 
+  'overwrite teamId on top folder 
   Dim aml As Item = inn.newItem("Item Folder","")
   If topFolderLockedBy = "" Then aml.setAction("edit")
   If topFolderLockedBy = inn.getUserId() Then aml.setAction("update")
 
   aml.setID(topFolderId)
   aml.setProperty("team_id",thisItemTeamId)
+  aml.setProperty("related_project_keyed_name",thisItemKN)
+  aml.setAttribute("serverEvents","0")
   aml = aml.apply()
   If aml.isError() Then Return aml
 
   ' ensure team_id is copied to sub folders, as well
-  ' this method is only available
   Try
     aml = aml.apply("Copy FolderTeam To SubStructure")
   Catch ex As Exception

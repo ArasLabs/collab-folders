@@ -3,6 +3,17 @@
   <is_private>0</is_private>
   <name>Item Folder Template Obsolete</name>
   <Relationships>
+   <Item type="Access" id="3F5288B633D844F3A2D498EFECB774A5" action="add">
+    <can_change_access>1</can_change_access>
+    <can_delete>1</can_delete>
+    <can_discover>1</can_discover>
+    <can_get>1</can_get>
+    <can_update>1</can_update>
+    <related_id keyed_name="Aras PLM" type="Identity">56A96DA9E981481688563E2D14D5D878</related_id>
+    <show_permissions_warning>1</show_permissions_warning>
+    <sort_order>128</sort_order>
+    <source_id keyed_name="Item Folder Template Obsolete" type="Permission">E94B46183E2C46CFB6737A0B58C97884</source_id>
+   </Item>
    <Item type="Access" id="8B9C828FAED348CB8D277E2F4A14BF8B" action="add">
     <can_change_access>1</can_change_access>
     <can_delete>1</can_delete>
@@ -14,17 +25,6 @@
     <sort_order>256</sort_order>
     <source_id keyed_name="Item Folder Template Obsolete" type="Permission">E94B46183E2C46CFB6737A0B58C97884</source_id>
    </Item>
-  
-   <Item type="Access" id="3F5288B633D844F3A2D498EFECB774A5" action="add">
-    <can_change_access>1</can_change_access>
-    <can_delete>1</can_delete>
-    <can_discover>1</can_discover>
-    <can_get>1</can_get>
-    <can_update>1</can_update>
-    <related_id keyed_name="Aras PLM" type="Identity">56A96DA9E981481688563E2D14D5D878</related_id>
-    <show_permissions_warning>1</show_permissions_warning>
-    <sort_order>128</sort_order>
-    <source_id keyed_name="Item Folder Template Obsolete" type="Permission">E94B46183E2C46CFB6737A0B58C97884</source_id>
-   </Item></Relationships>
+  </Relationships>
  </Item>
 </AML>

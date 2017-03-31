@@ -11,7 +11,7 @@ Dim folderTemplId As String = Me.getProperty("item_folder_template_id","")
 
 
 Dim newFolder As Item = Me.newItem("Item Folder","add")
-newFolder.setProperty("name",Me.getProperty("name",""))
+newFolder.setProperty("name",Me.GetType() & ":" & Me.getProperty("name",""))
 
 If folderTemplId <> "" Then 'set same folder template link on new top folder
   newFolder.setProperty("item_folder_template_id",folderTemplId)

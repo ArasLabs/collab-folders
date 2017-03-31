@@ -11,13 +11,31 @@ qry = qry.apply()
 If qry.isError() Then Return qry
    
 Dim i As Integer   
+Dim typesIdList As String = ""
+Dim sepChar As String = ""
+For i=0 To  qry.getItemCount() -1
+  Dim typeId As String = qry.getItemByIndex(i).getProperty("value","")
+  If (typesIdList.IndexOf(typeId) < 0) Then
+    typesIdList = typesIdList & sepChar & typeId
+    sepChar = ","
+  End If
+Next i
+If typesIdList = "" Then Return Me
+
+typesIdList = "'" & typesIdList.Replace(",","','") & "'"
+aml = "<Item type=""ItemType"" action=""get"" select=""name"" ><id condition=""in"">" & typesIdList & "</id></Item>"
+qry = Me.newItem("","")
+qry.loadAML(aml)
+qry = qry.apply()
+If qry.isError() Then Return qry
+
 Dim itemTypesAdded As String = ""
 For i=0 To  qry.getItemCount() -1
   Dim controlledItemConfig As Item = Me.newItem("","")
-  Dim itemTypeName As String = qry.getItemByIndex(i).getProperty("label","") ' this is the ItemType name of the poly items (language neutral)
+  Dim itemTypeName As String = qry.getItemByIndex(i).getProperty("name","") ' this is the ItemType name of the poly items (language neutral)
   
   ' due to config issues, poly item config could have an ItemType listed multiple times. Only add one row for each type.
-  If (itemTypesAdded.IndexOf(itemTypeName) > 0) Then
+  If (itemTypesAdded.IndexOf(itemTypeName) < 0) Then
   
     aml = "<Item type=""Item Folder Tmpl CtrItemConfig"" action=""merge"" "
     aml = aml & "where=""[Item_Folder_Tmpl_CtrItemConfig].source_id='" & Me.getID() & "' and [Item_Folder_Tmpl_CtrItemConfig].controlled_item_type='" & itemTypeName & "' "" >"
@@ -48,7 +66,7 @@ For i=0 To  qry.getItemCount() -1
     controlledItemConfig = controlledItemConfig.apply()
     If controlledItemConfig.isError() Then Return controlledItemConfig
 
-    itemTypesAdded = "," & itemTypeName;
+    itemTypesAdded = "," & itemTypeName
   End If 
 Next i
 

@@ -7,25 +7,41 @@ Author:
 
 Version:
 --------
+V3-0 9.x  (March 2014)
 
-v2-1 (October 2013)
- - reduced server calls from Navigator grid to load folder related items (Files, Documents) -> 30% performance increase.
- - fixed loading of related items for root folder
- - added Owner column to Navigator grid
+- Works for Aras 9.3 and 9.4 only !
+- Made compatible with Aras10 - IE and Firefox - (90% but still some minor issues)
+- Reworked loading of folder tree with controlled items and files. Uses "RepeatItemConfig" action now, 
+  which allows to load full structure with "released" or "current" effectivity condition at once
+  at acceptable performance.
+- Folder navigator javascript is more object oriented now (major rework) (cloned this from latest impact matrix grid)
+- New common utiltiy "Common Grid Utilities" added - method "CommonBaseTreeGridFuncs"  (cloned and enhanced from BaseTreeGrid of standard PE)
+- Loading of full structure will allow search feature in the future -- but not implemented, yet
+- Needed separate toolbar xml for Aras10 and Aras9 (because of differnt icon paths)
+- Some forms have html field with value set to "Aras9" or "Aras10" to drive conditional code of Folder Navigator Grid
+- Code tree overlay has grid icons (.gif) from Aras9 added to GridIcons folder
+- Added fields "related_projects" to Document, CAD, and Part item types.
+- If folders used on Project or Program, then new logic will copy the keyed_name of project/program to new folder property "related_project_keyed_name"
+  all sub folder will also inherit the value for "related_project_keyed_name" from their parent folder
+  all controlled items added to a folder will get this project/program keyed_name copy to their property "related_projects"
+    (if connected to more folders the different project/program names get listed in a comma separated list)
+    on main grid documents can then be search for by "project name"
 
 
 =========================
 Installation Instructions
 =========================
 
-NOTE: If you already have a previous version of "Item Folders" or "Collaboration Folders" installed, then you MUST run installation Stage0 and Stage7 !!!
-      If you install collaboration Folders the first time. DO NOT run Stage0 and start with Stage1 and skip Stage7 !!!
+NOTE: If you already have a previous version of "Item Folders" or "Collaboration Folders" installed,
+      then you MUST run installation Stage0 and Stage8 !!!
+     
+      If you install collaboration Folders the first time. DO NOT run Stage0 and start with Stage1 and skip Stage8 !!!
 
 --------------------------------------------
 Stage - 0  Updates Flags existing Folders Items 
 
 --> Nash update
---> you only need this if a previous version of Item Folders is in use in your DB !!!
+--> you only need this, if a previous version of Item Folders is in use in your DB !!!
 
 
 - use text editor and open file 
@@ -48,78 +64,109 @@ Stage - 0  Updates Flags existing Folders Items
 
 --> Use the Aras import utiltity tool "import.exe" log on as "admin"
 
-  Select Mainfest file from folder .\0-xItemFolder LifeCycle correction\imports (admin).mf and set option "Merge"
-
+  Select Mainfest file from folder .\0-xItemFolder LifeCycle correction\imports (admin).mf
+  place checkmark on all listed packages and  set option "Merge"
   then, click the "import" button on top tool bar
 
 
---------------------------------------------
+=============================================
 Stage - 1 Import subset of "Common Utilities"
 
 --> Use the Aras import utiltity tool "import.exe" log on as "admin"
 
 
-Select Mainfest file from folder .\1-Common Utilties v1-9 (partial)\imports.mf and set option "Merge"
-
+Select Mainfest file from folder .\1-Common Grid Utilities v1-0\imports.mf
+place checkmark on all listed packages and  set option "Merge"
 then, click the "import" button on top tool bar
 
 
---------------------------------------------
+Select Mainfest file from folder .\1-Common Utilties v1-9 (partial)\imports.mf
+place checkmark on all listed packages and  set option "Merge"
+then, click the "import" button on top tool bar
+
+
+
+=============================================
 Stage - 2  Import extensions to core and PLM item types
 
 --> Use the Aras import utiltity tool "import.exe" log on as "admin"
 
 
-Select Mainfest file from folder .\2-Innovator Core and PLM extensions\imports (admin).mf and set option "Merge"
-
+Select Mainfest file from folder .\2-Innovator Core and PLM extensions\1-imports - PLM (admin).mf
+place checkmark on all listed packages and  set option "Merge"
+then, click the "import" button on top tool bar
+Select Mainfest file from folder .\2-Innovator Core and PLM extensions\2-imports - core (admin).mf
+place checkmark on all listed packages and  set option "Merge"
 then, click the "import" button on top tool bar
 
 
---------------------------------------------
+=============================================
 Stage - 3  Import next parts of Collaboration Folder add-on
 
 --> Use the Aras import utiltity tool "import.exe" log on as "admin"
 
-Select Mainfest file from folder .\3-Collaboration Folders\imports (admin).mf and set option "Merge"
-
+Select Mainfest file from folder .\3-Collaboration Folders\imports (admin).mf
+place checkmark on all listed packages and  set option "Merge"
 then, click the "import" button on top tool bar
 
 
---------------------------------------------
+=============================================
 Stage - 4  Import final parts of Collaboration Folder add-on
 
 --> Use the Aras import utiltity tool "import.exe" log on as "admin"
 
-Select Mainfest file from folder .\4-Collaboration Folders\imports (admin).mf and set option "Merge"
-
+Select Mainfest file from folder .\4-Collaboration Folders\imports (admin).mf
+place checkmark on all listed packages and  set option "Merge"
 then, click the "import" button on top tool bar
 
 
---------------------------------------------
+=============================================
 Stage - 5  Adds Folder Features to standard Program ItemType
 
 --> Use the Aras import utiltity tool "import.exe" log on as "admin"
 
-
-Select Mainfest file from folder .\5-Folders On Program And Project\1_Add Folder To Program\imports (admin).mf and set option "Merge"
+Select Mainfest file from folder .\5-Folders On Program And Project\1_AddToProgram\1-imports - CF (admin).mf
+place checkmark on all listed packages and  set option "Merge"
+then, click the "import" button on top tool bar
+Select Mainfest file from folder .\5-Folders On Program And Project\1_AddToProgram\1-imports - Program (admin).mf
+place checkmark on all listed packages and  set option "Merge"
 then, click the "import" button on top tool bar
 
-Select Mainfest file from folder .\5-Folders On Program And Project\2_Add Folder To Project\imports (admin).mf and set option "Merge"
+Select Mainfest file from folder .\5-Folders On Program And Project\2_AddToProject\1-imports - CF (admin).mf
+place checkmark on all listed packages and  set option "Merge"
+then, click the "import" button on top tool bar
+Select Mainfest file from folder .\5-Folders On Program And Project\2_AddToProject\1-imports - Project (admin).mf
+place checkmark on all listed packages and  set option "Merge"
 then, click the "import" button on top tool bar
 
 
-------------------------------------------------------------------------------------------------------
-Stage - 6 Copy code tree overlay files to the code tree of the the target Aras System
+=============================================
+Stage - 6 Additiontal import for Aras10 only !!!
 
-- open folder "_CodeTreeOverlays" and select "innovator" and copy this folder
-- on the target Aras System go to the installation folders and paste the copy over the "innovator" folder
+--> Use the Aras import utiltity tool "import.exe" log on as "admin"
+
+Select Mainfest file from folder .\6-Collaboration Folders - Aras10 updates\imports(admin).mf
+place checkmark on all listed packages and  set option "Merge"
+then, click the "import" button on top tool bar
+
+
+=============================================
+Stage - 7 Copy code tree overlay files to the code tree of the the target Aras System
+
+Open folder "7-CodeTreeOverlays"
+
+if installing on Aras9x open sub folder "Aras9"
+if installing on Aras10 open sub folder "Aras10"
+
+- select "innovator" and copy this folder
+- on the target Aras System go to the installation folders and then paste the copy over the "innovator" folder
 - confirm to add or overwrite folders and files.
 
 - additional grid icons and language xml files are added.
 
 
---------------------------------------------
-Stage - 7  Updates Flags existing Folders Items 
+=============================================
+Stage - 8  Updates Flags existing Folders Items 
 
 --> Nash update
 --> you only need this if a previous version of Item Folders is in use and there are existing folder structres in your DB
@@ -137,14 +184,19 @@ start Nash.aspx tool on the target Aras System and log on as "admin"
   done. Close the Nash tool
 
 
-------------------------------------------------------------------------------------------------------
-Stage - 8 (Optional) SetPackage version - Will fail, if you do not have the Package Utiltities v1-4 or higher loaded !!!
+=============================================
+Stage - 9 (Optional) SetPackage version - Will fail, if you do not have the Package Utiltities v1-4 or higher loaded !!!
 
 
 
-================
+################
 Version History:
-================
+################
+
+v2-1 (October 2013)
+ - reduced server calls from Navigator grid to load folder related items (Files, Documents) -> 30% performance increase.
+ - fixed loading of related items for root folder
+ - added Owner column to Navigator grid
 
 v2-0 (August 2013)
  - Remamed package name from "Item Folders" to "Collaboration Folders"

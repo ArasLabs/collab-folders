@@ -3,24 +3,24 @@
   <description>must be in synch with appropriate "Team Identities"</description>
   <name>Team Tab  Roles</name>
   <Relationships>
-   <Item type="Value" id="B928A7A6A12840A2B130E0FA4E8FA49E" action="add">
-    <label xml:lang="en">Team Guest</label>
-    <sort_order>30</sort_order>
+   <Item type="Value" id="CF140D699C884618A18700EB46CB87F2" action="add">
+    <label xml:lang="en">Team Member</label>
+    <sort_order>10</sort_order>
     <source_id keyed_name="Team Tab  Roles" type="List">47356087E58B41D6B47AEC538F301EE1</source_id>
-    <value>Team Guest</value>
+    <value>Team Member</value>
    </Item>
-  
    <Item type="Value" id="044D8958183E43019AC49E9F7A3F9B03" action="add">
     <label xml:lang="en">Team Manager</label>
     <sort_order>20</sort_order>
     <source_id keyed_name="Team Tab  Roles" type="List">47356087E58B41D6B47AEC538F301EE1</source_id>
     <value>Team Manager</value>
    </Item>
-   <Item type="Value" id="CF140D699C884618A18700EB46CB87F2" action="add">
-    <label xml:lang="en">Team Member</label>
-    <sort_order>10</sort_order>
+   <Item type="Value" id="B928A7A6A12840A2B130E0FA4E8FA49E" action="add">
+    <label xml:lang="en">Team Guest</label>
+    <sort_order>30</sort_order>
     <source_id keyed_name="Team Tab  Roles" type="List">47356087E58B41D6B47AEC538F301EE1</source_id>
-    <value>Team Member</value>
-   </Item></Relationships>
+    <value>Team Guest</value>
+   </Item>
+  </Relationships>
  </Item>
 </AML>

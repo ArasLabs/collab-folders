@@ -1,0 +1,90 @@
+﻿<AML>
+ <Item type="Form" id="D952A176812A4FC1BE4C859E3FEF50A0" action="add">
+  <name>Team</name>
+  <Relationships>
+   <Item type="Body" id="A755F4FB2DB94B978A0707F25266E01E" action="add">
+    <source_id keyed_name="Team" type="Form">D952A176812A4FC1BE4C859E3FEF50A0</source_id>
+    <Relationships>
+     <Item type="Field" id="3FB1C60F3CE04078BEF94B3F15491CB3" action="add">
+      <border_width>0</border_width>
+      <display_length>64</display_length>
+      <field_type>textarea</field_type>
+      <font_color>#000000</font_color>
+      <font_family>arial, helvetica, sans-serif</font_family>
+      <font_size>8pt</font_size>
+      <font_weight>bold</font_weight>
+      <is_disabled>0</is_disabled>
+      <is_visible>1</is_visible>
+      <label xml:lang="en">Description</label>
+      <label_position>top</label_position>
+      <list_no_blank>0</list_no_blank>
+      <propertytype_id keyed_name="description" type="Property">E0B25B15B8314C1ABFE7B06626A9AF58</propertytype_id>
+      <sort_order>256</sort_order>
+      <source_id keyed_name="A755F4FB2DB94B978A0707F25266E01E" type="Body">A755F4FB2DB94B978A0707F25266E01E</source_id>
+      <tab_index>256</tab_index>
+      <tab_stop>1</tab_stop>
+      <textarea_cols>64</textarea_cols>
+      <textarea_rows>3</textarea_rows>
+      <x>185</x>
+      <y>45</y>
+      <name>description</name>
+     </Item>
+     <Item type="Field" id="C883E852BE9C47DB8F337A208772F2CD" action="add">
+      <border_width>0</border_width>
+      <display_length>64</display_length>
+      <field_type>text</field_type>
+      <font_color>#000000</font_color>
+      <font_family>arial, helvetica, sans-serif</font_family>
+      <font_size>8pt</font_size>
+      <font_weight>bold</font_weight>
+      <is_disabled>0</is_disabled>
+      <is_visible>1</is_visible>
+      <label xml:lang="en">Name</label>
+      <label_position>top</label_position>
+      <list_no_blank>0</list_no_blank>
+      <propertytype_id keyed_name="name" type="Property">989D3C1E965F488A99BCA2C6A76C0127</propertytype_id>
+      <sort_order>128</sort_order>
+      <source_id keyed_name="A755F4FB2DB94B978A0707F25266E01E" type="Body">A755F4FB2DB94B978A0707F25266E01E</source_id>
+      <tab_index>128</tab_index>
+      <tab_stop>1</tab_stop>
+      <textarea_cols>64</textarea_cols>
+      <textarea_rows>4</textarea_rows>
+      <x>185</x>
+      <y>10</y>
+      <name>name</name>
+     </Item>
+     <Item type="Field" id="E075D6E8666C46DD925B6AB27A1B9C98" action="add">
+      <border_width>0</border_width>
+      <display_length>30</display_length>
+      <field_type>item</field_type>
+      <font_color>#000000</font_color>
+      <font_family>arial, helvetica, sans-serif</font_family>
+      <font_size>8pt</font_size>
+      <font_weight>bold</font_weight>
+      <is_disabled>0</is_disabled>
+      <is_visible>1</is_visible>
+      <label xml:lang="en">Can Update Team</label>
+      <label_position>top</label_position>
+      <list_no_blank>0</list_no_blank>
+      <sort_order>640</sort_order>
+      <source_id keyed_name="A755F4FB2DB94B978A0707F25266E01E" type="Body">A755F4FB2DB94B978A0707F25266E01E</source_id>
+      <tab_index>1024</tab_index>
+      <tab_stop>1</tab_stop>
+      <x>185</x>
+      <y>105</y>
+      <name>owned_by_id</name>
+     </Item>
+    </Relationships>
+   </Item>
+  </Relationships>
+ </Item>
+ <Item type="Field" id="E075D6E8666C46DD925B6AB27A1B9C98" action="edit">
+  <!-- Please note: this AML depends on the "Team" ItemType. Please make sure it exists before running this. -->
+  <propertytype_id>
+   <Item type="Property" action="get" select="id">
+    <name>owned_by_id</name>
+    <source_id type="ItemType" keyed_name="Team">CC23F9130F574E7D99DF9659F27590A6</source_id>
+   </Item>
+  </propertytype_id>
+ </Item>
+</AML>

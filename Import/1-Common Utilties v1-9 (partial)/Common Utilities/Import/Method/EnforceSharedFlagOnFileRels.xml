@@ -10,18 +10,20 @@ Item sourceItem = this.getPropertyItem("source_id");
 
 if(sourceItem == null)
 {
-  //try to get the source item tope from naming convention of relationship name
+  //try to get the source item type from naming convention of relationship name
   //works, if the relationship name starts with source item's name adding " File" at the end.
   String srcTypeName = this.getType();
   srcTypeName = srcTypeName.Replace(" File","");
   
   sourceItem = this.newItem(srcTypeName, "get");
   String source_id = this.getProperty("source_id", "");
+  String condition = this.getPropertyAttribute("source_id","condition","");
   
   if(!String.IsNullOrEmpty(source_id))
   {
+  	if (condition == "") {condition="eq";}
     sourceItem.setProperty("id", source_id);
-    sourceItem.setPropertyAttribute("id", "condition", "eq");
+    sourceItem.setPropertyAttribute("id", "condition", condition);
   }
 }
 else
@@ -30,6 +32,7 @@ else
   tempItem.loadAML(sourceItem.node.OuterXml);
   sourceItem = tempItem;
 }
+//System.Diagnostics.Debugger.Launch();
 
 sourceItem.setProperty("owned_by_id", Aras.Server.Security.Permissions.Current.IdentitiesList);
 sourceItem.setPropertyAttribute("owned_by_id", "condition", "in");

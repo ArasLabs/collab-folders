@@ -8,13 +8,21 @@
 // this is based on the fact that the tabbar id = id of the relationshipType configration
 //
 //
+// assumes html field on form with id="arasRelease" is defined
+var el = document.getElementById("arasRelease"); 
+var arasRelease = "";
+if (el) {arasRelease = el.innerHTML;}
 
 top.hideFolderTabs = function() {
- // If the tabbar is not yet ready, wait a bit and call the function recursively
- if (!parent.relationships || !parent.relationships.relTabbarReady || parent.relationships.relTabbar.GetTabOrder("|") === "" ) {
-  setTimeout("top.hideFolderTabs();", 30);
-  return;
+ var needTimeout = false;
+ if (arasRelease === "Aras9") {
+  needTimeout = (!parent.relationships || !parent.relationships.relTabbarReady || parent.relationships.relTabbar.GetTabOrder("|") === "" );
  }
+ else {
+  needTimeout = (!parent.relationships || parent.relationships.relTabbar.GetTabOrder("|") === "" );
+ }
+ // If the tabbar is not yet ready, wait a bit and call the function recursively
+ if (needTimeout) {setTimeout("top.hideFolderTabs();", 30);return;}
  
  var thisType = document.thisItem.getAttribute("type","");
  var thisId = top.aras.getItemProperty(document.item,"id","");

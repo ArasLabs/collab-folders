@@ -1,7 +1,8 @@
 ﻿<AML>
  <Item type="Form" id="BF7A7C71D5214CA09FDADB5A46C42D37" action="add">
-  <name>Item Folder Add New</name>
+  <category_form>0</category_form>
   <stylesheet><![CDATA[../styles/default.css]]></stylesheet>
+  <name>Item Folder Add New</name>
   <Relationships>
    <Item type="Body" id="F2121BD8EB964535AE3D07D93A5BE0C3" action="add">
     <bg_attach>scroll</bg_attach>
@@ -24,7 +25,6 @@
       <label xml:lang="en">Description</label>
       <label_position>top</label_position>
       <list_no_blank>0</list_no_blank>
-      <name>description</name>
       <propertytype_id keyed_name="description" type="Property">E86E53FBF5CE4D5BB295B76EFA6EC5C9</propertytype_id>
       <sort_order>384</sort_order>
       <source_id keyed_name="F2121BD8EB964535AE3D07D93A5BE0C3" type="Body">F2121BD8EB964535AE3D07D93A5BE0C3</source_id>
@@ -34,6 +34,7 @@
       <textarea_rows>3</textarea_rows>
       <x>11</x>
       <y>55</y>
+      <name>description</name>
      </Item>
      <Item type="Field" id="E618AA174B574F79AF2773EC53986C50" action="add">
       <bg_color>#FFFFFF</bg_color>
@@ -48,7 +49,6 @@
       <label xml:lang="en">Select a Folder Template</label>
       <label_position>top</label_position>
       <list_no_blank>0</list_no_blank>
-      <name>item_folder_template_id</name>
       <propertytype_id keyed_name="item_folder_template_id" type="Property">1AAC981DBD4B453DB9A7B2E5AB0E1DB5</propertytype_id>
       <sort_order>256</sort_order>
       <source_id keyed_name="F2121BD8EB964535AE3D07D93A5BE0C3" type="Body">F2121BD8EB964535AE3D07D93A5BE0C3</source_id>
@@ -56,6 +56,7 @@
       <tab_stop>1</tab_stop>
       <x>353</x>
       <y>9</y>
+      <name>item_folder_template_id</name>
      </Item>
      <Item type="Field" id="85D6D39D588E40649FA3F876CD076258" action="add">
       <bg_color>beige  </bg_color>
@@ -71,7 +72,6 @@
       <label xml:lang="en">Name</label>
       <label_position>top</label_position>
       <list_no_blank>0</list_no_blank>
-      <name>name</name>
       <propertytype_id keyed_name="name" type="Property">5F604A856E604189AFEEFAF88EC957CC</propertytype_id>
       <sort_order>128</sort_order>
       <source_id keyed_name="F2121BD8EB964535AE3D07D93A5BE0C3" type="Body">F2121BD8EB964535AE3D07D93A5BE0C3</source_id>
@@ -79,6 +79,7 @@
       <tab_stop>1</tab_stop>
       <x>10</x>
       <y>10</y>
+      <name>name</name>
      </Item>
     </Relationships>
    </Item>

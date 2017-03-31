@@ -20,6 +20,24 @@
     <source_id keyed_name="Part" type="ItemType" name="Part">4F1AC04A2B484F3ABA4E20DB63808A88</source_id>
     <track_history>0</track_history>
    </Item>
+   <Item type="Property" id="146C85566B5049C5BDD7D5A4578EB67A" action="add">
+    <column_alignment>left</column_alignment>
+    <data_type>string</data_type>
+    <is_hidden>0</is_hidden>
+    <is_hidden2>0</is_hidden2>
+    <is_indexed>0</is_indexed>
+    <is_keyed>0</is_keyed>
+    <is_multi_valued>0</is_multi_valued>
+    <is_required>0</is_required>
+    <label xml:lang="en">Related Projects</label>
+    <range_inclusive>0</range_inclusive>
+    <readonly>0</readonly>
+    <sort_order>1900</sort_order>
+    <source_id keyed_name="Part" type="ItemType" name="Part">4F1AC04A2B484F3ABA4E20DB63808A88</source_id>
+    <stored_length>200</stored_length>
+    <track_history>0</track_history>
+    <name>related_projects</name>
+   </Item>
   </Relationships>
  </Item>
 </AML>

@@ -48,6 +48,25 @@
     <source_id keyed_name="Document" type="ItemType" name="Document">B88C14B99EF449828C5D926E39EE8B89</source_id>
     <track_history>0</track_history>
    </Item>  
+   <Item type="Property" id="991CD3337B394C5C93290C107855BFD7" action="add">
+    <column_alignment>left</column_alignment>
+    <column_width>100</column_width>
+    <data_type>string</data_type>
+    <is_hidden>0</is_hidden>
+    <is_hidden2>0</is_hidden2>
+    <is_indexed>0</is_indexed>
+    <is_keyed>0</is_keyed>
+    <is_multi_valued>0</is_multi_valued>
+    <is_required>0</is_required>
+    <label xml:lang="en">Related Projects</label>
+    <range_inclusive>0</range_inclusive>
+    <readonly>0</readonly>
+    <sort_order>107552</sort_order>
+    <source_id keyed_name="Document" type="ItemType" name="Document">B88C14B99EF449828C5D926E39EE8B89</source_id>
+    <stored_length>200</stored_length>
+    <track_history>0</track_history>
+    <name>related_projects</name>
+   </Item>
    <Item type="Server Event" id="209A3F4588904414A37553AE83DD4CE9" action="add">
     <related_id keyed_name="Show Doc Grid Icons" type="Method">
      <Item type="Method" action="get" select="id">

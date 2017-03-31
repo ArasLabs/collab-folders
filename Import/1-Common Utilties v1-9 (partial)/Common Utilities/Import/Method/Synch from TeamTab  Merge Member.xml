@@ -12,7 +12,7 @@ Function Main() As Item
   Dim SQLstr As String = ""
   Dim thisTeamRel As Item = Me.newItem(Me.GetType(),"get")
   thisTeamRel.setID(Me.getID())
-  thisTeamRel.setAttribute("select","source_id(team_id,config_id,name),related_id(keyed_name),team_role,team_identity_relship_id")
+  thisTeamRel.setAttribute("select","source_id(team_id,config_id,name,keyed_name),related_id(keyed_name),team_role,team_identity_relship_id")
   thisTeamRel.setAttribute("serverEvents","0")
   thisTeamRel = thisTeamRel.apply()
 
@@ -23,19 +23,29 @@ Function Main() As Item
   Dim sourceItemType As String = thisTeamRel.getPropertyItem("source_id").getAttribute("type","")
   Dim teamRelTeamRole As String = thisTeamRel.getProperty("team_role","")
 
-  if teamRelTeamRole = "" then return Me ' nothing to do, if role is missing !
+  If teamRelTeamRole = "" Then Return Me ' nothing to do, if role is missing !
 
-  suIdentity = Aras.Server.Security.Identity.GetByName("Administrators")
+  suIdentity = Aras.Server.Security.Identity.GetByName("Super User")
   suIdentityWasGranted = Aras.Server.Security.Permissions.GrantIdentity(suIdentity)
 
-  Dim teamSystemId As String = sourceItem.getProperty("team_id","")
-  Dim teamIdentityRelShipId As String = thisTeamRel.getProperty("team_identity_relship_id","")
+  Dim sourceItemTeamId As String = sourceItem.getProperty("team_id","")
+  Dim teamRelIdentityRelShipId As String = thisTeamRel.getProperty("team_identity_relship_id","")
 
   ' create new Team Item
-  If teamSystemId = "" Then
-     teamSystemId = createTeamItemWithDefinedName (sourceItem.getProperty("name",""),sourceItem.getProperty("config_id",""))
-     If teamSystemId.indexOf("ERROR") >= 0 Then
-        Return inn.newError(teamSystemId)
+  If sourceItemTeamId = "" Then
+     Dim teamName As String = sourceItem.getProperty("keyed_name","")
+	 Select sourceItem.GetType()
+	  Case "Project"
+	   teamName = "PJ_" & teamName
+	  Case "Project"
+	   teamName = "PM_" & teamName
+	  Case Else
+	   teamName = "TM_" & teamName
+     End Select
+	 
+     sourceItemTeamId = createTeamItemWithDefinedName (teamName,sourceItem.getProperty("config_id",""))
+     If sourceItemTeamId.indexOf("ERROR") >= 0 Then
+        Return inn.newError(sourceItemTeamId)
      End If 
   End If
 
@@ -46,26 +56,25 @@ Function Main() As Item
   If teamRelTeamRole.indexOf("Guest") >= 0 Then   teamRoleId = "65ABF0DF1F764001A2A91934910ED93D"  'id of identitty "Team Guest"
 
   ' set team_id and owned_by_id on the sourceItem 
-  Dim amlCmd As Item  = updateTeamIdOnProjectSourceItem (sourceItemType,sourceItemId,teamSystemId,teamRoleId,thisTeamRel.getProperty("related_id",""))
+  Dim amlCmd As Item  = updateTeamIdOnProjectSourceItem (sourceItemType,sourceItemId,sourceItemTeamId,teamRoleId,thisTeamRel.getProperty("related_id",""))
   If amlCmd.isError() Then Return returnErrorAndResetPermssion(amlCmd)
 
   ' merge = add or update members of the PS Team Item
   Dim whereStr As String = ""
   Dim res As Item = Me
-  whereStr= "[Team_Identity].source_id='" & teamSystemId  & "'"
+  whereStr= "[Team_Identity].source_id='" & sourceItemTeamId  & "'"
   whereStr = whereStr & " and [Team_Identity].related_id='" & thisTeamRel.getProperty("related_id","") & "'"
 
   amlCmd = inn.newItem("Team Identity","merge")
 
-  If teamIdentityRelShipId <> "" Then
-    amlCmd.setAttribute("id",teamIdentityRelShipId)
- 
-  Else
+  If teamRelIdentityRelShipId <> "" Then
+    amlCmd.setAttribute("id",teamRelIdentityRelShipId)
+   Else
     amlCmd.setAttribute("where",whereStr)
     amlCmd.setAttribute("version","0")
   End If
 
-  amlCmd.setProperty("source_id",teamSystemId)
+  amlCmd.setProperty("source_id",sourceItemTeamId)
   amlCmd.setProperty("related_id",thisTeamRel.getProperty("related_id",""))
   If teamRoleId <> "" Then amlCmd.setProperty("team_role",teamRoleId)
 
@@ -74,16 +83,16 @@ Function Main() As Item
   If res.isError() Then Return returnErrorAndResetPermssion(res)
   
   'store "Team Identity" relationship id in PS Team relationship with SQL
-  teamIdentityRelShipId = res.getID()
+  teamRelIdentityRelShipId = res.getID()
  
   Dim tableName As String = thisTeamRel.GetType().Replace(" ","_")
   SQLstr = "UPDATE [" & tableName & "]"
-  SQLstr = SQLstr & " SET [" & tableName & "].team_identity_relship_id='" & teamIdentityRelShipId & "'"
+  SQLstr = SQLstr & " SET [" & tableName & "].team_identity_relship_id='" & teamRelIdentityRelShipId & "'"
   SQLstr = SQLstr & " WHERE [" & tableName & "].id='" & thisTeamRel.getID() & "'"
   res = inn.applySQL(SQLstr)
   If res.isError() Then Return returnErrorAndResetPermssion(res)
 
-
+  'success
   If suIdentityWasGranted Then
      Aras.Server.Security.Permissions.RevokeIdentity(suIdentity)
   End If
@@ -100,13 +109,12 @@ Private Function returnErrorAndResetPermssion (ByRef errItem As Item ) As Item
 End Function
 
 '-----------------------------
-Private Function createTeamItemWithDefinedName (sourceItemName As String, sourceItemConfigId As String) As String
+Private Function createTeamItemWithDefinedName (teamName As String, sourceItemConfigId As String) As String
 
-  'try to find team item with this name
+  'try to find existing team item registered with this config_id
   Dim amlCmd As Item = inn.newItem("Team","get")
-  amlCmd.setProperty("name","TM_" & sourceItemName)
-  amlCmd.setPropertyAttribute("description","condition","like")
-  amlCmd.setProperty("description", "%" & sourceItemConfigId & "%")
+  amlCmd.setPropertyAttribute("private_team_item_id_string","condition","like")
+  amlCmd.setProperty("private_team_item_id_string", "%" & sourceItemConfigId & "%")
   amlCmd.setAttribute("select","id")
   amlCmd = amlCmd.apply()
 
@@ -114,13 +122,23 @@ Private Function createTeamItemWithDefinedName (sourceItemName As String, source
   If amlCmd.getItemCount() = 0 Then
 
     amlCmd = inn.newItem("Team","add")
-    amlCmd.setProperty("name","TM_" & sourceItemName)
-    amlCmd.setProperty("description", "config-" & sourceItemConfigId)
+    amlCmd.setProperty("name",teamName)
+    amlCmd.setProperty("private_team_item_id_string", sourceItemConfigId)
+
+    Dim aliasId As String = inn.getUserAliases()
+    If (aliasId <> "") Then
+      aliasId = aliasId.Substring(0,32)
+      amlCmd.setProperty("owned_by_id",aliasId)
+    End If  
+
     amlCmd = amlCmd.apply()
     If amlCmd.isError() Then Return "ERROR:" + amlCmd.getErrorString()
+    teamId = amlCmd.getItemByIndex(0).getAttribute("id","")  
 
+    amlCmd = amlCmd.apply("Set Folder privateTeam Perm")
+  Else
+    teamId = amlCmd.getItemByIndex(0).getAttribute("id","")
   End If
-  teamId = amlCmd.getItemByIndex(0).getAttribute("id","")
 
   If teamId <> "" Then  Return teamId
   

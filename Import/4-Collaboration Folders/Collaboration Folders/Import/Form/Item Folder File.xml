@@ -1,7 +1,8 @@
 ﻿<AML>
  <Item type="Form" id="D31DE256578345A2BFDA4997248340AC" action="add">
-  <name>Item Folder File</name>
+  <category_form>0</category_form>
   <stylesheet><![CDATA[../styles/default.css]]></stylesheet>
+  <name>Item Folder File</name>
   <Relationships>
    <Item type="Body" id="93C7A115ADB641FEA3647C2C25134963" action="add">
     <bg_attach>scroll</bg_attach>
@@ -22,7 +23,6 @@
       <label xml:lang="en">Is Shared</label>
       <label_position>right</label_position>
       <list_no_blank>0</list_no_blank>
-      <name>is_shared</name>
       <propertytype_id keyed_name="is_shared" type="Property">85259A3E2696422F98B4292E24F408E3</propertytype_id>
       <sort_order>128</sort_order>
       <source_id keyed_name="93C7A115ADB641FEA3647C2C25134963" type="Body">93C7A115ADB641FEA3647C2C25134963</source_id>
@@ -30,6 +30,7 @@
       <tab_stop>1</tab_stop>
       <x>15</x>
       <y>60</y>
+      <name>is_shared</name>
      </Item>
      <Item type="Field" id="A6C5A34596F742D7B432E9A455DA85E0" action="add">
       <border_width>0</border_width>
@@ -43,7 +44,6 @@
       <label xml:lang="en">Templ</label>
       <label_position>right</label_position>
       <list_no_blank>0</list_no_blank>
-      <name>is_template</name>
       <propertytype_id keyed_name="is_template" type="Property">8C191C80506D4C0699DEC1A5BBFC22FF</propertytype_id>
       <sort_order>512</sort_order>
       <source_id keyed_name="93C7A115ADB641FEA3647C2C25134963" type="Body">93C7A115ADB641FEA3647C2C25134963</source_id>
@@ -51,6 +51,7 @@
       <tab_stop>1</tab_stop>
       <x>15</x>
       <y>85</y>
+      <name>is_template</name>
      </Item>
      <Item type="Field" id="D061FA68244B42AE85B68797AF5FA924" action="add">
       <border_width>0</border_width>
@@ -64,7 +65,6 @@
       <label xml:lang="en">Referenced File</label>
       <label_position>right</label_position>
       <list_no_blank>0</list_no_blank>
-      <name>referenced_files</name>
       <propertytype_id keyed_name="referenced_file" type="Property">C78227C249104837B403349DA6625EE4</propertytype_id>
       <sort_order>256</sort_order>
       <source_id keyed_name="93C7A115ADB641FEA3647C2C25134963" type="Body">93C7A115ADB641FEA3647C2C25134963</source_id>
@@ -72,6 +72,7 @@
       <tab_stop>0</tab_stop>
       <x>95</x>
       <y>85</y>
+      <name>referenced_files</name>
      </Item>
      <Item type="Field" id="FD6ED2D1ED8C4AE8A41143F4FF88B4F8" action="add">
       <border_width>0</border_width>
@@ -86,19 +87,20 @@
       <label xml:lang="en">File</label>
       <label_position>top</label_position>
       <list_no_blank>0</list_no_blank>
-      <name>related_id</name>
       <sort_order>384</sort_order>
       <source_id keyed_name="93C7A115ADB641FEA3647C2C25134963" type="Body">93C7A115ADB641FEA3647C2C25134963</source_id>
       <tab_index>6666</tab_index>
       <tab_stop>1</tab_stop>
       <x>15</x>
       <y>15</y>
+      <name>related_id</name>
      </Item>
     </Relationships>
    </Item>
   </Relationships>
  </Item>
  <Item type="Field" id="FD6ED2D1ED8C4AE8A41143F4FF88B4F8" action="edit">
+  <!-- Please note: this AML depends on the "Item Folder File" ItemType. Please make sure it exists before running this. -->
   <propertytype_id>
    <Item type="Property" action="get" select="id">
     <name>related_id</name>

@@ -10,6 +10,14 @@ var thisItemType = this.getAttribute("type","");
 
 if (thisItemId === "" || thisItemType === "") {return inn.newError("in Args missing!");}
 
+//--- helper functions
+buildResultItem = function (inn, resString) 
+{
+  var resItem = inn.newItem("","");
+  resItem.loadAML("<Result>"+resString+"</Result>");
+  return resItem;
+};
+
 // default err, if type not supported
 var thisItem = inn.newError("ItemType '" + thisItemType + "' is not supported by this action");
 var thisItemFileRel = "";
@@ -69,7 +77,8 @@ if (itemFileRels.getItemCount() == 1) {
      if (!top.aras.uiFindWindowEx(fileRelItem.getProperty("related_id","")))
      {
        top.aras.uiShowItem("File", fileRelItem.getProperty("related_id","") );
-       return inn.newResult("OK");
+       //##old return inn.newResult("OK");
+	   return buildResultItem(inn,"OK");
      }
   }
 }
@@ -98,7 +107,8 @@ if (formNd)
    }
   }
 }
-return inn.newResult("OK");
+//##old return inn.newResult("OK");
+return buildResultItem(inn,"OK");
 ]]></method_code>
   <method_type>JavaScript</method_type>
   <name>Item Folder ViewItemFiles Action</name>
