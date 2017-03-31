@@ -1,36 +1,93 @@
 ﻿<AML>
  <Item type="Method" id="D392B9A7924B4F028926AB1A278432A7" action="add">
   <execution_allowed_to keyed_name="World" type="Identity">A73B655731924CD0B027E4F4D5FCC0A9</execution_allowed_to>
-  <method_code><![CDATA[//debugger;
-var cff = new CommonFormFunctions("Item Folder");
-var thisItem = top.aras.newIOMItem("","");
-thisItem.loadAML(document.item.xml);
-var isTemplate = (thisItem.getProperty("is_template","0") === "1");
+  <method_code><![CDATA[//=== main logic
+//debugger;
 
-var element = document.getElementsByName("html_is_folder_templ_white_box")[0];
+//var thisItem = top.aras.newIOMItem("","");
+//thisItem.loadAML(document.item.xml);
+var isTemplate = (top.aras.getItemProperty(document.thisItem.node, "is_template","0") === "1");
+
+var element = document.getElementById("arasRelease"); 
+var arasRelease = "";
+if (element) {arasRelease = element.innerHTML;}
+
+
+//show Template text (by removing white box)
+element = document.getElementById("is_folder_templ_white_box");
 if (element && isTemplate) {
   var parentElem = element.parentNode;
   if (parentElem) {parentElem.removeChild(element);}
-  cff.setVisibilityOfFieldByPropName("html_is_folder_templ_white_box",!isTemplate);
+}
+//show related projects field/link or template settings fields (if template)
+if (isTemplate) {
+	fn_FieldVisibleByName("related_project_keyed_name",false);
+	fn_FieldVisibleByName("html_related_project_keyed_name",false);
+}
+else {
+	fn_FieldVisibleByName("allow_sub_folders",false);
+	fn_FieldVisibleByName("allowed_relationships",false);
 }
 
-cff.setVisibilityOfFieldByPropName("allow_sub_folders",isTemplate);
-cff.setVisibilityOfFieldByPropName("allowed_relationships",isTemplate);
-cff.setVisibilityOfFieldByPropName("related_project_keyed_name",!isTemplate);
-
-//if top folder ...
-//field must be disabled by default
-if (thisItem.getProperty("is_root","0") === "1" && !isTemplate) {
-  cff.enableFieldByPropName("text", "related_project_keyed_name", true);
-  if (thisItem.getProperty("related_project_keyed_name","") !== "") {
-    cff.enableFieldByPropName("text", "related_project_keyed_name", false);
+//if top folder ...field can be enabled, if empty
+var projectKN = top.aras.getItemProperty(document.thisItem.node,"related_project_keyed_name","");
+if (top.aras.getItemProperty(document.thisItem.node,"is_root","0") === "1" && !isTemplate) {
+  if ( projectKN === "") {
+  	fn_FieldVisibleByName("html_related_project_keyed_name",false);
+  }
+  else {
+  	fn_FieldVisibleByName("related_project_keyed_name",false);
+	document.getElementById("html_related_project_keyed_name").getElementsByTagName("u")[0].innerHTML = projectKN;
   }
 }
 else {
-  cff.enableFieldByPropName("text", "related_project_keyed_name", false);
+  fn_FieldVisibleByName("related_project_keyed_name",false);
+  document.getElementById("html_related_project_keyed_name").getElementsByTagName("u")[0].innerHTML = projectKN;
 }
 
-return;]]></method_code>
+//=== helper functions
+// -------
+function fn_enableFieldByPropName(propName, isEnabled ) {
+  var fieldElement = document.getElementsByName(propName)[0];
+
+  //This will disable all the children of the div  (works on firefox but not on IE)
+  var nodes = fieldElement.getElementsByTagName('*');
+  for(var i = 0; i < nodes.length; i++)
+  {
+     nodes[i].disabled = !isEnabled;
+  } 
+}
+// -------
+function fn_FieldVisibleByName(propName, bShowField) {
+  var fieldElement;
+  if (arasRelease === "Aras9") {fieldElement = document.getElementsByName(propName)[0];}
+  else {
+  	var instance= top.aras.Browser.isIe() ? top.instance : top.instance.contentWindow;
+	fieldElement = instance.getFieldByName(propName);
+  }
+  if (fieldElement) {
+    var display    = bShowField ? "block"        : "none";  
+    var fieldStyle = fieldElement.style;
+    fieldStyle.display    = display;
+  }
+  return;
+}
+
+//===  form callback to open related project
+window.openRelatedProject = function() {
+  var kn = top.aras.getItemProperty(document.thisItem.node,"related_project_keyed_name","");
+  if (kn !== "") {
+	var projNo = kn.split(" ")[0];
+	var projItem = top.aras.newIOMItem("","");
+	projItem.loadAML('<Item type="Project" action="get" select="id" ><project_number>'+projNo+'</project_number></Item>');
+	projItem = projItem.apply();
+	if (!projItem.isError()) {
+	  top.aras.uiShowItem("Project", projItem.getID());
+	}
+  }
+};
+
+]]></method_code>
   <method_type>JavaScript</method_type>
   <name>Display Folder TemplText if Set</name>
  </Item>

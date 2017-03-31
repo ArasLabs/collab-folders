@@ -3,35 +3,103 @@
   <execution_allowed_to keyed_name="World" type="Identity">A73B655731924CD0B027E4F4D5FCC0A9</execution_allowed_to>
   <method_code><![CDATA[//*/ Client side Method: treeGrid1 misc. function
 // 
-// load with --> onLoad Event on Form: "Item Folder_PurchaseGrid"
+// load with --> onLoad Event on Form:
 // works together with 'Base TreeGrid' - must be loaded first
 
-// global variable "folderTreeGrid"   must be declared in grid's html field on the form !!!
+// top variable "top.folderGrid1"  holds the grid class
 // global variable "innovator"  must be declared in grid's html field on the form !!!
 // global variable "I18Ncntx"   must be declared in grid's html field on the form !!!
+var arasRelease;
+var	folderGroupCtrldItemsRowType = 	"CTRLD_ITEMS_GROUP";
+var	folderGroupFilesRowType =	"FILES_GROUP";
 
+// callback from html field on form
 window.initTreeGrid = function() {
     // assumes html field on form with id="arasRelease" is defined
     var el = document.getElementById("arasRelease"); 
-    var arasRelease = "";
+    arasRelease = "";
     if (el) {arasRelease = el.innerHTML;}
-	
-	folderTreeGrid = new FolderStructGrid(arasRelease);
+
+	top.folderGrid1 = new FolderStructGrid();
 	if (arasRelease === "Aras9") {
-	  folderTreeGrid.loadGridDefinitionHTML("treeGrid1","toolbar1","folderTreeGrid");  //3rd arg must be name of global variable !!!
+	  top.folderGrid1.loadGridDefinitionHTML("treeGrid1","toolbar1","folderTreeGrid");  //3rd arg must be name of global variable !!!
 	}
 	else {
-	  folderTreeGrid.loadDojoGridDefinitionHTML();
+	  top.folderGrid1.loadDojoGridDefinitionHTML();
 	}
 };
 
-FolderStructGrid = function FolderStructGridFunc(arasRelease) {
+// callback from method "ForceGridRefreshOnRelTabs"
+window.forceGridRefreshOnRelationship = function(relshipTypeName) {
+ if(relshipTypeName.indexOf("Folder") > 0 && relshipTypeName.indexOf("Structure")) {
+  if (arasRelease === "Aras9") {
+	top.folderGrid1.gridRefresh(true);
+  } else {
+	top.folderGrid1.refreshGridWithTimout(true);
+  }
+ }
+};
+
+FolderStructGrid = function FolderStructGridFunc() {
     this.arasRelease = arasRelease;
     this.initialized = false;
     this.topFolderItemId = "undefined";
     this.topFolderItem = null;
 	this.inputRowTdVals = null;
+	this.fullTopFolderStructConfigXML=null;
+
+    this.hasInputRow = false;
+    this.IsExpandOnStart = false;
+	this.numberOfGridColumns=-1; //init
+
+	this.constants = {
+		subFolderRelationshipName: 		"Item Sub Folder",
+		folderGroupCtrldItems_label: 	"Controlled Items",
+		folderGroupFiles_label:			"Attachments"
+	};
+
+	this.icons = {};
+	this.iconsOpen = {};
 	
+	this.icons[folderGroupCtrldItemsRowType] = 		"../images/icons/GridIcons/folder_items_group.gif";
+	this.iconsOpen[folderGroupCtrldItemsRowType] = 	"../images/icons/GridIcons/folder_items_group.gif";
+	this.icons[folderGroupFilesRowType] = 			"../images/icons/GridIcons/folder_files_group.gif";
+	this.iconsOpen[folderGroupFilesRowType] = 		"../images/icons/GridIcons/folder_files_group.gif";
+
+	this.icons["Item Folder"] = 			"../images/Icons/GridIcons/folder_closed.gif";
+	this.iconsOpen["Item Folder"] = 		"../images/Icons/GridIcons/folder_open.gif";
+
+  if (arasRelease == "Aras9")
+  {
+	this.icons["Document"] = 				fn_GetSmallIconFormatOfItemType("Document");
+	this.icons["CAD"] = 					fn_GetSmallIconFormatOfItemType("CAD");
+	this.icons["Part"] = 					fn_GetSmallIconFormatOfItemType("Part");
+  }
+  else
+  {
+	this.icons["Document"] = 				"../images/Icons/GridIcons/document.gif";
+	this.icons["CAD"] = 					"../images/Icons/GridIcons/CAD.gif";
+	this.icons["Part"] = 					"../images/Icons/GridIcons/part.gif";
+  }
+
+    this.icons["File"] = 					"../images/icons/GridIcons/has_files.gif";
+	this.icons["has_details"] = 			"../images/Icons/GridIcons/has_details.gif";
+	this.icons["is_shared"] = 				"../images/icons/GridIcons/is_shared.gif";
+	this.icons["newerItemGen"] = 			"../images/Icons/GridIcons/newerItemGen.gif";
+
+	this.use_svg_icons = true;  /*enables icons: "locked","locked_else","item_chk0","item_chk1" */
+};
+
+FolderStructGrid.prototype = new BaseTreeGrid();
+
+FolderStructGrid.prototype.isEditable = function FolderStructGrid_isEditable() {
+    //conditions when grid should be editable
+	var node = document.thisItem.node;
+	return top.aras.isLockedByUser(node);
+//	return top.aras.isTempEx(node) || ((!state || state === "Preliminary" || state === "In Work") && top.aras.isLockedByUser(node));
+};
+
+FolderStructGrid.prototype.refreshTopItemContext = function FolderStructGrid_refreshTopItemContext() {
 	this.rootItem = document.thisItem; //context if started from tab
 	this.rootItemType = document.thisItem.GetType();
 
@@ -52,74 +120,18 @@ FolderStructGrid = function FolderStructGridFunc(arasRelease) {
        this.topFolderItemId = rootItemId;
        break;
     }
-
-    this.hasInputRow = false;
-    this.IsExpandOnStart = false;
-	this.numberOfGridColumns=-1; //init
-	this.lockIconColumnNo = 2; // TODO ## detect index of column Name "LOCK" 
-
-	this.constants = {
-		subFolderRelationshipName: 		"Item Sub Folder",
-		folderGroupCtrldItems_label: 	"Controlled Items",
-		folderGroupCtrldItemsRowType: 	"CTRLD_ITEMS_GROUP",
-		folderGroupFiles_label:			"Attachments",
-		folderGroupFilesRowType: 		"FILES_GROUP"
-	};
-
-	this.icons = {};
-	this.iconsOpen = {};
 	
-	this.icons[this.constants.folderGroupCtrldItemsRowType] = 		"../images/icons/GridIcons/folder_items_group.gif";
-	this.iconsOpen[this.constants.folderGroupCtrldItemsRowType] = 	"../images/icons/GridIcons/folder_items_group.gif";
-	this.icons[this.constants.folderGroupFilesRowType] = 			"../images/icons/GridIcons/folder_files_group.gif";
-	this.iconsOpen[this.constants.folderGroupFilesRowType] = 		"../images/icons/GridIcons/folder_files_group.gif";
-
-	this.icons["Item Folder"] = 			"../images/Icons/GridIcons/folder_closed.gif";
-	this.iconsOpen["Item Folder"] = 		"../images/Icons/GridIcons/folder_open.gif";
-
-  if (this.arasRelease == "Aras9")
-  {
-	this.icons["Document"] = 				fn_GetSmallIconFormatOfItemType("Document");
-	this.icons["CAD"] = 					fn_GetSmallIconFormatOfItemType("CAD");
-	this.icons["Part"] = 					fn_GetSmallIconFormatOfItemType("Part");
-  }
-  else
-  {
-	this.icons["Document"] = 				"../images/Icons/GridIcons/document.gif";
-	this.icons["CAD"] = 					"../images/Icons/GridIcons/CAD.gif";
-	this.icons["Part"] = 					"../images/Icons/GridIcons/part.gif";
-  }
-
-    this.icons["File"] = 					"../images/icons/GridIcons/has_files.gif";
-	this.icons["has_files"] = 				"../images/icons/GridIcons/has_files.gif";
-	this.icons["has_details"] = 			"../images/Icons/GridIcons/has_details.gif";
-	this.icons["is_shared"] = 				"../images/icons/GridIcons/is_shared.gif";
-	this.icons["locked"] = 					"../images/Icons/GridIcons/locked.gif";
-	this.icons["locked_else"] = 			"../images/Icons/GridIcons/locked_else.gif";
-	this.icons["item_chk0"] = 				"../images/Icons/GridIcons/item_chk0.gif";
-	this.icons["item_chk1"] = 				"../images/Icons/GridIcons/item_chk1.gif";
-	this.icons["newerItemGen"] = 			"../images/Icons/GridIcons/newerItemGen.gif";
-	
-};
-
-FolderStructGrid.prototype = new BaseTreeGrid();
-
-FolderStructGrid.prototype.isEditable = function FolderStructGrid_isEditable() {
-    //conditions when grid should be editable
-	var node = document.thisItem.node;
-	return top.aras.isLockedByUser(node);
-//	return top.aras.isTempEx(node) || ((!state || state === "Preliminary" || state === "In Work") && top.aras.isLockedByUser(node));
+    this.currentUserIsOwner = fn_IsCurrUserMemberOfIdentityId(this.rootItem.getProperty("owned_by_id",""));	
+	this.currentUserIsTeamGuestOfRootItem = fn_isUserMemberOfThisItemTeamGuest(document.thisItem);
 };
 
 FolderStructGrid.prototype.onBeforeInitialize = function FolderStructGrid_onBeforeInitialize() {
-	
 };
 
 FolderStructGrid.prototype.initialize = function FolderStructGrid_Initialize() {
-    this.currentUserIsOwner = fn_IsCurrUserMemberOfIdentityId(this.rootItem.getProperty("owned_by_id",""));	
 	this.onBeforeInitialize();
-	
-  if (this.arasRelease == "Aras9") {
+
+  if (arasRelease == "Aras9") {
     this.toolbarXmlUrl = top.aras.getI18NXMLResource("ItemFolderNavigatorToolbar9.xml", "../Solutions/ItemFolders/"); }
   else {
     this.toolbarXmlUrl = top.aras.getI18NXMLResource("ItemFolderNavigatorToolbar.xml", "../Solutions/ItemFolders/"); }
@@ -127,20 +139,31 @@ FolderStructGrid.prototype.initialize = function FolderStructGrid_Initialize() {
 	this.toolbar.loadXml(this.toolbarXmlUrl);
 	this.toolbar.show();
 	
-	// define startup effectivity mode
-    if (fn_isUserMemberOfThisItemTeamGuest(this.rootItem)) {
-      this.fixEffectivityToReleased = true;
-      fn_setChoiceSelectionOnToolbar(this.toolbar,"effectivity_mode", "latest_released"); // triggers a refresh
-    }
-    else {
-      this.fixEffectivityToReleased = false;
-      fn_setChoiceSelectionOnToolbar(this.toolbar,"effectivity_mode", "current_config"); // triggeres a refresh
-    }
-
+	// register all possible menu actions - during event onGridMenuInit() apply rules to disable individual actions
+	this.gridContextMenu = [
+		{ name: "view_folder", 						label: top.aras.getResource("ItemFolders","itemfoldertreegrid.contextmenu.view_folder"), 				handler: new handleMenuActionByName(), menuindex:-1},
+		{ name: "view_attached_files",				label: top.aras.getResource("ItemFolders","itemfoldertreegrid.contextmenu.view_attached_files"), 		handler: new handleMenuActionByName(), menuindex:-1 },
+		{ separator: true },
+		{ name: "refresh_this_row",					label: top.aras.getResource("ItemFolders","itemfoldertreegrid.contextmenu.refresh_this_row"), 			handler: new handleMenuActionByName(), menuindex:-1 },
+		{ name: "action_revise_section", 			label: top.aras.getResource("DocumentHierarchies", "dochierarchygrid.contextmenu.revise_sections_up"), 	handler: new handleMenuActionByName(), menuindex:-1 },
+		{ separator: true },
+		{ name: "lock_row_item", 					label: top.aras.getResource("ItemFolders","itemfoldertreegrid.contextmenu.lock_row_item"), 				handler: new handleMenuActionByName(), menuindex:-1 },
+		{ name: "unlock_row_item", 					label: top.aras.getResource("ItemFolders","itemfoldertreegrid.contextmenu.unlock_row_item"), 			handler: new handleMenuActionByName(), menuindex:-1 },
+		{ separator: true },
+		{ name: "add_new_controlled_item", 			label: top.aras.getResource("ItemFolders","itemfoldertreegrid.contextmenu.add_new_controlled_item"), 	handler: new handleMenuActionByName(), menuindex:-1 },
+		{ name: "add_existing_controlled_item", 	label: top.aras.getResource("ItemFolders","itemfoldertreegrid.contextmenu.add_existing_controlled_item"),	handler: new handleMenuActionByName(), menuindex:-1 },
+		{ name: "add_new_file_to_folder", 			label: top.aras.getResource("ItemFolders","itemfoldertreegrid.contextmenu.add_new_file_to_folder"), 	handler: new handleMenuActionByName(), menuindex:-1 },
+		{ name: "add_sub_folder", 					label: top.aras.getResource("ItemFolders","itemfoldertreegrid.contextmenu.add_sub_folder"), 			handler: new handleMenuActionByName(), menuindex:-1 },
+		{ separator: true },
+		{ name: "promote_folders_to_active_down", 	label: top.aras.getResource("ItemFolders","itemfoldertreegrid.contextmenu.promote_folders_to_active_down"), handler: new handleMenuActionByName(), menuindex:-1 },
+		{ name: "promote_folders_to_archived_down", label: top.aras.getResource("ItemFolders","itemfoldertreegrid.contextmenu.promote_folders_to_archived_down"), handler: new handleMenuActionByName(), menuindex:-1 }
+	];
+	
 //debugger;
     //register column layouts of different row types
 	this.columnHeadingsAndLayout = fn_getGridTableColumnHeadingsAndLayout(true);
 	this.numberOfGridColumns = this.columnHeadingsAndLayout.length;
+	this.lockIconColumnNo = fn_getGridTableColumnIndexByName(this.columnHeadingsAndLayout,"LOCK");
 	this.itemFolderColumnList = fn_getGridTableColumnDefOfFolderRows();
 	this.ctrldItemsColumnList = fn_getGridTableColumnDefOfCtrlItemsRows();
 	this.filesColumnList = fn_getGridTableColumnDefOfFileRows();
@@ -186,11 +209,18 @@ FolderStructGrid.prototype.initialize = function FolderStructGrid_Initialize() {
 
 	xml += '</table>';
 	this.gridEmptyTable_xml = xml;
-	this.gridFullContent_xml = undefined;
 
+	// initially set variables related to top/root item
+	this.refreshTopItemContext();
+	
+	// define startup effectivity mode
+    this.fixEffectivityToReleased = false;
+	this.ignoreToolbarChangeEvent = true;
+    fn_setChoiceSelectionOnToolbar(this.toolbar,"effectivity_mode", "current_config"); // triggeres a refresh
+    	
 	this.initialized = true;
 
-	if (this.arasRelease === "Aras9") {
+	if (arasRelease === "Aras9") {
  	  this.grid.clear();
 	  this.grid.InitXml(xml);
 	}
@@ -199,7 +229,9 @@ FolderStructGrid.prototype.initialize = function FolderStructGrid_Initialize() {
 	}
 
 	// now load data into grid	
-	this.gridRefresh(true); 
+	if (!top.aras.Browser.isIe() && this.rootItemType === "Item Folder") {this.skipNextDraw = true;}
+	this.gridRefresh(true);  //refresh with load=true will come later from "forceRefreh" method of form's onPopulate event
+	
 };
 
 FolderStructGrid.prototype.SetIsDirtyAndUpdateAction = function FolderStructGrid_SetIsDirtyAndUpdateAction(item) {
@@ -248,7 +280,7 @@ FolderStructGrid.prototype.onEndEditCell = function FolderStructGrid_onEndEditCe
 };
 //==== helper function to wrap missing old grid method
 FolderStructGrid.prototype.gridRowExists = function FolderStructGrid_gridRowExists(rowId) {
-  if (this.arasRelease === "Aras9") {
+  if (arasRelease === "Aras9") {
     return this.grid.isItemExists(rowId);
   }
   else {
@@ -258,12 +290,43 @@ FolderStructGrid.prototype.gridRowExists = function FolderStructGrid_gridRowExis
 };
 
 FolderStructGrid.prototype.gridSetCellValue = function FolderStructGrid_gridSetCellValue(rowId,col,value) {
-  if (this.arasRelease === "Aras9") {
+  if (arasRelease === "Aras9") {
 	  this.grid.setCellValue(rowId,col,value);
   }
   else {
 	  var cell = this.grid.cells(rowId, col);
 	  this.grid.cells(rowId, col).setValue(value);
+  }
+};
+
+FolderStructGrid.prototype.setGridRowUserData = function FolderStructGrid_setGridRowUserData(rowId, dataName, dataValue) {
+  if (!rowId || rowId === "") {return;}
+  switch(dataName)
+  {
+  case "gridData_rowItemType":
+  	this.GridRowUserData[rowId] = {
+	  itemType: dataValue
+	};
+    break;
+  case "gridData_rowItemId":
+  	this.GridRowUserData[rowId] = {
+	  itemId: dataValue
+	};
+    break;
+  }
+};
+
+FolderStructGrid.prototype.getGridRowUserData = function FolderStructGrid_getGridRowUserData(rowId, dataName) {
+  if (!rowId || rowId === "") {return;}
+  var retValue = "";
+  switch(dataName)
+  {
+    case "gridData_rowItemType":
+	  return this.GridRowUserData[rowId].itemType;
+	  
+    case "gridData_rowItemID":
+    case "gridData_rowItemId":
+	  return this.GridRowUserData[rowId].itemId;
   }
 };
 
@@ -315,13 +378,13 @@ aml+='</Item>' +
 };
 
 //--------------
-fn_getFolderSubFolderRel = function(folderGridCtxt, sourceItemId, relatedItemId )  {
+fn_getFolderSubFolderRel = function(sourceItemId, relatedItemId )  {
 var amlQry = '<Item type="Item Sub Folder" action="get" select="';
-    amlQry += folderGridCtxt.folderRelItemSelectProperties + ',related_id" orderBy="org_number,sort_order" >';
+    amlQry += top.folderGrid1.folderRelItemSelectProperties + ',related_id" orderBy="org_number,sort_order" >';
     amlQry += "<source_id>"+sourceItemId+"</source_id>";
 	amlQry += '<related_id>';
 	amlQry += '<Item type="Item Folder" action="get" select="id,config_id,generation,';
-    amlQry += folderGridCtxt.folderItemSelectProperties + '" >';
+    amlQry += top.folderGrid1.folderItemSelectProperties + '" >';
     amlQry += '<id>'+relatedItemId+'</id>';
     amlQry += '</Item>';
     amlQry += '</related_id>';
@@ -335,11 +398,11 @@ var amlQry = '<Item type="Item Sub Folder" action="get" select="';
 };
 
 //--------------
-fn_getFolderControlledItemRel = function(folderGridCtxt, sourceItemId, relatedItemId  )  {
-  var itemSelectProperties = folderGridCtxt.folderCtrlItemSelectProperties;
+fn_getFolderControlledItemRel = function(sourceItemId, relatedItemId  )  {
+  var itemSelectProperties = top.folderGrid1.folderCtrlItemSelectProperties;
 
     // get relationship of related this ItemType
-    var amlQry = "<Item type='Item Folder Controlled Item' action='get' select='id,source_id(owned_by_id,managed_by_id,team_id,locked_by_id),related_id,"+folderGridCtxt.folderRelItemSelectProperties+"' >";
+    var amlQry = "<Item type='Item Folder Controlled Item' action='get' select='id,source_id(owned_by_id,managed_by_id,team_id,locked_by_id),related_id,"+top.folderGrid1.folderRelItemSelectProperties+"' >";
     amlQry += "<source_id>"+sourceItemId+"</source_id>";
     amlQry += "<related_id>";
     amlQry += "<Item type='Folder Controlled Item' action='get' select='id,config_id,"+itemSelectProperties+"'>";
@@ -375,36 +438,43 @@ fn_getFolderAttachedFileRel = function(fileRelationshipName, folderItem, related
 };
 
 // ======= Draw grid contents =======
-FolderStructGrid.prototype.Draw = function FolderStructGrid_Draw(forceGetRelationships) {
-	this.grid.removeAllRows();
-    this.hasInputRow = false;
-	if (this.topFolderItemId === "") {return;} //no root folder specified - do nothing
+FolderStructGrid.prototype.Draw = function FolderStructGrid_Draw(isReLoad) {
+//	alert(this.skipNextDraw);
+	if (this.skipNextDraw === true) {this.skipNextDraw=false; return;}
 
+    this.hasInputRow = false;
 	if (this.hasInputRow) {this.grid.showInputRow(true);}
 	
+	// get data from server
+	if (isReLoad) {
+		// re-set variables related to top/root item
+		this.refreshTopItemContext();
+		var isReleased = (fn_getChoiceSelectionOnToolbar(this.toolbar,"effectivity_mode") === "latest_released");
+	
+		this.fullTopFolderStructConfigXML = this.GetFullFolderStructConfig(this.topFolderItemId,isReleased,this.gridEmptyTable_xml);
+		if (this.fullTopFolderStructConfigXML.getItemCount() === 0) {return;} // do nothing 
+	}
+    // draw data into grid
+	//alert("draw");
+    if (!this.fullTopFolderStructConfigXML) {return;}  //cannot draw, if XML is null
+	this.grid.removeAllRows();
 	this.GridRowUserData = {};
-	this.defaultMenu = this.initDefaultMenu();	
 
-	fn_enableToolbarControls(this.toolbar, false, this.fixEffectivityToReleased);
-
-	var isReleased = (fn_getChoiceSelectionOnToolbar(this.toolbar,"effectivity_mode") === "latest_released");
-//debugger;	
-	
-    this.fullTopFolderStructConfigAML = this.GetFullFolderStructConfig(this.topFolderItemId,isReleased,this.gridEmptyTable_xml);
-	
-	if (this.fullTopFolderStructConfigAML.getItemCount() === 0) {return;} // do nothing 
-
-	var rootPartItem = this.fullTopFolderStructConfigAML.getItemByIndex(0);
+	var rootPartItem = this.fullTopFolderStructConfigXML.getItemByIndex(0);
 	var rowID = this.DrawFolderRow(rootPartItem, null, null, null);
-    fn_SetBackgroundColorInRow(this.grid,rowID,0,this.numberOfGridColumns-1, "#ffeeee");
+    fn_SetBackgroundColorInRow(rowID,0,this.numberOfGridColumns-1, "#ffeeee");
 
 //debugger;	
-	var parents = {};
-	
+	var parents = {};	
 	this.DrawFolderChildren(rootPartItem, rootPartItem.getID(), rowID, parents);
-	this.grid.openItem(rowID); //Root Item
-
-	fn_enableToolbarControls(this.toolbar, true, this.fixEffectivityToReleased);
+	
+	// need a timeout before openItem can be called. 	  
+	var self = this;
+	setTimeout(function(){
+		try {
+		} finally {
+		    self.grid.openItem(rowID); //Root Item
+		}} , 100);
 
 };
 
@@ -476,7 +546,7 @@ FolderStructGrid.prototype.DrawFolderControlledItemRows = function FolderStructG
 	var ctrldItemsGroupsNodeId = "";
 
    // add phantom grid row to group controlled Items
-    if (ctrldItemsGroupsNodeId === "" && folderCtrldItemRels.getItemCount() > 0) {ctrldItemsGroupsNodeId = fn_InsertControlledItemsGroupRowToTreeGrid (this,folderRowId,folderItem.getID()); }
+    if (ctrldItemsGroupsNodeId === "" && folderCtrldItemRels.getItemCount() > 0) {ctrldItemsGroupsNodeId = fn_InsertControlledItemsGroupRowToTreeGrid (folderRowId,folderItem.getID()); }
 	
 	for(var i = 0; i < folderCtrldItemRels.getItemCount(); i++) {
 	  var folderCtrldItemRel = folderCtrldItemRels.getItemByIndex(i);
@@ -514,7 +584,7 @@ FolderStructGrid.prototype.DrawFolderFileRows = function FolderStructGrid_DrawFo
 	var ctrldItemsGroupsNodeId = "";
 
    // add phantom grid row to group controlled Items
-    if (ctrldItemsGroupsNodeId === "" && folderFileRels.getItemCount() > 0) {ctrldItemsGroupsNodeId = fn_InsertFilesGroupRowToTreeGrid (this,folderRowId,folderItem.getID()); }
+    if (ctrldItemsGroupsNodeId === "" && folderFileRels.getItemCount() > 0) {ctrldItemsGroupsNodeId = fn_InsertFilesGroupRowToTreeGrid (folderRowId,folderItem.getID()); }
 	
 	for(var i = 0; i < folderFileRels.getItemCount(); i++) {
 	  var folderCtrldItemRel = folderFileRels.getItemByIndex(i);
@@ -593,14 +663,14 @@ FolderStructGrid.prototype.AddNewControlledItemToFolder = function FolderStructG
   folderItemRel = folderItemRel.apply(); //add new relationship on server
   if (folderItemRel.isError()) {return folderItemRel;}
   // retrieve new relationship with more details from server
-  folderItemRel = fn_getFolderControlledItemRel(this, folderItem.getID(),ctrldItem.getID());
+  folderItemRel = fn_getFolderControlledItemRel(folderItem.getID(),ctrldItem.getID());
   if (folderItemRel.isError()) {return folderItemRel;}
   ctrldItem = folderItemRel.getPropertyItem("related_id");
  
-  //## TODO - add new rel and item AML to this.fullTopFolderStructConfigAML
+  //## TODO - add new rel and item AML to this.fullTopFolderStructConfigXML
   
   // add phantom grid row to group controlled items
-  ctrldItemsGroupsNodeId = fn_InsertControlledItemsGroupRowToTreeGrid (this, folderRowId, folderItem.getID());  
+  ctrldItemsGroupsNodeId = fn_InsertControlledItemsGroupRowToTreeGrid (folderRowId, folderItem.getID());  
 
   ctrldItemType = newCtrldItem.getAttribute("type");
   var ctrldItemId = newCtrldItem.getAttribute("id");
@@ -626,7 +696,7 @@ FolderStructGrid.prototype.AddNewControlledItemToFolder = function FolderStructG
 //-------------
 FolderStructGrid.prototype.AddNewFileToFolder = function FolderStructGrid_AddNewFileToFolder(folderRowId, folderItem, newFileItem)
 {
-  fn_enableToolbarControls(this.toolbar, false);
+  this.toolbarRefresh(false);
   
   var folderFileRel = top.aras.newIOMItem("Item Folder File","add");
   
@@ -636,19 +706,19 @@ FolderStructGrid.prototype.AddNewFileToFolder = function FolderStructGrid_AddNew
   folderFileRel.setRelatedItem(fileItem);
  
   folderFileRel = folderFileRel.apply(); //triggers upload to vault.
-  if (folderFileRel.isError()) {fn_enableToolbarControls(this.toolbar, true);return folderFileRel;}
+  if (folderFileRel.isError()) {this.toolbarRefresh(true);return folderFileRel;}
 
   // retrieve new relationship with more details from server
   folderFileRel = fn_getFolderAttachedFileRel("Item Folder File", folderItem, fileItem.getID());
   if (folderFileRel.isError()) {
-    fn_enableToolbarControls(this.toolbar, true);
+    this.toolbarRefresh(true);
     top.aras.AlertError(top.aras.getResource("ItemFolders", "itemfoldertreegrid.message.attached_files_not_retrieved"));
     return folderFileRel;
   }
   fileItem = folderFileRel.getPropertyItem("related_id");
   
   // add phantom grid row to group files
-  fileGroupRowId = fn_InsertFilesGroupRowToTreeGrid (this, folderRowId, folderItem.getID());  
+  fileGroupRowId = fn_InsertFilesGroupRowToTreeGrid (folderRowId, folderItem.getID());  
   var newNodeId = folderItem.getID() + "-" + fileItem.getID();
 
   var fileItemId = folderFileRel.getProperty("related_id","");
@@ -666,8 +736,8 @@ FolderStructGrid.prototype.AddNewFileToFolder = function FolderStructGrid_AddNew
   // expand rows to see new rows
   this.grid.openItem(folderRowId);  
   this.grid.openItem(fileGroupRowId);  
-  
-  fn_enableToolbarControls(this.toolbar, true);  
+
+  this.toolbarRefresh(true);
   return folderFileRel;
 };
 
@@ -687,7 +757,7 @@ FolderStructGrid.prototype.AddNewSubFolderToFolder = function FolderStructGrid_A
   if (folderItemRel.isError()) {return folderItemRel;}
 
   // retrieve new relationship with more details from server
-  folderItemRel = fn_getFolderSubFolderRel(this, folderItemId,subFolderItem.getID());
+  folderItemRel = fn_getFolderSubFolderRel(folderItemId,subFolderItem.getID());
   if (folderItemRel.isError()) {return folderItemRel;}
   subFolderItem = folderItemRel.getPropertyItem("related_id");
   
@@ -709,12 +779,10 @@ FolderStructGrid.prototype.AddNewSubFolderToFolder = function FolderStructGrid_A
   return folderItemRel;
 };
 
-FolderStructGrid.prototype.gridRefresh = function FolderStructGrid_gridRefresh(forceGetRelationships) {
-	forceGetRelationships = !!forceGetRelationships;
-
-	this.setToolbarItemEnable("refresh_all", false);
-	this.grid.setPaintEnabled(false);
+FolderStructGrid.prototype.gridRefresh = function FolderStructGrid_gridRefresh(isReLoad) {
 	var self = this;
+	self.toolbarRefresh(false);
+	self.grid.setPaintEnabled(false);
 
   if (this.arasRelease === "Aras9") {
 
@@ -723,12 +791,12 @@ FolderStructGrid.prototype.gridRefresh = function FolderStructGrid_gridRefresh(f
 	setTimeout(function(){
 		try {
 			var gridState = self.GetGridState();
-			self.Draw(forceGetRelationships);
+			self.Draw(isReLoad);
 			self.SetGridState(gridState);
 		} finally {
 			self.grid.style.visibility = '';
 			self.grid.setPaintEnabled(true);
-			self.toolbarRefresh();
+			self.toolbarRefresh(true);
 		}
 	} ,50);
   }
@@ -740,7 +808,8 @@ FolderStructGrid.prototype.gridRefresh = function FolderStructGrid_gridRefresh(f
 	setTimeout(function(){
 		try {
 			var gridState = self.GetGridState();
-			self.Draw(forceGetRelationships);
+			self.Draw(isReLoad);
+			self.SetGridState(gridState);
 			setTimeout(function()
 			{
 				self.SetGridState(gridState);
@@ -757,13 +826,12 @@ FolderStructGrid.prototype.gridRefresh = function FolderStructGrid_gridRefresh(f
 			self.toolbarRefresh();
 		}
 	} ,0);
+
   }	
 	
 };
 
-FolderStructGrid.prototype.refreshGridWithTimout = function FolderStructGrid_refreshGridWithTimout(forceGetRelationships) {
-	forceGetRelationships = !!forceGetRelationships;
-
+FolderStructGrid.prototype.refreshGridWithTimout = function FolderStructGrid_refreshGridWithTimout(isReload) {
 	//If Refresh will be called multiple times per one execution scope then postponned call of Refresh_Impl will be canceled and initiated new call
 	//That is mean that Refresh_Impl will be called once.
 	if(this.Refresh_Impl_timeout) {
@@ -773,41 +841,84 @@ FolderStructGrid.prototype.refreshGridWithTimout = function FolderStructGrid_ref
 	var self = this;
 	//Need setTimeout because during handling OnPopulated event document.thisItem contain old item and it will be refreshed after OnPopulated event
 	this.Refresh_Impl_timeout = setTimeout(function () {
-		self.gridRefresh(forceGetRelationships);
+		self.gridRefresh(isReload);
 	}, 0);
 };
 
-
-FolderStructGrid.prototype.toolbarRefresh = function FolderStructGrid_toolbarRefresh() {
-	this.setToolbarItemEnable("expand_all", true);
-	this.setToolbarItemEnable("collapse_all", true);
-	this.setToolbarItemEnable("refresh_all", true);
-
-	this.toolbar.showLabels((top.aras.getVariable('ShowLabels') === 'true'));
+FolderStructGrid.prototype.toolbarRefresh = function FolderStructGrid_toolbarRefresh(enableToolbarElements) {
+	fn_enableToolbarControls(this.toolbar, enableToolbarElements, this.fixEffectivityToReleased);
 };
 
 FolderStructGrid.prototype.onGridMenuInit = function FolderStructGrid_onGridMenuInit(eArg) {
-		//reset menu items, enable all
-		for (var i = 0; i < this.defaultMenu.length; i++) {
-			if (!this.defaultMenu[i].separator) {
-				eArg.menuItems.push({
-					label: this.defaultMenu[i].label,
-					enabled: true,
-					handler: this.defaultMenu[i].handler
-				});
-			} else {
-				eArg.menuItems.push(this.defaultMenu[i]);
-			}
+	var id_array = this.grid.getSelectedItemIds("|").split("|");  //supports multi-select
+	var enableAction = true;
+	var prevActionIsSeparator = false;
+	var menuItemCount = 0;
+	var lastMenuItemIndex = 0;
+	var lastSepIndex = 0;
+	var rowItemType = null;
+	var rowItemId = null;
+	var lockStatus = null;
+	if (id_array.length == 1) {
+		rowItemType = this.getGridRowUserData(id_array[0],"gridData_rowItemType");
+		rowItemId = this.getGridRowUserData(id_array[0],"gridData_rowItemID");
+		if (rowItemType === folderGroupCtrldItemsRowType || rowItemType === folderGroupFilesRowType) {
+		    var folderRowId = this.grid.getParentId(id_array[0]);
+			lockStatus = fn_GetLockedStatusOfItemFromServer(this.getGridRowUserData(folderRowId,"gridData_rowItemType"), this.getGridRowUserData(folderRowId,"gridData_rowItemID")); 
+		} else {
+		  lockStatus = fn_GetLockedStatusOfItemFromServer(rowItemType, rowItemId); 
+		  this.gridSetCellValue(id_array[0],this.lockIconColumnNo,fn_GetLockedCellIconFormatByStatusCode(this.icons,lockStatus)); //update icon
 		}
-		return true;
+	}
+	//build dynamic context menu items (the tricky part is to avoid duplicate separators or separators at first and last position !!)
+	for (var i = 0; i < this.gridContextMenu.length; i++) {
+			if (!this.gridContextMenu[i].separator) {
+				if (this.gridContextMenu[i].handler.isShowOnMenu(this.gridContextMenu[i].name, this.isEditable(), rowItemType, rowItemId, this.currentUserIsOwner, lockStatus)) {
+					prevActionIsSeparator = false;
+					eArg.menuItems.push({
+						name: this.gridContextMenu[i].name,
+						label: this.gridContextMenu[i].label,
+						enabled: enableAction,
+						handler: this.gridContextMenu[i].handler
+					});
+					this.gridContextMenu[i].menuindex = menuItemCount;
+					lastMenuItemIndex = i;
+					menuItemCount++;
+				} else {
+					this.gridContextMenu[i].menuindex = -1;
+				}
+			} else {
+				if (prevActionIsSeparator === false) {
+					eArg.menuItems.push(this.gridContextMenu[i]);
+					menuItemCount++;
+					lastSepIndex = i;
+				}
+				prevActionIsSeparator = true;
+			}
+	}
+	//clean single separator on menu
+	if (menuItemCount === 1 && this.gridContextMenu[lastSepIndex].separator === true) {return false;} //show no menu
+	//clean separator on top of menu
+	if (eArg.menuItems[0].separator === true) {
+		eArg.menuItems.splice(0,1);menuItemCount--;
+		for ( i = 0; i < this.gridContextMenu.length; i++) {
+			if (this.gridContextMenu[i].menuindex !== -1) {this.gridContextMenu[i].menuindex = this.gridContextMenu[i].menuindex-1;}
+		}
+	}
+	//clean separator at bottom of menu
+	if (eArg.menuItems[menuItemCount-1].separator === true) {
+		eArg.menuItems.splice(menuItemCount-1,1);menuItemCount--;
+		this.gridContextMenu[lastMenuItemIndex].menuindex=menuItemCount-1;
+	}
+	return true;
 };
 
 FolderStructGrid.prototype.onToolbarClick = function FolderStructGrid_onToolbarClick(eArg) {
-	if (!this.initialized) {return;}
-	var id = eArg.id;
+	if (this.initialized === false) {return;}
+	var actionId = eArg.id;
 
     // add toolbar actions here ...	
-	switch(id)
+	switch(actionId)
 	{
 		case "expand_all":
 			this.expandAll(true);
@@ -816,40 +927,72 @@ FolderStructGrid.prototype.onToolbarClick = function FolderStructGrid_onToolbarC
 			this.expandAll(false);
 			break;
 		case "refresh_all":
-			this.gridRefresh(false);
+			this.gridRefresh(true);
 			break;
 	}
 	
 	// call additional toolbar action handler
-	fn_onToolbarAndMenuClickLocalAction(this,id,"toolbar");
+  // call additional toolbar action handler
+  var selectedId = this.grid.getSelectedId(); //selected grid row
+  if (!selectedId || typeof(selectedId) == "undefined" || selectedId === "" || selectedId === "NOTHING_MSG") {
+       return;
+  }
+  var rowItemType = this.getGridRowUserData(selectedId,"gridData_rowItemType");
+  var rowItemId = this.getGridRowUserData(selectedId,"gridData_rowItemID");
+   
+  var checkMsg = top.folderGrid1.ValidateActionRequest(actionId, rowItemType, rowItemId, selectedId);
+  if (checkMsg !== "") {top.aras.AlertError(checkMsg); return;}
+
+  top.folderGrid1.onToolbarAndMenuClickLocalAction(actionId,rowItemType, rowItemId, selectedId, "toolbar");
 };
 
 FolderStructGrid.prototype.onToolbarChange = function FolderStructGrid_onToolbarChange(eArg) {
-	if (!this.initialized) {return;}
+    if (this.ignoreToolbarChangeEvent === true) {this.ignoreToolbarChangeEvent = false; return;}
+	if (this.initialized === false) {return;}
 	var id = eArg.id;
-	if (id == "effectivity_mode")  {this.gridRefresh(false);}
+	if (id == "effectivity_mode")  {this.gridRefresh(true);}
 };
 
 //-----------  BEGIN Grid's custom grid handlers
 FolderStructGrid.prototype.onGridMenuClick = function FolderStructGrid_onGridMenuClick(menuChoice) {
-  var menuItem = this.defaultMenu[parseInt(menuChoice, 10)];
+  var idx = -1;
+  for (var i = 0; i < this.gridContextMenu.length && idx < 0; i++) {
+    if (this.gridContextMenu[i].menuindex === parseInt(menuChoice, 10)) {idx = i;}
+  }
+  var menuItem = this.gridContextMenu[idx];
   
-  // call additional menu action handler
-  fn_onToolbarAndMenuClickLocalAction(this,menuItem.name,"menu");
+  var selectedId = this.grid.getSelectedId(); //selected grid row
+  if (!selectedId || typeof(selectedId) == "undefined" || selectedId === "" || selectedId === "NOTHING_MSG") {
+       return;
+  }
+  var rowItemType = this.getGridRowUserData(selectedId,"gridData_rowItemType");
+  var rowItemId = this.getGridRowUserData(selectedId,"gridData_rowItemID");
+  if (rowItemType === folderGroupCtrldItemsRowType || rowItemType === folderGroupFilesRowType) {
+  	var parentFolderRowId = this.grid.getParentId(selectedId); // grouping row - use parent folder context instead
+	rowItemType = this.getGridRowUserData(parentFolderRowId,"gridData_rowItemType");
+    rowItemId = this.getGridRowUserData(parentFolderRowId,"gridData_rowItemID");
+	selectedId = parentFolderRowId;
+  }
+  var checkMsg = menuItem.handler.validateAction(selectedId,rowItemType,rowItemId,menuItem.name);
+  if (checkMsg !== "") {top.aras.AlertError(checkMsg); return;}
+  
+  menuItem.handler.executeAction(selectedId,rowItemType,rowItemId,menuItem.name);  
 };
 
 FolderStructGrid.prototype.onGridClick = function FolderStructGrid_onGridClick(eArg) {
-	if (!this.initialized) {return;}
+	if (this.initialized === false) {return;}
 };
 
 FolderStructGrid.prototype.onGridDoubleClick = function FolderStructGrid_onGridDoubleClick(eArg) {
-  var rowId = eArg.rowId;
+  var selectedId = eArg.rowId;
 
-  var rowItemType = this.getGridRowUserData(rowId,"gridData_rowItemType");
-  var rowItemId = this.getGridRowUserData(rowId,"gridData_rowItemID");
-  eArg = {selectedId: rowId, rowItemType: rowItemType, rowItemId: rowItemId};
+  var rowItemType = this.getGridRowUserData(selectedId,"gridData_rowItemType");
+  var rowItemId = this.getGridRowUserData(selectedId,"gridData_rowItemID");
+  
+  var checkMsg = this.ValidateActionRequest("view_item", rowItemType, rowItemId, selectedId);
+  if (checkMsg !== "") {top.aras.AlertError(checkMsg); return;}
 
-  fn_onOpenRowItem(this, eArg);
+  this.onToolbarAndMenuClickLocalAction("view_item",rowItemType, rowItemId, selectedId, "doubleclick");
 };
 
 FolderStructGrid.prototype.onGridLinkClick = function FolderStructGrid_onGridLinkClick(eArg) {
@@ -858,12 +1001,12 @@ FolderStructGrid.prototype.onGridLinkClick = function FolderStructGrid_onGridLin
     var rowId = linkInfo[2];
 	if (linkInfo[1] === "{OpenRowItem}") {  
 	  eArg = {selectedId: rowId, rowItemType: this.getGridRowUserData(rowId,"gridData_rowItemType"), rowItemId: this.getGridRowUserData(rowId,"gridData_rowItemId")};
-	  fn_onOpenRowItem(this, eArg);
+	  fn_onOpenRowItem(eArg);
 	  //eval("top.aras.uiShowItem('" + this.getGridRowUserData(rowId,"gridData_rowItemType")+"','"+this.getGridRowUserData(rowId,"gridData_rowItemId") + "')");
 	}
 	if (linkInfo[1] === "{FilesOfRelatedItem}") {
 	  eArg = {selectedId: rowId, rowItemType: this.getGridRowUserData(rowId,"gridData_rowItemType"), rowItemId: this.getGridRowUserData(rowId,"gridData_rowItemId")};
-	  fn_onViewRelatedFiles(this, eArg);
+	  fn_onViewRelatedFiles(eArg);
     }
 	
 	 //assumes only 1 link per row that links to the row's data item
@@ -889,15 +1032,15 @@ FolderStructGrid.prototype.onGridDragDrop = function FolderStructGrid_onGridDrag
     if (!dropRowId) {return;}
     var itemType = this.getGridRowUserData(dropRowId,"gridData_rowItemType");
 
-    var checkMsg = fn_ValidateActionRequest(this, "dropFile", itemType, dropRowId);
-    if (checkMsg !== "") {top.aras.AlertError(checkMsg);return;}
+	var checkMsg = top.folderGrid1.ValidateActionRequest("dropFile", itemType, null, dropRowId);
+    if (checkMsg !== "") {top.aras.AlertError(checkMsg); return;}
 
     if (itemType === "FILES_GROUP") {dropRowId = this.grid.getParentId(dropRowId);}
     if (!dropRowId) {top.aras.AlertError(top.aras.getResource("ItemFolders", "itemfoldertreegrid.message.error_getting_parent_of_group_row")); return;}
     itemType = this.getGridRowUserData(dropRowId,"gridData_rowItemType");
     var itemId = this.getGridRowUserData(dropRowId,"gridData_rowItemID");
 
-    var errMsg = fn_checkRowItemIsLocked(this,dropRowId,itemType,itemId,this.lockIconColumnNo);
+    var errMsg = fn_checkRowItemIsLocked(dropRowId,itemType,itemId,this.lockIconColumnNo);
     if (errMsg !== "") {top.aras.AlertError(errMsg); return;}
 
 	errMsg = fn_checkIfAttachmentsOnThisFolderAllowed(itemId);
@@ -931,90 +1074,122 @@ FolderStructGrid.prototype.onGridDragDrop = function FolderStructGrid_onGridDrag
   return;
 };
 //-----------  END Grid's custom grid handlers
-
-//--- Rola added
-FolderStructGrid.prototype.setGridRowUserData = function FolderStructGrid_setGridRowUserData(rowId, dataName, dataValue) {
-  if (!rowId || rowId === "") {return;}
-  switch(dataName)
-  {
-  case "gridData_rowItemType":
-  	this.GridRowUserData[rowId] = {
-	  itemType: dataValue
-	};
-    break;
-  case "gridData_rowItemId":
-  	this.GridRowUserData[rowId] = {
-	  itemId: dataValue
-	};
-    break;
-  }
+//------  Menu Action Handlers
+/*++++	Default Action Handler */
+handleMenuActionByName = function handleMenuActionByNameFunc() {
 };
-
-//--- Rola added
-FolderStructGrid.prototype.getGridRowUserData = function FolderStructGrid_getGridRowUserData(rowId, dataName) {
-  if (!rowId || rowId === "") {return;}
-  var retValue = "";
-  switch(dataName)
-  {
-    case "gridData_rowItemType":
-	  return this.GridRowUserData[rowId].itemType;
-	  
-    case "gridData_rowItemID":
-    case "gridData_rowItemId":
-	  return this.GridRowUserData[rowId].itemId;
-  }
+handleMenuActionByName.prototype.executeAction = function handleMenuActionByName_execute(selRowId, rowItemType, rowItemId, menuActionName) {
+  top.folderGrid1.onToolbarAndMenuClickLocalAction(menuActionName,rowItemType, rowItemId, selRowId, "menu");
 };
-
-//------ Definition of default grid context menu
-FolderStructGrid.prototype.initDefaultMenu = function FolderStructGrid_initDefaultMenu() {
-	var defaultMenu = [];
-//  defaultMenu.push({name: "view_item", label: top.aras.getResource("ItemFolders","itemfoldertreegrid.contextmenu.view_item")});
-//	defaultMenu.push({separator: true });
-
-    defaultMenu.push({name: "view_folder", label: top.aras.getResource("ItemFolders","itemfoldertreegrid.contextmenu.view_folder")});
-	if (this.arasRelease !== "Aras9") {
-      defaultMenu.push({name: "view_attached_files", label: top.aras.getResource("ItemFolders","itemfoldertreegrid.contextmenu.view_attached_files")});
-    }
-	else
+handleMenuActionByName.prototype.validateAction = function handleMenuActionByName_validate(selRowId, rowItemType, rowItemId, menuActionName) {
+  //returns "" if validations are OK. Else the function returns an Error message.
+  return top.folderGrid1.ValidateActionRequest(menuActionName, rowItemType, rowItemId, selRowId);
+};
+handleMenuActionByName.prototype.isShowOnMenu = function handleMenuActionByName_isShowOnMenu(menuActionName,isTopItemEditable,rowItemType,rowItemId,currentUserIsOwner,lockStatus) {
+    switch(rowItemType)
 	{
-	  defaultMenu.push({name: "refresh_this_row", label: top.aras.getResource("ItemFolders","itemfoldertreegrid.contextmenu.refresh_this_row")});
+	case "Document":
+		if (menuActionName === "view_attached_files") {return true;}
+		break;
+	case "Item Folder":
+		if (menuActionName === "view_folder") {return true;}
+		if (menuActionName === "refresh_this_row" && arasRelease === "Aras9") {return true;}
+		if (lockStatus === 1) { //folder locked by user
+			if (menuActionName === "add_new_controlled_item") {return true;}
+			if (menuActionName === "add_existing_controlled_item") {return true;}
+			if (menuActionName === "add_new_file_to_folder") {return true;}
+			if (menuActionName === "add_sub_folder") {return true;}
+		}
+		if (lockStatus === 0) { //folder not locked
+			if (menuActionName === "promote_folders_to_active_down" && currentUserIsOwner) {return true;}
+			if (menuActionName === "promote_folders_to_archived_down" && currentUserIsOwner) {return true;}
+		}
+		break;
+	default:
+		if (rowItemType === folderGroupCtrldItemsRowType) {
+			if (menuActionName === "add_new_controlled_item" && lockStatus === 1) {return true;}
+			if (menuActionName === "add_existing_controlled_item" && lockStatus === 1) {return true;}
+			if (menuActionName === "add_sub_folder" && lockStatus === 1) {return true;}
+		}
+		if (rowItemType === folderGroupFilesRowType) {
+			if (menuActionName === "add_new_file_to_folder" && lockStatus === 1) {return true;}
+		}
+		break;	
 	}
+	if(isTopItemEditable) {
+		if (rowItemType !== "File" && rowItemType !== folderGroupCtrldItemsRowType && rowItemType !== folderGroupFilesRowType) {
+			if (menuActionName === "lock_row_item" && lockStatus === 0) {return true;}
+			if (menuActionName === "unlock_row_item" && lockStatus === 1) {return true;}
+		}
+	}
+	return false;	
+};
+/*-----	Default Action Handler */
+FolderStructGrid.prototype.ValidateActionRequest = function FolderStructGrid_ValidateActionRequest(actionId, itemType, rowItemId, rowId) {
+  // run various checks specific to action
+  //debugger;
 
-	if(this.isEditable()) {
- 	  defaultMenu.push({separator: true });
-	  defaultMenu.push({name: "lock_row_item", label: top.aras.getResource("ItemFolders","itemfoldertreegrid.contextmenu.lock_row_item")});
-	  defaultMenu.push({name: "unlock_row_item", label: top.aras.getResource("ItemFolders","itemfoldertreegrid.contextmenu.unlock_row_item")});
- 	  defaultMenu.push({separator: true });
-	  defaultMenu.push({name: "add_new_controlled_item", label: top.aras.getResource("ItemFolders","itemfoldertreegrid.contextmenu.add_new_controlled_item")});
-	  defaultMenu.push({name: "add_existing_controlled_item", label: top.aras.getResource("ItemFolders","itemfoldertreegrid.contextmenu.add_existing_controlled_item")});
-	  defaultMenu.push({name: "add_new_file_to_folder", label: top.aras.getResource("ItemFolders","itemfoldertreegrid.contextmenu.add_new_file_to_folder")});
-	  defaultMenu.push({name: "add_sub_folder", label: top.aras.getResource("ItemFolders","itemfoldertreegrid.contextmenu.add_sub_folder")});
-	}
+  var effectivityMustBeCurrent = false;
+  var disallowForRootItems = false;  
+  
+  switch (actionId)
+  {
+	case "view_item":
+      return "";  // no checks
+	  
+	case "lock_row_item":
+    case "unlock_row_item":
+      effectivityMustBeCurrent = true;
+      disallowForRootItems = true;
+      if (itemType === folderGroupCtrldItemsRowType || itemType === folderGroupFilesRowType || itemType === "File")
+       {return top.aras.getResource("ItemFolders", "itemfoldertreegrid.message.action_not_allowed_on_rows_of_type_x") + itemType + " !";}
+      break;
+    case "add_new_controlled_item":
+    case "add_existing_controlled_item":
+      effectivityMustBeCurrent = true;
+      disallowForRootItems = true;
+      if (itemType !== "CTRLD_ITEMS_GROUP" && itemType !== "Item Folder")
+       {return top.aras.getResource("ItemFolders", "itemfoldertreegrid.message.action_not_allowed_on_rows_of_type_x") + itemType + " !";}
 
-	if (this.currentUserIsOwner) {
- 	  defaultMenu.push({separator: true });
-	  defaultMenu.push({name: "promote_folders_to_active_down", label: top.aras.getResource("ItemFolders","itemfoldertreegrid.contextmenu.promote_folders_to_active_down")});
-	  defaultMenu.push({name: "promote_folders_to_archived_down", label: top.aras.getResource("ItemFolders","itemfoldertreegrid.contextmenu.promote_folders_to_archived_down")});
-	}
-	
-	return defaultMenu;
+      break;
+    case "view_folder":
+      if (itemType !== "Item Folder")
+       {return top.aras.getResource("ItemFolders", "itemfoldertreegrid.message.action_not_allowed_on_rows_of_type_x") + itemType + " !";}
+      break;
+
+    case "dropFile":
+    case "addFile":
+    case "add_new_file_to_folder":
+      effectivityMustBeCurrent = true;
+      disallowForRootItems = true;
+      if (itemType !== "FILES_GROUP" && itemType !== "Item Folder")
+       {return top.aras.getResource("ItemFolders", "itemfoldertreegrid.message.action_not_allowed_on_rows_of_type_x") + itemType + " !";}
+      break;
+
+    case "add_sub_folder":
+      effectivityMustBeCurrent = true;
+      disallowForRootItems = false;
+      if (itemType !== "Item Folder")
+       {return top.aras.getResource("ItemFolders", "itemfoldertreegrid.message.action_not_allowed_onrows_of_type_x") + itemType + " !";}
+      break;
+  }
+
+  if (disallowForRootItems) {
+    // check rowId
+    if (!this.grid.getParentId(rowId))
+      {return top.aras.getResource("ItemFolders", "itemfoldertreegrid.message.action_not_allowed_on_root_rows");}
+  }
+
+  if (effectivityMustBeCurrent) {
+    if (fn_getChoiceSelectionOnToolbar(this.toolbar,"effectivity_mode") !== "current_config")
+      {return top.aras.getResource("ItemFolders", "itemfoldertreegrid.message.effectivity_must_be_current_for_action");}
+  }
+  
+  // success
+  return "";
 };
 
-//------ BEGIN: local action handlers for menu or toolbar clicks
-fn_onToolbarAndMenuClickLocalAction = function (folderGridCtxt, actionId, actionSource) {
-   var selectedId = folderGridCtxt.grid.getSelectedId(); //selected grid row
-   if (actionSource === "menu") {
-    if (!selectedId || typeof(selectedId) == "undefined" || selectedId === "" || selectedId === "NOTHING_MSG") {
-       return;
-	 }
-   }
-
-   var rowItemType = folderGridCtxt.getGridRowUserData(selectedId,"gridData_rowItemType");
-   var rowItemId = folderGridCtxt.getGridRowUserData(selectedId,"gridData_rowItemID");
-   
-   var checkMsg = fn_ValidateActionRequest(folderGridCtxt, actionId, rowItemType, selectedId);
-   if (checkMsg !== "") {top.aras.AlertError(checkMsg);return;}
-
+FolderStructGrid.prototype.onToolbarAndMenuClickLocalAction = function FolderStructGrid_onToolbarAndMenuClickLocalAction (actionId, rowItemType, rowItemId, selectedId, actionSource ) {
    //debugger;
    var eArg = {selectedId: selectedId, rowItemType: rowItemType, rowItemId: rowItemId};
 
@@ -1025,44 +1200,45 @@ fn_onToolbarAndMenuClickLocalAction = function (folderGridCtxt, actionId, action
 	  case "toolbar.execute_search":
 	     alert("The search feature is not implemented, yet!");
 	  	 break;
+	  case "doubleclick.view_item":
 	  case "toolbar.view_item":
 	  case "menu.view_item":
-	     fn_onOpenRowItem(folderGridCtxt, eArg);
+	     fn_onOpenRowItem(eArg);
 	  	 break;
 	  case "menu.refresh_this_row":
-	  	 fn_enableToolbarControls(folderGridCtxt.toolbar, false, folderGridCtxt.fixEffectivityToReleased);
-	     fn_onRefreshThisFolder(folderGridCtxt, eArg);
-	  	 fn_enableToolbarControls(folderGridCtxt.toolbar, true, folderGridCtxt.fixEffectivityToReleased);
+	  	 this.toolbarRefresh(false);
+	     fn_onRefreshThisFolder(eArg);
+	  	 this.toolbarRefresh(true);
 	  	 break;
 	  case "menu.view_folder":
-	     fn_onOpenRowItem(folderGridCtxt, eArg, "Item Folder");
+	     fn_onOpenRowItem(eArg, "Item Folder");
 	  	 break;
 	  case "menu.view_attached_files":
-	     fn_onViewRelatedFiles(folderGridCtxt, eArg);
+	     fn_onViewRelatedFiles(eArg);
 	  	 break;
 	  case "menu.promote_folders_to_active_down":
-	     fn_onPromoteFoldersDown(folderGridCtxt, eArg, "Active");
+	     fn_onPromoteFoldersDown(eArg, "Active");
 	  	 break;
 	  case "menu.promote_folders_to_archived_down":
-	     fn_onPromoteFoldersDown(folderGridCtxt, eArg,"Archived");
+	     fn_onPromoteFoldersDown(eArg,"Archived");
 	  	 break;
 	  case "menu.lock_row_item":
-	     fn_onLockRowItem(folderGridCtxt, eArg);
+	     fn_onLockRowItem(eArg);
 	  	 break;
 	  case "menu.unlock_row_item":
-	     fn_onUnLockRowItem(folderGridCtxt, eArg);
+	     fn_onUnLockRowItem(eArg);
 	  	 break;
 	  case "menu.add_new_controlled_item":
-	     fn_onAddControlledItem(folderGridCtxt, eArg, true);
+	     fn_onAddControlledItem(eArg, true);
 	  	 break;
 	  case "menu.add_existing_controlled_item":
-	     fn_onAddControlledItem(folderGridCtxt, eArg, false);
+	     fn_onAddControlledItem(eArg, false);
 	  	 break;
 	  case "menu.add_new_file_to_folder":
-	     fn_onAddFileToFolder(folderGridCtxt, eArg);
+	     fn_onAddFileToFolder(eArg);
 	  	 break;
 	  case "menu.add_sub_folder":
-	     fn_onAddSubFolder(folderGridCtxt, eArg);
+	     fn_onAddSubFolder(eArg);
 	  	 break;
 
 //	  case "menu.xx":
@@ -1070,16 +1246,17 @@ fn_onToolbarAndMenuClickLocalAction = function (folderGridCtxt, actionId, action
 	}
 };
 
+//------ BEGIN: local action handlers for menu or toolbar clicks
 //-----------------
-fn_onOpenRowItem = function (folderGridCtxt, eArg, checkForItemType) {
+fn_onOpenRowItem = function (eArg, checkForItemType) {
   //debugger;
   var itemId = eArg.rowItemId;
   var itemType = eArg.rowItemType;
 
   // phantom rows cannot be opened - open parent folder instead
-  if (itemType === folderGridCtxt.constants.folderGroupCtrldItemsRowType || itemType === folderGridCtxt.constants.folderGroupFilesRowType){
-    selectedId = folderGridCtxt.grid.getParentId(eArg.selectedId);
-    top.aras.uiShowItem(folderGridCtxt.getGridRowUserData(eArg.selectedId,"gridData_rowItemType"), folderGridCtxt.getGridRowUserData(eArg.selectedId,"gridData_rowItemID"));
+  if (itemType === folderGroupCtrldItemsRowType || itemType === folderGroupFilesRowType){
+    selectedId = top.folderGrid1.grid.getParentId(eArg.selectedId);
+    top.aras.uiShowItem(top.folderGrid1.getGridRowUserData(eArg.selectedId,"gridData_rowItemType"), top.folderGrid1.getGridRowUserData(eArg.selectedId,"gridData_rowItemID"));
     return;
   }
   // if check option set, check if row is of correct type
@@ -1101,7 +1278,7 @@ fn_onOpenRowItem = function (folderGridCtxt, eArg, checkForItemType) {
   if (itemType === "File") {selectProps = "filename,generation,modified_on,comments";}
   else {selectProps = "id,config_id,generation,is_released,is_current,item_number,name,major_rev,state,locked_by_id,owned_by_id,managed_by_id,team_id,modified_on,description,has_files,has_files_icon,itemtype";}
 
-  switch (fn_getChoiceSelectionOnToolbar(folderGridCtxt.toolbar,"effectivity_mode"))
+  switch (fn_getChoiceSelectionOnToolbar(top.folderGrid1.toolbar,"effectivity_mode"))
   {
     case "current_config":   
 //      itm = fn_GetItemsOfReleasedGeneration(itemType,"'0680E81AEFCB46ACA36D90A673C6ACBB','D45072B9014740F1A797D0597C3EA112','237546E10EF745C8B9499C248ADBC188'",selectProps);
@@ -1119,70 +1296,68 @@ fn_onOpenRowItem = function (folderGridCtxt, eArg, checkForItemType) {
   var newId = itm.getID();
   if (itm && itemId !== newId ) {
     
-  	folderGridCtxt.UpdateFolderControlledItemRowValues(eArg.selectedId, itm, null);
+  	top.folderGrid1.UpdateFolderControlledItemRowValues(eArg.selectedId, itm, null);
     itemId=newId;
   }
   top.aras.uiShowItem(itemType, itemId);
 };
 
-fn_onRefreshThisFolder = function (folderGridCtxt, eArg) {
+fn_onRefreshThisFolder = function (eArg) {
   if (eArg.rowItemType !== "Item Folder"){top.aras.AlertError(top.aras.getResource("ItemFolders", "itemfoldertreegrid.message.action_not_valid_on_folder_rows"));return;}
 
-  fn_enableToolbarControls(folderGridCtxt.toolbar, false, folderGridCtxt.fixEffectivityToReleased);
-  folderGridCtxt.grid.setPaintEnabled(false);
+  top.folderGrid1.grid.setPaintEnabled(false);
   
   // delete all Children down from this node (selectedId)
-  var allChildIds = folderGridCtxt.grid.getChildItemsId(eArg.selectedId,true,"|").split("|");
+  var allChildIds = top.folderGrid1.grid.getChildItemsId(eArg.selectedId,true,"|").split("|");
   //## getChildItemsId  method not available in dojo version of grid (Aras10)
 
   for (var i=0;i<allChildIds.length;i++)
   {
-    folderGridCtxt.grid.deleteRow(allChildIds[i]);
-    delete folderGridCtxt.getGridRowUserData[allChildIds[i]];
+    top.folderGrid1.grid.deleteRow(allChildIds[i]);
+    delete top.folderGrid1.getGridRowUserData[allChildIds[i]];
   }
 
-  var isReleased = (fn_getChoiceSelectionOnToolbar(folderGridCtxt.toolbar,"effectivity_mode") === "latest_released");
+  var isReleased = (fn_getChoiceSelectionOnToolbar(top.folderGrid1.toolbar,"effectivity_mode") === "latest_released");
 
   //reload this folder item with structure details and the re-draws the grid rows
-  var thisFolderStructConfig = folderGridCtxt.GetFullFolderStructConfig(eArg.rowItemId, isReleased, folderGridCtxt.gridEmptyTable_xml);
+  var thisFolderStructConfig = top.folderGrid1.GetFullFolderStructConfig(eArg.rowItemId, isReleased, top.folderGrid1.gridEmptyTable_xml);
   if (thisFolderStructConfig.getItemCount() === 0) {return;} // do nothing 
 
   
-  var parentRowId = folderGridCtxt.grid.getParentId(eArg.selectedId);
+  var parentRowId = top.folderGrid1.grid.getParentId(eArg.selectedId);
 
   // is it the root folder ?
   if (!parentRowId || parentRowId === undefined) {
-  	folderGridCtxt.UpdateFolderRowValues(eArg.selectedId, thisFolderStructConfig, null);
+  	top.folderGrid1.UpdateFolderRowValues(eArg.selectedId, thisFolderStructConfig, null);
   }
   else {
     // reload relationship to parent
-	var parentId=folderGridCtxt.getGridRowUserData(parentRowId,"gridData_rowItemID");
+	var parentId=top.folderGrid1.getGridRowUserData(parentRowId,"gridData_rowItemID");
     var parentFolderRel = top.aras.newIOMItem("Item Sub Folder","get");
-    parentFolderRel.setAttribute("select",folderGridCtxt.folderRelItemSelectProperties+",related_id"); 
+    parentFolderRel.setAttribute("select",top.folderGrid1.folderRelItemSelectProperties+",related_id"); 
     parentFolderRel.setProperty("source_id",parentId);
     parentFolderRel.setProperty("related_id",eArg.rowItemId);
     parentFolderRel = parentFolderRel.apply();
     if (parentFolderRel.isError) {top.aras.AlertError(parentFolderRel.getErrorString()); return;}
 
-    folderGridCtxt.UpdateFolderRowValues(eArg.selectedId, thisFolderStructConfig, parentFolderRel);
+    top.folderGrid1.UpdateFolderRowValues(eArg.selectedId, thisFolderStructConfig, parentFolderRel);
   } 
   var folderItem = thisFolderStructConfig.getItemByIndex(0);
 
   // draw new related data of this folder
-  folderGridCtxt.DrawFolderControlledItemRows(folderItem, eArg.selectedId);
-  folderGridCtxt.DrawFolderFileRows(folderItem, eArg.selectedId);
+  top.folderGrid1.DrawFolderControlledItemRows(folderItem, eArg.selectedId);
+  top.folderGrid1.DrawFolderFileRows(folderItem, eArg.selectedId);
   
   // draw new children with related data
   var parents = {};
-  folderGridCtxt.DrawFolderChildren(folderItem, folderItem.getID(), eArg.selectedId, parents);
-  folderGridCtxt.grid.openItem(eArg.selectedId); //refreshed folder Item
+  top.folderGrid1.DrawFolderChildren(folderItem, folderItem.getID(), eArg.selectedId, parents);
+  top.folderGrid1.grid.openItem(eArg.selectedId); //refreshed folder Item
   
-  folderGridCtxt.grid.setPaintEnabled(true);
-  fn_enableToolbarControls(folderGridCtxt.toolbar, true, folderGridCtxt.fixEffectivityToReleased);
+  top.folderGrid1.grid.setPaintEnabled(true);
   return;
 };
 
-fn_onViewRelatedFiles = function (folderGridCtxt, eArg) {
+fn_onViewRelatedFiles = function (eArg) {
   //debugger;
   var argsItem = innovator.newItem(eArg.rowItemType,"get");
   argsItem.setID(eArg.rowItemId);
@@ -1192,7 +1367,7 @@ fn_onViewRelatedFiles = function (folderGridCtxt, eArg) {
   return;
 };
 
-fn_onPromoteFoldersDown = function (folderGridCtxt, eArg, targetState) {
+fn_onPromoteFoldersDown = function (eArg, targetState) {
   if (eArg.rowItemType !== "Item Folder"){top.aras.AlertError(top.aras.getResource("ItemFolders","itemfoldertreegrid.message.action_not_valid_on_folder_rows"));return;}
 
   var lockStatus = fn_GetLockedStatusOfItemFromServer(eArg.rowItemType, eArg.rowItemId); 
@@ -1229,7 +1404,7 @@ fn_onPromoteFoldersDown = function (folderGridCtxt, eArg, targetState) {
   return;
 };
 
-fn_onLockRowItem = function (folderGridCtxt, eArg) {
+fn_onLockRowItem = function (eArg) {
   var lockStatus = fn_GetLockedStatusOfItemFromServer(eArg.rowItemType, eArg.rowItemId);
   
   if (lockStatus > 0) {
@@ -1241,13 +1416,13 @@ fn_onLockRowItem = function (folderGridCtxt, eArg) {
     if (res.isError()) {top.aras.AlertError(res.getErrorString());return;}
 
     // update lock cell of row 
-    var col = folderGridCtxt.lockIconColumnNo;
-    folderGridCtxt.gridSetCellValue(eArg.selectedId,col,fn_GetLockedCellFormatByStatusCode(folderGridCtxt,1));
+    var col = top.folderGrid1.lockIconColumnNo;
+    top.folderGrid1.gridSetCellValue(eArg.selectedId,col,fn_GetLockedCellIconFormatByStatusCode(top.folderGrid1.icons,1));
   }
   return;
 };
 
-fn_onUnLockRowItem = function (folderGridCtxt, eArg) {
+fn_onUnLockRowItem = function (eArg) {
   var lockStatus = fn_GetLockedStatusOfItemFromServer(eArg.rowItemType, eArg.rowItemId);
 
   if (lockStatus === 0) {
@@ -1260,18 +1435,18 @@ fn_onUnLockRowItem = function (folderGridCtxt, eArg) {
     if (res.isError()) {top.aras.AlertError(top.aras.getResource("ItemFolders", "itemfoldertreegrid.message.unlock_error") + res.getErrorString());return;}
   
     // update lock cell of row 
-    folderGridCtxt.gridSetCellValue(eArg.selectedId,folderGridCtxt.lockIconColumnNo,"");
+    top.folderGrid1.gridSetCellValue(eArg.selectedId,top.folderGrid1.lockIconColumnNo,"");
   }
   return;
 };
 //------ END: local action handlers for menu or toolbar clicks
 
 //------ BEGIN: validation functions
-fn_checkRowItemIsLocked = function (folderGridCtxt, selectedId, itemType, itemId, gridLockColumn) {
+fn_checkRowItemIsLocked = function (selectedId, itemType, itemId, gridLockColumn) {
   // return error msg or "" if lockStatus OK.
   var lockStatus = fn_GetLockedStatusOfItemFromServer(itemType, itemId);
   // update grid in case lock status got change by someone else
-  folderGridCtxt.gridSetCellValue(selectedId,gridLockColumn,fn_GetLockedCellFormatByStatusCode(folderGridCtxt,lockStatus));
+  top.folderGrid1.gridSetCellValue(selectedId,gridLockColumn,fn_GetLockedCellIconFormatByStatusCode(top.folderGrid1.icons,lockStatus));
 
   if (lockStatus === 1) {return "";}  
   if (lockStatus === 0) {return top.aras.getResource("ItemFolders", "itemfoldertreegrid.message.folder_row_must_be_locked_for_action");}
@@ -1318,160 +1493,94 @@ fn_checkIfSubFoldersOnThisFolderAllowed = function (folderItemId) {
   
   return top.aras.getResource("ItemFolders", "itemfoldertreegrid.message.adding_sub_folder_not_allowed");
 };
-
-//--------------
-fn_ValidateActionRequest = function (folderGridCtxt, actionId, itemType, rowId) {
-  // run various checks specific to action
-  //debugger;
-
-  //if (!isTopFolderParentItemLocked)
-  // {return "Folder structure's parent item must be locked to do this action !";}
-
-  var effectivityMustBeCurrent = false;
-  var disallowForRootItems = false;  
-  
-  switch (actionId)
-  {
-    case "lock_row_item":
-    case "unlock_row_item":
-      effectivityMustBeCurrent = true;
-      disallowForRootItems = true;
-      if (itemType === folderGridCtxt.constants.folderGroupCtrldItemsRowType || itemType === folderGridCtxt.constants.folderGroupFilesRowType || itemType === "File")
-       {return top.aras.getResource("ItemFolders", "itemfoldertreegrid.message.action_not_allowed_on_rows_of_type_x") + itemType + " !";}
-
-      break;
-    case "add_new_controlled_item":
-    case "add_existing_controlled_item":
-      effectivityMustBeCurrent = true;
-      disallowForRootItems = true;
-      if (itemType !== "CTRLD_ITEMS_GROUP" && itemType !== "Item Folder")
-       {return top.aras.getResource("ItemFolders", "itemfoldertreegrid.message.action_not_allowed_on_rows_of_type_x") + itemType + " !";}
-
-      break;
-    case "view_folder":
-      if (itemType !== "Item Folder")
-       {return top.aras.getResource("ItemFolders", "itemfoldertreegrid.message.action_not_allowed_on_rows_of_type_x") + itemType + " !";}
-      break;
-
-    case "dropFile":
-    case "addFile":
-    case "add_new_file_to_folder":
-      effectivityMustBeCurrent = true;
-      disallowForRootItems = true;
-      if (itemType !== "FILES_GROUP" && itemType !== "Item Folder")
-       {return top.aras.getResource("ItemFolders", "itemfoldertreegrid.message.action_not_allowed_on_rows_of_type_x") + itemType + " !";}
-      break;
-
-    case "add_sub_folder":
-      effectivityMustBeCurrent = true;
-      disallowForRootItems = false;
-      if (itemType !== "Item Folder")
-       {return top.aras.getResource("ItemFolders", "itemfoldertreegrid.message.action_not_allowed_onrows_of_type_x") + itemType + " !";}
-      break;
-  }
-
-  if (disallowForRootItems) {
-    // check rowId
-    if (!folderGridCtxt.grid.getParentId(rowId))
-      {return top.aras.getResource("ItemFolders", "itemfoldertreegrid.message.action_not_allowed_on_root_rows");}
-  }
-
-  if (effectivityMustBeCurrent) {
-    if (fn_getChoiceSelectionOnToolbar(folderGridCtxt.toolbar,"effectivity_mode") !== "current_config")
-      {return top.aras.getResource("ItemFolders", "itemfoldertreegrid.message.effectivity_must_be_current_for_action");}
-  }
-  
-  // success
-  return "";
-};
 //------ END: validation functions
 
 //------ BEGIN: local helper functions
-fn_getInputRowVals = function (folderGridCtxt) {
-    folderGridCtxt.inputRowTdVals = new Array(); // set in global variable
-    for (var i=0; i<folderGridCtxt.numberOfGridColumns; i++)
+fn_getInputRowVals = function () {
+    top.folderGrid1.inputRowTdVals = new Array(); // set in global variable
+    for (var i=0; i<top.folderGrid1.numberOfGridColumns; i++)
     {
-      var cellVal = folderGridCtxt.grid.cells("input_row", i).getValue();
+      var cellVal = top.folderGrid1.grid.cells("input_row", i).getValue();
       if (!cellVal) {cellVal = "";}
-      folderGridCtxt.inputRowTdVals.push(cellVal);
+      top.folderGrid1.inputRowTdVals.push(cellVal);
     }
 };
 //--------
-fn_setInputRowVals = function (folderGridCtxt) {
-    if (!folderGridCtxt.inputRowTdVals) {return;}
-	for (var i = 0; i < folderGridCtxt.inputRowTdVals.length; i++)
+fn_setInputRowVals = function () {
+    if (!top.folderGrid1.inputRowTdVals) {return;}
+	for (var i = 0; i < top.folderGrid1.inputRowTdVals.length; i++)
 	{
-		var elem = folderGridCtxt.inputRowTdVals[i];
-		var cell = folderGridCtxt.grid.cells("input_row", elem.colId);
+		var elem = top.folderGrid1.inputRowTdVals[i];
+		var cell = top.folderGrid1.grid.cells("input_row", elem.colId);
 		cell.setValue(elem.val);
 	}
 };
 //--------
-fn_clearInputRowVals = function (folderGridCtxt) {
-    if (!folderGridCtxt.inputRowTdVals) {return;}
-	for (var i = 0; i < folderGridCtxt.inputRowTdVals.length; i++)
+fn_clearInputRowVals = function () {
+    if (!top.folderGrid1.inputRowTdVals) {return;}
+	for (var i = 0; i < top.folderGrid1.inputRowTdVals.length; i++)
 	{
-		var elem = folderGridCtxt.inputRowTdVals[i];
-		var cell = folderGridCtxt.grid.cells("input_row", elem.colId);
+		var elem = top.folderGrid1.inputRowTdVals[i];
+		var cell = top.folderGrid1.grid.cells("input_row", elem.colId);
 		cell.setValue("");
 	}
 };
 //-----------------
-fn_InsertControlledItemsGroupRowToTreeGrid = function (folderGridCtxt, parentNodeId, sourceItemId) {
-  var groupNodeRowId = sourceItemId + "-" + folderGridCtxt.constants.folderGroupCtrldItemsRowType;
-  if (folderGridCtxt.arasRelease === "Aras9") {
-   if (folderGridCtxt.grid.isItemExists(groupNodeRowId)) {return groupNodeRowId;}
+fn_InsertControlledItemsGroupRowToTreeGrid = function (parentNodeId, sourceItemId) {
+  var groupNodeRowId = sourceItemId + "-" + folderGroupCtrldItemsRowType;
+  if (top.folderGrid1.arasRelease === "Aras9") {
+   if (top.folderGrid1.grid.isItemExists(groupNodeRowId)) {return groupNodeRowId;}
   }
 
   // add summary row for documents as child of Folder row
   var vals = [];
-  vals[0] = folderGridCtxt.constants.folderGroupCtrldItems_label+":";
-  for (var v = 1; v < folderGridCtxt.numberOfGridColumns; v++) {vals[v] = "";}
+  vals[0] = top.folderGrid1.constants.folderGroupCtrldItems_label+":";
+  for (var v = 1; v < top.folderGrid1.numberOfGridColumns; v++) {vals[v] = "";}
   var gridRow =  vals.join("|");
-  folderGridCtxt.grid.insertNewChild(parentNodeId, groupNodeRowId, gridRow, groupNodeRowId, folderGridCtxt.iconsOpen[folderGridCtxt.constants.folderGroupCtrldItemsRowType], folderGridCtxt.icons[folderGridCtxt.constants.folderGroupCtrldItemsRowType]);
-  folderGridCtxt.setGridRowUserData(groupNodeRowId,"gridData_rowItemType",folderGridCtxt.constants.folderGroupCtrldItemsRowType);
+  top.folderGrid1.grid.insertNewChild(parentNodeId, groupNodeRowId, gridRow, groupNodeRowId, top.folderGrid1.iconsOpen[folderGroupCtrldItemsRowType], top.folderGrid1.icons[folderGroupCtrldItemsRowType]);
+  top.folderGrid1.setGridRowUserData(groupNodeRowId,"gridData_rowItemType",folderGroupCtrldItemsRowType);
 
   // ColorCode parent row 
-  folderGridCtxt.setGridRowUserData(parentNodeId,"gridData_hasFolderDetails","1");
-  fn_SetBackgroundColorInRow(folderGridCtxt.grid,groupNodeRowId,0,folderGridCtxt.numberOfGridColumns-1, "#eeeeee",false);
+  top.folderGrid1.setGridRowUserData(parentNodeId,"gridData_hasFolderDetails","1");
+  fn_SetBackgroundColorInRow(groupNodeRowId,0,top.folderGrid1.numberOfGridColumns-1, "#eeeeee",false);
   return groupNodeRowId;
 };
 //-----------------
-fn_InsertFilesGroupRowToTreeGrid = function (folderGridCtxt, parentNodeId, sourceItemId ) {
-  var groupNodeRowId = sourceItemId + "-" + folderGridCtxt.constants.folderGroupFilesRowType;
-  if (folderGridCtxt.arasRelease === "Aras9") {
-   if (folderGridCtxt.grid.isItemExists(groupNodeRowId)) {return groupNodeRowId;}
+fn_InsertFilesGroupRowToTreeGrid = function (parentNodeId, sourceItemId ) {
+  var groupNodeRowId = sourceItemId + "-" + folderGroupFilesRowType;
+  if (top.folderGrid1.arasRelease === "Aras9") {
+   if (top.folderGrid1.grid.isItemExists(groupNodeRowId)) {return groupNodeRowId;}
   }
 
   // add summary row for files as child of Folder row
   var vals = [];
-  vals[0] = folderGridCtxt.constants.folderGroupFiles_label+":";
-  for (var v = 1; v < folderGridCtxt.numberOfGridColumns; v++) {vals[v] = "";}
+  vals[0] = top.folderGrid1.constants.folderGroupFiles_label+":";
+  for (var v = 1; v < top.folderGrid1.numberOfGridColumns; v++) {vals[v] = "";}
   var gridRow =  vals.join("|");
-  folderGridCtxt.grid.insertNewChild(parentNodeId, groupNodeRowId, gridRow, groupNodeRowId, folderGridCtxt.iconsOpen[folderGridCtxt.constants.folderGroupFilesRowType], folderGridCtxt.icons[folderGridCtxt.constants.folderGroupFilesRowType]);
-  folderGridCtxt.setGridRowUserData(groupNodeRowId,"gridData_rowItemType",folderGridCtxt.constants.folderGroupFilesRowType);
+  top.folderGrid1.grid.insertNewChild(parentNodeId, groupNodeRowId, gridRow, groupNodeRowId, top.folderGrid1.iconsOpen[folderGroupFilesRowType], top.folderGrid1.icons[folderGroupFilesRowType]);
+  top.folderGrid1.setGridRowUserData(groupNodeRowId,"gridData_rowItemType",folderGroupFilesRowType);
 
   // ColorCode parent row 
-  folderGridCtxt.setGridRowUserData(parentNodeId,"gridData_hasFolderDetails","1");
-  fn_SetBackgroundColorInRow(folderGridCtxt.grid,groupNodeRowId,0,folderGridCtxt.numberOfGridColumns-1, "#eeeeee",false);
+  top.folderGrid1.setGridRowUserData(parentNodeId,"gridData_hasFolderDetails","1");
+  fn_SetBackgroundColorInRow(groupNodeRowId,0,top.folderGrid1.numberOfGridColumns-1, "#eeeeee",false);
   
   return groupNodeRowId;
 };
 //-----------------
-fn_SetBackgroundColorInRow = function (gridCtrl, row_id, startCell, endCell, colorCode, upToRoot) {
+fn_SetBackgroundColorInRow = function (row_id, startCell, endCell, colorCode, upToRoot) {
   if (!upToRoot || upToRoot === undefined) {upToRoot = false;}
-  fn_SetBackgroundColorOfCellsInRow(gridCtrl, row_id, startCell, endCell, colorCode);
+  fn_SetBackgroundColorOfCellsInRow(top.folderGrid1.grid, row_id, startCell, endCell, colorCode);
   // include one parent level
-  var parent_row_id = gridCtrl.getParentId(row_id);
-  if (parent_row_id && parent_row_id.indexOf("ROOT") < 0) {fn_SetBackgroundColorOfCellsInRow(gridCtrl, parent_row_id, startCell, endCell, colorCode);}
+  var parent_row_id = top.folderGrid1.grid.getParentId(row_id);
+  if (parent_row_id && parent_row_id.indexOf("ROOT") < 0) {fn_SetBackgroundColorOfCellsInRow(top.folderGrid1.grid, parent_row_id, startCell, endCell, colorCode);}
 
   if (!upToRoot) {return;}
-  parent_row_id = gridCtrl.getParentId(parent_row_id);
+  parent_row_id = top.folderGrid1.grid.getParentId(parent_row_id);
   while (parent_row_id)
   {
     if (parent_row_id.indexOf("ROOT") < 0)
-      {fn_SetBackgroundColorOfCellsInRow(gridCtrl, parent_row_id, startCell, endCell, colorCode);}
-    parent_row_id = gridCtrl.getParentId(parent_row_id);
+      {fn_SetBackgroundColorOfCellsInRow(top.folderGrid1.grid, parent_row_id, startCell, endCell, colorCode);}
+    parent_row_id = top.folderGrid1.grid.getParentId(parent_row_id);
   }
   return;
 };
@@ -1500,7 +1609,7 @@ fn_enableToolbarControls = function (toolbarCtxt, isOn, isDisableEffectivity, ms
 
   // ensures that at least permission for top folder is granted to switch view to "current" effectivity.
   //debugger;
-//  if (fixEffectivityToReleased && isOn){fn_enableToolbarElement(toolbarCtxt, "effectivity_mode", false, false);}
+//  if (fixEffectivityToReleased === true && isOn){fn_enableToolbarElement(toolbarCtxt, "effectivity_mode", false, false);}
   if (isDisableEffectivity && isOn){fn_enableToolbarElement(toolbarCtxt, "effectivity_mode", false, false);}
   else {fn_enableToolbarElement(toolbarCtxt, "effectivity_mode", isOn, false);}
   
@@ -1527,13 +1636,13 @@ fn_isUserMemberOfThisItemTeamGuest = function(itm)  {
 //------ END: local helper functions
 
 // ============================= Toolbar and Menu  Handlers ===============================
-fn_onAddSubFolder = function (folderGridCtxt, eArg) {
+fn_onAddSubFolder = function (eArg) {
   var selectedId = eArg.selectedId;
   if (!selectedId) {return;}
   var itemType = eArg.rowItemType;
   var itemId = eArg.rowItemId;
 
-  checkMsg = fn_checkRowItemIsLocked(folderGridCtxt, selectedId,itemType,itemId,folderGridCtxt.lockIconColumnNo);
+  checkMsg = fn_checkRowItemIsLocked(selectedId,itemType,itemId,top.folderGrid1.lockIconColumnNo);
   if (checkMsg !== "") {top.aras.AlertError(checkMsg);return;}
 
   checkMsg = fn_checkIfSubFoldersOnThisFolderAllowed(itemId);
@@ -1556,7 +1665,7 @@ fn_onAddSubFolder = function (folderGridCtxt, eArg) {
     res = showModalDialog("ShowFormAsADialog.html", param,"dialogHeight:"+height+"px; dialogWidth:"+width+"px; " +  "status:0; help:0; resizable:1; scroll:0;");
 
   if (res) {
-    subFolderItem = folderGridCtxt.AddNewSubFolderToFolder(selectedId,itemId,res.org_number,res.name,res.description);
+    subFolderItem = top.folderGrid1.AddNewSubFolderToFolder(selectedId,itemId,res.org_number,res.name,res.description);
     if (subFolderItem.isError()) {top.aras.AlertError(top.aras.getResource("ItemFolders", "itemfoldertreegrid.message.add_sub_folder_error") + subFolderItem.getErrorString()); return;} 
   } 
   }
@@ -1564,19 +1673,19 @@ fn_onAddSubFolder = function (folderGridCtxt, eArg) {
 
 };
 
-fn_onAddControlledItem = function (folderGridCtxt, eArg, isNew) {
+fn_onAddControlledItem = function (eArg, isNew) {
   var selectedId = eArg.selectedId;
   if (!selectedId) {return;}
 
   var itemType = eArg.rowItemType;
 
-  if (itemType === "CTRLD_ITEMS_GROUP") {selectedId = folderGridCtxt.grid.getParentId(selectedId);}
+  if (itemType === "CTRLD_ITEMS_GROUP") {selectedId = top.folderGrid1.grid.getParentId(selectedId);}
   if (!selectedId) {top.aras.AlertError(top.aras.getResource("ItemFolders", "itemfoldertreegrid.message.error_getting_parent_of_grid_row")); return;}
   
-  itemType = folderGridCtxt.getGridRowUserData(selectedId,"gridData_rowItemType");
-  var itemId = folderGridCtxt.getGridRowUserData(selectedId,"gridData_rowItemID");
+  itemType = top.folderGrid1.getGridRowUserData(selectedId,"gridData_rowItemType");
+  var itemId = top.folderGrid1.getGridRowUserData(selectedId,"gridData_rowItemID");
 
-  checkMsg = fn_checkRowItemIsLocked(folderGridCtxt, selectedId, itemType, itemId, folderGridCtxt.lockIconColumnNo);
+  checkMsg = fn_checkRowItemIsLocked(selectedId, itemType, itemId, top.folderGrid1.lockIconColumnNo);
   if (checkMsg !== "") {top.aras.AlertError(checkMsg);return;}
 
   checkMsg = fn_checkIfControlledItemsOnThisFolderAllowed(itemId);
@@ -1601,52 +1710,52 @@ fn_onAddControlledItem = function (folderGridCtxt, eArg, isNew) {
   }
   var folderItem = top.aras.newIOMItem(itemType,"get");
   folderItem.setID(itemId);
-  folderItem.setAttribute("select",folderGridCtxt.folderItemSelectProperties);
+  folderItem.setAttribute("select",top.folderGrid1.folderItemSelectProperties);
   folderItem = folderItem.apply();
   
-  ctrldItem = folderGridCtxt.AddNewControlledItemToFolder(selectedId,folderItem,ctrldItem,isNew);
+  ctrldItem = top.folderGrid1.AddNewControlledItemToFolder(selectedId,folderItem,ctrldItem,isNew);
   if (ctrldItem.isError()) {top.aras.AlertError(top.aras.getResource("ItemFolders", "itemfoldertreegrid.message.add_ctrld_item_error") + ctrldItem.getErrorString()); return;} 
    
   return;
 };
 
-fn_onAddFileToFolder = function (folderGridCtxt,eArg) {
+fn_onAddFileToFolder = function (eArg) {
   var selectedId = eArg.selectedId;
   if (!selectedId) {return;}
   var itemType = eArg.rowItemType;
 
-  if (itemType === "FILES_GROUP") {selectedId = folderGridCtxt.grid.getParentId(selectedId);}
+  if (itemType === "FILES_GROUP") {selectedId = top.folderGrid1.grid.getParentId(selectedId);}
   if (!selectedId) {top.aras.AlertError(top.aras.getResource("ItemFolders", "itemfoldertreegrid.message.error_getting_parent_of_grid_row")); return;}
 
-  itemType = folderGridCtxt.getGridRowUserData(selectedId,"gridData_rowItemType");
-  var itemId = folderGridCtxt.getGridRowUserData(selectedId,"gridData_rowItemID");
+  itemType = top.folderGrid1.getGridRowUserData(selectedId,"gridData_rowItemType");
+  var itemId = top.folderGrid1.getGridRowUserData(selectedId,"gridData_rowItemID");
 
-  checkMsg = fn_checkRowItemIsLocked(folderGridCtxt, selectedId,itemType,itemId, folderGridCtxt.lockIconColumnNo);
+  checkMsg = fn_checkRowItemIsLocked(selectedId,itemType,itemId, top.folderGrid1.lockIconColumnNo);
   if (checkMsg !== "") {top.aras.AlertError(checkMsg);return;}
 
   checkMsg = fn_checkIfAttachmentsOnThisFolderAllowed(itemId);
   if (checkMsg !== "") {top.aras.AlertError(checkMsg);return;}
   
-  var fileItem = fn_showFileDialog(folderGridCtxt);
+  var fileItem = fn_showFileDialog();
   if (!fileItem) {return;} //no file selected
 
   //debugger;
   var folderItem = top.aras.newIOMItem(itemType,"get");
   folderItem.setID(itemId);
-  folderItem.setAttribute("select",folderGridCtxt.folderItemSelectProperties);
+  folderItem.setAttribute("select",top.folderGrid1.folderItemSelectProperties);
   folderItem = folderItem.apply();
  
-  fileItem = folderGridCtxt.AddNewFileToFolder(selectedId,folderItem,fileItem);
+  fileItem = top.folderGrid1.AddNewFileToFolder(selectedId,folderItem,fileItem);
   if (fileItem.isError()) {top.aras.AlertError(top.aras.getResource("ItemFolders", "itemfoldertreegrid.message.add_file_error") + fileItem.getErrorString()); return;}
 
   return;
 };
 
-fn_showFileDialog = function (folderGridCtxt) {
+fn_showFileDialog = function () {
   var fileItem = top.aras.newItem('File');
   //top.aras.itemsCache.addItem(fileItem);
       
-  folderGridCtxt.grid.requestFocus();
+  top.folderGrid1.grid.requestFocus();
   if (!fileItem) {return null;}
 
   return fileItem;
@@ -1666,7 +1775,7 @@ fn_getGridTableColumnHeadingsAndLayout = function (hasVariantColums) {
 
 	// display order of columns left to right in order listed !!!
 	var columnList = [
-	{Name: "TREE", Title: top.aras.getResource("ItemFolders","itemfoldertreegrid.gridheading.col0"),		Width: "280",	Align: "l",	EditType: "noedit",FilterEdit: "FIELD"}, 
+	{Name: "TREE", Title: top.aras.getResource("ItemFolders","itemfoldertreegrid.gridheading.col0"),		Width: "400",	Align: "l",	EditType: "noedit",FilterEdit: "FIELD"}, 
 	{Name: "SORT",	PropItemType: "Item Sub Folder",PropName: "sort_order",									Width: "40",	Align: "c",	EditType: "noedit"},
 	{Name: "LOCK", 	PropItemType: "Item Folder",PropName: "locked_by_id",									Width: "40",	Align: "c",	EditType: "noedit"},
 	{Name: "FILES",	PropItemType: "Item Folder",PropName: "has_files",										Width: "40",	Align: "c",	EditType: "noedit"},
@@ -1675,12 +1784,20 @@ fn_getGridTableColumnHeadingsAndLayout = function (hasVariantColums) {
 	{Name: "GEN",	PropItemType: "Item Folder",PropName: "generation",										Width: "40",	Align: "c",	EditType: "noedit",FilterEdit: "FIELD"},
 	{Name: "MOD_ON",PropItemType: "Item Folder",PropName: "modified_on",									Width: "100",	Align: "l",	EditType: "noedit",FilterEdit: "FIELD"},
 	{Name: "OWNER",	PropItemType: "Item Folder",PropName: "owned_by_id",									Width: "120",	Align: "l",	EditType: "noedit",FilterEdit: "FIELD"},
-	{Name: "DESCR",	PropItemType: "Item Folder",PropName: "description",									Width: "300",	Align: "l",	EditType: "noedit",FilterEdit: "FIELD"},
-	{Name: "TEAM",	PropItemType: "Item Folder",PropName: "team_id",										Width: "100",	Align: "l",	EditType: "noedit",FilterEdit: "FIELD"}
+	{Name: "TEAM",	PropItemType: "Item Folder",PropName: "team_id",										Width: "100",	Align: "l",	EditType: "noedit",FilterEdit: "FIELD"},
+	{Name: "DESCR",	PropItemType: "Item Folder",PropName: "description",									Width: "120",	Align: "l",	EditType: "noedit",FilterEdit: "FIELD"}
 	];
 	
     //fn_getGridTableColumnHeadingsAddSalesCols(columnList);  
 	return columnList;
+};
+
+fn_getGridTableColumnIndexByName = function (columnList, columnName) {
+  for (var idx=0;idx < columnList.length; idx++)
+  {
+    if (columnList[idx].Name === columnName) {return idx;}
+  }
+  return -1;
 };
 
 fn_getGridTableColumnDefOfFolderRows = function () {
@@ -1706,8 +1823,8 @@ fn_getGridTableColumnDefOfFolderRows = function () {
 	columnList["GEN"] =		{CellStaticValue: "-"};
 	columnList["MOD_ON"] =	{CellStaticValue: "-"};
 	columnList["OWNER"] =	{PropItemType: "Item Folder",		PropName: "owned_by_id",					CellValueType: "keyed_name"};
-	columnList["DESCR"] =	{PropItemType: "Item Folder",		PropName: "description"};
 	columnList["TEAM"] =	{PropItemType: "Item Folder",		PropName: "team_id",						CellValueType: "keyed_name"};
+	columnList["DESCR"] =	{PropItemType: "Item Folder",		PropName: "description"};
 
 	return columnList;
 };
@@ -1726,7 +1843,7 @@ fn_getGridTableColumnDefOfCtrlItemsRows = function () {
 
     // Index must match a columnName of HeadingsAndLayout !!! 
 	var columnList = [];
-	columnList["TREE"] =	{PropItemType: "Folder Controlled Item",		PropName: "item_number", 					CellLinkKey:"{OpenRowItem}"};
+	columnList["TREE"] =	{PropItemType: "Folder Controlled Item",		PropName: "item_number+name", 					CellLinkKey:"{OpenRowItem}"};
 	columnList["SORT"] =	{PropItemType: "Item Folder Controlled Item",	PropName: "sort_order",isRelProp: true};
 	columnList["LOCK"] =	{PropItemType: "Folder Controlled Item",		PropName: "locked_by_id",					CellValueType: "lock"};
 	columnList["FILES"] =	{PropItemType: "Folder Controlled Item",		PropName: "has_files_icon",					CellValueType: "icon", CellLinkKey:"{FilesOfRelatedItem}"};
@@ -1735,8 +1852,8 @@ fn_getGridTableColumnDefOfCtrlItemsRows = function () {
 	columnList["GEN"] =		{PropItemType: "Folder Controlled Item",		PropName: "generation"};
 	columnList["MOD_ON"] =	{PropItemType: "Folder Controlled Item",		PropName: "modified_on",					CellValueType: "date"};
 	columnList["OWNER"] =	{PropItemType: "Folder Controlled Item",		PropName: "owned_by_id",					CellValueType: "keyed_name"};
-	columnList["DESCR"] =	{PropItemType: "Folder Controlled Item",		PropName: "name"};
 	columnList["TEAM"] =	{PropItemType: "Folder Controlled Item",		PropName: "team_id",						CellValueType: "keyed_name"};
+	columnList["DESCR"] =	{PropItemType: "Folder Controlled Item",		PropName: "description"};
 
     //fn_getGridTableColumnDefOfCtrlItemsRowsAddFlexCols(columnList);
 	return columnList;
@@ -1765,6 +1882,7 @@ fn_getGridTableColumnDefOfFileRows = function () {
 	columnList["GEN"] =		{PropItemType: "File",				PropName: "generation"};
 	columnList["MOD_ON"] =	{PropItemType: "File",				PropName: "modified_on",					CellValueType: "date"};
 	columnList["OWNER"] =	{CellStaticValue: "-"};
+	columnList["TEAM"] =	{CellStaticValue: "-"};
 	columnList["DESCR"] =	{PropItemType: "Item Folder File",	PropName: "comments",isRelProp: true};
 
     //fn_getGridTableColumnDefOfCtrlItemsRowsAddFlexCols(columnList);
@@ -1782,8 +1900,7 @@ isSharedFileCellClass.prototype.convertValueForUI = function(value) {
     value = "";
   }
   return value;
-};
-]]></method_code>
+};]]></method_code>
   <method_type>JavaScript</method_type>
   <name>Item Folder Struct Grid Handler</name>
  </Item>

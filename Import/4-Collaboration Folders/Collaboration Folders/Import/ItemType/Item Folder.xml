@@ -360,6 +360,16 @@
     <sort_order>10</sort_order>
     <source_id keyed_name="Item Folder" type="ItemType" name="Item Folder">C0C8138AB15C41F59FA629EB8EAE2DC2</source_id>
    </Item>
+   <Item type="Server Event" id="85B7EC81A01D4E998105CBFD35096BC7" action="add">
+    <related_id keyed_name="Add to Ctxt to Copy FolderTeam" type="Method">
+     <Item type="Method" action="get" select="id">
+      <name>Add to Ctxt to Copy FolderTeam</name>
+     </Item>
+    </related_id>
+    <server_event>onBeforeUpdate</server_event>
+    <sort_order>10</sort_order>
+    <source_id keyed_name="Item Folder" type="ItemType" name="Item Folder">C0C8138AB15C41F59FA629EB8EAE2DC2</source_id>
+   </Item>
    <Item type="Item Action" id="1658BC74AD994212AA9CE4BB6424E33C" action="add">
     <related_id keyed_name="Item Folder ClearTeamAccess" type="Action">C41267CD2385462C99867A6C870D6272</related_id>
     <sort_order>128</sort_order>

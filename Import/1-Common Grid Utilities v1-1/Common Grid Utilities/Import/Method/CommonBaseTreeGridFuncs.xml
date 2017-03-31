@@ -161,7 +161,7 @@ BaseTreeGrid.prototype = {
 		//load grid and toolbar was success
 	},
 
-//--- 
+//--- Aras 9 - Grid
 	loadGridDefinitionHTML: function (gridObjectName, toolbarObjectName, gridInstanceName) {
 		top.aras.uiAddConfigLink2Doc4Assembly(document, "TreeTable");
 		top.aras.uiAddConfigLink2Doc4Assembly(document, "Toolbar");
@@ -299,6 +299,40 @@ BaseTreeGrid.prototype = {
 		dojo.connect(grid, 'gridKeyPress', this, 'handleGridKeyPress');
 		this.grid = grid;
 
+		this.initialize();
+		this.ready = true;
+	},
+//--- 
+	loadHTML_DojoGridIntoElement: function (gridElementId) {
+		var grid;
+		dojo.require('Aras.Client.Controls.TreeGridContainer');
+		dojo.require('dojo._base.connect');
+		dojo.require('dojo.aspect');
+
+		grid = new Aras.Client.Controls.TreeGridContainer({connectId: gridElementId, canEdit: dojo.hitch(this, function (rowId, field) {
+			var columnIndex = this.grid.columns.get(field, 'index');
+			return this.onBeginEditCell({ rowId: rowId, column: columnIndex});
+		}) });
+
+/*
+		require(["Aras/Client/Controls/TreeGridContainer", "dojo/_base/connect", "dojo/domReady!", "dojo.aspect"], function (Grid, connect) {
+		  grid = new Grid({ connectId: gridElementId });
+		  grid.setEditable(false);
+		  grid.setMultiselect(false);
+		});
+*/
+	
+		dojo.connect(grid, 'gridClick', this, 'handleGridClick');
+		dojo.connect(grid, 'gridDoubleClick', this, 'handleGridDoubleClick');
+		dojo.connect(grid, 'gridLinkClick', this, 'handleGridLinkClick');
+		dojo.connect(grid, 'gridMenuInit', this, 'handleGridMenuInit');
+		dojo.connect(grid, 'gridMenuClick', this, 'handleGridMenuClick');
+		dojo.connect(grid, 'onApplyEdit', this, function (rowId, field, value) {
+			var columnIndex = this.grid.columns.get(field, 'index');
+			return this.onEndEditCell({ rowId: rowId, column: columnIndex});
+		});
+		dojo.connect(grid, 'gridKeyPress', this, 'handleGridKeyPress');
+		this.grid = grid;
 		this.initialize();
 		this.ready = true;
 	},

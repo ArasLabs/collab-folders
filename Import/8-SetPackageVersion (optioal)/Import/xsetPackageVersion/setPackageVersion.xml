@@ -1,6 +1,6 @@
 <AML>
   <Item type="PackageDefinition" action="updatePackageDefinitionVersion" where="PackageDefinition.state='Released'" >
     <name>Collaboration Folders</name>
-    <minor_rev>v3-A10</minor_rev>
+    <minor_rev>v3-1A10</minor_rev>
   </Item>
 </AML>

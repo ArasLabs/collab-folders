@@ -25,8 +25,8 @@ top.hideFolderTabs = function() {
  if (needTimeout) {setTimeout("top.hideFolderTabs();", 30);return;}
  
  var thisType = document.thisItem.getAttribute("type","");
- var thisId = top.aras.getItemProperty(document.item,"id","");
- var folderAllowedRelationships = top.aras.getItemProperty(document.item,"allowed_relationships","");
+ var thisId = top.aras.getItemProperty(document.thisItem.node,"id","");
+ var folderAllowedRelationships = top.aras.getItemProperty(document.thisItem.node,"allowed_relationships","");
  var subFoldersAllowed = (top.aras.getItemProperty(document.item,"allow_sub_folders","0") === "1");
  if (!folderAllowedRelationships || folderAllowedRelationships === "") {return;}
 

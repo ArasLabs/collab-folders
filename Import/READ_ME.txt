@@ -7,6 +7,9 @@ Author:
 
 Version:
 --------
+V3-1 (May 2014)
+- added dynamic grid context menu logic
+- added/improved related projects property on folder and Document/CAD (if folder connected to project, property is filled)
 V3-0 (May 2014)
 
 - Made compatible with Aras10 - IE and Firefox - (90% but still some minor issues)

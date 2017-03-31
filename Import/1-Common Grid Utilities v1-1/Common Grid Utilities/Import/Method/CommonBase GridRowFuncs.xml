@@ -12,6 +12,19 @@ RowClass = function (grid, data, gridColumnsDef, rowCellValueClasses ) {
 	this.grid = grid;
 	this.data = data;
 
+	if (grid.use_svg_icons) {
+		grid.icons["locked"] = 		"../images/LockedByMe.svg";
+		grid.icons["locked_else"] = "../images/LockedByOthers.svg";
+		grid.icons["item_chk0"] = 	"../images/checkbox-unchecked.svg";
+		grid.icons["item_chk1"] = 	"../images/checkbox-checked.svg";
+	}
+	else {
+		grid.icons["locked"] = 		"../images/Icons/ToolbarIcons/locked.gif";
+		grid.icons["locked_else"] = "../images/Icons/ToolbarIcons/locked_else.gif";
+		grid.icons["item_chk0"] = 	"../images/Icons/ToolbarIcons/item_chk0.gif";
+		grid.icons["item_chk1"] = 	"../images/Icons/ToolbarIcons/item_chk1.gif";
+	}
+
 	this.cells = [];
 	this.length = gridColumnsDef.length; //all cols of grid
 	
@@ -307,7 +320,7 @@ fn_GetLockedCellFormatFromLockedById = function (gridCntxt,lockedById)   {
 	}
     return "<img src='"+gridCntxt.icons["locked_else"]+"' />"; // locked by other  user
 };
-//==================================
+//===OLD============================
 fn_GetLockedCellFormatByStatusCode = function (gridCntxt, statusCode)   {
   switch (statusCode)
   {
@@ -317,6 +330,17 @@ fn_GetLockedCellFormatByStatusCode = function (gridCntxt, statusCode)   {
      return "<img src='"+gridCntxt.icons["locked"]+"' />";
   }
   return "<img src='"+gridCntxt.icons["locked_else"]+"' />";
+};
+//==================================
+fn_GetLockedCellIconFormatByStatusCode = function (icons, statusCode)   {
+  switch (statusCode)
+  {
+   case 0:
+     return "";
+   case 1:
+     return "<img src='"+icons["locked"]+"' />";
+  }
+  return "<img src='"+icons["locked_else"]+"' />";
 };
 ]]></method_code>
   <method_type>JavaScript</method_type>

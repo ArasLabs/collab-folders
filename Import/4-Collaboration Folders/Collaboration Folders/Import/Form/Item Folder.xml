@@ -1,9 +1,9 @@
 ﻿<AML>
  <Item type="Form" id="D8A26FDB1ECC4DC19CFCF263713F320C" action="add">
   <category_form>0</category_form>
-  <height>180</height>
+  <height>160</height>
   <stylesheet><![CDATA[../styles/default.css]]></stylesheet>
-  <width>1100</width>
+  <width>1250</width>
   <name>Item Folder</name>
   <Relationships>
    <Item type="Body" id="2420B2CC2AF04726A6ABD207F80DE852" action="add">
@@ -172,7 +172,7 @@
       <font_family>arial, helvetica, sans-serif</font_family>
       <font_size>8pt</font_size>
       <font_weight>bold</font_weight>
-      <html_code><![CDATA[<table id="is_folder_templ_white_box" width=80 height=30 style="background:white" ></table>]]></html_code>
+      <html_code><![CDATA[<table id="is_folder_templ_white_box" width=150 height=40 style="background:white" ></table>]]></html_code>
       <is_disabled>0</is_disabled>
       <is_visible>1</is_visible>
       <label_position>top</label_position>
@@ -180,7 +180,7 @@
       <sort_order>2304</sort_order>
       <source_id keyed_name="2420B2CC2AF04726A6ABD207F80DE852" type="Body">2420B2CC2AF04726A6ABD207F80DE852</source_id>
       <tab_stop>1</tab_stop>
-      <x>0</x>
+      <x>5</x>
       <y>100</y>
       <name>html_is_folder_templ_white_box</name>
      </Item>
@@ -188,22 +188,45 @@
       <bg_color>#FFFFFF</bg_color>
       <border_width>0</border_width>
       <field_type>html</field_type>
-      <font_color>#000000</font_color>
+      <font_color>#ff0000</font_color>
       <font_family>arial, helvetica, sans-serif</font_family>
-      <font_size>8pt</font_size>
+      <font_size>12pt</font_size>
       <font_weight>bold</font_weight>
-      <html_code><![CDATA[<p id="is_folder_template"><b><font color="#ff0000" size="3">Template</font></b><p>]]></html_code>
+      <html_code><![CDATA[<p id="is_folder_template"><p>]]></html_code>
       <is_disabled>0</is_disabled>
       <is_visible>1</is_visible>
+      <label xml:lang="en">Template</label>
       <label_position>top</label_position>
       <list_no_blank>0</list_no_blank>
       <sort_order>1280</sort_order>
       <source_id keyed_name="2420B2CC2AF04726A6ABD207F80DE852" type="Body">2420B2CC2AF04726A6ABD207F80DE852</source_id>
       <tab_stop>1</tab_stop>
-      <x>0</x>
-      <y>95</y>
-      <z_index>-1</z_index>
+      <x>5</x>
+      <y>100</y>
+      <z_index>-2</z_index>
       <name>html_is_folder_template</name>
+     </Item>
+     <Item type="Field" id="6C8A7BDD297E4056B3398470F37F2073" action="add">
+      <border_width>0</border_width>
+      <display_length_unit>px</display_length_unit>
+      <field_type>html</field_type>
+      <font_color>#000000</font_color>
+      <font_family>tahoma, arial, helvetica, sans-serif</font_family>
+      <font_size>8pt</font_size>
+      <font_weight>bold</font_weight>
+      <html_code><![CDATA[<a id="html_related_project_keyed_name"  href="javascript:window.openRelatedProject()" >
+<font color="#0000FF"><u></u></font></a>]]></html_code>
+      <is_disabled>0</is_disabled>
+      <is_visible>1</is_visible>
+      <label xml:lang="en">Related Project</label>
+      <label_position>top</label_position>
+      <list_no_blank>0</list_no_blank>
+      <sort_order>2688</sort_order>
+      <source_id keyed_name="2420B2CC2AF04726A6ABD207F80DE852" type="Body">2420B2CC2AF04726A6ABD207F80DE852</source_id>
+      <tab_stop>1</tab_stop>
+      <x>90</x>
+      <y>100</y>
+      <name>html_related_project_keyed_name</name>
      </Item>
      <Item type="Field" id="8101CF391F8D45C18E008F664945D92B" action="add">
       <bg_color>#FFFFFF</bg_color>
@@ -409,7 +432,6 @@
     </Relationships>
    </Item>
    <Item type="Form Event" id="BE0A5CAD37764B4E8C4ACB0F87F1750A" action="add">
-    <form_event>onformpopulated</form_event>
     <related_id keyed_name="CommonFormFuncs_API" type="Method">
      <Item type="Method" action="get" select="id">
       <name>CommonFormFuncs_API</name>
@@ -450,9 +472,9 @@
    </Item>
    <Item type="Form Event" id="836BBB00567C453F8BE5E602C6242D56" action="add">
     <form_event>onformpopulated</form_event>
-    <related_id keyed_name="ItemFolderStructForceGridRefresh" type="Method">
+    <related_id keyed_name="ForceGridRefreshOnRelTabs" type="Method">
      <Item type="Method" action="get" select="id">
-      <name>ItemFolderStructForceGridRefresh</name>
+      <name>ForceGridRefreshOnRelTabs</name>
      </Item>
     </related_id>
     <sort_order>13</sort_order>

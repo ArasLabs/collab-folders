@@ -41,7 +41,8 @@ Function Main() As Item
       End If
     Next i
   End If
-
+  if relItemProjects = "" then relItemProjects = "NULL"  'will clear the field on relatedItems
+  
   If (relItemAllowTeamChange)
     'update related item - reset team, and update relatedProjects
     res = updateTeamIdOnItem(relItemType,relItemId,"NULL",relItemProjects)
@@ -64,6 +65,8 @@ Function Main() As Item
   thisRelatedItemRel = thisRelatedItemRel.getItemByIndex(0) 'should only be one records anyways
   Dim parentFolderTeamId As String = thisRelatedItemRel.getPropertyItem("source_id").getProperty("team_id","")
   Dim relatedProjectKN As String = thisRelatedItemRel.getPropertyItem("source_id").getProperty("related_project_keyed_name","")
+  Dim prevRelatedProjectKN As String = Me.getAttribute("prevRelatedProjectKN","")
+  
 
   relItemId  = thisRelatedItemRel.getProperty("related_id","")
   If (relItemId <> "") Then
@@ -81,16 +84,20 @@ Function Main() As Item
         Dim i As Integer
         relItemProjects = "" 'build comma separated list again
         sepChr = ""
-        Dim doAdd As Boolean = True
         For i=0 To projectList.Length-1
-           relItemProjects = relItemProjects & sepChr & projectList(i)
-           If relatedProjectKN = projectList(i) Then doAdd = False
-           sepChr = ","
+		   ' skip previous project KN, if listed
+		   if projectList(i) <> prevRelatedProjectKN And projectList(i) <> relatedProjectKN then
+				relItemProjects = relItemProjects & sepChr & projectList(i)
+				sepChr = ","
+		   end if
         Next i
-        If doAdd Then relItemProjects = relItemProjects & sepChr & relatedProjectKN
+		' add new project KN, if not listed already
+		relItemProjects = relItemProjects & sepChr & relatedProjectKN
       Else
         relItemProjects = relatedProjectKN
       End If
+	  if relItemProjects = "" then relItemProjects = "NULL"  'will clear the field on relatedItems
+
     Else
       relItemProjects = ""
     End If
@@ -134,7 +141,8 @@ Private Function updateTeamIdOnItem (relItemType As String, relItemId As String,
     End If
     If relItemProjects <> "" Then
       If relItemProjects.Length > 200 Then relItemProjects = relItemProjects.Substring(0,200)
-      SQLstr = SQLstr & setSep & " [" & typeTable & "].related_projects='" & relItemProjects & "'"
+      If relItemProjects <> "NULL" Then relItemProjects = "'" & relItemProjects & "'"
+      SQLstr = SQLstr & setSep & " [" & typeTable & "].related_projects=" & relItemProjects
     End If
     SQLstr = SQLstr & " WHERE [" & typeTable & "].id='" & relItemId & "'"
     res = inn.applySQL(SQLstr)

@@ -1,0 +1,44 @@
+﻿<AML>
+ <Item type="Method" id="585C0499A51E417697AC3EC7BA89D149" action="add">
+  <comments>generic method refreshes grids on tabs when user clicks the "Refresh" on top form.</comments>
+  <execution_allowed_to keyed_name="World" type="Identity">A73B655731924CD0B027E4F4D5FCC0A9</execution_allowed_to>
+  <method_code><![CDATA[// This generic method refreshes grids on tabs when user clicks the "Refresh" on top form.
+// It must be called from another client method that is triggered from event "onFromPopulate"
+// of all forms of the ItemType that holds the programmed grid on a tab (dummy relationship)
+// Context must contain custom attribute "relationshipNames" with a comma separated list of relationship names 
+
+// Assumes: on grid form a callback window.forceGridRefreshOnRelationship(relshipTypeName) is available in a method loaded with the grid's form (typically the grid handler)
+
+var iFramesCollection = null;
+var isA9 = false;
+if (top.frames && top.frames.relationships && top.frames.relationships.iframesCollection) {iFramesCollection = top.frames.relationships.iframesCollection;} // Aras10
+if (top.document.frames[2] && top.document.frames[2].iframesCollection) {iFramesCollection = top.document.frames[2].iframesCollection; isA9=true;} // Aras9
+
+if(iFramesCollection)
+{
+  var tabId,relshipTypeNd,relshipTypeName,formFrame;
+  for (tabId in iFramesCollection) {
+	relshipTypeNd = top.aras.getRelationshipType(tabId);
+	if (relshipTypeNd) {
+	 relshipTypeName = top.aras.getItemProperty(relshipTypeNd.node, "name");
+	 // for every relationship call callback function !!!  (callback function can apply logic based on relshipTypeName)
+		formFrame = iFramesCollection[tabId].contentWindow.document.getElementById('formFrame');
+		if (isA9 === true) {
+		  if(formFrame && formFrame.window.window.forceGridRefreshOnRelationship) {
+			formFrame.window.window.forceGridRefreshOnRelationship(relshipTypeName);
+			return;
+		  }
+		} else {
+		  if(formFrame && formFrame.contentWindow.forceGridRefreshOnRelationship) {
+			formFrame.contentWindow.forceGridRefreshOnRelationship(relshipTypeName);
+			return;
+		  }
+		}
+	  }	
+  }
+}
+return;]]></method_code>
+  <method_type>JavaScript</method_type>
+  <name>ForceGridRefreshOnRelTabs</name>
+ </Item>
+</AML>
