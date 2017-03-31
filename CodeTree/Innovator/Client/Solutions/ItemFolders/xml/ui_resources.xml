@@ -1,0 +1,64 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ui_resources>
+	<!-- +++++ Item Folder Navigator +++++ -->
+	<resource key="itemfoldertreegrid.gridheading.col0" value="Folder/Number"/>
+
+	<resource key="itemfoldertreegrid.contextmenu.view_item" value="View Item"/>
+	<resource key="itemfoldertreegrid.contextmenu.view_folder" value="View Folder"/>
+
+	<resource key="itemfoldertreegrid.contextmenu.refresh_this_row" value="Refresh this Folder"/>
+	<resource key="itemfoldertreegrid.contextmenu.lock_row_item" value="Lock"/>
+	<resource key="itemfoldertreegrid.contextmenu.unlock_row_item" value="Unlock"/>
+	<resource key="itemfoldertreegrid.contextmenu.add_new_controlled_item" value="Add Controlled Item to Folder (new)..."/>
+	<resource key="itemfoldertreegrid.contextmenu.add_existing_controlled_item" value="Add Controlled Item to Folder (pick)..."/>
+	<resource key="itemfoldertreegrid.contextmenu.add_new_file_to_folder" value="Add File to Folder..."/>
+	<resource key="itemfoldertreegrid.contextmenu.add_sub_folder" value="Add Sub Folder..."/>
+	<resource key="itemfoldertreegrid.contextmenu.promote_folders_to_active_down" value="Promote Folders to Active (down)"/>
+	<resource key="itemfoldertreegrid.contextmenu.promote_folders_to_archived_down" value="Promote Folders to Archived (down)"/>
+
+	<resource key="itemfoldertreegrid.message.loading_please_wait" value="Loading Folders, Please wait ..."/>
+	<resource key="itemfoldertreegrid.message.re_loading_please_wait" value="Re-Loading Folders, Please wait ..."/>
+	<resource key="itemfoldertreegrid.message.expanding_all_please_wait" value="Expanding all, Please wait ..."/>
+	<resource key="itemfoldertreegrid.message.loading_next_level_please_wait" value="Loading next Level, Please wait ..."/>
+	
+	<resource key="itemfoldertreegrid.message.confirm_expanding_all_large_struture" value="For large structures expanding all can take considerable time. Do you want to continue ?"/>
+	<resource key="itemfoldertreegrid.message.confirm_promote_to_archived" value="This action will promote this folder and all sub folders to 'Archived'. Do you want to continue ?"/>
+	<resource key="itemfoldertreegrid.message.confirm_promote_to_active" value="This action will promote this folder and all sub folders to 'Active'. Do you want to continue ?"/>
+	<resource key="itemfoldertreegrid.message.confirm_clear_folder_team" value="Are you sure you want to clear this folder's team access ?"/>
+
+	<resource key="itemfoldertreegrid.message.unknown_error" value="An unknown error has occurred. Please contact your System Administrator"/>
+	<resource key="itemfoldertreegrid.message.undefined" value="Undefined error message !"/>
+	<resource key="itemfoldertreegrid.message.user_must_be_owner_of_item_for_action" value="User must be Owner for this action !"/>
+	<resource key="itemfoldertreegrid.message.item_must_be_locked_for_action" value="Item must be locked for this action!"/>
+	<resource key="itemfoldertreegrid.message.item_apply_error" value="Item apply error: -->"/>
+	<resource key="itemfoldertreegrid.message.attached_files_not_retrieved" value="Attached files could not be retrieved from server again. There might be a permission issue with shared files on this folder!"/>
+	<resource key="itemfoldertreegrid.message.already_locked" value="Already locked by you or someone else ! (Refresh grid to update status)"/>
+	<resource key="itemfoldertreegrid.message.item_not_locked" value="Item is not locked ! (Refresh grid to update status)"/>
+	<resource key="itemfoldertreegrid.message.cannot_unlock_locked_by_other" value="Cannot unlock! Item is locked by someone else."/>
+	<resource key="itemfoldertreegrid.message.error_getting_parent_of_grid_row" value="Error getting parent of this row ! Contact your System Administrator."/>
+	<resource key="itemfoldertreegrid.message.action_not_valid_on_folder_rows" value="This action is only valid on folder rows !"/>
+	<resource key="itemfoldertreegrid.message.folder_already_in_status_x" value="The folder is already in status: "/>
+	<resource key="itemfoldertreegrid.message.folder_must_be_in_status_active" value="The folder must be in status 'Active' for this action !"/>
+	<resource key="itemfoldertreegrid.message.folder_must_be_in_status_planning" value="The folder must be in status 'Planning' for this action !"/>
+	<resource key="itemfoldertreegrid.message.folder_locked_by_you_or_other_please_unlock" value="Already locked by you or someone else ! Folder must be unlocked for this action."/>
+	<resource key="itemfoldertreegrid.message.action_not_allowed_on_rows_of_this_type" value="This action is not allowed for rows of this type !"/>
+	<resource key="itemfoldertreegrid.message.error_getting_parent_of_group_row" value="Error getting parent of this row ! Contact your System Administrator."/>
+	<resource key="itemfoldertreegrid.message.folder_row_must_be_locked_for_action" value="The folder row to add a new item to must be locked for this action !"/>
+	<resource key="itemfoldertreegrid.message.folder_row_locked_by_other_no_permission_action" value="The folder row to add a new item to is locked by someone else. You do not have permission for this action !"/>
+	<resource key="itemfoldertreegrid.message.adding_files_to_folder_not_allowed" value="Adding attachments (files) is not allowed on this folder !"/>
+	<resource key="itemfoldertreegrid.message.adding_ctrld_items_to_folder_not_allowed" value="Adding controlled items is not allowed on this folder !"/>
+	<resource key="itemfoldertreegrid.message.adding_sub_folder_not_allowed" value="Adding sub folders is not allowed on this folder !"/>
+	<resource key="itemfoldertreegrid.message.action_not_allowed_on_rows_of_type_x" value="This action is not allowed on rows of type: "/>
+	<resource key="itemfoldertreegrid.message.action_not_allowed_on_root_rows" value="This action is not allowed on Root rows !"/>
+	<resource key="itemfoldertreegrid.message.effectivity_must_be_current_for_action" value="Effectivity must be 'Current' to do this action !"/>
+	<resource key="itemfoldertreegrid.message.unlock_error" value="Unlock Errror: "/>
+	<resource key="itemfoldertreegrid.message.add_sub_folder_error" value="Error adding Sub Folder: "/>
+	<resource key="itemfoldertreegrid.message.add_ctrld_item_error" value="Error adding Controlled Item: "/>
+	<resource key="itemfoldertreegrid.message.add_file_error" value="Error adding File: "/>
+	<resource key="itemfoldertreegrid.message.get_item_current_generation_error" value="Error getting current generation of item: "/>
+	<resource key="itemfoldertreegrid.message.get_item_released_generation_error" value="Error getting released generation of item: "/>
+	<resource key="itemfoldertreegrid.message.view_item_files_error" value="Error with viewing item's files: "/>
+	
+	<!-- 			 Item Folder Navigator  		 -->
+		
+</ui_resources>

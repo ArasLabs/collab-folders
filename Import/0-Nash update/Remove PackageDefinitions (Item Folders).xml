@@ -1,0 +1,4 @@
+﻿<AML>
+ <Item type="PackageDefinition" action="delete" where="PackageDefinition.name='Item Folders'" >
+ </Item>
+</AML>

@@ -19,6 +19,7 @@ This project and the following release notes have been migrated from the old Ara
 
 Release | Notes
 --------|--------
+[v2.1](https://github.com/ArasLabs/collab-folders/releases/tag/v2.1) | 	Collaboration Folders Add-On Package. Enhanced Folders Life Cycle and Permissions (for Team and Archive scenario). Improved performance for large structures (level by level). Requires 9.3SP6 or higher !!
 [v1.7](https://github.com/ArasLabs/collab-folders/releases/tag/v1.7) | 	Item Folders Add-On Package. Enhanced Folders Life Cycle and Permissions (for Archive scenario). Requires 9.3SP6 or higher !!
 [v1.6](https://github.com/ArasLabs/collab-folders/releases/tag/v1.6) | 	Item Folders Add-On Package. Enhanced Folders grid. File drag-n-drop. Enhanced folder templates.
 [v1.5](https://github.com/ArasLabs/collab-folders/releases/tag/v1.5) | Item Folders Add-On Package. Displays folder related documents before sub folders in Navigator, now.
@@ -27,6 +28,7 @@ Release | Notes
 
 Project | Aras
 --------|------
+[v2.1](https://github.com/ArasLabs/collab-folders/releases/tag/v2.1) | 9.3 SP6+
 [v1.7](https://github.com/ArasLabs/collab-folders/releases/tag/v1.7) | 9.3 SP6+
 [v1.6](https://github.com/ArasLabs/collab-folders/releases/tag/v1.6) | 9.3
 [v1.5](https://github.com/ArasLabs/collab-folders/releases/tag/v1.5) | 9.3
@@ -57,7 +59,7 @@ Project | Aras
 
 ## Usage
 
-See [Item Folders Concept v1-6.pdf](./Documentation/Item%20Folders%20Concept%20v1-6.pdf) for more information on using this project.
+See [Collaboration Folders Concept v2-0.pdf](./Documentation/Collaboration%20Folders%20Concept%20v2-0.pdf) or [Collaboration Folders User Guide v2-0.pdf](./Documentation/Collaboration%20Folders%20User%20Guide%20v2-0.pdf) for more information on using this project.
 
 ![Screenshot of Collaboration Folders](./Screenshots/Item%20Folders%20Screen1.jpg)
 

@@ -1,0 +1,38 @@
+﻿<AML>
+ <Item type="Method" id="D392B9A7924B4F028926AB1A278432A7" action="add">
+  <execution_allowed_to keyed_name="World" type="Identity">A73B655731924CD0B027E4F4D5FCC0A9</execution_allowed_to>
+  <method_code><![CDATA[//debugger;
+var cff = new CommonFormFunctions("Item Folder");
+
+var element = document.getElementsByName("is_template")[0];
+var isChecked = false;
+if (element) {isChecked=element.checked;}
+
+var htmlTemplIndicator = document.getElementById("is_folder_template");
+if (htmlTemplIndicator) {
+  var parentElem = htmlTemplIndicator.parentNode;
+  if (htmlTemplIndicator && parentElem) {
+    if (!isChecked) {
+      parentElem.removeChild(htmlTemplIndicator);
+      
+      cff.setVisibilityOfFieldByPropName("allow_sub_folders",false);
+      cff.setVisibilityOfFieldByPropName("allowed_relationships",false);
+      
+      /*
+      element = document.getElementsByName("allow_sub_folders")[0];
+      parentElem = element.parentNode;
+      parentElem.removeChild(element);
+      element = document.getElementsByName("allowed_relationships")[0];
+      parentElem = element.parentNode;
+      parentElem.removeChild(element);
+     */
+    }
+  }
+}
+return;
+
+]]></method_code>
+  <method_type>JavaScript</method_type>
+  <name>Display Folder TemplText if Set</name>
+ </Item>
+</AML>

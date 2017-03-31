@@ -1,0 +1,41 @@
+﻿<AML>
+ <Item type="Method" id="433B3071CF7D4826A02D9C3052A3472C" action="add">
+  <comments>onAfter -Add,Delete,Update,Version of Relationship ItemTypes.</comments>
+  <execution_allowed_to keyed_name="World" type="Identity">A73B655731924CD0B027E4F4D5FCC0A9</execution_allowed_to>
+  <method_code><![CDATA[//onAfter -Add,Delete,Update,Version of Relationship ItemTypes
+//source Item has bool prop 'has_sub_folders'
+string relship_id = this.getAttribute("typeId");
+Item relationship = this.newItem("RelationshipType", "get");
+if (string.IsNullOrEmpty(relship_id))
+{
+	relationship.setProperty("name", this.getAttribute("type"));
+}
+else
+{
+	relationship.setProperty("relationship_id", relship_id);
+}
+relationship.setAttribute("select", "name,source_id(name)");
+relationship = relationship.apply();
+
+if(relationship.isError())
+{
+  return relationship;
+}
+
+Item source_it = relationship.getPropertyItem("source_id");
+string source_id = this.getProperty("source_id");
+
+Item callframe = this.newItem("SQL","SQL PROCESS");
+callframe.setProperty("name","update_has_relationships_flag");
+callframe.setProperty("PROCESS","CALL");
+callframe.setProperty("ARG1", source_it.getProperty("name"));
+callframe.setProperty("ARG2", source_id);
+callframe.setProperty("ARG3", "has_sub_folders");
+callframe.setProperty("ARG4", relationship.getProperty("name"));
+callframe = callframe.apply();
+
+return this;]]></method_code>
+  <method_type>C#</method_type>
+  <name>update_has_SubFolders_flag</name>
+ </Item>
+</AML>

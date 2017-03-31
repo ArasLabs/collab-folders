@@ -1,0 +1,149 @@
+﻿<AML>
+ <Item type="ItemType" id="1B3A68711AFE49AFB72121C592E27498" action="add">
+  <name>Program</name>
+  <Relationships>
+   <Item type="Property" id="86EC8D85E4C14D30964E6BB3899FA2C5" action="add">
+    <column_alignment>left</column_alignment>
+    <data_source keyed_name="Customer" type="ItemType" name="Customer">E4847F4A706B4285A395C0228A867E0F</data_source>
+    <data_type>item</data_type>
+    <is_hidden>0</is_hidden>
+    <is_hidden2>0</is_hidden2>
+    <is_indexed>0</is_indexed>
+    <is_keyed>0</is_keyed>
+    <is_multi_valued>0</is_multi_valued>
+    <is_required>0</is_required>
+    <item_behavior>float</item_behavior>
+    <label xml:lang="en">Customer</label>
+    <name>customer</name>
+    <range_inclusive>0</range_inclusive>
+    <readonly>0</readonly>
+    <sort_order>3072</sort_order>
+    <source_id keyed_name="Program" type="ItemType" name="Program">1B3A68711AFE49AFB72121C592E27498</source_id>
+    <track_history>0</track_history>
+   </Item>
+   <Item type="Property" id="477FBA88329946069A52A0D276C3B233" action="add">
+    <column_alignment>left</column_alignment>
+    <data_type>text</data_type>
+    <is_hidden>0</is_hidden>
+    <is_hidden2>0</is_hidden2>
+    <is_indexed>0</is_indexed>
+    <is_keyed>0</is_keyed>
+    <is_multi_valued>0</is_multi_valued>
+    <is_required>0</is_required>
+    <label xml:lang="en">Description</label>
+    <name>description</name>
+    <range_inclusive>0</range_inclusive>
+    <readonly>0</readonly>
+    <sort_order>256</sort_order>
+    <source_id keyed_name="Program" type="ItemType" name="Program">1B3A68711AFE49AFB72121C592E27498</source_id>
+    <track_history>0</track_history>
+   </Item>
+   <Item type="Property" id="71EBAD63D13D444E982887729F5EEF00" action="add">
+    <column_alignment>left</column_alignment>
+    <data_source keyed_name="Item Folder Template" type="ItemType" name="Item Folder Template">4D5FB24117B040F484D2ACA7BED6C2B2</data_source>
+    <data_type>item</data_type>
+    <is_hidden>1</is_hidden>
+    <is_hidden2>1</is_hidden2>
+    <is_indexed>0</is_indexed>
+    <is_keyed>0</is_keyed>
+    <is_multi_valued>0</is_multi_valued>
+    <is_required>0</is_required>
+    <item_behavior>float</item_behavior>
+    <label xml:lang="en">Folder Template</label>
+    <name>item_folder_template_id</name>
+    <range_inclusive>0</range_inclusive>
+    <readonly>0</readonly>
+    <sort_order>6272</sort_order>
+    <source_id keyed_name="Program" type="ItemType" name="Program">1B3A68711AFE49AFB72121C592E27498</source_id>
+    <track_history>0</track_history>
+   </Item>
+   <Item type="Property" id="09F271451D1E4FEA8AE12913A71596F2" action="add">
+    <column_alignment>left</column_alignment>
+    <data_type>string</data_type>
+    <is_hidden>0</is_hidden>
+    <is_hidden2>0</is_hidden2>
+    <is_indexed>0</is_indexed>
+    <is_keyed>0</is_keyed>
+    <is_multi_valued>0</is_multi_valued>
+    <is_required>1</is_required>
+    <keyed_name_order>1</keyed_name_order>
+    <label xml:lang="en">Name</label>
+    <name>name</name>
+    <range_inclusive>0</range_inclusive>
+    <readonly>0</readonly>
+    <sort_order>128</sort_order>
+    <source_id keyed_name="Program" type="ItemType" name="Program">1B3A68711AFE49AFB72121C592E27498</source_id>
+    <stored_length>30</stored_length>
+    <track_history>0</track_history>
+   </Item>
+   <Item type="Property" id="762C841C61BB43679F4E066B87B2D82F" action="add">
+    <column_alignment>left</column_alignment>
+    <column_width>100</column_width>
+    <data_source keyed_name="Item Folder" type="ItemType" name="Item Folder">C0C8138AB15C41F59FA629EB8EAE2DC2</data_source>
+    <data_type>item</data_type>
+    <is_hidden>0</is_hidden>
+    <is_hidden2>0</is_hidden2>
+    <is_indexed>0</is_indexed>
+    <is_keyed>0</is_keyed>
+    <is_multi_valued>0</is_multi_valued>
+    <is_required>0</is_required>
+    <item_behavior>float</item_behavior>
+    <label xml:lang="en">Related Folder</label>
+    <name>top_item_folder_id</name>
+    <range_inclusive>0</range_inclusive>
+    <readonly>0</readonly>
+    <sort_order>6144</sort_order>
+    <source_id keyed_name="Program" type="ItemType" name="Program">1B3A68711AFE49AFB72121C592E27498</source_id>
+    <track_history>0</track_history>
+   </Item>
+   <Item type="Server Event" id="4FE12115B19B43939F4E15E184F9AA53" action="add">
+    <related_id keyed_name="Synch Item TeamId to TopFolder" type="Method">
+     <Item type="Method" action="get" select="id">
+      <name>Synch Item TeamId to TopFolder</name>
+     </Item>
+    </related_id>
+    <server_event>onAfterAdd</server_event>
+    <sort_order>10</sort_order>
+    <source_id keyed_name="Program" type="ItemType" name="Program">1B3A68711AFE49AFB72121C592E27498</source_id>
+   </Item>
+   <Item type="Server Event" id="71DDB21C548D495EB40F926AD8D8753D" action="add">
+    <related_id keyed_name="Synch Item TeamId to TopFolder" type="Method">
+     <Item type="Method" action="get" select="id">
+      <name>Synch Item TeamId to TopFolder</name>
+     </Item>
+    </related_id>
+    <server_event>onAfterUpdate</server_event>
+    <sort_order>10</sort_order>
+    <source_id keyed_name="Program" type="ItemType" name="Program">1B3A68711AFE49AFB72121C592E27498</source_id>
+   </Item>
+   <Item type="Server Event" id="77849A9FF7DB488499FED3925A509D01" action="add">
+    <related_id keyed_name="Create TopFolder And Link 2 Prog" type="Method">
+     <Item type="Method" action="get" select="id">
+      <name>Create TopFolder And Link 2 Prog</name>
+     </Item>
+    </related_id>
+    <server_event>onBeforeAdd</server_event>
+    <sort_order>10</sort_order>
+    <source_id keyed_name="Program" type="ItemType" name="Program">1B3A68711AFE49AFB72121C592E27498</source_id>
+   </Item>
+   <Item type="TOC Access" id="91B05F95DD9D462FB7BAD225447774E3" action="add">
+    <category>Portfolio</category>
+    <related_id keyed_name="All Employees" type="Identity">B32BD81D1AD04207BF1E61E39A4E0E13</related_id>
+    <sort_order>128</sort_order>
+    <source_id keyed_name="Program" type="ItemType" name="Program">1B3A68711AFE49AFB72121C592E27498</source_id>
+   </Item>
+   <Item type="View" id="9CCEC14F958343E8AC70734778595B04" action="add">
+    <client>js</client>
+    <related_id keyed_name="Program Add New" type="Form">0F3AE48841694A07BBE67B398C9968FC</related_id>
+    <role keyed_name="World" type="Identity">
+     <Item type="Identity" action="get" select="id">
+      <name>World</name>
+     </Item>
+    </role>
+    <sort_order>256</sort_order>
+    <source_id keyed_name="Program" type="ItemType" name="Program">1B3A68711AFE49AFB72121C592E27498</source_id>
+    <type>add</type>
+   </Item>
+  </Relationships>
+ </Item>
+</AML>

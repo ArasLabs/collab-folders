@@ -1,3 +1,0 @@
-<imports>
-   <package name="Item Folders" path="Item Folders\Import" />
-</imports>

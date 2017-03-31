@@ -1,0 +1,228 @@
+﻿<AML>
+ <Item type="Form" id="EC9D60083BDB4DA1B57309A931E7B990" action="add">
+  <name>Item Folder Structure Grid</name>
+  <stylesheet><![CDATA[../styles/default.css]]></stylesheet>
+  <Relationships>
+   <Item type="Body" id="5EA5D95524B94B1286E447EBA7B99639" action="add">
+    <sort_order>128</sort_order>
+    <source_id keyed_name="Item Folder Structure Grid" type="Form">EC9D60083BDB4DA1B57309A931E7B990</source_id>
+    <Relationships>
+     <Item type="Field" id="A8CABE9A08F44B97B1A3F6B61DD04FD1" action="add">
+      <bg_color>#FFFFFF</bg_color>
+      <border_width>0</border_width>
+      <field_type>html</field_type>
+      <font_color>#000000</font_color>
+      <font_family>arial, helvetica, sans-serif</font_family>
+      <font_size>8pt</font_size>
+      <font_weight>bold</font_weight>
+      <html_code><![CDATA[<script type="text/javascript">
+// Generic TreeView - HTML-code - Variant2 - populates Toolbar and TreeGrid
+//
+// this is a HTML-skeleton.  additional functions with logic need to be loaded from methods attached to tbe Form
+// (FormEvents = onLoad)
+//
+// logic of all Click Handlers treeGrid1_XXXX ()  listed in this HTML must be in these attached Form handlers as well
+//
+// ====================================================================================================================
+	top.aras.uiAddConfigLink2Doc4Assembly(document, "TreeTable");
+	top.aras.uiAddConfigLink2Doc4Assembly(document, "Toolbar");
+
+	var toolbar1_Control = null;
+	var treeGrid1_Control = null;
+	var treeGrid1_MsgsId;
+	var thisItem = undefined;
+
+    var innovator = new top.Innovator();
+	var I18Ncntx = innovator.getI18NSessionContext();
+ 	var OnLoadMethodsLoaded = false;
+
+	// attach to window Events
+	var onresize_handler = function ()
+	{
+		fixGridHeight();
+	}
+
+	var onbeforeunload_handler = function ()
+	{
+		if (window.interval)
+		{
+			clearInterval(interval);
+		}
+	}
+	
+	function onload_handler() {
+      // Make sure the item is loaded before proceeding
+	  var myCount = 0;
+     if (!document.thisItem) {
+       if (myCount > 9) { return; }
+       myCount++;
+       setTimeout("onload_handler()", 300);
+       return;
+     }
+     thisItem = document.thisItem;
+
+	 toolbar1_Control = document.toolbar1;
+	 treeGrid1_Control = document.treeGrid1;
+
+     loadToolbarAndGrid();	 
+
+     interval = window.setInterval(fixGridHeight, 100);
+ 	 
+	}
+
+    function loadToolbarAndGrid()
+	 {
+		if (!window.populateToolbar1)  // this function must reside in one of the handlers loaded with the Form (onLoad)
+		{
+			setTimeout('loadToolbarAndGrid()',10);
+			return;
+		}
+		var res = window.populateToolbar1(false);  // this function must reside in one of the handlers loaded with the Form (onLoad)
+//        toolbar1_Control.show();
+		res = window.populateTreeGrid1(thisItem);  // this function must reside in one of the handlers loaded with the Form (onLoad)
+		fixGridHeight();
+ 	    OnLoadMethodsLoaded = false;
+	}
+
+	function fixGridHeight()
+	{
+		var el = document.getElementById("treeGrid1");
+		top.aras.fixLiquidContainerHeight(document, el);
+		el = document.getElementById("grid_td");
+		top.aras.fixLiquidContainerHeight(document, el);
+	}
+
+    window.attachEvent("onbeforeunload", onbeforeunload_handler);
+	window.attachEvent("onload", onload_handler);
+	window.attachEvent("onresize", onresize_handler);	
+
+</script>
+
+<style>
+   html, body
+	{
+	  margin: 0;
+	  padding: 0;
+	  height: 100%;
+	  border: none;
+	}
+	.sys_f_container
+	{
+	  position:absolute; 
+	  top:0px; 
+	  left:0px;
+	  width: 100%;
+	  height: 100%;
+	}
+	.sys_f_table
+	{
+	  position:absolute; 
+	  top:0px; left:0px;
+	  width: 100%;
+	  height: 100%;
+	}
+</style>
+
+<script type="text/javascript" for="treeGrid1" event="GridStart(isSuccess)">
+	treeGrid1_Control=document.treeGrid1;
+</script>
+<script type="text/javascript" for="toolbar1" event="Onload()">
+	toolbar1_Control = document.toolbar1;
+</script>
+<script type="text/javascript" for="toolbar1" event="Onclick(tbItem)">
+	toolbar1_onToolbarClick(tbItem);
+</script>
+<script type="text/javascript" for="toolbar1" event="OnChange(tbItem)">
+	toolbar1_onToolbarOnChange(tbItem);
+</script>
+<script type="text/javascript" for="treeGrid1" event="GridClick(rowId, col)">
+	treeGrid1_onGridClick(rowId, col);
+</script>
+<script type="text/javascript" for="treeGrid1" event="GridDoubleClick(rowId)">
+	treeGrid1_onGridDoubleClick(rowId);
+</script>
+<script type="text/javascript" for="treeGrid1" event="GridLinkClick(strLink)">
+	treeGrid1_onGridLinkClick(strLink);
+</script>
+<script type="text/javascript" for="treeGrid1" event="GridMenuInit(rowId, col, p)">
+	treeGrid1_onGridMenuInit(rowId, col, p);
+</script>
+<script type="text/javascript" for="treeGrid1" event="GridMenuClick(m, rowId, col)">
+	treeGrid1_onGridMenuClick(m);
+</script>
+<script type="text/javascript" for="treeGrid1" event="GridEditCell(mode, rowID, col)">
+	return treeGrid1_onGridEditCell(mode, rowID, col);
+</script>
+<script type="text/javascript" for="treeGrid1" event="GridKeyPress(kEv)">
+	return true;
+</script>
+<script type="text/javascript" for="treeGrid1" event="TreeGridCloseNode(rowID)">
+	return treeGrid1_onTreeGridCloseNode(rowID);
+</script>
+<script type="text/javascript" for="treeGrid1" event="TreeGridOpenNode(rowID)">
+	return treeGrid1_onTreeGridOpenNode(rowID);
+</script>
+<script type="text/javascript" for="treeGrid1" event="DragEnter(a, b)">
+	return treeGrid1_onTreeGridDragEnter(a,b);
+</script>
+<script type="text/javascript" for="treeGrid1" event="DragDrop(a, b)">
+	return treeGrid1_onTreeGridDragDrop(a,b);
+</script>
+<script language="jscript" for="treeGrid1" event="DragStart(a, b)">
+	return treeGrid1_onTreeGridDragStart(a,b);
+</script>
+
+<table id="grid1Table" border="0" cellspacing="0" cellpadding="0" style="width: 100%; height: 100%; table-layout: fixed;" >
+	<tr id="grid1ToolbarRow" style="vertical-align: top;">
+		<td style="width: 100%; height: 28px;">
+			<object id="toolbar1" style="width: 100%; height: 28px; display: block;"
+					classid="../cbin/Toolbar.dll#Aras.Client.Controls.Toolbar" >
+			</object>
+		</td>
+	</tr>
+	<tr id="grid1TreeRow" style="vertical-align: top;">
+		<td id="grid_td" style="width: 100%; height: 100%;">
+			<object id="treeGrid1" style="height: 100%; width: 100%; display: block;"
+				classid="../cbin/TreeTable.dll#Aras.Client.Controls.TreeGridContainer">
+                <param name="AllowDrop" value="true">
+			</object>
+		</td>
+	</tr>
+</table>
+]]></html_code>
+      <is_disabled>0</is_disabled>
+      <is_visible>1</is_visible>
+      <label_position>top</label_position>
+      <list_no_blank>0</list_no_blank>
+      <name>html_folder_structure_grid</name>
+      <sort_order>128</sort_order>
+      <source_id keyed_name="5EA5D95524B94B1286E447EBA7B99639" type="Body">5EA5D95524B94B1286E447EBA7B99639</source_id>
+      <tab_stop>1</tab_stop>
+      <x>0</x>
+      <y>0</y>
+     </Item>
+    </Relationships>
+   </Item>
+   <Item type="Form Event" id="0C559513423D432C88979AF3321D8868" action="add">
+    <form_event>onload</form_event>
+    <related_id keyed_name="Common Grid Handler Funcs" type="Method">
+     <Item type="Method" action="get" select="id">
+      <name>Common Grid Handler Funcs</name>
+     </Item>
+    </related_id>
+    <sort_order>1</sort_order>
+    <source_id keyed_name="Item Folder Structure Grid" type="Form">EC9D60083BDB4DA1B57309A931E7B990</source_id>
+   </Item>
+   <Item type="Form Event" id="E1A6D8EA17684C8D8340E779EE3AEC27" action="add">
+    <form_event>onload</form_event>
+    <related_id keyed_name="Item Folder Struct Grid Handler" type="Method">
+     <Item type="Method" action="get" select="id">
+      <name>Item Folder Struct Grid Handler</name>
+     </Item>
+    </related_id>
+    <sort_order>2</sort_order>
+    <source_id keyed_name="Item Folder Structure Grid" type="Form">EC9D60083BDB4DA1B57309A931E7B990</source_id>
+   </Item>
+  </Relationships>
+ </Item>
+</AML>

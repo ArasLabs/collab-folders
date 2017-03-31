@@ -1,0 +1,94 @@
+﻿<AML>
+ <Item type="Method" id="687CB3BF37B546C0B724EB301F024EDA" action="add">
+  <comments>onForm Populate</comments>
+  <execution_allowed_to keyed_name="World" type="Identity">A73B655731924CD0B027E4F4D5FCC0A9</execution_allowed_to>
+  <method_code><![CDATA[// Form event method: 
+//
+// hides the Tabs with defined names based on item classification
+// this is based on the fact that the tabbar id = id of the relationshipType configration
+//
+//
+
+top.hideFolderTabs = function() {
+ // If the tabbar is not yet ready, wait a bit and call the function recursively
+ if (!parent.relationships || !parent.relationships.relTabbarReady || parent.relationships.relTabbar.GetTabOrder("|") === "" ) {
+  setTimeout("top.hideFolderTabs();", 30);
+  return;
+ }
+ 
+ var thisType = document.thisItem.getAttribute("type","");
+ var thisId = top.aras.getItemProperty(document.item,"id","");
+ var folderAllowedRelationships = top.aras.getItemProperty(document.item,"allowed_relationships","");
+ var subFoldersAllowed = (top.aras.getItemProperty(document.item,"allow_sub_folders","0") === "1");
+ if (!folderAllowedRelationships || folderAllowedRelationships === "") {return;}
+
+ // names of relationships to include in this logic - item type specific !
+ var tabRelNamesForLogic = "";
+ switch (thisType)
+ {
+   case "Item Folder":
+     tabRelNamesForLogic = "Item Folder Controlled Item,Item Folder File";
+     if (!subFoldersAllowed)
+     {
+       tabRelNamesForLogic += ",Item Sub Folder";
+     }
+     break;
+ }
+ if (tabRelNamesForLogic === "") {return;}
+    
+ // get ids of RelationshipTypes of this ItemType (configuration)
+ var qry = top.aras.newIOMItem ("RelationshipType","get");
+ var aml = "<Item type='RelationshipType' action='get' select='id,name' oderBy='sort_order' serverEvents='0' >";
+ aml += "<source_id><Item type='ItemType' action='get' select='id' ><name>" + thisType + "</name></Item>";
+ aml += "</source_id></Item>";
+ qry.loadAML(aml);
+ qry = qry.apply();
+ if (qry.getItemCount() <= 0) {return;}
+   
+ var tabbar = parent.relationships.relTabbar;
+ var tabbarIdOrder = "";
+
+ for (var i=0; i<qry.getItemCount(); i++)
+ {
+   var tabId = qry.getItemByIndex(i).getID();
+   tabbarIdOrder += "," + tabId;
+   var tabRelName = qry.getItemByIndex(i).getProperty("name","");
+   var showTab = true;     
+   if (tabRelName === "Item Sub Folder")
+   {
+     if (!subFoldersAllowed && tabRelName === "Item Sub Folder")
+     {
+       showTab = false;
+     }
+   }
+   if (tabRelNamesForLogic.indexOf(tabRelName) >= 0)
+   {
+     showTab = false;
+     switch (folderAllowedRelationships)
+     {
+       case "attachments_and_controlled_items":
+         if (tabRelName === "Item Folder File" || tabRelName === "Item Folder Controlled Item") {showTab = true;}
+         break;
+       case "attachments_only":
+         if (tabRelName === "Item Folder File") {showTab = true;}
+         break;
+       case "controlled_items_only":
+         if (tabRelName === "Item Folder Controlled Item") {showTab = true;}
+         break;
+     }
+   }
+
+   try {tabbar.SetTabVisible(tabId,showTab);}
+   catch (err) {top.aras.AlertError("Failed to set tab ("+tabRelName+") visibility to '"+showTab+"'!");}
+ }
+ tabbarIdOrder = tabbarIdOrder.replace(/,/,""); // removes first comma found
+ try {tabbar.SetTabOrder(tabbarIdOrder,true);}
+ catch (err) {top.aras.AlertError("Failed to set tab order! Please close and re-open the form.");}
+
+ return;
+};
+setTimeout("top.hideFolderTabs();", 30);]]></method_code>
+  <method_type>JavaScript</method_type>
+  <name>Item Folder Hide Tabs</name>
+ </Item>
+</AML>

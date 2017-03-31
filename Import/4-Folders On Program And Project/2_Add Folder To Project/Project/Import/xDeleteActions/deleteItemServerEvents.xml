@@ -1,8 +1,0 @@
-<AML>
-<!-- from Item Type: Program  -->
-<Item type="Server Event" id="D0B764761DB8410AA3927C3EA62C5EAD" action="delete" keyed_name="Add TemplStuct to rel TopFolder" />
-
-<!-- from Item Type: Project  -->
-<Item type="Server Event" id="3CFD35FCC5CF4014B0AABC9B463494CB" action="delete" keyed_name="Add TemplStuct to rel TopFolder" />
-
-</AML>

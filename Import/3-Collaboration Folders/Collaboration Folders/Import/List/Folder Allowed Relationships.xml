@@ -1,0 +1,25 @@
+﻿<AML>
+ <Item type="List" id="CE2B317825BD45F680A0A30DBC7D63A0" action="add">
+  <name>Folder Allowed Relationships</name>
+  <Relationships>
+   <Item type="Value" id="E09DDDCF241143ADADD9084A72393AF1" action="add">
+    <label xml:lang="en">Attachments And Controlled Items</label>
+    <sort_order>10</sort_order>
+    <source_id keyed_name="Folder Allowed Relationships" type="List">CE2B317825BD45F680A0A30DBC7D63A0</source_id>
+    <value>attachments_and_controlled_items</value>
+   </Item>
+   <Item type="Value" id="5CD8ECB41F2B442B9F1C6446BDCF580D" action="add">
+    <label xml:lang="en">Attachments Only</label>
+    <sort_order>20</sort_order>
+    <source_id keyed_name="Folder Allowed Relationships" type="List">CE2B317825BD45F680A0A30DBC7D63A0</source_id>
+    <value>attachments_only</value>
+   </Item>
+   <Item type="Value" id="FED3248267A84AD3B71C02FDFCD89547" action="add">
+    <label xml:lang="en">Controlled Items Only</label>
+    <sort_order>30</sort_order>
+    <source_id keyed_name="Folder Allowed Relationships" type="List">CE2B317825BD45F680A0A30DBC7D63A0</source_id>
+    <value>controlled_items_only</value>
+   </Item>
+  </Relationships>
+ </Item>
+</AML>

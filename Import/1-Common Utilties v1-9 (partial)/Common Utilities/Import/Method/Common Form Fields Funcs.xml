@@ -1,0 +1,331 @@
+﻿<AML>
+ <Item type="Method" id="F32B5C1BCCCD494E9BAC4F37CB339BAF" action="add">
+  <comments>a library of JS function to be used on a Form</comments>
+  <execution_allowed_to keyed_name="World" type="Identity">A73B655731924CD0B027E4F4D5FCC0A9</execution_allowed_to>
+  <method_code><![CDATA[// must be used with Form Event "onLoad" !!!  before you can use the functions
+// ----Helper Functions --
+
+//Field types that can be used in some API functions: (case sensitive)
+//  "text","radiolist","checkbox","select","date","button","ItemRef","HtmlRef"
+
+CommonFormFunctions = function (itemTypeName)
+{
+  //debugger;
+  this.ItemTypeName = itemTypeName;
+};
+
+// API helper functions from here on ... \/\/\/\/
+
+CommonFormFunctions.prototype.setVisibilityOfFieldById = function CommonFormFunctions_setVisibilityOfFieldById(htmlElementId,bShowField)
+{
+  var field = document.getElementById(htmlElementId);
+  if (field) { ShowOrHideFieldElement (field, bShowField);}
+  return;
+};
+
+// -------
+CommonFormFunctions.prototype.setVisibilityOfFieldByPropName = function CommonFormFunctions_setVisibilityOfFieldByPropName(propName, bShowField)
+{
+  // Find the field with the same name as the property
+  var field = getFieldByName(propName);
+  if (field) { ShowOrHideFieldElement (field, bShowField);}
+  return;
+};
+
+// -------
+CommonFormFunctions.prototype.enableFieldByPropName = function CommonFormFunctions_enableFieldByPropName(FieldType, propName, doEnable)
+{
+  //debugger;
+  switch (FieldType)
+  {
+    case "checkbox":
+    case "text":
+    case "date":
+    case "button": //does not disable the Aras Form Field Events. - method must check disabled status !!!
+    case "radiolist":
+      enableSimpleFieldByName(propName,doEnable);
+      break;
+    case "itemprop":
+      enableItemFieldByName(propName, doEnable);
+      break;
+    case "select":
+      enableListFieldByPropName(propName,doEnable);
+      break;
+    case "Html":
+      enableHtmlInputFieldByName(propName);
+      break;
+      
+    default:
+      alert("FieldType '"+ FieldType +"' is not supported by Form helper function.");
+      break;
+  }
+};
+
+// -------
+CommonFormFunctions.prototype.setValueOfFieldByPropName = function CommonFormFunctions_setValueOfFieldByPropName(FieldType, propName, value)
+{
+  var currVal;
+    
+  switch (FieldType)
+  {
+    case "text":
+    case "list":
+    case "date":
+      var field = document.getElementsByName(propName)[0];
+      if (!field) {return;} //field element not found on form
+      field.value = value;
+      handleItemChange(propName,value);
+      break;
+      
+    default:
+      alert("FieldType '"+ FieldType +"' is not supported by Form helper function.");
+      break;
+  }
+
+};
+
+// -------
+CommonFormFunctions.prototype.getValueOfFieldByPropName = function CommonFormFunctions_getValueOfFieldByPropName(FieldType, propName, default_value)
+{
+  var retVal;
+    
+  switch (FieldType)
+  {
+    case "text":
+    case "list":
+    case "date":
+      var field = document.getElementsByName(propName)[0];
+      if (!field) {return;} //field element not found on form
+      retVal = field.value;
+      break;
+      
+    default:
+      alert("FieldType '"+ FieldType +"' is not supported by Form helper function.");
+      break;
+  }
+  if (!retVal || typeof(retVal) === undefined) {
+    if (!default_value || typeof(default_value) === undefined) {
+      retVal = default_value;
+    }
+  }
+  return retVal;
+};
+
+// -- Helper Functions
+CommonFormFunctions.prototype.isYesNoRadioButtonSet = function CommonFormFunctions_isYesNoRadioButtonSet(propName)
+{
+ return (GetValueOfSetRadioButtonByPropName(propName) == "1");
+};
+
+CommonFormFunctions.prototype.setYesNoRadioButton = function CommonFormFunctions_setYesNoRadioButton(propName, bIsYes)
+{
+  var val = bIsYes ? "1" : "0";
+  top.aras.setItemProperty(document.item,propName,val);
+  handleItemChange(propName,val);
+};
+
+CommonFormFunctions.prototype.clearYesNoRadioButton = function CommonFormFunctions_clearYesNoRadioButton(propName)
+{
+  top.aras.setItemProperty(document.item,propName,"");
+  handleItemChange(propName,"");
+};
+
+
+// -------
+CommonFormFunctions.prototype.getCheckBoxValueByPropName = function CommonFormFunctions_getCheckBoxValueByPropName(propName)
+{
+  var field = getFieldByName(propName);
+  if (field)
+  {
+    return field.checked;
+  }
+  return false;
+};
+
+// -------
+CommonFormFunctions.prototype.setCheckBoxFieldByPropName = function CommonFormFunctions_setCheckBoxFieldByPropName(propName,isOn)
+{
+  var field = getFieldByName(propName);
+  if (field)
+  {
+    field.checked = isOn;
+  }
+};
+
+// -------
+CommonFormFunctions.prototype.isCurrUserMemberOfIdentityId = function CommonFormFunctions_isCurrUserMemberOfIdentityId(identity_id_to_check)
+{
+  return IsCurrUserMemberOfIdentityId (identity_id_to_check);
+};
+// -------
+CommonFormFunctions.prototype.isCurrUserMemberOfIdentityName = function CommonFormFunctions_isCurrUserMemberOfIdentityName(identity_name_to_check)
+{
+  if (identity_name_to_check === "") {return false;}
+  
+  var identItem = top.aras.IOMnewItem ("","");
+  identItem.loadAML("<Item type='Identity' action='get' select='id' serverEvents='0'><name>"+identity_name_to_check+"</name></Item>");
+  identItem = identItem.apply();
+  if (identItem.isError()) {return false;}
+  
+  return IsCurrUserMemberOfIdentityId (identItem.getProperty("id",""));
+};
+// -------
+CommonFormFunctions.prototype.isCurrUserMemberOfThisManager = function CommonFormFunctions_isCurrUserMemberOfThisManager()
+{
+  var managed_by_id = document.thisItem.getProperty("managed_by_id","");
+  if (managed_by_id === "") {return false;}  
+  return IsCurrUserMemberOfIdentityId (managed_by_id);
+};
+// -------
+CommonFormFunctions.prototype.isCurrUserMemberOfThisOwner = function CommonFormFunctions_isCurrUserMemberOfThisOwner()
+{
+  var owned_by_id = document.thisItem.getProperty("owned_by_id","");
+  if (owned_by_id === "") {return false;}  
+  return IsCurrUserMemberOfIdentityId (owned_by_id);
+};
+
+// -------
+IsCurrUserMemberOfIdentityId = function (identity_id_to_check)
+{
+  if (identity_id_to_check === "") {return false;}
+    
+  var sessionIdentitites_array = top.aras.getIdentityList().split(",");
+  // now we have all identities the current user (session) is member of
+  // scan if given identity is in the list - if yes, return true
+  for (var i=0;i<sessionIdentitites_array.length;i++) {
+    if (identity_id_to_check == sessionIdentitites_array[i]) {return true;}
+  }
+  return false;
+};
+
+
+// -------
+GetValueOfSetRadioButtonByPropName = function (propName)
+{
+  var e = document.item.selectSingleNode(propName);
+  if (!e){return "";}
+  
+  var itm = top.aras.newIOMItem("", "");
+  if (!e.xml || e.xml === undefined){return "";}
+  itm.loadAML("<Item type='TEMP' >" + e.xml + "</Item>");
+  
+  return itm.getProperty(propName,"");
+};
+
+// -------
+ShowOrHideFieldElement = function (fieldElement, bShowField)
+{
+  if (fieldElement) {
+    var visibility = bShowField ? "visible" : "hidden";
+    var display    = bShowField ? ""        : "none";
+    
+    var fieldStyle = fieldElement.style;
+    fieldStyle.visibility = visibility;
+    fieldStyle.display    = display;
+  }
+  return;
+};
+
+//## show hide complex fields .. i.e. radio buttons etc
+//  element.style.display = (doHide ? "" : "block");
+//  element.parentElement.all.tags("DIV")[0].style.display = (doHide ? "" : "none");
+
+// -------
+EnableOrDisableField = function (fieldElement, bEnabled) {
+  // may require different logic base on fieldElement.type ??
+  if (fieldElement) {
+     fieldElement.disabled = !bEnabled;
+  }
+};
+
+// -------
+enableSimpleFieldByName = function (fieldName,doEnable) {
+  var element = getFieldByName(fieldName);
+  EnableOrDisableField(element, doEnable);
+};
+
+// -------
+// use type="select" for dropdown fields
+enableListFieldByPropName = function (propName, doEnable) {
+  var elements = document.getElementsByTagName("select");
+  if (elements) {
+    for(var i=0;i<elements.length;i++) {
+      var element = elements.item(i);
+        if ( element.name == propName) {
+           EnableOrDisableField(element, !doEnable);
+       }
+    } 
+  }
+};
+
+// -------
+enableHtmlFieldByName = function (propName, doEnable) {
+  enableTagsOfSpan ("input",propName, doEnable);
+  var span = getSpanByClassName(propName);
+  if (span) {
+    span.onclick="";
+  }
+};
+
+// -------
+enableItemFieldByName = function (propName, doEnable) {
+  if (!doEnable)
+  {
+   var span = getSpanByClassName(propName);
+   span.onclick="";
+   for (var i = 0; i < span.childNodes.length; i++)
+   {
+    var e = span.childNodes[i];
+    if (e.type == "image") {ShowOrHideFieldElement(e, false);}
+   }
+  }
+  enableSimpleFieldByName(propName,doEnable); 
+};
+
+
+// -------
+function enableTagsOfSpan(tagName,spanName,doEnable) {
+    var span = getSpanByPropName(spanName);
+    if (span) {
+      var tags = span.getElementsByTagName(tagName);
+      for (var i = 0; i < tags.length; i++) {
+        tags.item(i).disabled = !doEnable;
+      }
+    }
+} 
+
+// -------
+function getSpanByPropName(propNm) {
+  var spans = document.getElementsByTagName("span");
+  if (spans) {
+    var s;
+    for (var i=0; i<spans.length; i++) {
+      s = spans[i];
+      if (s.name==propNm) {
+        return s;
+      }
+    }
+  }
+  return null;
+}
+
+// -------
+function getSpanByClassName(classNm)
+{
+  var spans = document.getElementsByTagName("span");
+  var s;
+  for (var i=0; i<spans.length; i++)
+  {
+    s = spans[i];
+    if (s.className == classNm)
+    {
+      return s;
+    }
+  }
+  return null;
+} 
+]]></method_code>
+  <method_type>JavaScript</method_type>
+  <name>CommonFormFuncs_API</name>
+ </Item>
+</AML>

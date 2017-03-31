@@ -1,0 +1,229 @@
+﻿<AML>
+ <Item type="RelationshipType" id="4A41FCCF15B54ED6BB8B36F928784474" action="add" dependencyLevel="0">
+  <auto_search>1</auto_search>
+  <behavior>float</behavior>
+  <copy_permissions>0</copy_permissions>
+  <create_related>1</create_related>
+  <hide_in_all>0</hide_in_all>
+  <inc_rel_key_name>1</inc_rel_key_name>
+  <inc_related_key_name>1</inc_related_key_name>
+  <is_list_type>0</is_list_type>
+  <label xml:lang="en">Folder Attachments</label>
+  <name>Item Folder File</name>
+  <new_show_related>0</new_show_related>
+  <related_id keyed_name="File" type="ItemType" name="File">8052A558B9084D41B9F11805E464F443</related_id>
+  <related_notnull>1</related_notnull>
+  <related_option>1</related_option>
+  <relationship_id keyed_name="Item Folder File" type="ItemType" name="Item Folder File">
+   <Item type="ItemType" id="022CE9AE944743CA9A9215DCAF042D20" action="add">
+    <allow_private_permission>1</allow_private_permission>
+    <auto_search>0</auto_search>
+    <enforce_discovery>0</enforce_discovery>
+    <hide_where_used>0</hide_where_used>
+    <implementation_type>table</implementation_type>
+    <instance_data>ITEM_FOLDER_FILE</instance_data>
+    <is_dependent>0</is_dependent>
+    <is_relationship>1</is_relationship>
+    <is_versionable>0</is_versionable>
+    <manual_versioning>0</manual_versioning>
+    <name>Item Folder File</name>
+    <open_icon>../images/Icons/16x16/16x16_relationship1.gif</open_icon>
+    <revisions keyed_name="Default" type="Revision">7FE395DD8B9F4E1090756A34B733D75E</revisions>
+    <show_parameters_tab>1</show_parameters_tab>
+    <unlock_on_logout>0</unlock_on_logout>
+    <use_src_access>1</use_src_access>
+    <Relationships>
+     <Item type="Property" id="85259A3E2696422F98B4292E24F408E3" action="add">
+      <column_alignment>center</column_alignment>
+      <column_width>60</column_width>
+      <data_type>boolean</data_type>
+      <default_value xml:lang="en">1</default_value>
+      <is_hidden>0</is_hidden>
+      <is_hidden2>0</is_hidden2>
+      <is_indexed>0</is_indexed>
+      <is_keyed>0</is_keyed>
+      <is_multi_valued>0</is_multi_valued>
+      <is_required>0</is_required>
+      <label xml:lang="en">Is Shared</label>
+      <name>is_shared</name>
+      <range_inclusive>0</range_inclusive>
+      <readonly>0</readonly>
+      <sort_order>10</sort_order>
+      <source_id keyed_name="Item Folder File" type="ItemType" name="Item Folder File">022CE9AE944743CA9A9215DCAF042D20</source_id>
+      <track_history>0</track_history>
+     </Item>
+     <Item type="Property" id="8C191C80506D4C0699DEC1A5BBFC22FF" action="add">
+      <column_alignment>center</column_alignment>
+      <column_width>50</column_width>
+      <data_type>boolean</data_type>
+      <is_hidden>1</is_hidden>
+      <is_hidden2>1</is_hidden2>
+      <is_indexed>0</is_indexed>
+      <is_keyed>0</is_keyed>
+      <is_multi_valued>0</is_multi_valued>
+      <is_required>0</is_required>
+      <label xml:lang="en">Templ</label>
+      <name>is_template</name>
+      <range_inclusive>0</range_inclusive>
+      <readonly>0</readonly>
+      <sort_order>3594</sort_order>
+      <source_id keyed_name="Item Folder File" type="ItemType" name="Item Folder File">022CE9AE944743CA9A9215DCAF042D20</source_id>
+      <track_history>0</track_history>
+     </Item>
+     <Item type="Property" id="C78227C249104837B403349DA6625EE4" action="add">
+      <column_alignment>center</column_alignment>
+      <column_width>100</column_width>
+      <data_type>boolean</data_type>
+      <default_value xml:lang="en">0</default_value>
+      <is_hidden>0</is_hidden>
+      <is_hidden2>0</is_hidden2>
+      <is_indexed>0</is_indexed>
+      <is_keyed>0</is_keyed>
+      <is_multi_valued>0</is_multi_valued>
+      <is_required>0</is_required>
+      <label xml:lang="en">Referenced File</label>
+      <name>referenced_file</name>
+      <range_inclusive>0</range_inclusive>
+      <readonly>0</readonly>
+      <sort_order>7178</sort_order>
+      <source_id keyed_name="Item Folder File" type="ItemType" name="Item Folder File">022CE9AE944743CA9A9215DCAF042D20</source_id>
+      <track_history>0</track_history>
+      <Relationships>
+       <Item type="Grid Event" id="909F6A95FAC5428796195178BEB77654" action="add">
+        <grid_event>oneditstart</grid_event>
+        <related_id keyed_name="Grid Cell ReadOnly" type="Method">
+         <Item type="Method" action="get" select="id">
+          <name>Grid Cell ReadOnly</name>
+         </Item>
+        </related_id>
+        <sort_order>128</sort_order>
+        <source_id keyed_name="referenced_file" type="Property">C78227C249104837B403349DA6625EE4</source_id>
+       </Item>
+      </Relationships>
+     </Item>
+     <Item type="Server Event" id="81F55162FE8A482881FD45ACDCC1E31A" action="add">
+      <related_id keyed_name="PE_update_has_files_flag" type="Method">
+       <Item type="Method" action="get" select="id">
+        <name>PE_update_has_files_flag</name>
+       </Item>
+      </related_id>
+      <server_event>onAfterAdd</server_event>
+      <sort_order>10</sort_order>
+      <source_id keyed_name="Item Folder File" type="ItemType" name="Item Folder File">022CE9AE944743CA9A9215DCAF042D20</source_id>
+     </Item>
+     <Item type="Server Event" id="BF15686EF11C480684FA02A43D056A1C" action="add">
+      <related_id keyed_name="Set Templ Flag on Folder Rel" type="Method">
+       <Item type="Method" action="get" select="id">
+        <name>Set Templ Flag on Folder Rel</name>
+       </Item>
+      </related_id>
+      <server_event>onAfterAdd</server_event>
+      <sort_order>5</sort_order>
+      <source_id keyed_name="Item Folder File" type="ItemType" name="Item Folder File">022CE9AE944743CA9A9215DCAF042D20</source_id>
+     </Item>
+     <Item type="Server Event" id="EFE06B0521C841859D6097566C927947" action="add">
+      <related_id keyed_name="PE_update_has_files_flag" type="Method">
+       <Item type="Method" action="get" select="id">
+        <name>PE_update_has_files_flag</name>
+       </Item>
+      </related_id>
+      <server_event>onAfterDelete</server_event>
+      <sort_order>10</sort_order>
+      <source_id keyed_name="Item Folder File" type="ItemType" name="Item Folder File">022CE9AE944743CA9A9215DCAF042D20</source_id>
+     </Item>
+     <Item type="Server Event" id="5C4DCD027A8F4669897805C4535AD287" action="add">
+      <related_id keyed_name="PE_update_has_files_flag" type="Method">
+       <Item type="Method" action="get" select="id">
+        <name>PE_update_has_files_flag</name>
+       </Item>
+      </related_id>
+      <server_event>onAfterUpdate</server_event>
+      <sort_order>10</sort_order>
+      <source_id keyed_name="Item Folder File" type="ItemType" name="Item Folder File">022CE9AE944743CA9A9215DCAF042D20</source_id>
+     </Item>
+     <Item type="Server Event" id="DBFCA5CE1A6841589AB46E0196AAB0F5" action="add">
+      <related_id keyed_name="PE_update_has_files_flag" type="Method">
+       <Item type="Method" action="get" select="id">
+        <name>PE_update_has_files_flag</name>
+       </Item>
+      </related_id>
+      <server_event>onAfterVersion</server_event>
+      <sort_order>10</sort_order>
+      <source_id keyed_name="Item Folder File" type="ItemType" name="Item Folder File">022CE9AE944743CA9A9215DCAF042D20</source_id>
+     </Item>
+     <Item type="Server Event" id="F8D0CC6C45B246D5AAD1D6810E79911A" action="add">
+      <related_id keyed_name="Increment SortOrder BeforeAdd" type="Method">
+       <Item type="Method" action="get" select="id">
+        <name>Increment SortOrder BeforeAdd</name>
+       </Item>
+      </related_id>
+      <server_event>onBeforeAdd</server_event>
+      <sort_order>10</sort_order>
+      <source_id keyed_name="Item Folder File" type="ItemType" name="Item Folder File">022CE9AE944743CA9A9215DCAF042D20</source_id>
+     </Item>
+     <Item type="Server Event" id="A5D804071E2B4463AEEC6A581D0E780E" action="add">
+      <related_id keyed_name="EnforceSharedFlagOnFileRels" type="Method">
+       <Item type="Method" action="get" select="id">
+        <name>EnforceSharedFlagOnFileRels</name>
+       </Item>
+      </related_id>
+      <server_event>onBeforeGet</server_event>
+      <sort_order>10</sort_order>
+      <source_id keyed_name="Item Folder File" type="ItemType" name="Item Folder File">022CE9AE944743CA9A9215DCAF042D20</source_id>
+     </Item>
+    
+     <Item type="View" id="EF920867251B49BF8B059218CFDBA5C9" action="add">
+      <client>js</client>
+      <related_id keyed_name="Item Folder File" type="Form">D31DE256578345A2BFDA4997248340AC</related_id>
+      <role keyed_name="World" type="Identity">
+       <Item type="Identity" action="get" select="id">
+        <name>World</name>
+       </Item>
+      </role>
+      <sort_order>128</sort_order>
+      <source_id keyed_name="Item Folder File" type="ItemType" name="Item Folder File">022CE9AE944743CA9A9215DCAF042D20</source_id>
+      <type>default</type>
+     </Item></Relationships>
+   </Item>
+  </relationship_id>
+  <sort_order>10</sort_order>
+  <source_id keyed_name="Item Folder" type="ItemType" name="Item Folder">C0C8138AB15C41F59FA629EB8EAE2DC2</source_id>
+ </Item>
+ <Item type="ItemType" id="022CE9AE944743CA9A9215DCAF042D20" action="edit">
+  <Relationships>
+   <Item type="Property" action="edit" where="source_id='022CE9AE944743CA9A9215DCAF042D20' and name='generation'">
+    <column_alignment>left</column_alignment>
+    <data_type>integer</data_type>
+    <is_hidden>1</is_hidden>
+    <is_hidden2>1</is_hidden2>
+    <is_indexed>0</is_indexed>
+    <is_keyed>0</is_keyed>
+    <is_multi_valued>0</is_multi_valued>
+    <is_required>0</is_required>
+    <name>generation</name>
+    <range_inclusive>0</range_inclusive>
+    <readonly>1</readonly>
+    <sort_order>2432</sort_order>
+    <source_id keyed_name="Item Folder File" type="ItemType" name="Item Folder File">022CE9AE944743CA9A9215DCAF042D20</source_id>
+    <track_history>0</track_history>
+   </Item>
+   <Item type="Property" action="edit" where="source_id='022CE9AE944743CA9A9215DCAF042D20' and name='sort_order'">
+    <column_alignment>left</column_alignment>
+    <data_type>integer</data_type>
+    <is_hidden>1</is_hidden>
+    <is_hidden2>0</is_hidden2>
+    <is_indexed>0</is_indexed>
+    <is_keyed>0</is_keyed>
+    <is_multi_valued>0</is_multi_valued>
+    <is_required>0</is_required>
+    <label xml:lang="en">Pos</label>
+    <name>sort_order</name>
+    <range_inclusive>0</range_inclusive>
+    <readonly>0</readonly>
+    <sort_order>1</sort_order>
+    <source_id keyed_name="Item Folder File" type="ItemType" name="Item Folder File">022CE9AE944743CA9A9215DCAF042D20</source_id>
+    <track_history>0</track_history>
+   </Item>
+  </Relationships>
+ </Item>
+</AML>

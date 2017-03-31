@@ -1,0 +1,28 @@
+﻿<AML>
+ <Item type="Method" id="F22FDF2A14494FCBB85C0CBBDD2DCF03" action="add">
+  <comments>Item Folder - sets defaults to allow_sub_folders and allowed_relaionships rules. - SQL</comments>
+  <execution_allowed_to keyed_name="Administrators" type="Identity">2618D6F5A90949BAA7E920D1B04C7EE1</execution_allowed_to>
+  <method_code><![CDATA[' Use Run Method action
+
+' Data Administration tool
+Dim SQLstr As String = ""
+Dim inn As Innovator = Me.getInnovator()
+'System.Diagnostics.Debugger.Break()
+
+' select Item Sub Folder relationship
+SQLstr = "UPDATE [Item_Folder] SET [Item_Folder].allow_sub_folders = '1'"
+SQLstr = SQLstr & " WHERE [Item_Folder].allow_sub_folders is Null"
+Dim res As Item = inn.applySQL(SQLstr)
+If res.isError() Then Return inn.newError(res.getErrorString())
+
+' select Item Sub Folder relationship
+SQLstr = "UPDATE [Item_Folder] SET [Item_Folder].allowed_relationships = 'attachments_and_controlled_items'"
+SQLstr = SQLstr & " WHERE [Item_Folder].allowed_relationships is Null"
+res = inn.applySQL(SQLstr)
+If res.isError() Then Return inn.newError(res.getErrorString())
+
+Return inn.newResult("DONE")]]></method_code>
+  <method_type>VB</method_type>
+  <name>SYS_ItemFolder Admin Helper 03</name>
+ </Item>
+</AML>
