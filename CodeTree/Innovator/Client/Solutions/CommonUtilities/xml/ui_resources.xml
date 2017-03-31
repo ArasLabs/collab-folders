@@ -1,0 +1,33 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ui_resources>
+	<resource key="commonUtilities.message.unknown_error" value="An unknown error has occurred. Please contact your System Administrator"/>
+	<resource key="commonUtilities.message.undefined" value="Undefined error message !"/>
+
+	
+	<resource key="commonUtilities.message.cannot_load_grid_configuration" value="Cannot load grid configuration '{0}' !  ERROR: "/>
+	<resource key="commonUtilities.message.config_of_grid_view_x_does_not_exist" value="Configuration of grid view does not exist --> "/>
+	<resource key="commonUtilities.message.invalid_config_of_change_action" value="Missing or invalid configuration of change Action column in config xml file!"/>
+		
+	<resource key="commonUtilities.message.user_must_be_owner_of_item_for_action" value="User must be Owner for this action !"/>
+	<resource key="commonUtilities.message.item_must_be_locked_for_action" value="Item must be locked for this action!"/>
+	<resource key="commonUtilities.message.attached_files_not_retrieved" value="Attached files could not be retrieved from server again. There might be a permission issue with shared files on this folder!"/>
+	<resource key="commonUtilities.message.already_locked" value="Already locked by you or someone else ! (Refresh grid to update status)"/>
+	<resource key="commonUtilities.message.item_not_locked" value="Item is not locked ! (Refresh grid to update status)"/>
+	<resource key="commonUtilities.message.cannot_unlock_locked_by_other" value="Cannot unlock! Item is locked by someone else."/>
+	<resource key="commonUtilities.message.error_getting_parent_of_grid_row" value="Error getting parent of this row ! Contact your System Administrator."/>
+	<resource key="commonUtilities.message.newer_item_version_found_refresh_grid_first" value="Item of this row has newer version. Please refresh the grid and repeat this action !"/>
+	<resource key="commonUtilities.message.action_not_allowed_on_rows_of_this_type" value="This action is not allowed for rows of this type !"/>
+	<resource key="commonUtilities.message.error_getting_parent_of_group_row" value="Error getting parent of this row ! Contact your System Administrator."/>
+	<resource key="commonUtilities.message.action_not_allowed_on_rows_of_type_x" value="This action is not allowed on rows of type: "/>
+	<resource key="commonUtilities.message.action_not_allowed_on_root_rows" value="This action is not allowed on Root rows !"/>
+	<resource key="commonUtilities.message.effectivity_must_be_current_for_action" value="Effectivity must be 'Current' to do this action !"/>
+	<resource key="commonUtilities.message.unlock_error" value="Unlock Error: "/>
+	<resource key="commonUtilities.message.get_item_current_generation_error" value="Error getting current generation of item: "/>
+	<resource key="commonUtilities.message.get_item_released_generation_error" value="Error getting released generation of item: "/>
+	<resource key="commonUtilities.message.view_item_files_error" value="Error with viewing item's files: "/>
+	<resource key="commonUtilities.message.view_cad_viewable_error" value="Error with viewing CAD viewable: "/>
+	<resource key="commonUtilities.message.add_to_change_error" value="Error with adding item to change: "/>
+
+	<resource key="commonUtilities.message.refreh_grid_to_see_results" value="You must refresh the grid to see the result of this action !"/>
+	
+</ui_resources>

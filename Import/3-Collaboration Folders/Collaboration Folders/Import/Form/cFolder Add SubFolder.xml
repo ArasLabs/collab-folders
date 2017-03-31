@@ -72,9 +72,9 @@
       <Relationships>
        <Item type="Field Event" id="B69E9461BB8A445282F461BDF44C21C6" action="add">
         <field_event>onclick</field_event>
-        <related_id keyed_name="cFolder TopWinClose" type="Method">
+        <related_id keyed_name="cFolder DialogWinClose" type="Method">
          <Item type="Method" action="get" select="id">
-          <name>cFolder TopWinClose</name>
+          <name>cFolder DialogWinClose</name>
          </Item>
         </related_id>
         <sort_order>128</sort_order>

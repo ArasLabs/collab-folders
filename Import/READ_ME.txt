@@ -1,4 +1,4 @@
-Notice of Liability
+﻿Notice of Liability
 -------------------
 The information contained in this document and the import packages are distributed on an "As Is" basis, 
 without warranty of any kind, express or implied, including, but not limited to, the implied warranties 
@@ -17,6 +17,103 @@ Author:
 
 Version:
 --------
+v5-0 (Oct 2016)
+- upgraded to work with 11SP7 and Chrome (still some issues with Chrome, creating new controlled item on treeGrid)
+- now uses updated versions of "common Utitlties(v-3-0)" and "common Grid Utiltities(v3-1)" (partial)
+
+- Moved grid configuration to xml file read from a code tree location.
+  The filename of this configuration file must be defined in a "Variable"
+  with this naming convention: "tGridCfg <item type name>"
+  where <item type name> is the item types using the collaboration folder navigator grid (i.e "tGridCfg cFolder")
+
+- CodeTreeOverlay now contain Grid config XML and javascript library modules of "common Grid Utitltites"
+- added structure grid handler (logik) specific to Colloboration Folder (instead of generic from common Grid Utitities)
+
+
+
+Known Issues
+------------
+- right click menu actions don't always fire first time. second time works.
+- Folder Navigator: action "cut_folder" not implemented, yet. 
+- Folder Navigator: action "paste_folder" not implemented, yet. 
+- File Drag n Drop not yet implemented (can be cloned from "relatioshipsgrid.js") !
+- Loading by level no longer supported. For large structures loading can take a while. Future release may re-introduce loading by levels
+. where used & structure browser base actions no longer work.  check new way of using Dependencies module (JS)
+
+
+=========================
+Installation Instructions
+=========================
+	(1) Start the Aras Packing "Import Tool" and logon as "admin". 
+
+	The imports will require multiple steps that need to be run extactly in the sequence listed below. Use option MERGE for all steps !!!
+
+	1-Other Dependent Packages:
+		Select this manifest File "…\1-Other Dependent Packages\1-Common Utilties v2-1 (partial)\imports (admin).mf"
+		"Common Utilities" <-- place check mark in this option and start the import.
+
+		Select this manifest File "…\1-Other Dependent Packages\2-Common Grid Utilities v3-0\1-Grid Utilities\imports (admin).mf"
+		"Common Grid Utilities" <-- place check mark in this option and start the import.
+
+	2-Innovator Core and PLM extensions:
+		Select this manifest File "…\2-Innovator Core and PLM extensions\1-imports - PLM (admin).mf"
+		"com.aras.innovator.solution.PLM" <-- place check mark in this option and start the import.
+
+		Select this manifest File "…\2-Innovator Core and PLM extensions\2-imports - CF (admin).mf"
+		"Collaboration Folders" <-- place check mark in this option and start the import.
+
+		Select this manifest File "…\2-Innovator Core and PLM extensions\3-imports - core (admin).mf"
+		"com.aras.innovator.core" <-- place check mark in this option and start the import.
+
+	3-Collaboration Folders:
+		(Optional) Select this manifest File "…\3-Collaboration Folders\1-imports (admin) - Renaming.mf"
+		"Collaboration Folders" <-- place check mark in this option and start the import.
+
+		Select this manifest File "…\3-Collaboration Folders\2-imports (admin).mf"
+		"Collaboration Folders" <-- place check mark in this option and start the import.
+
+	(Optional) 4-Collaboration Folders on TOC:
+		Select this manifest File "…\4-Collaboration Folders on TOC\imports (admin).mf"
+		"Collaboration Folders" <-- place check mark in this option and start the import.
+
+	(Optional) 5-Configuration Data:
+		Select this manifest File "…\5-Configuration Data\imports (admin).mf"
+		"Collaboration Folders" <-- place check mark in this option and start the import.
+		## this import will fail, if you do not have the grid configurations from package "Common Grid Utilities" loaded already ##
+
+	(Optional) 6-Folders On Program And Project:
+		Select this manifest File "…\6-Folders On Program And Project\1_AddToProgram\1-imports - CF (admin).mf"
+		"Collaboration Folders" <-- place check mark in this option and start the import.
+
+		Select this manifest File "…\6-Folders On Program And Project\1_AddToProgram\2-imports - Program (admin).mf"
+		"com.aras.innovator.solution.Project" <-- place check mark in this option and start the import.
+			
+		Select this manifest File "…\6-Folders On Program And Project\2_AddToProject\1-imports - CF (admin).mf"
+		"Collaboration Folders" <-- place check mark in this option and start the import.
+
+		Select this manifest File "…\6-Folders On Program And Project\2_AddToProject\2-imports - Project (admin).mf"
+		"com.aras.innovator.solution.Project" <-- place check mark in this option and start the import.
+		
+	(Optional) \SetPackageVersion :
+		Select this manifest File "…\SetPackageVersion (optioal)\imports (admin).mf"
+		"Collaboration Folders" <-- place check mark in this option and start the import.
+		## this import will fail, if you do not have the package "Package Utilities v1-6(A11)" loaded already ##
+		
+
+
+	(2) After all imports have finished the final step is to copy some add-on "images" and "ui_resource"(for multi-language messages) files
+		into the "CodeTree" of your Aras installation.
+
+		Open folder "…\_CodeTreeOverlays" then copy folder "Innovator". Navigate to your CodeTree and paste the "Innovator" folder to the installation root.
+		Choose option "overwrite", if older versions of any file are found.
+
+
+
+
+################
+Version History:
+################
+
 V4-0 (Oct 2015)
 - added flexible "Grid Configurations" based on "CommonBase Grid Utiltities" (package)
 - added new folder relationship "cFolder URL" that allows 
@@ -30,76 +127,6 @@ V4-0 (Oct 2015)
 	--> configuration can point to a folder identified by its "config_id" to be displayed in a TOC Folder
 	--> configuration can have "config_id" = "root:*" so all root folder accessible by user are displayed in a TOC Folder
 	--> configuration can have "config_id" = "root:owner" so all root folder directly owned by user "My Folders" are displayed in a TOC Folder
-
-
-Known Issues
-------------
-- Folder Navigator: action "refresh_this_folder" does not work and got disabled.
-- Folder Navigator: action "cut_folder" not implemented, yet. 
-- Folder Navigator: action "paste_folder" not implemented, yet. 
-- File Drag n Drop does not yet work with Aras 11 !
-- Loading by level no longer supported. For large structures loading can take a while. Future release may re-introduce loading by levels
-
-
-=========================
-Installation Instructions
-=========================
-	1. Start the Aras Packing "Import Tool" and logon as "admin". 
-
-	The imports will require multiple steps that need to be run extactly in the sequence listed below. Use option MERGE for all steps !!!
-
-	STEP1:  Select this manifest File "…\1-Other Dependent Packages\1-Common Utilties v2-1 (partial)\imports (admin).mf"
-		"Common Utilities" <-- place check mark in this option and start the import.
-
-	STEP2:  Select this manifest File "…\1-Other Dependent Packages\2-Common Grid Utilities v3-0\1-Grid Utilities\imports (admin).mf"
-		"Common Grid Utilities" <-- place check mark in this option and start the import.
-
-	STEP3:  Select this manifest File "…\2-Innovator Core and PLM extensions\1-imports - PLM (admin).mf"
-		"com.aras.innovator.solution.PLM" <-- place check mark in this option and start the import.
-
-	STEP4:  Select this manifest File "…\2-Innovator Core and PLM extensions\2-imports - core (admin).mf"
-		"com.aras.innovator.core" <-- place check mark in this option and start the import.
-
-	STEP5:  Select this manifest File "…\3-Collaboration Folders\1-imports (admin) - Renaming.mf"
-		"Collaboration Folders" <-- place check mark in this option and start the import.
-
-	STEP6:  Select this manifest File "…\3-Collaboration Folders\2-imports (admin).mf"
-		"Collaboration Folders" <-- place check mark in this option and start the import.
-
-	(Optional) STEP7:  Select this manifest File "…\4-Collaboration Folders on TOC\imports (admin).mf"
-		"Collaboration Folders" <-- place check mark in this option and start the import.
-
-	STEP8:  Select this manifest File "…\5-Configuration Data\imports (admin).mf"
-		"Collaboration Folders" <-- place check mark in this option and start the import.
-
-	(Optional) STEP9:  Select this manifest File "…\6-Folders On Program And Project\1_AddToProgram\1-imports - CF (admin).mf"
-		"Collaboration Folders" <-- place check mark in this option and start the import.
-
-	(Optional) STEP10:  Select this manifest File "…\6-Folders On Program And Project\1_AddToProgram\2-imports - Program (admin).mf"
-		"com.aras.innovator.solution.Project" <-- place check mark in this option and start the import.
-			
-	(Optional) STEP11:  Select this manifest File "…\6-Folders On Program And Project\2_AddToProject\1-imports - CF (admin).mf"
-		"Collaboration Folders" <-- place check mark in this option and start the import.
-
-	(Optional) STEP12:  Select this manifest File "…\6-Folders On Program And Project\2_AddToProject\2-imports - Project (admin).mf"
-		"com.aras.innovator.solution.Project" <-- place check mark in this option and start the import.
-		
-	(Optional) STEP13:  Select this manifest File "…\SetPackageVersion (optioal)\imports (admin).mf"
-		"Collaboration Folders" <-- place check mark in this option and start the import.
-		## this import will fail, if you do not have the package "Package Utilities v1-6(A11)" loaded already ##
-		
-
-	2. After all imports have finished the final step is to copy some add-on "images" and "ui_resource"(for multi-language messages) files into the
-	"CodeTree" of your Aras installation.
-		Open folder "…\_CodeTreeOverlays" then copy folder "Innovator". Navigate to your CodeTree and paste the "Innovator" folder to the installation root.
-		Choose option "overwrite", if older versions of any file are found.
-
-
-
-
-################
-Version History:
-################
 
 V3-1 (May 2014)
 - added dynamic grid context menu logic

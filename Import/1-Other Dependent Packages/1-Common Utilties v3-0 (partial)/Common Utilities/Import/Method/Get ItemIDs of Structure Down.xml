@@ -1,0 +1,76 @@
+﻿<AML>
+ <Item type="Method" id="7436B319E38145959F4D4E8179A96B94" action="add">
+  <comments>generic method that traverses the structure of a defined relationship</comments>
+  <execution_allowed_to keyed_name="World" type="Identity">A73B655731924CD0B027E4F4D5FCC0A9</execution_allowed_to>
+  <method_code><![CDATA[/// defined Releationship must have source and related item of the same type
+
+/// Item context is the itemType of the starting item (sourceItem)
+/// custom attribute "relationshipName" must be set. It defines the relationships to traverse
+/// (optional) custom attribute "isReleased='1'" can be set. To traverse logic will check for latest released child items only
+
+/// the methods returns a comma separated list of ids, or an empty result, if nothing found
+/// NOTE: the result does not include the id of the starting item ! 
+
+  // System.Diagnostics.Debugger.Break();
+  GlobalVars.inn = this.getInnovator();
+  
+  // returns a comma separated list of item Ids
+  GlobalVars.IdsList = "##";  //reset global variable
+
+  String relationshipName = this.getAttribute("relationshipName","");
+  bool isReleased = (this.getAttribute("isReleased","0") == "1");
+
+  if (relationshipName == "") {return GlobalVars.inn.newError("Method 'Get ItemIDs of Structure Down' failed!. Custom attribute 'relationshipName' not set.");}
+
+  Item res = fn_traverseStructureDown (this.getType(), this.getID(),relationshipName, isReleased );
+  if (res.isError()) { return GlobalVars.inn.newResult("");}
+  if (GlobalVars.IdsList == "##") { return GlobalVars.inn.newResult("");}
+  
+  return GlobalVars.inn.newResult(GlobalVars.IdsList.Replace("##,",""));
+}
+
+// Global Variables
+public static class GlobalVars
+{
+	// constants
+	// public const string specialCaseElements = "Property,Field,View";
+
+    // Global static variable.
+	public static Innovator inn;
+	public static String IdsList;
+}
+
+//-----------
+Item fn_traverseStructureDown (String startItemType, String startItemId, String relationshipName, bool isReleased) {
+	String amlCmd = "<Item type='" + relationshipName + "' action='get' serverEvents='0' select='sort_order,source_id(id,name,generation),related_id(id,name,generation)' >";
+	amlCmd += "<source_id>" + startItemId + "</source_id>";
+	amlCmd += "<related_id><Item type='" + startItemType + "' action='get' serverEvents='0' select='id,name,generation)'>";
+ 
+	if (isReleased) { amlCmd = amlCmd + "<is_released>1</is_released>";}
+	amlCmd += "</Item></related_id>";
+	amlCmd += "</Item>";
+ 
+	Item relsItems = GlobalVars.inn.newItem("","");
+	relsItems.loadAML(amlCmd);
+	relsItems = relsItems.apply();
+	if (relsItems.isError()) { return relsItems;}
+ 
+	for (int i=0; i<relsItems.getItemCount(); i++) {
+		String itemId = relsItems.getItemByIndex(i).getProperty("related_id","");
+		if (itemId != "") {GlobalVars.IdsList = GlobalVars.IdsList + "," + itemId;}
+ 	
+		// recursive call
+		fn_traverseStructureDown(startItemType,itemId,relationshipName,isReleased);
+	}
+	return this;
+}
+
+// needed to end method
+void methodEnd () {
+	return;
+]]></method_code>
+  <method_type>C#</method_type>
+  <owned_by_id keyed_name="Innovator Admin" type="Identity">DBA5D86402BF43D5976854B8B48FCDD1</owned_by_id>
+  <name>Get ItemIDs of Structure Down</name>
+ </Item>
+</AML>

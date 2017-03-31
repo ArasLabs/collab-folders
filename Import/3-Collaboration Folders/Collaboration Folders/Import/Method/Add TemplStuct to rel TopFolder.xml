@@ -1,59 +1,53 @@
 ﻿<AML>
  <Item type="Method" id="E451C53712C34839979EE6EA07DE1CEC" action="add">
   <execution_allowed_to keyed_name="World" type="Identity">A73B655731924CD0B027E4F4D5FCC0A9</execution_allowed_to>
-  <method_code><![CDATA['MethodTemplateName=VBMain;
-Dim inn As Innovator = Me.getInnovator()
-Dim res As Item
-'
-' Server Events: onAfterAdd/Update
-'
-' check if new folder has property "cfolder_template_id" set.
-' and if property "top_cfolder_id" is set
+  <method_code><![CDATA[//
+// Server Events: onAfterAdd/Update
+//
+// check if new folder has property "cfolder_template_id" set and if property "top_cfolder_id" is set
 
-' if set, call generic method that does the cloning of the structure 
-' of Sub folders from the folder template
-'
-Function Main() As Item
-  'System.Diagnostics.Debugger.Break()
-  Dim thisItemType As String = Me.GetType()
-  Dim thisItemId As String = Me.GetID()
+// if set, call generic method that does the cloning of the structure 
+// of Sub folders from the folder template
+//
+  //System.Diagnostics.Debugger.Break()
+  
+  Innovator inn = this.getInnovator();
+  Item qry = inn.newItem(this.getType(),"get");
+  qry.setID(this.getID());
+  qry.setAttribute("serverEvents","0");
+  qry.setAttribute("select","cfolder_template_id,top_cfolder_id");
+  Item thisItem = qry.apply(); // fetch this item from server
+  
+  string topFolderId = thisItem.getProperty("top_cfolder_id","");
+  string folderTemplId = thisItem.getProperty("cfolder_template_id","");
+  
+  if (topFolderId == "" || folderTemplId == "") {return this;} // nothing to do
 
-  Dim qry As Item = inn.newItem(thisItemType,"get")
-  qry.setID(thisItemId)
-  qry.setAttribute("serverEvents","0")
-  qry.setAttribute("select","cfolder_template_id,top_cfolder_id")
-  Dim thisItem As Item = qry.apply() ' fetch this item from server
+  // get the top folder item
+  qry = inn.newItem("cFolder","get");
+  qry.setID(topFolderId);
+  qry.setAttribute("serverEvents","0");
+  qry.setAttribute("select","name,cfolder_template_id");
+  Item topFolderItem = qry.apply();
+  if (topFolderItem.isError()) {return topFolderItem;}
   
-  Dim topFolderId As String = thisItem.getProperty("top_cfolder_id","")
-  Dim folderTemplId As String = thisItem.getProperty("cfolder_template_id","")
+  //inherit template id to to top folder
+  string SQLstr = "UPDATE [cFolder]";
+  SQLstr = SQLstr + " SET [cFolder].cfolder_template_id='" + folderTemplId + "'";
+  SQLstr = SQLstr + " WHERE [cFolder].id='" + topFolderId + "'";
+  qry = inn.applySQL(SQLstr);
+  if (qry.isError()) {return qry;}
   
-  If topFolderId = "" Or folderTemplId = "" Then Return Me ' nothing to do
+  // call generic method with thisItem context
+  topFolderItem.setAction("Create Folder Struct from Templ");
+  topFolderItem = topFolderItem.apply();
+  if (topFolderItem.isError()) {return topFolderItem;}
+  
+  return this;
 
-  ' get the top folder item
-  qry = inn.newItem("cFolder","get")
-  qry.setID(topFolderId)
-  qry.setAttribute("serverEvents","0")
-  qry.setAttribute("select","name,cfolder_template_id")
-  Dim topFolderItem As Item = qry.apply()
-  If topFolderItem.isError() Then Return topFolderItem
-  
-  'inherit template id to to top folder
-  Dim SQLstr As String = "UPDATE [cFolder]"
-  SQLstr = SQLstr & " SET [cFolder].cfolder_template_id='" & folderTemplId & "'"
-  SQLstr = SQLstr & " WHERE [cFolder].id='" & topFolderId & "'"
-  qry = inn.applySQL(SQLstr)
-  If qry.isError() Then Return qry
-  
-  ' call generic method with thisItem context
-  topFolderItem.setAction("Create Folder Struct from Templ")
-  topFolderItem = topFolderItem.apply()
-  If topFolderItem.isError() Then Return topFolderItem
-  
-  Return Me
-End Function  
 
 ]]></method_code>
-  <method_type>VB</method_type>
+  <method_type>C#</method_type>
   <name>Add TemplStuct to rel TopFolder</name>
  </Item>
 </AML>

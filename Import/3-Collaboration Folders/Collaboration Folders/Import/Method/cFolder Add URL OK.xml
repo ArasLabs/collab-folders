@@ -1,7 +1,7 @@
 ﻿<AML>
  <Item type="Method" id="C79F5A41B9F84FE1A4D56B3CEFF8EAA1" action="add">
   <execution_allowed_to keyed_name="World" type="Identity">A73B655731924CD0B027E4F4D5FCC0A9</execution_allowed_to>
-  <method_code><![CDATA[var result = new Object();
+  <method_code><![CDATA[var result = {};
 
 //result.url = document.getElementsByName("folder_name")[0].value;
 //result.description = document.getElementsByName("folder_description")[0].value;
@@ -20,11 +20,12 @@ if (!result.url || result.url === "") {
   return;
 }
 //return values in result object
-if (!top.setReturnValue) {top.returnValue = result;}
-else {top.setReturnValue(result);}
+parent.args.dialog.result = result;
+// if (!top.setReturnValue) {top.returnValue = result;}
+// else {top.setReturnValue(result);}
 
 //close the window
-top.window.close();
+parent.args.dialog.close();
 ]]></method_code>
   <method_type>JavaScript</method_type>
   <name>cFolder Add URL OK</name>

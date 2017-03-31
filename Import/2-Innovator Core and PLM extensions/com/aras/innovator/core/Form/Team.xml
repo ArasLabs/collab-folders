@@ -1,13 +1,20 @@
 ﻿<AML>
  <Item type="Form" id="D952A176812A4FC1BE4C859E3FEF50A0" action="add">
+  <category_form>0</category_form>
+  <height>149</height>
+  <stylesheet><![CDATA[../styles/default.css]]></stylesheet>
+  <width>784</width>
   <name>Team</name>
   <Relationships>
    <Item type="Body" id="A755F4FB2DB94B978A0707F25266E01E" action="add">
+    <bg_color>#FFFFFF</bg_color>
+    <sort_order>128</sort_order>
     <source_id keyed_name="Team" type="Form">D952A176812A4FC1BE4C859E3FEF50A0</source_id>
     <Relationships>
      <Item type="Field" id="3FB1C60F3CE04078BEF94B3F15491CB3" action="add">
       <border_width>0</border_width>
       <display_length>64</display_length>
+      <display_length_unit>ex</display_length_unit>
       <field_type>textarea</field_type>
       <font_color>#000000</font_color>
       <font_family>arial, helvetica, sans-serif</font_family>
@@ -24,14 +31,36 @@
       <tab_index>256</tab_index>
       <tab_stop>1</tab_stop>
       <textarea_cols>64</textarea_cols>
-      <textarea_rows>3</textarea_rows>
+      <textarea_rows>5</textarea_rows>
       <x>185</x>
       <y>45</y>
       <name>description</name>
      </Item>
+     <Item type="Field" id="50068C79010043399CC6D29DA7369E4C" action="add">
+      <display_length_unit>px</display_length_unit>
+      <field_type>html</field_type>
+      <html_code><![CDATA[<span id="ITEM_INFO_INTERNAL_SPAN"/>
+<script>
+  populate_ITEM_INFO_INTERNAL_SPAN = function()
+  {
+    document.getElementById("ITEM_INFO_INTERNAL_SPAN").innerHTML = aras.uiDrawItemInfoTable(document.itemType,null,new Array(0));
+  }
+  window.addEventListener("load", populate_ITEM_INFO_INTERNAL_SPAN);
+</script>]]></html_code>
+      <is_disabled>0</is_disabled>
+      <is_visible>1</is_visible>
+      <list_no_blank>0</list_no_blank>
+      <sort_order>384</sort_order>
+      <source_id keyed_name="A755F4FB2DB94B978A0707F25266E01E" type="Body">A755F4FB2DB94B978A0707F25266E01E</source_id>
+      <tab_stop>0</tab_stop>
+      <x>0</x>
+      <y>0</y>
+      <name>item_info</name>
+     </Item>
      <Item type="Field" id="C883E852BE9C47DB8F337A208772F2CD" action="add">
       <border_width>0</border_width>
       <display_length>64</display_length>
+      <display_length_unit>ex</display_length_unit>
       <field_type>text</field_type>
       <font_color>#000000</font_color>
       <font_family>arial, helvetica, sans-serif</font_family>

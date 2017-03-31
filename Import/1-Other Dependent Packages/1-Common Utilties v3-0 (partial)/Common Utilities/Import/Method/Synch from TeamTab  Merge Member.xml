@@ -1,0 +1,178 @@
+﻿<AML>
+ <Item type="Method" id="2514CD80D27E411AB0FB9C7228A9AC2B" action="add">
+  <execution_allowed_to keyed_name="World" type="Identity">A73B655731924CD0B027E4F4D5FCC0A9</execution_allowed_to>
+  <method_code><![CDATA[/// called onAfterAdd/Update of "team Relationhip"  (i.e. Program Team)
+
+GlobalVars.inn  = this.getInnovator();
+
+  //System.Diagnostics.Debugger.Break()
+  String SQLstr = "";
+  Item thisTeamRel = this.newItem(this.getType(),"get");
+  thisTeamRel.setID(this.getID());
+  thisTeamRel.setAttribute("select","source_id(team_id,config_id,name,keyed_name),related_id(keyed_name),team_role,team_identity_relship_id");
+  thisTeamRel.setAttribute("serverEvents","0");
+  thisTeamRel = thisTeamRel.apply();
+  if (thisTeamRel.isError()) {return thisTeamRel;}
+
+  String sourceItemId = thisTeamRel.getProperty("source_id","");
+  Item sourceItem = thisTeamRel.getPropertyItem("source_id");
+  String sourceItemType = thisTeamRel.getPropertyItem("source_id").getAttribute("type","");
+  String teamRelTeamRole = thisTeamRel.getProperty("team_role","");
+
+  if (teamRelTeamRole == "") {return this;} // nothing to do, if role is missing !
+
+  GlobalVars.suIdentity = Aras.Server.Security.Identity.GetByName("Super User");
+  GlobalVars.suIdentityWasGranted = Aras.Server.Security.Permissions.GrantIdentity(GlobalVars.suIdentity);
+
+  String sourceItemTeamId = sourceItem.getProperty("team_id","");
+  String teamRelIdentityRelShipId = thisTeamRel.getProperty("team_identity_relship_id","");
+
+  // create new Team Item
+  if (sourceItemTeamId == "") {
+    String teamName = sourceItem.getProperty("keyed_name","");
+	switch (sourceItem.getType()) {
+	  case "Project":
+	   teamName = "PJ_" + teamName;
+	   break;
+	  case "Program":
+	   teamName = "PM_" + teamName;
+	   break;
+	  default:
+	   teamName = "TM_" + teamName;
+	   break;
+    }
+	 
+    sourceItemTeamId = createTeamItemWithDefinedName (teamName,sourceItem.getProperty("config_id",""));
+    if (sourceItemTeamId.IndexOf("ERROR") >= 0) {return GlobalVars.inn.newError(sourceItemTeamId);} 
+  }
+
+  // resolve teamRole to identity id
+  String teamRoleId = "";
+  if (teamRelTeamRole.IndexOf("Manager") >= 0) {teamRoleId = "60EBF9D1BB584921A73FA2F8D74DAF80";} //id of identitty "Team Manager"
+  if (teamRelTeamRole.IndexOf("Member") >= 0) {teamRoleId = "7635594273054F2BA32C1CADB31FD413";}  //id of identitty "Team Member";}
+  if (teamRelTeamRole.IndexOf("Guest") >= 0) {teamRoleId = "65ABF0DF1F764001A2A91934910ED93D";}   //id of identitty "Team Guest";}
+
+  // set team_id and owned_by_id on the sourceItem 
+  Item amlCmd = updateTeamIdOnProjectSourceItem (sourceItemType,sourceItemId,sourceItemTeamId,teamRoleId,thisTeamRel.getProperty("related_id",""));
+  if (amlCmd.isError()) {return returnErrorAndResetPermssion(amlCmd);}
+
+  // merge = add or update members of the PS Team Item
+  String whereStr = "";
+  Item res = this;
+  whereStr= "[Team_Identity].source_id='" + sourceItemTeamId  + "'";
+  whereStr = whereStr + " and [Team_Identity].related_id='" + thisTeamRel.getProperty("related_id","") + "'";
+
+  amlCmd = GlobalVars.inn.newItem("Team Identity","merge");
+
+  if (teamRelIdentityRelShipId != "") {
+    amlCmd.setAttribute("id",teamRelIdentityRelShipId);
+  }
+  else {
+    amlCmd.setAttribute("where",whereStr);
+    amlCmd.setAttribute("version","0");
+  }
+
+  amlCmd.setProperty("source_id",sourceItemTeamId);
+  amlCmd.setProperty("related_id",thisTeamRel.getProperty("related_id",""));
+  if (teamRoleId != "") {amlCmd.setProperty("team_role",teamRoleId);}
+
+  res = amlCmd.apply();
+  if (res.isError()) {return returnErrorAndResetPermssion(res);}
+  
+  //store "Team Identity" relationship id in PS Team relationship with SQL
+  teamRelIdentityRelShipId = res.getID();
+ 
+  String tableName =  "[" + CCO.DB.GenerateTableName(thisTeamRel.getType()) + "]";
+  SQLstr = "UPDATE " + tableName;
+  SQLstr += " SET " + tableName + ".team_identity_relship_id='" + teamRelIdentityRelShipId + "'";
+  SQLstr += " WHERE " + tableName + ".id='" + thisTeamRel.getID() + "'";
+  res = GlobalVars.inn.applySQL(SQLstr);
+  if (res.isError()) {return returnErrorAndResetPermssion(res);}
+
+  //success
+  if (GlobalVars.suIdentityWasGranted) {Aras.Server.Security.Permissions.RevokeIdentity(GlobalVars.suIdentity);}
+
+  return this;
+}
+// Global Variables
+public static class GlobalVars
+{
+	// constants
+	// public const string specialCaseElements = "Property,Field,View";
+
+    // Global static variable.
+	public static Innovator inn;
+	public static String IdsList;
+	public static bool suIdentityWasGranted;
+	public static Aras.Server.Security.Identity suIdentity;
+}
+
+
+//-----------------------------
+Item returnErrorAndResetPermssion (Item errItem) {
+ if (GlobalVars.suIdentityWasGranted) {Aras.Server.Security.Permissions.RevokeIdentity(GlobalVars.suIdentity);}
+ return errItem;
+}
+
+//-----------------------------
+String createTeamItemWithDefinedName (String teamName, String sourceItemConfigId) {
+
+  //try to find existing team item registered with this config_id
+  Item amlCmd = this.newItem("Team","get");
+  amlCmd.setPropertyAttribute("private_team_item_id_string","condition","like");
+  amlCmd.setProperty("private_team_item_id_string", "%" + sourceItemConfigId + "%");
+  amlCmd.setAttribute("select","id");
+  amlCmd = amlCmd.apply();
+
+  String teamId = "";
+  if (amlCmd.getItemCount() == 0) {
+    amlCmd = this.newItem("Team","add");
+    amlCmd.setProperty("name",teamName);
+    amlCmd.setProperty("private_team_item_id_string", sourceItemConfigId);
+
+    String aliasId = GlobalVars.inn.getUserAliases();
+    if (aliasId != "") {
+      aliasId = aliasId.Substring(0,32);
+      amlCmd.setProperty("owned_by_id",aliasId);
+    }
+
+    amlCmd = amlCmd.apply();
+    if (amlCmd.isError()) {return "ERROR:" + amlCmd.getErrorString();}
+    teamId = amlCmd.getItemByIndex(0).getAttribute("id","");
+
+    amlCmd = amlCmd.apply("Set Folder privateTeam Perm");
+  }
+  else {
+    teamId = amlCmd.getItemByIndex(0).getAttribute("id","");
+  }
+
+  if (teamId != "") {return teamId;}
+  
+  return "ERROR: Cannot find or create Team item for this Item!";
+}
+
+//-----------------------------
+Item updateTeamIdOnProjectSourceItem (String sourceItemType,  String sourceItemId , String teamId, String teamRoleId, String teamMemberId) {
+
+  String tableName = "[" + sourceItemType.Replace(" ","_") + "]";
+  String SQLstr = "";
+  SQLstr += "UPDATE " + tableName;
+  SQLstr += " SET " + tableName + ".team_id='" + teamId + "'";
+
+  //if team roles is Manager --> also set the Owner
+  if (teamMemberId != "" && teamRoleId == "60EBF9D1BB584921A73FA2F8D74DAF80") {
+    SQLstr += "," + tableName + ".owned_by_id='" + teamMemberId + "'";
+  }
+  SQLstr += " WHERE " + tableName + ".id='" + sourceItemId + "'";
+  return GlobalVars.inn.applySQL(SQLstr);  
+}
+
+// needed to end method
+void methodEnd () {
+	return;
+]]></method_code>
+  <method_type>C#</method_type>
+  <owned_by_id keyed_name="Innovator Admin" type="Identity">DBA5D86402BF43D5976854B8B48FCDD1</owned_by_id>
+  <name>Synch from TeamTab  Merge Member</name>
+ </Item>
+</AML>

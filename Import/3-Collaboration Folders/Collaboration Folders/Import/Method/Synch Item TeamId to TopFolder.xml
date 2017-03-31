@@ -1,64 +1,63 @@
 ﻿<AML>
  <Item type="Method" id="8842963A648D4D2E8558A705792C6023" action="add">
   <execution_allowed_to keyed_name="World" type="Identity">A73B655731924CD0B027E4F4D5FCC0A9</execution_allowed_to>
-  <method_code><![CDATA['MethodTemplateName=VBMain;
-' called onAfterAdd/Update of item with team relationship (i.e. Program)
-Dim inn As Innovator = Me.getInnovator()
+  <method_code><![CDATA[// called onAfterAdd/Update of item with team relationship (i.e. Program)
+Innovator inn = this.getInnovator();
   
-Function Main() As Item
-  'System.Diagnostics.Debugger.Break()
+  //System.Diagnostics.Debugger.Break()
 
-  Dim thisItem As Item = Me.newItem(Me.GetType(),"get")
-  thisItem.setID(Me.getID())
-  thisItem.setAttribute("select","team_id,keyed_name,top_cfolder_id(team_id,locked_by_id,related_project_keyed_name)")
-  thisItem.setAttribute("serverEvents","0")
-  thisItem = thisItem.apply()
-  If thisItem.isError() Then Return thisItem
+	Item thisItem = this.newItem(this.getType(),"get");
+	thisItem.setID(this.getID());
+	thisItem.setAttribute("select","team_id,keyed_name,top_cfolder_id(team_id,locked_by_id,related_project_keyed_name)");
+	thisItem.setAttribute("serverEvents","0");
+	thisItem = thisItem.apply();
+	if (thisItem.isError()) {return thisItem;}
 
-  Dim topFolderId As String = thisItem.getProperty("top_cfolder_id","")
-  If topFolderId = ""  Then
-    Return Me ' nothing to do
-  End If
-    
-  Dim thisItemTeamId As String = thisItem.getProperty("team_id","")
-  Dim thisItemKN As String = thisItem.getProperty("keyed_name","")
-  If thisItem.GetType() = "Program" Then
-    thisItemKN = "Program:" & thisItemKN
-  End If
+	string topFolderId = thisItem.getProperty("top_cfolder_id","");
+	if (topFolderId == "") {
+		return this; // nothing to do
+	}
 
-  'read values from top folder
-  Dim topFolderTeamId As String = thisItem.getPropertyItem("top_cfolder_id").getProperty("team_id","")
-  Dim topFolderLockedBy As String = thisItem.getPropertyItem("top_cfolder_id").getProperty("locked_by_id","")
-  Dim topFolderProjectKN As String = thisItem.getPropertyItem("top_cfolder_id").getProperty("related_project_keyed_name","")
-  
-  If thisItemKN = topFolderProjectKN And thisItemTeamId = topFolderTeamId Then
-    Return Me ' nothing to do
-  End If
+	string thisItemTeamId = thisItem.getProperty("team_id","");
+	string thisItemKN = thisItem.getProperty("keyed_name","");
+	if (thisItem.getType() == "Program") {
+		thisItemKN = "Program:" + thisItemKN;
+	}
 
-  'overwrite teamId on top folder 
-  Dim aml As Item = inn.newItem("cFolder","")
-  If topFolderLockedBy = "" Then aml.setAction("edit")
-  If topFolderLockedBy = inn.getUserId() Then aml.setAction("update")
+	// read values from top folder
+	string topFolderTeamId = thisItem.getPropertyItem("top_cfolder_id").getProperty("team_id","");
+	string topFolderLockedBy = thisItem.getPropertyItem("top_cfolder_id").getProperty("locked_by_id","");
+	string topFolderProjectKN = thisItem.getPropertyItem("top_cfolder_id").getProperty("related_project_keyed_name","");
 
-  aml.setID(topFolderId)
-  aml.setProperty("team_id",thisItemTeamId)
-  aml.setProperty("related_project_keyed_name",thisItemKN)
-  aml.setAttribute("serverEvents","0")
-  aml = aml.apply()
-  If aml.isError() Then Return aml
+	if (thisItemKN == topFolderProjectKN && thisItemTeamId == topFolderTeamId) {
+		return this; // nothing to do
+	}
 
-  ' ensure team_id is copied to sub folders, as well
-  Try
-    aml = aml.apply("Copy FolderTeam To SubStructure")
-  Catch ex As Exception
-    Return Me
-  End Try
+	// overwrite teamId on top folder 
+	Item aml = inn.newItem("cFolder","");
+	if (topFolderLockedBy == "") {aml.setAction("edit");}
+	if (topFolderLockedBy == inn.getUserID()) {aml.setAction("update");}
 
-  If aml.isError() Then Return aml
+	aml.setID(topFolderId);
+	aml.setProperty("team_id",thisItemTeamId);
+	aml.setProperty("related_project_keyed_name",thisItemKN);
+	aml.setAttribute("serverEvents","0");
+	aml = aml.apply();
+	if (aml.isError()) {return aml;}
 
-  Return Me  
-End Function]]></method_code>
-  <method_type>VB</method_type>
-  <name>Synch Item TeamId to TopFolder</name>
+	// ensure team_id is copied to sub folders, as well
+	try  {
+		aml = aml.apply("Copy cFolderTeam To SubStructure");
+	} 
+	catch {
+		return this;
+	}
+
+	if (aml.isError()) {return aml;}
+
+	return this;  
+]]></method_code>
+  <method_type>C#</method_type>
+  <name>Synch Item TeamId to TopcFolder</name>
  </Item>
 </AML>

@@ -3,20 +3,6 @@
 	<!-- +++++ Item Folder Navigator +++++ -->
 	<resource key="itemfoldertreegrid.gridheading.col0" value="Folder/Number"/>
 
-	<resource key="itemfoldertreegrid.contextmenu.view_item" value="View Item"/>
-	<resource key="itemfoldertreegrid.contextmenu.view_folder" value="View Folder"/>
-	<resource key="itemfoldertreegrid.contextmenu.view_attached_files" value="View Attached Files"/>
-
-	<resource key="itemfoldertreegrid.contextmenu.refresh_this_row" value="Refresh this Folder"/>
-	<resource key="itemfoldertreegrid.contextmenu.lock_row_item" value="Lock"/>
-	<resource key="itemfoldertreegrid.contextmenu.unlock_row_item" value="Unlock"/>
-	<resource key="itemfoldertreegrid.contextmenu.add_folder_related_item_new" value="Add Related Item to Folder (new)..."/>
-	<resource key="itemfoldertreegrid.contextmenu.add_folder_related_item_existing" value="Add Related Item to Folder (pick)..."/>
-	<resource key="itemfoldertreegrid.contextmenu.add_new_file_to_folder" value="Add File to Folder..."/>
-	<resource key="itemfoldertreegrid.contextmenu.add_sub_folder" value="Add Sub Folder..."/>
-	<resource key="itemfoldertreegrid.contextmenu.promote_folders_to_active_down" value="Promote Folders to Active (down)"/>
-	<resource key="itemfoldertreegrid.contextmenu.promote_folders_to_archived_down" value="Promote Folders to Archived (down)"/>
-
 	<resource key="itemfoldertreegrid.message.loading_please_wait" value="Loading Folders, Please wait ..."/>
 	<resource key="itemfoldertreegrid.message.re_loading_please_wait" value="Re-Loading Folders, Please wait ..."/>
 	<resource key="itemfoldertreegrid.message.expanding_all_please_wait" value="Expanding all, Please wait ..."/>
@@ -48,6 +34,8 @@
 	<resource key="itemfoldertreegrid.message.undefined" value="Undefined error message !"/>
 	<resource key="itemfoldertreegrid.message.user_must_be_owner_of_item_for_action" value="User must be Owner for this action !"/>
 	<resource key="itemfoldertreegrid.message.item_must_be_locked_for_action" value="Item must be locked for this action!"/>
+	<resource key="itemfoldertreegrid.message.folder_must_be_locked_for_action" value="Folder must be locked for this action!"/>
+	<resource key="itemfoldertreegrid.message.folder_must_be_unlocked_for_action" value="Folder must be unlocked for this action!"/>
 	<resource key="itemfoldertreegrid.message.item_apply_error" value="Item apply error: -->"/>
 	<resource key="itemfoldertreegrid.message.attached_files_not_retrieved" value="Attached files could not be retrieved from server again. There might be a permission issue with shared files on this folder!"/>
 	<resource key="itemfoldertreegrid.message.already_locked" value="Already locked by you or someone else ! (Refresh grid to update status)"/>

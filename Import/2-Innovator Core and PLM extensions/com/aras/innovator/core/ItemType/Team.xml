@@ -12,13 +12,19 @@
     <is_multi_valued>0</is_multi_valued>
     <is_required>0</is_required>
     <label xml:lang="en">keep hidden</label>
-    <name>private_team_item_id_string</name>
     <range_inclusive>0</range_inclusive>
     <readonly>0</readonly>
     <sort_order>3328</sort_order>
     <source_id keyed_name="Team" type="ItemType" name="Team">CC23F9130F574E7D99DF9659F27590A6</source_id>
     <stored_length>32</stored_length>
     <track_history>0</track_history>
+    <name>private_team_item_id_string</name>
+   </Item>
+   <Item type="Allowed Permission" id="DF1DAECC88BD4ACA8AD9A9F6585C2EC3" action="add">
+    <is_default>0</is_default>
+    <related_id keyed_name="cFolder Private Team Update" type="Permission">49D9C33BBFFB45B2BE6E8BB9B6C26F16</related_id>
+    <sort_order>256</sort_order>
+    <source_id keyed_name="Team" type="ItemType" name="Team">CC23F9130F574E7D99DF9659F27590A6</source_id>
    </Item>
   </Relationships>
  </Item>

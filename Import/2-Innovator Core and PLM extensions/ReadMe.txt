@@ -3,6 +3,7 @@ Core Extensions:
 
 ItemType: "Team"  new properties:
 - private_team_item_id_string
+- Allowed Permission: cFolder Private Team Update
 
 
 PLM Extensions

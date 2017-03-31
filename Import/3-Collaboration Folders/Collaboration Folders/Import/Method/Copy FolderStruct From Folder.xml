@@ -30,7 +30,7 @@ aml += 				"<Item type='Sub cFolder' action='get' repeatProp='related_id' repeat
 // add relationships to copy to query. Note "related_expand" MUST be off !!!
 if (folderRelationshipsToCopy != "") {
 	string[] relNames = folderRelationshipsToCopy.Split(',');
-	for (int r=0; r<relNames.Length; r++) {
+	for (int r=0; r<relNames.Length && relNames[0] != ""; r++) {
 		aml += 		"<Item type='"+relNames[r]+"' action='get' select='*' related_expand='0' />";
 	}
 }
@@ -130,7 +130,7 @@ for (int i=0; i<folderStructItems.getItemCount(); i++) {
 // link 1st lebel relationships to this context
 if (folderRelationshipsToCopy != "") {
 	string[] relNames = folderRelationshipsToCopy.Split(',');
-	for (int r=0; r<relNames.Length; r++) {
+	for (int r=0; r<relNames.Length && relNames[0] != ""; r++) {
 		Item folderRelItems = copyFromFolderItem.getRelationships(relNames[r]);
 		for (int i=0; i<folderRelItems.getItemCount(); i++) {
 			tmpItem = folderRelItems.getItemByIndex(i);

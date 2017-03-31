@@ -25,10 +25,11 @@
     <is_versionable>0</is_versionable>
     <revisions keyed_name="Default" type="Revision">7FE395DD8B9F4E1090756A34B733D75E</revisions>
     <show_parameters_tab>1</show_parameters_tab>
+    <structure_view>tabs off</structure_view>
     <unlock_on_logout>0</unlock_on_logout>
     <use_src_access>1</use_src_access>
     <name>cFolder Template Folders</name>
-    <Relationships></Relationships>
+    <Relationships />
    </Item>
   </relationship_id>
   <sort_order>10</sort_order>

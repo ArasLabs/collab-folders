@@ -33,7 +33,7 @@ aml +=	"<Relationships>";
 aml +=	"	<Item type='Sub cFolder' action='get' repeatProp='related_id' repeatTimes='0' select='id,related_id,locked_by_id' />";
 
 string[] relNames = folderRelationships.Split(',');
-for (int r=0; r<relNames.Length; r++) {
+for (int r=0; r<relNames.Length && relNames[0] != ""; r++) {
 	aml += 		"<Item type='"+relNames[r]+"' action='get' select='id,related_id,locked_by_id' />";
 }
 

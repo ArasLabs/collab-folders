@@ -1,0 +1,47 @@
+﻿<AML>
+ <Item type="Method" id="A3C3E5616573473C97786363DFB88AFF" action="add">
+  <comments>cloned form PE_EnforceSharedFile, but with more generic logic on SourceItem</comments>
+  <execution_allowed_to keyed_name="World" type="Identity">A73B655731924CD0B027E4F4D5FCC0A9</execution_allowed_to>
+  <method_code><![CDATA[Item orItem = this.newOR();
+
+orItem.setProperty("is_shared", "1");
+
+Item sourceItem = this.getPropertyItem("source_id");
+
+if(sourceItem == null)
+{
+  //try to get the source item type from naming convention of relationship name
+  //works, if the relationship name starts with source item's name adding " File" at the end.
+  String srcTypeName = this.getType();
+  srcTypeName = srcTypeName.Replace(" File","");
+  
+  sourceItem = this.newItem(srcTypeName, "get");
+  String source_id = this.getProperty("source_id", "");
+  String condition = this.getPropertyAttribute("source_id","condition","");
+  
+  if(!String.IsNullOrEmpty(source_id))
+  {
+  	if (condition == "") {condition="eq";}
+    sourceItem.setProperty("id", source_id);
+    sourceItem.setPropertyAttribute("id", "condition", condition);
+  }
+}
+else
+{
+  Item tempItem = this.newItem();
+  tempItem.loadAML(sourceItem.node.OuterXml);
+  sourceItem = tempItem;
+}
+//System.Diagnostics.Debugger.Launch();
+
+sourceItem.setProperty("owned_by_id", Aras.Server.Security.Permissions.Current.IdentitiesList);
+sourceItem.setPropertyAttribute("owned_by_id", "condition", "in");
+
+orItem.setPropertyItem("source_id", sourceItem);
+
+return this;]]></method_code>
+  <method_type>C#</method_type>
+  <owned_by_id keyed_name="Innovator Admin" type="Identity">DBA5D86402BF43D5976854B8B48FCDD1</owned_by_id>
+  <name>EnforceSharedFlagOnFileRels</name>
+ </Item>
+</AML>

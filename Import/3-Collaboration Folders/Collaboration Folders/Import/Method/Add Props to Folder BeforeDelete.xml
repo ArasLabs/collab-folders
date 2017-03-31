@@ -1,19 +1,19 @@
 ﻿<AML>
  <Item type="Method" id="DF3FABE11B0C41D0997CA755093E9812" action="add">
   <execution_allowed_to keyed_name="World" type="Identity">A73B655731924CD0B027E4F4D5FCC0A9</execution_allowed_to>
-  <method_code><![CDATA[' use beforeDelete of Project Space items
-' necesary so that afterDelete action can read the config_id and use it in its logic
-Dim thisItem As Item = Me.newItem(Me.GetType(),"get")
-thisItem.setID(Me.getID())
-thisItem.setAttribute("select","team_id,config_id,name")
-thisItem.setAttribute("serverEvents","0")
-thisItem = thisItem.apply()
+  <method_code><![CDATA[// use beforeDelete of Project Space items
+// necesary so that afterDelete action can read the config_id and use it in its logic
+Item thisItem = this.newItem(this.getType(),"get");
+thisItem.setID(this.getID());
+thisItem.setAttribute("select","team_id,config_id,name");
+thisItem.setAttribute("serverEvents","0");
+thisItem = thisItem.apply();
 
-' add properties to context
-Me.setProperty("config_id",thisItem.getProperty("config_id",""))
-Me.setProperty("team_id",thisItem.getProperty("team_id",""))
-]]></method_code>
-  <method_type>VB</method_type>
+// add properties to context
+this.setProperty("config_id",thisItem.getProperty("config_id",""));
+this.setProperty("team_id",thisItem.getProperty("team_id",""));
+return this;]]></method_code>
+  <method_type>C#</method_type>
   <name>Add Props to Folder BeforeDelete</name>
  </Item>
 </AML>

@@ -1,436 +1,443 @@
 ﻿<AML>
  <Item type="Method" id="96DE761643CE48A88AC2581E82C97EC4" action="add">
   <execution_allowed_to keyed_name="World" type="Identity">A73B655731924CD0B027E4F4D5FCC0A9</execution_allowed_to>
-  <method_code><![CDATA['MethodTemplateName=VBMain;
-Dim inn As Innovator = Me.getInnovator()
-Dim res As Item
-Dim folderItemPropertiesToCopy As String
-Dim ItemTypesWithConfig As String
-Dim ItemTypesAutoNumberMethods As String
-Dim localVaultRoot As String
+  <method_code><![CDATA[//
+// called on ItemType: Folder Item
+// Server Events: onAfterAdd
+//
+// check if (new folder is a template (is_template flag = "1")
+// if (yes, make sure the folder template permission set is used !
+//
+// check if (new folder has property "cfolder_template_id" set and it is not a template folder.
+// if (set, clone the structure of sub folders from this template
+// Merge some properties from the //top// folder of the template to this //top// cFolder
+//
+// Merge relationships from template folders with defined rules
+//  For Rel: "cFolder File" (Attachments) -> read prop "referenced_file"
+//           if (set (1) -> copy related_ids (re-use same File items)
+//           if (not set (0) -> copy file in vault and use copied files (on related_ids)
+//  For Rel: "cFolder Controlled Item" -> read prop "template_action"
+//           template_action = //Reference" -> copy related_id (re-use same item)
+//           template_action = //Copy" -> create a new controlled item of same type
+//
+// ##NOTE##:
+// Cloning attached file on controlled items depends on vault configuration - the logic below must be adjusted.
+// if (vault config is not the default !!!
+// vault subPath configs - could be different in VaultServerConfig.xml
+// default is - 1st char of 32charId - 2-3char of 32charId - rest of 32charId
+//  treeConfig(0) = 1
+//  treeConfig(1) = 2
+//  treeConfig(2) = 29 
+//
 
-'
-' called on ItemType: Folder Item
-' Server Events: onAfterAdd
-'
-' check if new folder is a template (is_template flag = "1")
-' if yes, make sure the folder template permission set is used !
-'
-' check if new folder has property "cfolder_template_id" set and it is not a template folder.
-' if set, clone the structure of sub folders from this template
-' Merge some properties from the 'top' folder of the template to this 'top' cFolder
-'
-' Merge relationships from template folders with defined rules
-'  For Rel: "cFolder File" (Attachments) -> read prop "referenced_file"
-'           if set (1) -> copy related_ids (re-use same File items)
-'           if not set (0) -> copy file in vault and use copied files (on related_ids)
-'  For Rel: "cFolder Controlled Item" -> read prop "template_action"
-'           template_action = 'Reference" -> copy related_id (re-use same item)
-'           template_action = 'Copy" -> create a new controlled item of same type
-'
-' ##NOTE##:
-' Cloning attached file on controlled items depends on vault configuration - the logic below must be adjusted.
-' if vault config is not the default !!!
-' vault subPath configs - could be different in VaultServerConfig.xml
-' default is - 1st char of 32charId - 2-3char of 32charId - rest of 32charId
-'  treeConfig(0) = 1
-'  treeConfig(1) = 2
-'  treeConfig(2) = 29 
-'
-Function Main() As Item
-  'System.Diagnostics.Debugger.Break()
-  Dim thisItemType As String = Me.GetType()
-  Dim thisItemId As String = Me.GetID()
 
-  folderItemPropertiesToCopy = "name,description,allow_sub_folders,allowed_relationships"  ' add more custom properties to this list ....
+  // System.Diagnostics.Debugger.Break();
+  string thisItemType = this.getType();
+  string thisItemId = this.getID();
+
+  GlobalVar.folderItemPropertiesToCopy = "name,description,allow_sub_folders,allowed_relationships";  // add more custom properties to this list ....
   
-  Dim qry As Item = inn.newItem(thisItemType,"get")
-  qry.setID(thisItemId)
-  qry.setAttribute("serverEvents","0")
-  qry.setAttribute("select","name,description,item_number,state,cfolder_template_id,is_template")
-  Dim thisItemFolder As Item = qry.apply() ' fetch this item from server
-  Dim SQLstr As String
-  If thisItemFolder.getProperty("is_template","0") = "1" Then
-    ' set "cFolder Template" Pemissions (Id) to permission of new ItemFolder
-    SQLstr = "UPDATE [cFolder] SET [cFolder].permission_id='E2227109B19B45E0B4690EEE5E890FBB' WHERE [cFolder].id='" & thisItemId & "'"
-    thisItemFolder = Me.getInnovator().applySQL(SQLstr)
-    If thisItemFolder.isError() Then Return thisItemFolder
+  Item qry = this.newItem(thisItemType,"get");
+  qry.setID(thisItemId);
+  qry.setAttribute("serverEvents","0");
+  qry.setAttribute("select","name,description,item_number,state,cfolder_template_id,is_template");
+  Item thisItemFolder = qry.apply(); // fetch this item from server
+  string SQLstr;
+  if (thisItemFolder.getProperty("is_template","0") == "1") {
+    // set "cFolder Template" Pemissions (Id) to permission of new ItemFolder
+    SQLstr = "UPDATE [cFolder] SET [cFolder].permission_id='E2227109B19B45E0B4690EEE5E890FBB' WHERE [cFolder].id='" + thisItemId + "'";
+    thisItemFolder = this.getInnovator().applySQL(SQLstr);
+    if (thisItemFolder.isError()) { return thisItemFolder;}
     
-    Return Me 'Item is a template folder. logic ends here
-  End If
+    return this; // Item is a template folder. logic ends here
+  }
 
-  ' if folder is not a template continue logic ...
+  // if (folder is not a template continue logic ...
   
-  ' get the folder template item (which is only set on top level). if no reference, exit
-  Dim thisFolderTemplateId As String = thisItemFolder.getProperty("cfolder_template_id","")
-  If thisFolderTemplateId = "" Then Return Me ' nothing to do
+  // get the folder template item (which is only set on top level). if (no reference, exit
+  string thisFolderTemplateId = thisItemFolder.getProperty("cfolder_template_id","");
+  if (thisFolderTemplateId == "") { return this;} // nothing to do
   
-  qry = inn.newItem("cFolder Template","get")
-  qry.setID(thisFolderTemplateId)
-  qry.setAttribute("select","name,item_number,state,top_cfolder_id")
-  Dim folderTemplItem As Item = qry.apply()
-  If folderTemplItem.isError() Then Return Me ' template not found, nothing to do
+  qry = this.newItem("cFolder Template","get");
+  qry.setID(thisFolderTemplateId);
+  qry.setAttribute("select","name,item_number,state,top_cfolder_id");
+  Item folderTemplItem = qry.apply();
+  if (folderTemplItem.isError()) { return this;} // template not found, nothing to do
  
-  ' check, if this folder already has sub folders. if yes exit (don't copy from folder)
-  qry = inn.newItem("Sub cFolder","get")
-  qry.setProperty("source_id",thisItemId)
-  qry.setAttribute("select","source_id(keyed_name),related_id(name,description,keyed_name)")
-  qry.setAttribute("serverEvents","0")
-  qry = qry.apply()
-  If qry.getItemCount() > 0 Then Return Me
+  // check, if (this folder already has sub folders. if (yes exit (don't copy from folder)
+  qry = this.newItem("Sub cFolder","get");
+  qry.setProperty("source_id",thisItemId);
+  qry.setAttribute("select","source_id(keyed_name),related_id(name,description,keyed_name)");
+  qry.setAttribute("serverEvents","0");
+  qry = qry.apply();
+  if (qry.getItemCount() > 0) { return this;}
 
-  ' get the template's top folder item (to copy from)
-  Dim templateTopFolderId As String = folderTemplItem.getProperty("top_cfolder_id","")
-  If templateTopFolderId = "" Then Return Me ' nothing to do
-  qry = inn.newItem("cFolder","get")
-  qry.setProperty("id",templateTopFolderId)
-  qry.setProperty("is_template","1") ' make sure it's a template folder
-  qry.setAttribute("select","id,is_template," & folderItemPropertiesToCopy)
-  qry = qry.apply()
-  If qry.isError() Then Return Me ' template top folder not found, nothing to do
+  // get the template's top folder item (to copy from)
+  string templateTopFolderId = folderTemplItem.getProperty("top_cfolder_id","");
+  if (templateTopFolderId == "") { return this;} //  nothing to do
+  qry = this.newItem("cFolder","get");
+  qry.setProperty("id",templateTopFolderId);
+  qry.setProperty("is_template","1"); //  make sure it's a template folder
+  qry.setAttribute("select","id,is_template," + GlobalVar.folderItemPropertiesToCopy);
+  qry = qry.apply();
+  if (qry.isError()) { return this;} // template top folder not found, nothing to do
   
-  ' merge properties from template folder to new folder
-  res = copyItemProperties(qry, Me, folderItemPropertiesToCopy, True, True)
-  If res.isError() Then Return res
+  //  merge properties from template folder to new folder
+  Item res = copyItemProperties(qry, this, GlobalVar.folderItemPropertiesToCopy, true, true);
+  if (res.isError()) { return res;}
   
-  SetItemTypesWithConfigFromCtrItemsConfig(thisFolderTemplateId)  'inits global vars
-  localVaultRoot = GetLocalVaultPath() 
+  SetItemTypesWithConfigFromCtrItemsConfig(thisFolderTemplateId);  // inits global vars
+  GlobalVar.localVaultRoot = GetLocalVaultPath();
   
-  ' create sub folders for top level folder (from template structure)
-  createSubFoldersFromTemplate (templateTopFolderId,thisItemId)
+  // create sub folders for top level folder (from template structure)
+  createSubFoldersFromTemplate (templateTopFolderId,thisItemId);
   
-  Return Me
-End Function  
+  return this;
+}
 
-'-----------------------------
-Private Function createSubFoldersFromTemplate (templateFolderParentId As String, newParentFolderId As String) As Item
-  ' copy Folder Files (attachments) of this level from template
-  res = addFolderFilesFromTemplateToThisItem (templateFolderParentId,newParentFolderId)
-  If res.isError() Then Return res
+// Global Variables
+public static class GlobalVar
+{
+	// constants
+	public const string specialCaseRelItemTypeText = " [related IType modified]";
+	public const string specialCaseElements = "Property,Field,View";
 
-  ' copy controlled Items of this level from template
-  res = addFolderControlledItemsFromTemplateToThisItem (templateFolderParentId,newParentFolderId)
-  If res.isError() Then Return res
+    // Global static variable.
+	public static string folderItemPropertiesToCopy;
+	public static string ItemTypesWithConfig;
+	public static string ItemTypesAutoNumberMethods;
+	public static string localVaultRoot;
+}
+
+// -----------------------------
+Item createSubFoldersFromTemplate (string templateFolderParentId, string newParentFolderId)  {
+  // copy Folder Files (attachments) of this level from template
+  Item res = addFolderFilesFromTemplateToThisItem (templateFolderParentId,newParentFolderId);
+  if (res.isError()) { return res;}
+
+  // copy controlled Items of this level from template
+  res = addFolderControlledItemsFromTemplateToThisItem (templateFolderParentId,newParentFolderId);
+  if (res.isError()) { return res;}
   
-  ' build structure from template
-  Dim thisSubFolderRel As Item = inn.newItem("Sub cFolder","get")
-  thisSubFolderRel.setProperty("source_id",templateFolderParentId)
-  thisSubFolderRel.setAttribute("select","org_number,source_id(keyed_name),related_id(" & folderItemPropertiesToCopy & ",keyed_name)")
-  thisSubFolderRel.setAttribute("serverEvents","0")
-  thisSubFolderRel = thisSubFolderRel.apply()
+  // build structure from template
+  Item thisSubFolderRel = this.getInnovator().newItem("Sub cFolder","get");
+  thisSubFolderRel.setProperty("source_id",templateFolderParentId);
+  thisSubFolderRel.setAttribute("select","org_number,source_id(keyed_name),related_id(" + GlobalVar.folderItemPropertiesToCopy + ",keyed_name)");
+  thisSubFolderRel.setAttribute("serverEvents","0");
+  thisSubFolderRel = thisSubFolderRel.apply();
 
-  If thisSubFolderRel.getItemCount() = 0 Then Return Me 'nothing to do
-  If thisSubFolderRel.isError() Then Return thisSubFolderRel
+  if (thisSubFolderRel.getItemCount() == 0) { return this;} // nothing to do
+  if (thisSubFolderRel.isError()) { return thisSubFolderRel;}
 
-  Dim i As Integer
-  For i=0 To thisSubFolderRel.getItemCount()-1
-  	Dim templRelItem As Item = thisSubFolderRel.getItemByIndex(i)
-    Dim templSubFolderId As String = templRelItem.getProperty("related_id","")
+  for (int i=0;i<thisSubFolderRel.getItemCount(); i++) {
+  	Item templRelItem = thisSubFolderRel.getItemByIndex(i);
+    string templSubFolderId = templRelItem.getProperty("related_id","");
 
-    If  (templSubFolderId <> "") Then
-      Dim newSubFolderItem As Item = inn.newItem("cFolder","add")
+    if (templSubFolderId != "") {
+      Item newSubFolderItem = this.newItem("cFolder","add");
 	  
-	  ' merge properties from template folder to new folder
-	  res = templRelItem.getPropertyItem("related_id")
-      res = copyItemProperties(res, newSubFolderItem, folderItemPropertiesToCopy, False, False)
+	  // merge properties from template folder to new folder
+	  res = templRelItem.getPropertyItem("related_id");
+      res = copyItemProperties(res, newSubFolderItem, GlobalVar.folderItemPropertiesToCopy, false, false);
 
-      newSubFolderItem.setProperty("is_root","")
-      newSubFolderItem = newSubFolderItem.apply()
-      If newSubFolderItem.isError() Then Return newSubFolderItem
+      newSubFolderItem.setProperty("is_root","");
+      newSubFolderItem = newSubFolderItem.apply();
+      if (newSubFolderItem.isError()) { return newSubFolderItem;}
       
-     ' assume new parent folder already exists on server - then only new relationship needs to be added
-      Dim newSubFolderRel As Item = inn.newItem("Sub cFolder","add")
-      newSubFolderRel.setProperty("org_number",templRelItem.getProperty("org_number",""))
-      newSubFolderRel.setProperty("source_id",newParentFolderId)
-      newSubFolderRel.setProperty("related_id",newSubFolderItem.getID())
-      newSubFolderRel = newSubFolderRel.apply()
-      If newSubFolderRel.isError() Then Return newSubFolderRel
+     // assume new parent folder already exists on server - { only new relationship needs to be added
+      Item newSubFolderRel = this.newItem("Sub cFolder","add");
+      newSubFolderRel.setProperty("org_number",templRelItem.getProperty("org_number",""));
+      newSubFolderRel.setProperty("source_id",newParentFolderId);
+      newSubFolderRel.setProperty("related_id",newSubFolderItem.getID());
+      newSubFolderRel = newSubFolderRel.apply();
+      if (newSubFolderRel.isError()) { return newSubFolderRel;}
 
-      ' recursion - create next level sub folders
-      res = createSubFoldersFromTemplate (templSubFolderId,newSubFolderItem.GetID())
-      If res.isError() Then Return res
+      // recursion - create next level sub folders
+      res = createSubFoldersFromTemplate (templSubFolderId,newSubFolderItem.getID());
+      if (res.isError()) { return res;}
 
-    End If
+    }
   
-  Next i
-  Return Me
-End Function
+	}
+  return this;
+}
 
-'-----------------------------
-Private Function copyItemProperties (ByRef fromItem As Item, ByRef toItem As Item, propsToCopy As String, isTop As Boolean, doApply As Boolean) As Item
-  If isTop Then propsToCopy = propsToCopy.Replace("name","") ' prevent that name property is copied
-  Dim propName As String() = propsToCopy.split(",")
-  Dim copyToItem As Item = toItem
+// -----------------------------
+Item copyItemProperties (Item fromItem, Item toItem, string propsToCopy, bool isTop, bool doApply) {
+  if (isTop) { propsToCopy = propsToCopy.Replace("name","");} // prevent that name property is copied
+  string[] propName = propsToCopy.Split(',');
+  Item copyToItem = toItem;
 
-  If doApply Then
-    copyToItem = inn.newItem(toItem.GetType(),"merge")
-	copyToItem.SetID(toItem.GetID())
-	copyToItem.setAttribute("version","0")
-	copyToItem.setAttribute("serverEvents","0")
-	copyToItem.setAttribute("doGetItem","0")
-  End If
+  if (doApply) {
+    copyToItem = this.getInnovator().newItem(toItem.getType(),"merge");
+	copyToItem.setID(toItem.getID());
+	copyToItem.setAttribute("version","0");
+	copyToItem.setAttribute("serverEvents","0");
+	copyToItem.setAttribute("doGetItem","0");
+  }
   
-  Dim i As Integer
-  For i=0 To propName.Length -1
-  	If propName(i) <> "" Then
-  	  Dim propVal As String = fromItem.getProperty(propName(i), "")
-  	  If propVal <> "" Then  copyToItem.setProperty(propName(i),propVal)
-  	End If
-  Next i
-
-  If doApply Then
-    Return copyToItem.apply()
-  Else
-    Return fromItem
-  End If
-End Function  
-
-'-----------------------------
-Private Function GetLocalVaultPath() As String
-  ' call utility Method
-  Dim qry As Item = inn.newItem("Method","GetLocalVaultPath")
-  qry = qry.apply()
+  for (int i=0; i<propName.Length; i++) {
+  	if (propName[i] != "") {
+  	  string propVal = fromItem.getProperty(propName[i], "");
+  	  if (propVal != "") {  copyToItem.setProperty(propName[i],propVal);}
+  	}
+  }
   
-  If qry.isError() Then Return ""
-  Dim path As String = qry.getResult()
-  Return path.Replace("\","\\")
-End Function  
+  if (doApply) {
+    return copyToItem.apply();
+  } else {
+    return fromItem;
+  }
+}  
 
-'-----------------------------
-Private Function SetItemTypesWithConfigFromCtrItemsConfig(sourceId As String) As Boolean
-  If sourceId = "" Then Return False
+// -----------------------------
+string GetLocalVaultPath() {
+  // call utility Method
+  Item qry = this.newItem("Method","GetLocalVaultPath");
+  qry = qry.apply();
   
-  Dim controlledItemConfig As Item = inn.newItem("","")	
-  Dim aml As String = "<Item type=""cFolder Tmpl CtrItemConfig"" action=""get"" select=""controlled_item_type,auto_number_method(name)"" >"
-  aml = aml & "<source_id>" & sourceId & "</source_id>"   	
-  aml = aml & "</Item>"   	
-  controlledItemConfig.loadAML(aml)
-  controlledItemConfig = controlledItemConfig.apply()
-  
-  ItemTypesWithConfig = ""
-  ItemTypesAutoNumberMethods = ""
-  Dim i As Integer
-  For i=0 To controlledItemConfig.getItemCount()-1
-  	Dim propVal As String = controlledItemConfig.getItemByIndex(i).getProperty("controlled_item_type")
-  	ItemTypesWithConfig = ItemTypesWithConfig & "," & propVal
+  if (qry.isError()) { return "";}
+  string path = qry.getResult();
+  return path.Replace("\\","\\\\");
+}  
 
-  	propVal  = controlledItemConfig.getItemByIndex(i).getProperty("auto_number_method","")
-  	If propVal <> "" Then
-  	  propVal = controlledItemConfig.getItemByIndex(i).getPropertyItem("auto_number_method").getProperty("name","")
-  	End If
-  	ItemTypesAutoNumberMethods = ItemTypesAutoNumberMethods & "," & propVal
-  Next i
+// -----------------------------
+bool SetItemTypesWithConfigFromCtrItemsConfig(string sourceId) {
+  if (sourceId == "") { return false;}
+  
+  Item controlledItemConfig = this.newItem("","");
+  string aml = "<Item type=\"cFolder Tmpl CtrItemConfig\" action=\"get\" select=\"controlled_item_type,auto_number_method(name)\" >";
+  aml = aml + "<source_id>" + sourceId + "</source_id>"; 	
+  aml = aml + "</Item>";   	
+  controlledItemConfig.loadAML(aml);
+  controlledItemConfig = controlledItemConfig.apply();
+  
+  GlobalVar.ItemTypesWithConfig = "";
+  GlobalVar.ItemTypesAutoNumberMethods = "";
+
+  for (int i=0; i<controlledItemConfig.getItemCount(); i++) {
+  	string propVal = controlledItemConfig.getItemByIndex(i).getProperty("controlled_item_type");
+  	GlobalVar.ItemTypesWithConfig += "," + propVal;
+
+  	propVal  = controlledItemConfig.getItemByIndex(i).getProperty("auto_number_method","");
+  	if (propVal != "") {
+  	  propVal = controlledItemConfig.getItemByIndex(i).getPropertyItem("auto_number_method").getProperty("name","");
+  	}
+  	GlobalVar.ItemTypesAutoNumberMethods += "," + propVal;
+  }
  
-  Return True
+  return true;
+}  
 
-End Function  
+// -----------------------------
+Item addFolderFilesFromTemplateToThisItem (string templateFolderParentId, string newFolderId) {
+  // System.Diagnostics.Debugger.Break()  
 
-'-----------------------------
-Private Function addFolderFilesFromTemplateToThisItem (templateFolderParentId As String, newFolderId As String) As Item
-  'System.Diagnostics.Debugger.Break()  
+  Item FolderFileRels = this.newItem("cFolder File","get");
+  FolderFileRels.setProperty("source_id",templateFolderParentId);
+  FolderFileRels.setAttribute("select","is_template,sort_order,source_id(keyed_name),related_id(filename),is_shared,referenced_file");
+  FolderFileRels.setAttribute("serverEvents","0");
+  FolderFileRels = FolderFileRels.apply();
 
-  Dim FolderFileRels As Item = inn.newItem("cFolder File","get")
-  FolderFileRels.setProperty("source_id",templateFolderParentId)
-  FolderFileRels.setAttribute("select","is_template,sort_order,source_id(keyed_name),related_id(filename),is_shared,referenced_file")
-  FolderFileRels.setAttribute("serverEvents","0")
-  FolderFileRels = FolderFileRels.apply()
+  if (FolderFileRels.getItemCount() == 0) { return this;} // nothing to do
+  if (FolderFileRels.isError()) { return FolderFileRels;}
 
-  If FolderFileRels.getItemCount() = 0 Then Return Me 'nothing to do
-  If FolderFileRels.isError() Then Return FolderFileRels
+  for (int i=0; i<FolderFileRels.getItemCount(); i++) {
+  	Item templRelItem = FolderFileRels.getItemByIndex(i);
+    string templSubFolderId = templRelItem.getProperty("related_id","");
 
-  Dim i As Integer
-  For i=0 To FolderFileRels.getItemCount()-1
-  	Dim templRelItem As Item = FolderFileRels.getItemByIndex(i)
-    Dim templSubFolderId As String = templRelItem.getProperty("related_id","")
+    if (templSubFolderId != "") {
 
-    If  (templSubFolderId <> "") Then
+     // assume new folder already exists on server - { only new relationship needs to be added
+      Item newFolderFileRel = this.newItem("cFolder File","add");
+      newFolderFileRel.setProperty("sort_order",templRelItem.getProperty("sort_order",""));
+      newFolderFileRel.setProperty("is_shared",templRelItem.getProperty("is_shared",""));
+      newFolderFileRel.setProperty("referenced_file",templRelItem.getProperty("referenced_file",""));
+      newFolderFileRel.setProperty("source_id",newFolderId);
 
-     ' assume new folder already exists on server - then only new relationship needs to be added
-      Dim newFolderFileRel As Item = inn.newItem("cFolder File","add")
-      newFolderFileRel.setProperty("sort_order",templRelItem.getProperty("sort_order",""))
-      newFolderFileRel.setProperty("is_shared",templRelItem.getProperty("is_shared",""))
-      newFolderFileRel.setProperty("referenced_file",templRelItem.getProperty("referenced_file",""))
-      newFolderFileRel.setProperty("source_id",newFolderId)
+      string newFileId = templSubFolderId;
+      // copy file or use reference to same file ? - if (flag = 0 { copy the file
+      if (templRelItem.getProperty("referenced_file","0") == "0") {
+      	 Item clonedFileItem = cloneFileInVault(FolderFileRels.getItemByIndex(i).getPropertyItem("related_id"), i);
+		 if (clonedFileItem.isError()) { return clonedFileItem;}
+         newFileId = clonedFileItem.getID();
+      }    
 
-      Dim newFileId As String = templSubFolderId
-      ' copy file or use reference to same file ? - if flag = 0 then copy the file
-      If templRelItem.getProperty("referenced_file","0") = "0" Then
-      	 Dim clonedFileItem As Item = cloneFileInVault(FolderFileRels.getItemByIndex(i).getPropertyItem("related_id"), i)
-		 If clonedFileItem.IsError() Then Return clonedFileItem
-         newFileId = clonedFileItem.getID() 
-      End If    
-
-      newFolderFileRel.setProperty("related_id",newFileId)
-      newFolderFileRel = newFolderFileRel.apply()
-      If newFolderFileRel.isError() Then Return newFolderFileRel
+      newFolderFileRel.setProperty("related_id",newFileId);
+      newFolderFileRel = newFolderFileRel.apply();
+      if (newFolderFileRel.isError()) { return newFolderFileRel;}
     
-    End If
-  Next i
-  Return Me
-End Function
+    }
+  }
+  return this;
+}
 
-'-----------------------------
-Private Function addFolderControlledItemsFromTemplateToThisItem (templateFolderParentId As String, newFolderId As String) As Item
-  'System.Diagnostics.Debugger.Break()
-  Dim FolderCtrldItemRels As Item = inn.newItem("cFolder Controlled Item","get")
-  FolderCtrldItemRels.setProperty("source_id",templateFolderParentId)
-  FolderCtrldItemRels.setAttribute("select","is_template,template_action,source_id(keyed_name),related_id(keyed_name)")
-  FolderCtrldItemRels.setAttribute("serverEvents","0")
-  FolderCtrldItemRels = FolderCtrldItemRels.apply()
+// -----------------------------
+Item addFolderControlledItemsFromTemplateToThisItem (string templateFolderParentId, string newFolderId) {
+  // System.Diagnostics.Debugger.Break();
+  Item FolderCtrldItemRels = this.newItem("cFolder Controlled Item","get");
+  FolderCtrldItemRels.setProperty("source_id",templateFolderParentId);
+  FolderCtrldItemRels.setAttribute("select","is_template,template_action,source_id(keyed_name),related_id(keyed_name)");
+  FolderCtrldItemRels.setAttribute("serverEvents","0");
+  FolderCtrldItemRels = FolderCtrldItemRels.apply();
 
-  If FolderCtrldItemRels.getItemCount() = 0 Then Return Me 'nothing to do
-  If FolderCtrldItemRels.isError() Then Return FolderCtrldItemRels
+  if (FolderCtrldItemRels.getItemCount() == 0) { return this;}  // nnothing to do
+  if (FolderCtrldItemRels.isError()) { return FolderCtrldItemRels;}
 
-  Dim i As Integer
-  For i=0 To FolderCtrldItemRels.getItemCount()-1
-  	Dim templRelItem As Item = FolderCtrldItemRels.getItemByIndex(i)
-    Dim templSubFolderId As String = templRelItem.getProperty("related_id","")
+  for (int i=0; i<FolderCtrldItemRels.getItemCount(); i++) {
+  	Item templRelItem = FolderCtrldItemRels.getItemByIndex(i);
+    string templSubFolderId = templRelItem.getProperty("related_id","");
     
-    Dim templAction As String = templRelItem.getProperty("template_action","")
-    Dim relItemId As String = ""
-    Dim relItemType As String = ""
+    string templAction = templRelItem.getProperty("template_action","");
+    string relItemId = "";
+    string relItemType = "";
     
-    'define new related Item accroding to template action
-    Select Case (templAction)
-      Case "Reference"
-         relItemId = templRelItem.getProperty("related_id","")
+    // define new related Item accroding to template action
+    switch (templAction) {
+      case "Reference":
+         relItemId = templRelItem.getProperty("related_id","");
+		 break;
 
-      Case "New Item","Copy"
-         relItemId = templRelItem.getProperty("related_id","")
-         If relItemId <> "" Then
-           relItemType = templRelItem.getPropertyItem("related_id").getAttribute("type","")
+      case "New Item":
+	  case "Copy":
+         relItemId = templRelItem.getProperty("related_id","");
+         if (relItemId != "") {
+           relItemType = templRelItem.getPropertyItem("related_id").getAttribute("type","");
            
-           Dim relItem As Item = inn.newItem(relItemType,"get")
-           Dim fileRelshipItem As Item
-           Dim fileRelshipName As String = ""
-           Dim relItemPropertiesSelect As String = ""
-           Dim fileRelPropertiesSelect As String = ""
+           Item relItem = this.newItem(relItemType,"get");
+           Item fileRelshipItem;
+           string fileRelshipName = "";
+           string relItemPropertiesSelect = "";
+           string fileRelPropertiesSelect = "";
            
-           Select Case (relItemType)
-             Case "Document"
-               fileRelshipName = "Document File"
-               fileRelPropertiesSelect = "sort_order,source_id,related_id(filename,file_type),is_shared"
+           switch (relItemType) {
+             case "Document":
+               fileRelshipName = "Document File";
+               fileRelPropertiesSelect = "sort_order,source_id,related_id(filename,file_type),is_shared";
                
-               relItemPropertiesSelect = "item_number,name,description,classification"
-               ' set item type specific conditions etc... here ...
-            
-             Case "Part"
-               relItemPropertiesSelect = "item_number,name,description,classification"
+               relItemPropertiesSelect = "item_number,name,description,classification";
+               // set item type specific conditions etc... here ...
+			   break;
 
-               ' set item type specific conditions etc... here ...
+ 		     case "Part":
+               relItemPropertiesSelect = "item_number,name,description,classification";
+
+               // set item type specific conditions etc... here ...
+			   break;
                
-             '--------------
-             ' add more item type cases, if folder controlled (poly)item gets extended
-             Case "add your item type case.."
-               relItemPropertiesSelect = "name,description,classification"
-               ' set item type specific conditions etc... here ...
-             '--------------
+             // --------------
+             // add more item type cases, if (folder controlled (poly)item gets extended
+             case "add your item type case..":
+               relItemPropertiesSelect = "name,description,classification";
+               // set item type specific conditions etc... here ...
+             // --------------
+			   break;
             
-           End Select 
+		  }
            
-           relItem.setID(relItemId)
-           relItem.setAttribute("select",relItemPropertiesSelect)
+           relItem.setID(relItemId);
+           relItem.setAttribute("select",relItemPropertiesSelect);
 
-           If fileRelshipName <> "" Then
-             fileRelshipItem = inn.newItem(fileRelshipName,"get")
-             fileRelshipItem.setAttribute("select",fileRelPropertiesSelect)
-             relItem.addRelationship(fileRelshipItem)
-           End If  
+           if (fileRelshipName != "") {
+             fileRelshipItem = this.newItem(fileRelshipName,"get");
+             fileRelshipItem.setAttribute("select",fileRelPropertiesSelect);
+             relItem.addRelationship(fileRelshipItem);
+           }  
            
-           relItem = relItem.apply()
-           If relItem.isError() Then Return relItem
+           relItem = relItem.apply();
+           if (relItem.isError()) { return relItem;}
           
-           ' create the new Item with same setting and relationships as in item context
-           Dim newRelItem As Item = relItem.clone(False)
-           newRelItem.setAction ("add")
-           If relItemPropertiesSelect.indexOf("item_number") >= 0 Then
-             Dim newItemNumber As String = generateItemNumberForItemType(relItemType)
-             If (newItemNumber <> "") Then newRelItem.setProperty("item_number",newItemNumber)
-           End If
-           newRelItem = newRelItem.apply()          
-           If newRelItem.isError() Then Return newRelItem
+           // create the new Item with same setting and relationships as in item context
+           Item newRelItem = relItem.clone(false);
+           newRelItem.setAction ("add");
+           if (relItemPropertiesSelect.IndexOf("item_number") >= 0) {
+             string newItemNumber = generateItemNumberForItemType(relItemType);
+             if (newItemNumber != "") { newRelItem.setProperty("item_number",newItemNumber);}
+           }
+           newRelItem = newRelItem.apply();          
+           if (newRelItem.isError()) { return newRelItem;}
            
-           relItemId = newRelItem.GetID()
+           relItemId = newRelItem.getID();
            
-           ' clone the file relationships
-           Dim fileRels As Item = relItem.getItemsByXPath("/*/*/Result/Item/Relationships/Item[@type='" & fileRelshipName & "']")
-           Dim f As Integer
-           For f=0 To fileRels.getItemCount() -1
-		     Dim clonedFileItem As Item = cloneFileInVault(fileRels.getItemByIndex(f).getPropertyItem("related_id"), f)
-			 If clonedFileItem.IsError() Then Return clonedFileItem
-         	 Dim newFileRel As Item = inn.newItem(fileRelshipName,"add")
-             newFileRel.setProperty("sort_order",fileRels.getItemByIndex(f).getProperty("sort_order",""))
-             newFileRel.setProperty("is_shared",fileRels.getItemByIndex(f).getProperty("is_shared",""))
-             newFileRel.setProperty("source_id",relItemId) ' set to new RelItem
-			 
-             newFileRel.setProperty("related_id",clonedFileItem.getID())
-			 
-             newFileRel = newFileRel.apply()
-           Next f
-         End If
+           // clone the file relationships
+           Item fileRels = relItem.getItemsByXPath("/*/*/Result/Item/Relationships/Item[@type='" + fileRelshipName + "']");
 
-    End Select
+           for (int f=0; f<fileRels.getItemCount(); f++) {
+		     Item clonedFileItem = cloneFileInVault(fileRels.getItemByIndex(f).getPropertyItem("related_id"), f);
+			 if (clonedFileItem.isError()) { return clonedFileItem;}
+         	 Item newFileRel = this.newItem(fileRelshipName,"add");
+             newFileRel.setProperty("sort_order",fileRels.getItemByIndex(f).getProperty("sort_order",""));
+             newFileRel.setProperty("is_shared",fileRels.getItemByIndex(f).getProperty("is_shared",""));
+             newFileRel.setProperty("source_id",relItemId); // set to new RelItem
+			 
+             newFileRel.setProperty("related_id",clonedFileItem.getID());
+			 
+             newFileRel = newFileRel.apply();
+           }
+         }
+		 break;
+	}
   
-    If  (relItemId <> "") Then
-     ' assume new folder already exists on server - then only new relationship needs to be added
-      Dim newFolderCtrldItemRel As Item = inn.newItem("cFolder Controlled Item","add")
-      newFolderCtrldItemRel.setProperty("sort_order",templRelItem.getProperty("sort_order",""))
-      newFolderCtrldItemRel.setProperty("template_action",templAction)
-      newFolderCtrldItemRel.setProperty("source_id",newFolderId)
-      newFolderCtrldItemRel.setProperty("related_id",relItemId)
-      newFolderCtrldItemRel = newFolderCtrldItemRel.apply()
-      If newFolderCtrldItemRel.isError() Then Return newFolderCtrldItemRel
+    if (relItemId != "") {
+     // assume new folder already exists on server - { only new relationship needs to be added
+      Item newFolderCtrldItemRel = this.newItem("cFolder Controlled Item","add");
+      newFolderCtrldItemRel.setProperty("sort_order",templRelItem.getProperty("sort_order",""));
+      newFolderCtrldItemRel.setProperty("template_action",templAction);
+      newFolderCtrldItemRel.setProperty("source_id",newFolderId);
+      newFolderCtrldItemRel.setProperty("related_id",relItemId);
+      newFolderCtrldItemRel = newFolderCtrldItemRel.apply();
+      if (newFolderCtrldItemRel.isError()) { return newFolderCtrldItemRel;}
     
-    End If
-  Next i
-  Return Me
-End Function
+    }
+  }
+  return this;
+}
 
-'-----------------------------
-Private Function cloneFileInVault (fileItem As Item, count As Integer) As Item
+// -----------------------------
+Item cloneFileInVault (Item fileItem, int count) {
 	
-    Dim runMethod As Item = inn.newItem("File","CopyFileToNewFileInVault") 'calls utilities server method
-    runMethod.setID(fileItem.getID())
-	runMethod.setProperty("filename",fileItem.getProperty("filename",""))
-	runMethod.setAttribute("newFilenamePrefix",count+1 & "-")
-	runMethod.setAttribute("newFilename",fileItem.getProperty("filename",""))
-	runMethod.setAttribute("localVaultPath",localVaultRoot)
+    Item runMethod = this.newItem("File","CopyFileToNewFileInVault"); // calls utilities server method
+    runMethod.setID(fileItem.getID());
+	runMethod.setProperty("filename",fileItem.getProperty("filename",""));
+	runMethod.setAttribute("newFilenamePrefix",count+1 + "-");
+	runMethod.setAttribute("newFilename",fileItem.getProperty("filename",""));
+	runMethod.setAttribute("localVaultPath", GlobalVar.localVaultRoot);
 	
-    runMethod = runMethod.apply()
-    Return runMethod
-End Function
+    runMethod = runMethod.apply();
+    return runMethod;
+}
 
-'-----------------------------
-Private Function generateItemNumberForItemType (itemType As String) As String
-  'detect, if given itemType has is marked for auto numbering
-  'when it is listed in comma separated list "ItemTypesWithConfig" defined on the "cFolder TeEmplate"
+// -----------------------------
+string generateItemNumberForItemType (string itemType)  {
+  // detect, if (given itemType has is marked for auto numbering
+  // when it is listed in comma separated list "ItemTypesWithConfig" defined on the "cFolder TeEmplate"
    
-  If (ItemTypesWithConfig.indexOf(itemType) < 0) Then Return ""  ' not listed
+  if (GlobalVar.ItemTypesWithConfig.IndexOf(itemType) < 0) { return "";}  // not listed
    
-  Dim autoNumMethodName  As String = ""
-  Dim itAutoNumType As String() = ItemTypesWithConfig.split(",")
-  Dim itAutoNumTypeMethods As String() = ItemTypesAutoNumberMethods.split(",")
-  Dim i As Integer
-  For i=0 To itAutoNumType.Length -1
-  	If itAutoNumType(i) = itemType Then
-  	  autoNumMethodName = itAutoNumTypeMethods(i)
-   	End If
-  Next i
+  string autoNumMethodName  = "";
+  string[] itAutoNumType = GlobalVar.ItemTypesWithConfig.Split(',');
+  string[] itAutoNumTypeMethods = GlobalVar.ItemTypesAutoNumberMethods.Split(',');
+
+  for (int i=0; i<itAutoNumType.Length; i++) {
+  	if (itAutoNumType[i] == itemType) {
+  	  autoNumMethodName = itAutoNumTypeMethods[i];
+   	}
+  }
      
-  If autoNumMethodName <> "" Then
-    Dim runMethod As Item = inn.newItem(itemType,autoNumMethodName)
-    runMethod = runMethod.apply()
-    If runMethod.isError() Then Return ""
+  if (autoNumMethodName != "") {
+    Item runMethod = this.newItem(itemType,autoNumMethodName);
+    runMethod = runMethod.apply();
+    if (runMethod.isError()) { return "";}
      
-    Return runMethod.getResult()
+    return runMethod.getResult();
    
-  End If
+  }
    
-  Return ""
-      
-End Function
-]]></method_code>
-  <method_type>VB</method_type>
+  return "";
+}
+
+void endOfMethod () {]]></method_code>
+  <method_type>C#</method_type>
   <name>Create Folder Struct from Templ</name>
  </Item>
 </AML>

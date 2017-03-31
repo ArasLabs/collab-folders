@@ -27,6 +27,7 @@
     <is_versionable>0</is_versionable>
     <revisions keyed_name="Default" type="Revision">7FE395DD8B9F4E1090756A34B733D75E</revisions>
     <show_parameters_tab>1</show_parameters_tab>
+    <structure_view>tabs off</structure_view>
     <unlock_on_logout>0</unlock_on_logout>
     <use_src_access>1</use_src_access>
     <name>cFolder Controlled Item</name>
@@ -90,11 +91,14 @@
         <name>World</name>
        </Item>
       </role>
+      <show_ssvc>0</show_ssvc>
       <sort_order>128</sort_order>
       <source_id keyed_name="cFolder Controlled Item" type="ItemType" name="cFolder Controlled Item">7B47D31C35774AF482CC551FA058A122</source_id>
       <type>default</type>
      </Item>
      <Item type="Server Event" id="A000FF6DF38445D5A3C000372DF70F3B" action="add">
+      <event_version>version_1</event_version>
+      <is_required>0</is_required>
       <related_id keyed_name="Set Templ Flag on Folder Rel" type="Method">
        <Item type="Method" action="get" select="id">
         <name>Set Templ Flag on Folder Rel</name>
@@ -105,6 +109,8 @@
       <source_id keyed_name="cFolder Controlled Item" type="ItemType" name="cFolder Controlled Item">7B47D31C35774AF482CC551FA058A122</source_id>
      </Item>
      <Item type="Server Event" id="4B6DACAA01744EA08880ECB077E39CE8" action="add">
+      <event_version>version_1</event_version>
+      <is_required>0</is_required>
       <related_id keyed_name="Copy FolderTeam to RelatedItems" type="Method">
        <Item type="Method" action="get" select="id">
         <name>Copy FolderTeam to RelatedItems</name>
@@ -115,6 +121,8 @@
       <source_id keyed_name="cFolder Controlled Item" type="ItemType" name="cFolder Controlled Item">7B47D31C35774AF482CC551FA058A122</source_id>
      </Item>
      <Item type="Server Event" id="7D67E81E411A44DF96D2D691FB0120FD" action="add">
+      <event_version>version_1</event_version>
+      <is_required>0</is_required>
       <related_id keyed_name="update_has_CtrldItems_flag" type="Method">
        <Item type="Method" action="get" select="id">
         <name>update_has_CtrldItems_flag</name>
@@ -125,6 +133,8 @@
       <source_id keyed_name="cFolder Controlled Item" type="ItemType" name="cFolder Controlled Item">7B47D31C35774AF482CC551FA058A122</source_id>
      </Item>
      <Item type="Server Event" id="C631007B8C764767B742E22610834FC7" action="add">
+      <event_version>version_1</event_version>
+      <is_required>0</is_required>
       <related_id keyed_name="update_has_CtrldItems_flag" type="Method">
        <Item type="Method" action="get" select="id">
         <name>update_has_CtrldItems_flag</name>
@@ -135,6 +145,8 @@
       <source_id keyed_name="cFolder Controlled Item" type="ItemType" name="cFolder Controlled Item">7B47D31C35774AF482CC551FA058A122</source_id>
      </Item>
      <Item type="Server Event" id="04733ED294E147F293231E249FA08C6B" action="add">
+      <event_version>version_1</event_version>
+      <is_required>0</is_required>
       <related_id keyed_name="Copy FolderTeam to RelatedItems" type="Method">
        <Item type="Method" action="get" select="id">
         <name>Copy FolderTeam to RelatedItems</name>
@@ -145,6 +157,8 @@
       <source_id keyed_name="cFolder Controlled Item" type="ItemType" name="cFolder Controlled Item">7B47D31C35774AF482CC551FA058A122</source_id>
      </Item>
      <Item type="Server Event" id="470E85D5EE8741B1BDDEC8719DBC0A00" action="add">
+      <event_version>version_1</event_version>
+      <is_required>0</is_required>
       <related_id keyed_name="Copy FolderTeam to RelatedItems" type="Method">
        <Item type="Method" action="get" select="id">
         <name>Copy FolderTeam to RelatedItems</name>
@@ -155,6 +169,8 @@
       <source_id keyed_name="cFolder Controlled Item" type="ItemType" name="cFolder Controlled Item">7B47D31C35774AF482CC551FA058A122</source_id>
      </Item>
      <Item type="Server Event" id="C7247B7D1C3342AA98824CDB53061520" action="add">
+      <event_version>version_1</event_version>
+      <is_required>0</is_required>
       <related_id keyed_name="update_has_CtrldItems_flag" type="Method">
        <Item type="Method" action="get" select="id">
         <name>update_has_CtrldItems_flag</name>
@@ -165,6 +181,8 @@
       <source_id keyed_name="cFolder Controlled Item" type="ItemType" name="cFolder Controlled Item">7B47D31C35774AF482CC551FA058A122</source_id>
      </Item>
      <Item type="Server Event" id="21C76D3C097F41BD9F6096F0CECDFEF1" action="add">
+      <event_version>version_1</event_version>
+      <is_required>0</is_required>
       <related_id keyed_name="update_has_CtrldItems_flag" type="Method">
        <Item type="Method" action="get" select="id">
         <name>update_has_CtrldItems_flag</name>
@@ -175,6 +193,8 @@
       <source_id keyed_name="cFolder Controlled Item" type="ItemType" name="cFolder Controlled Item">7B47D31C35774AF482CC551FA058A122</source_id>
      </Item>
      <Item type="Server Event" id="60CF5319C586475889515BFE993064CC" action="add">
+      <event_version>version_1</event_version>
+      <is_required>0</is_required>
       <related_id keyed_name="Increment SortOrder BeforeAdd" type="Method">
        <Item type="Method" action="get" select="id">
         <name>Increment SortOrder BeforeAdd</name>
@@ -185,6 +205,8 @@
       <source_id keyed_name="cFolder Controlled Item" type="ItemType" name="cFolder Controlled Item">7B47D31C35774AF482CC551FA058A122</source_id>
      </Item>
      <Item type="Server Event" id="E87370B30A934D41BABA3C34A1ABBDD3" action="add">
+      <event_version>version_1</event_version>
+      <is_required>0</is_required>
       <related_id keyed_name="Del FolderTeam on RelatedItems" type="Method">
        <Item type="Method" action="get" select="id">
         <name>Del FolderTeam on RelatedItems</name>

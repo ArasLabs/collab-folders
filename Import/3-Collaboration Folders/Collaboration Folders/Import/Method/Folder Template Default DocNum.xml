@@ -2,10 +2,9 @@
  <Item type="Method" id="F37540BB49A34CF983DD278AD541B515" action="add">
   <comments>used on relationships "cFolder_Tmpl_CtrItemConfig"</comments>
   <execution_allowed_to keyed_name="World" type="Identity">A73B655731924CD0B027E4F4D5FCC0A9</execution_allowed_to>
-  <method_code><![CDATA[Dim newItemNumber As String = Me.getInnovator().getNextSequence("Default Document")
-Return Me.getInnovator().newResult(newItemNumber)
-      ]]></method_code>
-  <method_type>VB</method_type>
+  <method_code><![CDATA[string newItemNumber = this.getInnovator().getNextSequence("Default Document");
+return this.getInnovator().newResult(newItemNumber);]]></method_code>
+  <method_type>C#</method_type>
   <name>Folder Template Default DocNum</name>
  </Item>
 </AML>

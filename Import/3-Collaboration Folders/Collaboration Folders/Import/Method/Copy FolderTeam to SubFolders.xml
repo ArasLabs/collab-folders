@@ -1,83 +1,83 @@
 ﻿<AML>
  <Item type="Method" id="1DA3E118D7BC41EC9A8AC6CE8F705D10" action="add">
   <execution_allowed_to keyed_name="World" type="Identity">A73B655731924CD0B027E4F4D5FCC0A9</execution_allowed_to>
-  <method_code><![CDATA['MethodTemplateName=VBMain;
-Dim inn As Innovator = Me.getInnovator()
-Dim res As Item
+  <method_code><![CDATA[// called onAfterAdd/Update of realtionships:
+//
 
-' called onAfterAdd/Update of realtionships:
-'
-Function Main() As Item
-  'System.Diagnostics.Debugger.Break()
-  Dim thisSubFolderRel As Item = Me.newItem(Me.GetType(),"get")
-  thisSubFolderRel.setID(Me.getID())
-  thisSubFolderRel.setAttribute("select","team_id,source_id(team_id,config_id,name,related_project_keyed_name),related_id(team_id,config_id,name,related_project_keyed_name,keyed_name,allow_team_change_logic)")
-  thisSubFolderRel.setAttribute("serverEvents","0")
-  thisSubFolderRel = thisSubFolderRel.apply()
+  //System.Diagnostics.Debugger.Break();
+  Item thisSubFolderRel = this.newItem(this.getType(),"get");
+  thisSubFolderRel.setID(this.getID());
+  thisSubFolderRel.setAttribute("select","team_id,source_id(team_id,config_id,name,related_project_keyed_name),related_id(team_id,config_id,name,related_project_keyed_name,keyed_name,allow_team_change_logic)");
+  thisSubFolderRel.setAttribute("serverEvents","0");
+  thisSubFolderRel = thisSubFolderRel.apply();
 
-  If thisSubFolderRel.isError() Then Return thisSubFolderRel
+  if (thisSubFolderRel.isError()) {return thisSubFolderRel;}
 
-  thisSubFolderRel = thisSubFolderRel.getItemByIndex(0) 'should only be one records anyways
-  Dim parentFolderTeamId As String = thisSubFolderRel.getPropertyItem("source_id").getProperty("team_id","")
-  Dim relatedProjectKN As String = thisSubFolderRel.getPropertyItem("source_id").getProperty("related_project_keyed_name","")
+  thisSubFolderRel = thisSubFolderRel.getItemByIndex(0); //should only be one records anyways
+  string parentFolderTeamId = thisSubFolderRel.getPropertyItem("source_id").getProperty("team_id","");
+  string relatedProjectKN = thisSubFolderRel.getPropertyItem("source_id").getProperty("related_project_keyed_name","");
 
-  Dim relItemId As String = thisSubFolderRel.getProperty("related_id","")
-  If  (relItemId <> "") Then
-  	Dim relShipTeamId As String = thisSubFolderRel.getProperty("team_id","")
-    Dim relItemTeamId As String = thisSubFolderRel.getPropertyItem("related_id").getProperty("team_id","empty")
-    Dim relItemType As String = thisSubFolderRel.getPropertyItem("related_id").getAttribute("type","")
-    Dim relItemAllowTeamChange As Boolean = (thisSubFolderRel.getPropertyItem("related_id").getProperty("allow_team_change_logic","0") = "1")
+  string relItemId = thisSubFolderRel.getProperty("related_id","");
+  string relShipTeamId = "";
+  if  (relItemId != "") {
+  	relShipTeamId = thisSubFolderRel.getProperty("team_id","");
+    string relItemTeamId = thisSubFolderRel.getPropertyItem("related_id").getProperty("team_id","empty");
+    string relItemType = thisSubFolderRel.getPropertyItem("related_id").getAttribute("type","");
+    bool relItemAllowTeamChange = (thisSubFolderRel.getPropertyItem("related_id").getProperty("allow_team_change_logic","0") == "1");
 
-    If relItemAllowTeamChange And parentFolderTeamId <> relItemTeamId Then
-    End If
+    if (relItemAllowTeamChange && parentFolderTeamId != relItemTeamId) {}
 
-    ' also set team id on the relionship item (since this is not controlled by 'SrcAcess' core logic
-    If parentFolderTeamId <> relShipTeamId Then
-      res = updateTeamIdOnItem(Me.GetType(),Me.getID(),parentFolderTeamId,"")
-      If res.isError() Then Return res
-    End If
-    ' set team id on the related item
-    If relItemAllowTeamChange And parentFolderTeamId <> relItemTeamId Then
-      res = updateTeamIdOnItem(relItemType,relItemId,parentFolderTeamId,relatedProjectKN)
-      If res.isError() Then Return res
-    Else
-      ' set related project on related item only
-      If relatedProjectKN <> "" Then
-      res = updateTeamIdOnItem(relItemType,relItemId,"",relatedProjectKN)
-      If res.isError() Then Return res
-      End If
-    End If
+ 	
+    // also set team id on the relionship item (since this is not controlled by 'SrcAcess' core logic
+ 	Item res;
+    if (parentFolderTeamId != relShipTeamId) {
+      res = updateTeamIdOnItem(this.getType(),this.getID(),parentFolderTeamId,"");
+      if (res.isError()) {return res;}
+   }
+   // set team id on the related item
+    if (relItemAllowTeamChange && parentFolderTeamId != relItemTeamId) {
+      res = updateTeamIdOnItem(relItemType,relItemId,parentFolderTeamId,relatedProjectKN);
+      if (res.isError()) {return res;}
+    } 
+	else {
+      // set related project on related item only
+      if (relatedProjectKN != "") {
+		res = updateTeamIdOnItem(relItemType,relItemId,"",relatedProjectKN);
+		if (res.isError()) {return res;}
+	  }
+    }
+  }
 
+  return this;
+}  
 
-  End If
-
-  Return Me
-End Function  
-
-'-----------------------------
-Private Function updateTeamIdOnItem (relItemType As String, relItemId As String, newTeamId As String, relatedProjectKN As String) As Item
-  Dim typeTable As String = relItemType.Replace(" " ,"_")
+// -----------------------------
+Item updateTeamIdOnItem (string relItemType, string relItemId, string newTeamId, string relatedProjectKN) {
+  string typeTable = relItemType.Replace(" " ,"_");
   
-  'link teamId to project space
-  If newTeamId <> "" Or relatedProjectKN <> "" Then  
-    Dim setSep As String = "SET"
-    Dim SQLstr As String = "UPDATE [" & typeTable & "] "
-    If (newTeamId <> "") Then
-      SQLstr = SQLstr & setSep & " [" & typeTable & "].team_id='" & newTeamId & "'"
-      setSep = ","
-    End If
-    If (relatedProjectKN <> "") Then
-      SQLstr = SQLstr & setSep & " [" & typeTable & "].related_project_keyed_name='" & relatedProjectKN & "'" 
-    End If
+  // link teamId to project space
+  if (newTeamId != "" || relatedProjectKN != "") {  
+    string setSep = "SET";
+    string SQLstr = "UPDATE [" + typeTable + "] ";
+    if (newTeamId != "") {
+      SQLstr = SQLstr + setSep + " [" + typeTable + "].team_id='" + newTeamId + "'";
+      setSep = ",";
+   }
+    if (relatedProjectKN != "") {
+      relatedProjectKN = relatedProjectKN.Replace("'","''");  // need to escape single quotes
+      SQLstr = SQLstr + setSep + " [" + typeTable + "].related_project_keyed_name='" + relatedProjectKN + "'";
+   }
     
-    SQLstr = SQLstr & " WHERE [" & typeTable & "].id='" & relItemId & "'"
-    res = inn.applySQL(SQLstr)
-    Return res
-  End If
-  Return Me
-End Function
+    SQLstr = SQLstr + " WHERE [" + typeTable + "].id='" + relItemId + "'";
+    Item res = this.getInnovator().applySQL(SQLstr);
+    return res;
+ }
+  return this;
+}
+
+void endOfMethod () {
 ]]></method_code>
-  <method_type>VB</method_type>
-  <name>Copy FolderTeam to SubFolders</name>
+  <method_type>C#</method_type>
+  <name>Copy cFolderTeam to SubFolders</name>
  </Item>
 </AML>

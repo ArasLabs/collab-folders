@@ -1,0 +1,134 @@
+﻿<AML>
+ <Item type="Method" id="ACED7387681B4DADB3044BD474DA2567" action="add">
+  <comments>Reads the config XML file or the Database into an Item and returns it</comments>
+  <execution_allowed_to keyed_name="World" type="Identity">A73B655731924CD0B027E4F4D5FCC0A9</execution_allowed_to>
+  <method_code><![CDATA[//System.Diagnostics.Debugger.Break();
+
+Item configItem = null;
+
+string filePath = GetConfigurationFileNameOfType(this.getType());
+if (filePath != "") {
+	if (filePath.IndexOf("Client/Solutions") == 0 || filePath.IndexOf("Client\\Solutions") == 0) {
+		filePath = CCO.Server.MapPath("./../" + filePath);
+	}
+	else {
+		filePath = CCO.Server.MapPath("./../Client/Solutions/CommonUtilities/xml/"+filePath);
+	}
+	var cntx = this.getInnovator().getI18NSessionContext();
+	string langCode = cntx.GetLanguageCode();
+	string defaultSuffix = cntx.GetDefaultLanguageSuffix();
+	if (defaultSuffix != null && "_"+langCode != defaultSuffix) {
+		// adjust "xml" folder to read from
+		filePath = filePath.Replace("xml/","xml."+langCode+"/");
+	}
+	
+	string fileTextContent;
+	var streamReader = new System.IO.StreamReader(filePath, Encoding.UTF8);
+	fileTextContent = streamReader.ReadToEnd();
+	streamReader.Close();
+
+	configItem = this.newItem("");
+	configItem.loadAML(fileTextContent);
+}
+else {
+	string configName = this.getAttribute("configName","");
+	if (configName == "") {
+		Item res = GetConfigurationNameOfType(this.getType());
+		if (res.isError()) {return res;}
+		configName = res.getResult();
+	}
+	configItem = GetConfigurationItems(configName);
+}
+return configItem;
+}
+// end of Main
+
+
+// local functions
+
+//----
+string GetConfigurationFileNameOfType (string typeName) {
+	Item variableItem = this.newItem("Variable", "get");
+	variableItem.setProperty("name", "tGridCfg "+typeName);
+	variableItem = variableItem.apply();
+	if (variableItem.isError()) {return "";}
+	string retVal = variableItem.getProperty("value", "");
+	if (retVal.IndexOf("disabled") >=0) {retVal="";}
+	return retVal;
+}
+	
+//----
+Item GetConfigurationNameOfType (string typeName) {
+	Item confNameItem = this.newItem("");
+	confNameItem.loadAML("<Item type=\"tgc_Apply to Item Types\" action=\"get\"  select=\"source_id(name,structure_item_type),item_type_name,is_used_with_toc_view\" ><item_type_name>"+typeName+"</item_type_name><is_disabled condition=\"ne\">1</is_disabled></Item>");
+	confNameItem = confNameItem.apply();
+	if (confNameItem.isError()) {return confNameItem;}
+	
+	// validate configuration found
+	if (confNameItem.getItemCount() > 1) {
+		string sep="";
+		string configNames = "";
+		for (int i=0;i<confNameItem.getItemCount(); i++) {
+			configNames += sep + confNameItem.getItemByIndex(i).getPropertyItem("source_id").getProperty("name","");
+			sep = ",";
+		}
+		return this.getInnovator().newError("Multiple grid configurations found ("+configNames+") for ItemType '"+typeName+"' !"); 
+	}
+	return this.getInnovator().newResult(confNameItem.getPropertyItem("source_id").getProperty("name",""));
+}
+	
+//----
+Item GetConfigurationItems (string configName) {
+	// escape XML
+	configName = configName.Replace("\"","&quot;");
+	configName = configName.Replace("'","&apos;");
+	configName = configName.Replace("<","&lt;");
+	configName = configName.Replace(">","&gt;");
+	configName = configName.Replace("&","&amp;");
+	
+    // now get the "released" configuration item with all definitions on all its relationships
+	string aml = "";
+	aml += "<Item type=\"tgc_Configuration\" action=\"get\" select=\"name,state,is_released,structure_relationship,structure_item_type,structure_row_bg_color,is_disallow_duplicate_items,";
+	aml += 	"structure_row_icon_path,apply_child_bg_color_up_to_root,structure_row_w_chldren_bg_color,root_item_generation,root_item_type,root_item_config_id,root_item_property_name,root_item_effectivity,toolbar_id\">";
+	aml += "<name>"+configName+"</name>";
+	aml += "<is_released>1</is_released>";
+	aml += "<Relationships>";
+	aml += 	"<Item type=\"tgc_Constant\" action=\"get\" select=\"sort_order,name,value,constant_type,description\" />";
+	aml += 	"<Item type=\"tgc_Apply to Item Types\" action=\"get\" select=\"*\" ><is_disabled condition=\"ne\">1</is_disabled></Item>";
+	aml += 	"<Item type=\"tgc_Toolbar Element\" action=\"get\" select=\"*\" >";
+	aml += 		"<Relationships>";
+	aml += 			"<Item type=\"tgc_Toolbar Element Choice\" action=\"get\" select=\"*\" />";
+	aml += 		"</Relationships>";
+	aml += 	"</Item>";
+	aml += 	"<Item type=\"tgc_View\" action=\"get\" select=\"*\" >";
+	aml += 		"<Relationships>";
+	aml += 			"<Item type=\"tgc_View ColumnDef\" action=\"get\" select=\"*\" ></Item>";
+	aml += 			"<Item type=\"tgc_View MenuAction\" action=\"get\" select=\"*\" />";
+	aml += 			"<Item type=\"tgc_StructRelQuery MenuAction\" action=\"get\" select=\"*\" />";
+	aml += 			"<Item type=\"tgc_Struct Prop MappingDef\" action=\"get\" select=\"*\" ></Item>";
+	aml += 			"<Item type=\"tgc_View Node RelQuery\" action=\"get\" select=\"*\" >";
+	aml += 				"<Relationships>";
+	aml += 					"<Item type=\"tgc_Prop MappingDef\" action=\"get\" select=\"*\" ></Item>";
+	aml += 					"<Item type=\"tgc_RelQuery MenuAction\" action=\"get\" select=\"*\" />";
+	aml += 				"</Relationships>";
+	aml += 			"</Item>";
+	aml += 		"</Relationships>";
+	aml += 	"</Item>";
+	aml += "</Relationships>";
+	aml += "</Item>";
+	
+	Item configItem = this.newItem("");
+    configItem.loadAML(aml);
+	return configItem.apply();
+
+}
+
+void endOfMethod () {
+
+
+]]></method_code>
+  <method_type>C#</method_type>
+  <owned_by_id keyed_name="Innovator Admin" type="Identity">DBA5D86402BF43D5976854B8B48FCDD1</owned_by_id>
+  <name>CommonBase GetGridConfigItem</name>
+ </Item>
+</AML>

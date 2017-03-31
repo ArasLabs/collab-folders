@@ -1,0 +1,208 @@
+﻿<AML>
+ <Item type="Method" id="2DFA0E94B05B4F479AD29674A848D75F" action="add">
+  <execution_allowed_to keyed_name="World" type="Identity">A73B655731924CD0B027E4F4D5FCC0A9</execution_allowed_to>
+  <method_code><![CDATA[//System.Diagnostics.Debugger.Break();
+
+string dataAction = this.getAttribute("dataAction","");
+if (dataAction == "") 
+    {return this.getInnovator().newError("no dataAction provided for root item of query!");}
+this.setAction(dataAction);
+string inAmlQuery = this.node.OuterXml;
+
+
+string searchText = this.getAttribute("searchText","");
+string searchWithinProjectKN = this.getAttribute("searchWithinProjectKN","");
+bool isReleased = (this.getAttribute("isReleased","0") == "1");
+string structureNodeRelNames = this.getAttribute("structureNodeRelNames","");
+string structureRelName = this.getAttribute("structureRelName","");
+structureRelName = "Sub cFolder";
+
+bool getMultipleRootItems = (this.getAttribute("getMultipleRootItems","0") == "1");
+
+Item resultItems = this.newItem("DUMMY");
+
+Item res;
+
+if (getMultipleRootItems) {
+	string structureNodeTypeName = this.getType();
+	string structureReleasedCondition = this.getAttribute("structureReleasedCondition","");
+	string restrictToRootOwnerId = this.getAttribute("restrictToRootOwnerId","");
+	
+	Item multiRootItems = this.newItem(structureNodeTypeName,"get");
+	if (isReleased && structureReleasedCondition != "") {setReleasedConditionOnItem (multiRootItems, structureReleasedCondition);}
+	if (restrictToRootOwnerId != "") {multiRootItems.setProperty("owned_by_id",restrictToRootOwnerId);}
+
+	multiRootItems.setAttribute("select","id");
+	multiRootItems.setProperty("is_root","1");
+	multiRootItems.setProperty("is_template","0");
+	
+	multiRootItems = multiRootItems.apply();
+	if (multiRootItems.isError()) {return multiRootItems;}
+	
+	for (int i=0; i<multiRootItems.getItemCount(); i++) {
+		res = getGridDataOfSingleRootItem (structureNodeTypeName, multiRootItems.getItemByIndex(i).getID(), inAmlQuery, structureNodeRelNames, structureRelName, searchText, searchWithinProjectKN);
+		if (res.isError()) {return res;}
+		resultItems.appendItem(res);
+	}
+}
+else {
+	res = getGridDataOfSingleRootItem (this.getType(), this.getID(), inAmlQuery, structureNodeRelNames, structureRelName, searchText, searchWithinProjectKN);
+	if (res.isError()) {return res;}
+	resultItems.appendItem(res);
+}
+
+// strip DUMMY item
+if (resultItems.getItemCount() == 1) {return this;}  // no data found
+
+resultItems.removeItem(resultItems.getItemByIndex(0));
+
+return resultItems;
+}
+
+
+//--- local functions
+
+//-- strip structure Relship
+Item getGridDataOfSingleRootItem (string rootItemType, string rootItemId, string amlQry, string structureNodeRelNames, string structureRelName, string searchText, string searchWithinProjectKN) {
+
+	Item resItems = this.newItem("DUMMY");
+	
+	Item qryItem = this.newItem("");
+	qryItem.loadAML(amlQry);
+	qryItem.setType(rootItemType);
+	qryItem.setID(rootItemId);
+
+	if (searchText != "") {
+		// build intelligent search conditions
+		// searchText should be applied to folder "name", controlled item "name", URL "name", and "filename"
+		
+		qryItem.setAction("get");
+		qryItem.removeAttribute("id");
+		qryItem.removeProperty("id");
+		stripRelationshipFromQueryItem(qryItem, structureRelName);
+		string newAmlQuery = qryItem.node.OuterXml;
+		
+		// AND conditions on folders
+		addStringConditionToItem (qryItem.getItemByIndex(0), "name", searchText);
+		if (searchWithinProjectKN != "") {
+			addStringConditionToItem (qryItem.getItemByIndex(0), "related_project_keyed_name", searchWithinProjectKN);
+		}
+		Item tmpRes = qryItem.apply();
+		for (int j=0; j< tmpRes.getItemCount(); j++) {
+			resItems.appendItem(tmpRes.getItemByIndex(j));
+		}
+		
+		// 2. search: apply condition on controlled items
+		string[] nodeRelNames = structureNodeRelNames.Split(',');
+		for (int i=0; i<nodeRelNames.Length && nodeRelNames[0] != "" ; i++) {
+			string xx = nodeRelNames[i];
+			if (nodeRelNames[i] != structureRelName) {
+				qryItem.loadAML(newAmlQuery);
+				stripAllRelationshipsButThisFromQueryItem(qryItem, nodeRelNames[i], structureNodeRelNames);
+				if (nodeRelNames[i].IndexOf("Controlled Item") > 0) {
+					addStringConditionToRelatedItem (qryItem, nodeRelNames[i], "name|item_number", searchText);
+				}
+				else if (nodeRelNames[i].IndexOf("File") > 0) {
+					addStringConditionToRelatedItem (qryItem, nodeRelNames[i], "filename", searchText);
+				}
+				else {
+					addStringConditionToRelatedItem (qryItem, nodeRelNames[i], "name", searchText);
+				}
+				tmpRes = qryItem.apply();
+		
+				if (tmpRes.getItemCount() > 0) {
+					// append res2 to res
+					for (int j=0; j< tmpRes.getItemCount(); j++) {
+						resItems.appendItem(tmpRes.getItemByIndex(j));
+					}
+				}
+			}
+		}
+		if (resItems.getItemCount() == 1) {return this.getInnovator().newError("no Item found!");}
+		resItems.removeItem(resItems.getItemByIndex(0));
+
+		return resItems;
+	}
+	else {
+		resItems = qryItem.apply();
+		return resItems;
+	}
+}
+
+//-- strip structure Relship
+void stripRelationshipFromQueryItem (Item qryItem, string relshipName) {
+	XmlNodeList nds = qryItem.dom.SelectNodes("//Item[@type='"+relshipName+"']");
+
+	for (int i = 0; i < nds.Count; i++)	{
+		XmlNode tmpNode = nds[i];
+		tmpNode.ParentNode.RemoveChild(tmpNode);
+	}
+}
+
+// -------------
+void stripAllRelationshipsButThisFromQueryItem (Item qryItem, string relshipName, string structureNodeRelNames) {
+	string[] rels = structureNodeRelNames.Split(',');
+	for (int i=0; i<rels.Length; i++) {
+		if (rels[i] != relshipName) {
+			stripRelationshipFromQueryItem (qryItem, rels[i]);
+		}
+	}
+}
+
+// -------------
+void addStringConditionToItem (Item itm, string propName, string searchString) {
+	if (searchString.IndexOf("*") >=0) {searchString = searchString.Replace("*","%");}
+	if (searchString.IndexOf("%") <0) {searchString = "%"+searchString+"%";}  // add wildcard, if not provided
+
+	// propName can be multiple to be applied as OR
+	string[] propNameA = {propName};
+	bool addOr = false;
+	if (propName.IndexOf("|") > 0) {
+		propNameA = propName.Split('|');
+		addOr = true;
+	}
+
+	Item condItm = itm;
+	if (addOr) {condItm = itm.newOR();}
+	for (int i=0;i<propNameA.Length;i++) {
+		condItm.setProperty(propNameA[i],searchString);
+		condItm.setPropertyAttribute(propNameA[i],"condition","like");
+	}
+}
+
+// -------------
+void addStringConditionToRelatedItem (Item qryItem, string relshipName, string propName, string searchString) {
+	Item relQry = qryItem.getItemsByXPath("//Item[@type='"+relshipName+"']");
+	Item relItemQry = relQry.getItemByIndex(0).getPropertyItem("related_id");
+	if (relItemQry != null) {
+		addStringConditionToItem (relItemQry, propName, searchString);
+	}
+	else {
+		addStringConditionToItem (relQry, propName, searchString);
+	}
+}
+
+// -------------
+void setReleasedConditionOnItem (Item itm, string amlConditions) {
+	if (amlConditions == "") {return;}
+	string[] conditions = amlConditions.Split(';');
+	for (int c=0;c<conditions.Length;c++) {
+		int pos = conditions[c].IndexOf(">");
+		int pos2 = conditions[c].IndexOf("</");
+		if (pos >=0) {
+			string propName = conditions[c].Substring(1,pos);
+			string propVal = conditions[c].Substring(pos+1,pos2);
+			itm.setProperty(propName,propVal);
+		}	
+	}
+}
+
+// needed to end method
+void methodEnd () {
+	return;
+]]></method_code>
+  <method_type>C#</method_type>
+  <owned_by_id keyed_name="Innovator Admin" type="Identity">DBA5D86402BF43D5976854B8B48FCDD1</owned_by_id>
+  <name>cFolder GetGridData Search</name>
+ </Item>
+</AML>

@@ -1,7 +1,12 @@
+* Add detection of custom actions on an ItemType (add to context menu automatically)
+
+* Add base menu action for "edit" and "version"
 
 * Drag & Drop for Aras11
 
 * Navigate with keyboard arrow keys
 
 * Move folder structuer with action "cut & paste"
+
+*key down events:  i.e. to execute search ('return' on toolbar), open selected row Item ('return' on grid)
 

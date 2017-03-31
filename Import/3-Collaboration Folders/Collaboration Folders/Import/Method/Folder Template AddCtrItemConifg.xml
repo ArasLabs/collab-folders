@@ -1,77 +1,79 @@
 ﻿<AML>
  <Item type="Method" id="2F3746335CDD47109802367D008A8BF2" action="add">
   <execution_allowed_to keyed_name="World" type="Identity">A73B655731924CD0B027E4F4D5FCC0A9</execution_allowed_to>
-  <method_code><![CDATA[' add null relationship for each value in List "Folder Controlled Item"
-'System.Diagnostics.Debugger.Break()
-Dim aml As String
-Dim qry As Item = Me.newItem("Value","get")
-aml = "<Item type='Value' action='get' select='value,label' ><source_id><Item type='List' action='get' select='id' ><name>Folder Controlled Item</name></Item></source_id></Item>"
-qry.loadAML(aml)
-qry = qry.apply()
-If qry.isError() Then Return qry
+  <method_code><![CDATA[// add null relationship for each value in List "Folder Controlled Item"
+//System.Diagnostics.Debugger.Break();
+string aml;
+Item qry = this.newItem("Value","get");
+aml = "<Item type='Value' action='get' select='value,label' ><source_id><Item type='List' action='get' select='id' ><name>Folder Controlled Item</name></Item></source_id></Item>";
+qry.loadAML(aml);
+qry = qry.apply();
+if (qry.isError()) {return qry;}
    
-Dim i As Integer   
-Dim typesIdList As String = ""
-Dim sepChar As String = ""
-For i=0 To  qry.getItemCount() -1
-  Dim typeId As String = qry.getItemByIndex(i).getProperty("value","")
-  If (typesIdList.IndexOf(typeId) < 0) Then
-    typesIdList = typesIdList & sepChar & typeId
-    sepChar = ","
-  End If
-Next i
-If typesIdList = "" Then Return Me
+string typesIdList = "";
+string sepChar = "";
+for (int i=0; i<qry.getItemCount(); i++) {
+  string typeId = qry.getItemByIndex(i).getProperty("value","");
+  if (typesIdList.IndexOf(typeId) < 0) {
+    typesIdList = typesIdList + sepChar + typeId;
+    sepChar = ",";
+  }
+}
+if (typesIdList == "") {return this;}
 
-typesIdList = "'" & typesIdList.Replace(",","','") & "'"
-aml = "<Item type=""ItemType"" action=""get"" select=""name"" ><id condition=""in"">" & typesIdList & "</id></Item>"
-qry = Me.newItem("","")
-qry.loadAML(aml)
-qry = qry.apply()
-If qry.isError() Then Return qry
+typesIdList = "'" + typesIdList.Replace(",","','") + "'";
+aml = "<Item type=\"ItemType\" action=\"get\" select=\"name\" ><id condition=\"in\">" + typesIdList + "</id></Item>";
+qry = this.newItem("","");
+qry.loadAML(aml);
+qry = qry.apply();
+if (qry.isError()) {return qry;}
 
-Dim itemTypesAdded As String = ""
-For i=0 To  qry.getItemCount() -1
-  Dim controlledItemConfig As Item = Me.newItem("","")
-  Dim itemTypeName As String = qry.getItemByIndex(i).getProperty("name","") ' this is the ItemType name of the poly items (language neutral)
+string itemTypesAdded = "";
+for (int i=0; i<qry.getItemCount(); i++) {
+  Item controlledItemConfig = this.newItem("","");
+  string itemTypeName = qry.getItemByIndex(i).getProperty("name",""); // this is the ItemType name of the poly items (language neutral)
   
-  ' due to config issues, poly item config could have an ItemType listed multiple times. Only add one row for each type.
-  If (itemTypesAdded.IndexOf(itemTypeName) < 0) Then
+  // due to config issues, poly item config could have an ItemType listed multiple times. Only add one row for each type.
+  if (itemTypesAdded.IndexOf(itemTypeName) < 0) {
   
-    aml = "<Item type=""cFolder Tmpl CtrItemConfig"" action=""merge"" "
-    aml = aml & "where=""[cFolder_Tmpl_CtrItemConfig].source_id='" & Me.getID() & "' and [cFolder_Tmpl_CtrItemConfig].controlled_item_type='" & itemTypeName & "' "" >"
-    aml = aml & "<controlled_item_type>" & itemTypeName & "</controlled_item_type>"   	
-    aml = aml & "<source_id>" & Me.getID() & "</source_id>"   	
-    aml = aml & "</Item>"   	
-    controlledItemConfig.loadAML(aml)
+    aml = "<Item type=\"cFolder Tmpl CtrItemConfig\" action=\"merge\" ";
+    aml += "where=\"[cFolder_Tmpl_CtrItemConfig].source_id='" + this.getID() + "' and [cFolder_Tmpl_CtrItemConfig].controlled_item_type='" + itemTypeName + "' \" >";
+    aml += "<controlled_item_type>" + itemTypeName + "</controlled_item_type>";
+    aml += "<source_id>" + this.getID() + "</source_id>";
+    aml += "</Item>";
+    controlledItemConfig.loadAML(aml);
 
-    Dim methodName As String = ""
-    Select Case (itemTypeName)
-     Case "Document"
-       methodName = "Folder Template Default DocNum"  
-     Case "CAD"
-       methodName = "Folder Template Default CADNum"
-     Case "Part"
-       methodName = "Folder Template Default PartNum"
-    End Select
+    string methodName = "";
+    switch (itemTypeName) {
+     case "Document":
+       methodName = "Folder Template Default DocNum";
+	   break;
+     case "CAD":
+       methodName = "Folder Template Default CADNum";
+	   break;
+     case "Part":
+       methodName = "Folder Template Default PartNum";
+	   break;
+    }
 
-    If methodName <> "" Then
-      Dim methItem As Item = Me.newItem("Method","get")
-      methItem.setProperty("name",methodName) 
-      methItem = methItem.apply()' get current generation of this method
-      If Not methItem.isError() Then
-        controlledItemConfig.setProperty("auto_number_method",methItem.getID())
-      End If
-    End If
+    if (methodName != "") {
+		Item methItem = this.newItem("Method","get");
+		methItem.setProperty("name",methodName);
+		methItem = methItem.apply(); // get current generation of this method
+		if (!methItem.isError()) {
+			controlledItemConfig.setProperty("auto_number_method",methItem.getID());
+		}
+    }
   
-    controlledItemConfig = controlledItemConfig.apply()
-    If controlledItemConfig.isError() Then Return controlledItemConfig
+    controlledItemConfig = controlledItemConfig.apply();
+    if (controlledItemConfig.isError()) {return controlledItemConfig;}
 
-    itemTypesAdded = "," & itemTypeName
-  End If 
-Next i
+    itemTypesAdded = "," + itemTypeName;
+  } 
+}
 
-Return Me]]></method_code>
-  <method_type>VB</method_type>
+return this;]]></method_code>
+  <method_type>C#</method_type>
   <name>Folder Template AddCtrItemConifg</name>
  </Item>
 </AML>

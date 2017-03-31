@@ -18,7 +18,6 @@ else
   if (resMsg !== "") {
     msg += resMsg + " ";
   }
-  alert(msg + "Please refresh the related grids on any open Forms !");
 }
 return;  
 ]]></method_code>

@@ -2,11 +2,13 @@
  <Item type="Form" id="EC9D60083BDB4DA1B57309A931E7B990" action="add">
   <category_form>0</category_form>
   <height>234</height>
+  <owned_by_id keyed_name="Innovator Admin" type="Identity">DBA5D86402BF43D5976854B8B48FCDD1</owned_by_id>
   <stylesheet><![CDATA[../styles/default.css]]></stylesheet>
   <width>699</width>
   <name>cFolder Structure Grid</name>
   <Relationships>
    <Item type="Body" id="5EA5D95524B94B1286E447EBA7B99639" action="add">
+    <owned_by_id keyed_name="Innovator Admin" type="Identity">DBA5D86402BF43D5976854B8B48FCDD1</owned_by_id>
     <sort_order>128</sort_order>
     <source_id keyed_name="cFolder Structure Grid" type="Form">EC9D60083BDB4DA1B57309A931E7B990</source_id>
     <Relationships>
@@ -18,41 +20,20 @@
       <font_family>arial, helvetica, sans-serif</font_family>
       <font_size>8pt</font_size>
       <font_weight>bold</font_weight>
-      <html_code><![CDATA[  <script type="text/javascript">
+      <html_code><![CDATA[   <script type="text/javascript">
 	// Generic TreeView - HTML-code
 	// FormEvent = onLoad
 	// ==============================
-    var treeGridHandler;
     var innovator = new top.Innovator();
     var I18Ncntx = innovator.getI18NSessionContext();
 
-	function onTabSelected() {
-		return; // not used
-	}
-
-	function setEditMode(item) {
-		// responds to the windows top toolbar actions
-		treeGrid.grid.turnEditOff();
-	}
-
-	function setViewMode(item) {
-		// responds to the windows top toolbar actions
-		treeGrid.grid.turnEditOff();
-	}
-
-	var onload_handler = function() {
-		if (window.initTreeGrid) {
-			window.initTreeGrid();
-		}
-	}
-	window.addEventListener("load", onload_handler);
-	//window.attachEvent("onload", onload_handler);
  </script>
 ]]></html_code>
       <is_disabled>0</is_disabled>
       <is_visible>1</is_visible>
       <label_position>top</label_position>
       <list_no_blank>0</list_no_blank>
+      <owned_by_id keyed_name="Innovator Admin" type="Identity">DBA5D86402BF43D5976854B8B48FCDD1</owned_by_id>
       <sort_order>128</sort_order>
       <source_id keyed_name="5EA5D95524B94B1286E447EBA7B99639" type="Body">5EA5D95524B94B1286E447EBA7B99639</source_id>
       <tab_stop>1</tab_stop>
@@ -64,42 +45,24 @@
    </Item>
    <Item type="Form Event" id="0C559513423D432C88979AF3321D8868" action="add">
     <form_event>onload</form_event>
-    <related_id keyed_name="CommonBase GridUtilities" type="Method">
-     <Item type="Method" action="get" select="id">
-      <name>CommonBase GridUtilities</name>
-     </Item>
-    </related_id>
-    <sort_order>1</sort_order>
-    <source_id keyed_name="cFolder Structure Grid" type="Form">EC9D60083BDB4DA1B57309A931E7B990</source_id>
-   </Item>
-   <Item type="Form Event" id="8D2C99343F344B0D9D802EDC85442437" action="add">
-    <form_event>onload</form_event>
-    <related_id keyed_name="CommonBase GridConfiguration" type="Method">
-     <Item type="Method" action="get" select="id">
-      <name>CommonBase GridConfiguration</name>
-     </Item>
-    </related_id>
-    <sort_order>2</sort_order>
-    <source_id keyed_name="cFolder Structure Grid" type="Form">EC9D60083BDB4DA1B57309A931E7B990</source_id>
-   </Item>
-   <Item type="Form Event" id="18D11667248C418680986C5D36A84FB5" action="add">
-    <form_event>onload</form_event>
+    <owned_by_id keyed_name="Innovator Admin" type="Identity">DBA5D86402BF43D5976854B8B48FCDD1</owned_by_id>
     <related_id keyed_name="cFolder Struct GridMenu Handler" type="Method">
      <Item type="Method" action="get" select="id">
       <name>cFolder Struct GridMenu Handler</name>
      </Item>
     </related_id>
-    <sort_order>3</sort_order>
+    <sort_order>1</sort_order>
     <source_id keyed_name="cFolder Structure Grid" type="Form">EC9D60083BDB4DA1B57309A931E7B990</source_id>
    </Item>
-   <Item type="Form Event" id="E1A6D8EA17684C8D8340E779EE3AEC27" action="add">
+   <Item type="Form Event" id="C10B57D9CD794DFEBB1D869F3281564E" action="add">
     <form_event>onload</form_event>
-    <related_id keyed_name="configStructure GridHandler" type="Method">
+    <owned_by_id keyed_name="Innovator Admin" type="Identity">DBA5D86402BF43D5976854B8B48FCDD1</owned_by_id>
+    <related_id keyed_name="cFolderStructure GridHandler" type="Method">
      <Item type="Method" action="get" select="id">
-      <name>configStructure GridHandler</name>
+      <name>cFolderStructure GridHandler</name>
      </Item>
     </related_id>
-    <sort_order>4</sort_order>
+    <sort_order>2</sort_order>
     <source_id keyed_name="cFolder Structure Grid" type="Form">EC9D60083BDB4DA1B57309A931E7B990</source_id>
    </Item>
   </Relationships>

@@ -1,0 +1,8 @@
+﻿<AML>
+ <Item type="Variable" id="AA3FC2E027A84D05B505A196AC3A513B" action="add">
+  <value>disabled</value>
+  <default_value>Client/Solutions/ItemFolders/xml/cFolderStructureConfig.xml</default_value>
+  <owned_by_id keyed_name="Innovator Admin" type="Identity">DBA5D86402BF43D5976854B8B48FCDD1</owned_by_id>
+  <name>tGridCfg User Folders TOC</name>
+ </Item>
+</AML>

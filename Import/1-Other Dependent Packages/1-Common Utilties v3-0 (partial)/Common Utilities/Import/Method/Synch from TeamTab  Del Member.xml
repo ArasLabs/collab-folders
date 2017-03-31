@@ -1,0 +1,33 @@
+﻿<AML>
+ <Item type="Method" id="3EC8ED0DA06941E180C2265731C2FB4B" action="add">
+  <execution_allowed_to keyed_name="World" type="Identity">A73B655731924CD0B027E4F4D5FCC0A9</execution_allowed_to>
+  <method_code><![CDATA[/// called onAfterDelete of "team Relationhip"  (i.e. Program Team)
+//System.Diagnostics.Debugger.Break()
+
+Item thisTeamRel = this.newItem(this.getType(),"get");
+thisTeamRel.setID(this.getID());
+thisTeamRel.setAttribute("select","source_id(team_id,config_id,name),related_id(keyed_name)");
+thisTeamRel.setAttribute("serverEvents","0");
+thisTeamRel = thisTeamRel.apply();
+
+if (thisTeamRel.isError()) {return thisTeamRel;}
+
+String teamSystemId = thisTeamRel.getPropertyItem("source_id").getProperty("team_id","");
+if (teamSystemId == "") {return this;} // nothing to do
+
+// delete relationship from Team Item 
+String SQLstr = "";
+SQLstr += "DELETE FROM [Team_Identity]";
+SQLstr += " WHERE [Team_Identity].source_id='" + teamSystemId  + "'";
+SQLstr += " AND  [Team_Identity].related_id='" + thisTeamRel.getProperty("related_id","") + "'";
+Item amlCmd = this.getInnovator().applySQL(SQLstr);
+if (amlCmd.isError()) {return amlCmd;}
+
+return this;
+
+]]></method_code>
+  <method_type>C#</method_type>
+  <owned_by_id keyed_name="Innovator Admin" type="Identity">DBA5D86402BF43D5976854B8B48FCDD1</owned_by_id>
+  <name>Synch from TeamTab  Del Member</name>
+ </Item>
+</AML>

@@ -28,6 +28,7 @@
     <open_icon>../images/Icons/16x16/16x16_relationship1.gif</open_icon>
     <revisions keyed_name="Default" type="Revision">7FE395DD8B9F4E1090756A34B733D75E</revisions>
     <show_parameters_tab>1</show_parameters_tab>
+    <structure_view>tabs off</structure_view>
     <unlock_on_logout>0</unlock_on_logout>
     <use_src_access>1</use_src_access>
     <name>Sub cFolder</name>
@@ -52,6 +53,8 @@
       <name>org_number</name>
      </Item>
      <Item type="Server Event" id="C640E635E71E46039EF3239A6D7244B9" action="add">
+      <event_version>version_1</event_version>
+      <is_required>0</is_required>
       <related_id keyed_name="Copy FolderTeam to SubFolders" type="Method">
        <Item type="Method" action="get" select="id">
         <name>Copy FolderTeam to SubFolders</name>
@@ -62,6 +65,8 @@
       <source_id keyed_name="Sub cFolder" type="ItemType" name="Sub cFolder">E79AC539681A49E9A664B3C19B7E5647</source_id>
      </Item>
      <Item type="Server Event" id="A1DD65C0F7BC47D4AE3097121764AB81" action="add">
+      <event_version>version_1</event_version>
+      <is_required>0</is_required>
       <related_id keyed_name="cFolder Set Root Templ Flag" type="Method">
        <Item type="Method" action="get" select="id">
         <name>cFolder Set Root Templ Flag</name>
@@ -72,6 +77,8 @@
       <source_id keyed_name="Sub cFolder" type="ItemType" name="Sub cFolder">E79AC539681A49E9A664B3C19B7E5647</source_id>
      </Item>
      <Item type="Server Event" id="06C885F649C9476E9581C1BB04713679" action="add">
+      <event_version>version_1</event_version>
+      <is_required>0</is_required>
       <related_id keyed_name="update_has_SubFolders_flag" type="Method">
        <Item type="Method" action="get" select="id">
         <name>update_has_SubFolders_flag</name>
@@ -82,6 +89,8 @@
       <source_id keyed_name="Sub cFolder" type="ItemType" name="Sub cFolder">E79AC539681A49E9A664B3C19B7E5647</source_id>
      </Item>
      <Item type="Server Event" id="D459FC6C099C43238F8E9D2C3B80D45E" action="add">
+      <event_version>version_1</event_version>
+      <is_required>0</is_required>
       <related_id keyed_name="delete related Sub Folder" type="Method">
        <Item type="Method" action="get" select="id">
         <name>delete related Sub Folder</name>
@@ -92,6 +101,8 @@
       <source_id keyed_name="Sub cFolder" type="ItemType" name="Sub cFolder">E79AC539681A49E9A664B3C19B7E5647</source_id>
      </Item>
      <Item type="Server Event" id="D64F308086C54FD3B14347B530308292" action="add">
+      <event_version>version_1</event_version>
+      <is_required>0</is_required>
       <related_id keyed_name="update_has_SubFolders_flag" type="Method">
        <Item type="Method" action="get" select="id">
         <name>update_has_SubFolders_flag</name>
@@ -102,6 +113,8 @@
       <source_id keyed_name="Sub cFolder" type="ItemType" name="Sub cFolder">E79AC539681A49E9A664B3C19B7E5647</source_id>
      </Item>
      <Item type="Server Event" id="B86F3472F2724F7084D2E1721D44BD98" action="add">
+      <event_version>version_1</event_version>
+      <is_required>0</is_required>
       <related_id keyed_name="Copy FolderTeam to SubFolders" type="Method">
        <Item type="Method" action="get" select="id">
         <name>Copy FolderTeam to SubFolders</name>
@@ -112,6 +125,8 @@
       <source_id keyed_name="Sub cFolder" type="ItemType" name="Sub cFolder">E79AC539681A49E9A664B3C19B7E5647</source_id>
      </Item>
      <Item type="Server Event" id="384A03E8916843439BC5CE5E4E67B993" action="add">
+      <event_version>version_1</event_version>
+      <is_required>0</is_required>
       <related_id keyed_name="update_has_SubFolders_flag" type="Method">
        <Item type="Method" action="get" select="id">
         <name>update_has_SubFolders_flag</name>
@@ -122,6 +137,8 @@
       <source_id keyed_name="Sub cFolder" type="ItemType" name="Sub cFolder">E79AC539681A49E9A664B3C19B7E5647</source_id>
      </Item>
      <Item type="Server Event" id="4AAF74B3B25A46F0B347FC351AB2FF54" action="add">
+      <event_version>version_1</event_version>
+      <is_required>0</is_required>
       <related_id keyed_name="update_has_SubFolders_flag" type="Method">
        <Item type="Method" action="get" select="id">
         <name>update_has_SubFolders_flag</name>
@@ -132,6 +149,8 @@
       <source_id keyed_name="Sub cFolder" type="ItemType" name="Sub cFolder">E79AC539681A49E9A664B3C19B7E5647</source_id>
      </Item>
      <Item type="Server Event" id="768510AAC7FF418EA9017E34A2C7E329" action="add">
+      <event_version>version_1</event_version>
+      <is_required>0</is_required>
       <related_id keyed_name="allow Sub Folder Delete" type="Method">
        <Item type="Method" action="get" select="id">
         <name>allow Sub Folder Delete</name>

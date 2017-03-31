@@ -1,0 +1,104 @@
+﻿<AML>
+ <Item type="Form" id="1CF50C86BD1141A9863451B7634B2F04" action="add">
+  <name>PM_projectOnAdd</name>
+  <Relationships>
+   <Item type="Body" id="2A0A9404985D437D92A5E2ADF27F7B89" action="add">
+    <source_id keyed_name="PM_projectOnAdd" type="Form">1CF50C86BD1141A9863451B7634B2F04</source_id>
+    <Relationships>
+     <Item type="Field" id="CBBD09563A824515BC4C095EFE89C7E0" action="add">
+      <border_width>0</border_width>
+      <display_length>40</display_length>
+      <display_length_unit>ex</display_length_unit>
+      <field_type>item</field_type>
+      <font_color>#000000</font_color>
+      <font_family>arial, helvetica, sans-serif</font_family>
+      <font_size>8pt</font_size>
+      <font_weight>bold</font_weight>
+      <is_disabled>1</is_disabled>
+      <is_visible>1</is_visible>
+      <label xml:lang="en">Folder Template:   ......... </label>
+      <label_position>left</label_position>
+      <list_no_blank>0</list_no_blank>
+      <propertytype_id keyed_name="cfolder_template_id" type="Property">201E238393484B93A8EFB03F6DCAE5AC</propertytype_id>
+      <sort_order>2304</sort_order>
+      <source_id keyed_name="2A0A9404985D437D92A5E2ADF27F7B89" type="Body">2A0A9404985D437D92A5E2ADF27F7B89</source_id>
+      <tab_index>14464</tab_index>
+      <tab_stop>1</tab_stop>
+      <x>181</x>
+      <y>122</y>
+      <name>cfolder_template_id</name>
+     </Item>
+     <Item type="Field" id="43B5485620E04BF786E93A857953F008" action="add">
+      <border_width>0</border_width>
+      <display_length_unit>px</display_length_unit>
+      <field_type>html</field_type>
+      <font_color>#000000</font_color>
+      <font_family>arial, helvetica, sans-serif</font_family>
+      <font_size>8pt</font_size>
+      <font_weight>bold</font_weight>
+      <html_code><![CDATA[<script>
+window.SearchFolderTemplate = function()
+{
+	//Show search dialog to select 'cFolder Template'
+	var params = { aras: window.top.aras, itemtypeName: 'cFolder Template', itemContext: undefined, itemSelectedID: undefined };
+	var options = { dialogWidth: 700, dialogHeight: 450 };
+	var res = top.aras.modalDialogHelper.show('DefaultModal', window, params, options, 'searchDialog.html');
+	
+	if ((res === undefined) || (res.itemID === '')) {
+		return;
+	}
+	else
+	{
+		var templateNd = top.aras.getItemById('cFolder Template', res.itemID, 0);
+		
+		var div_id,control_id,select;
+		div_id= getFieldByName("cfolder_template_text_box").id; control_id = div_id.substring(0, div_id.indexOf("span")); select = document.getElementById(control_id);
+		select.value = top.aras.getItemProperty(templateNd,"keyed_name","");
+
+		handleItemChange("cfolder_template_id",res.itemID);
+		document.thisItem.setProperty("cfolder_template_id",res.itemID);
+	}
+	return;
+};
+</script>
+<a href="javascript:window.SearchFolderTemplate()" id="searchFolderTemplate"><img src="../images/ellipsis-hover.svg" border="0" alt="Search" align="center" style="width:18px; height:18px;"></a>
+
+]]></html_code>
+      <is_disabled>0</is_disabled>
+      <is_visible>1</is_visible>
+      <label_position>top</label_position>
+      <list_no_blank>0</list_no_blank>
+      <sort_order>2432</sort_order>
+      <source_id keyed_name="2A0A9404985D437D92A5E2ADF27F7B89" type="Body">2A0A9404985D437D92A5E2ADF27F7B89</source_id>
+      <tab_stop>1</tab_stop>
+      <x>282</x>
+      <y>121</y>
+      <name>cfolder_template_search</name>
+     </Item>
+     <Item type="Field" id="4D55678E25AC4ADC87C3CB153704CA85" action="add">
+      <border_width>0</border_width>
+      <display_length>40</display_length>
+      <display_length_unit>ex</display_length_unit>
+      <field_type>text</field_type>
+      <font_color>#000000</font_color>
+      <font_family>arial, helvetica, sans-serif</font_family>
+      <font_size>8pt</font_size>
+      <font_weight>bold</font_weight>
+      <is_disabled>1</is_disabled>
+      <is_visible>1</is_visible>
+      <label_position>top</label_position>
+      <list_no_blank>0</list_no_blank>
+      <sort_order>2560</sort_order>
+      <source_id keyed_name="2A0A9404985D437D92A5E2ADF27F7B89" type="Body">2A0A9404985D437D92A5E2ADF27F7B89</source_id>
+      <tab_stop>1</tab_stop>
+      <x>313</x>
+      <y>121</y>
+      <z_index>-1</z_index>
+      <name>cfolder_template_text_box</name>
+     </Item>
+	
+    </Relationships>
+   </Item>
+  </Relationships>
+ </Item>
+</AML>

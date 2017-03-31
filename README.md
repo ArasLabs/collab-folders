@@ -19,6 +19,7 @@ This project and the following release notes have been migrated from the old Ara
 
 Release | Notes
 --------|--------
+[v5.0](https://github.com/ArasLabs/collab-folders/releases/tag/v5.0) | Aras 11SP6 & SP7. Read the Readme.txt for a functional overview and installation instructions.
 [v4.0](https://github.com/ArasLabs/collab-folders/releases/tag/v4.0) | Aras 11 only. Read the Readme.txt. Collaboration Folders Add-On Package. Please also read the documentation.
 [v3.1](https://github.com/ArasLabs/collab-folders/releases/tag/v3.1) | Aras 10 only. Read the Readme.txt. Collaboration Folders Add-On Package. Please also read the documentation.
 [v3.0.1](https://github.com/ArasLabs/collab-folders/releases/tag/v3.0.1) | Aras 10 only. Read the Readme.txt. Collaboration Folders Add-On Package. Please also read the documentation.
@@ -32,6 +33,7 @@ Release | Notes
 
 Project | Aras
 --------|------
+[v5.0](https://github.com/ArasLabs/collab-folders/releases/tag/v5.0) | 11 SP6-SP7
 [v4.0](https://github.com/ArasLabs/collab-folders/releases/tag/v4.0) | 11
 [v3.1](https://github.com/ArasLabs/collab-folders/releases/tag/v3.1) | 10
 [v3.0.1](https://github.com/ArasLabs/collab-folders/releases/tag/v3.0.1) | 10

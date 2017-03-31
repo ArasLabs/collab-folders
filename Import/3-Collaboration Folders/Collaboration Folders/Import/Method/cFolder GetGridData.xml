@@ -1,0 +1,95 @@
+﻿<AML>
+ <Item type="Method" id="10C9F61435A749D4B3A3ADDD715C9D5D" action="add">
+  <execution_allowed_to keyed_name="World" type="Identity">A73B655731924CD0B027E4F4D5FCC0A9</execution_allowed_to>
+  <method_code><![CDATA[//System.Diagnostics.Debugger.Break();
+
+string dataAction = this.getAttribute("dataAction","");
+if (dataAction == "") 
+    {return this.getInnovator().newError("no dataAction provided for root item of query!");}
+this.setAction(dataAction);
+string inAmlQuery = this.node.OuterXml;
+
+
+bool isReleased = (this.getAttribute("isReleased","0") == "1");
+
+bool getMultipleRootItems = (this.getAttribute("getMultipleRootItems","0") == "1");
+
+Item resultItems = this.newItem("DUMMY");
+
+Item res;
+
+if (getMultipleRootItems) {
+	string structureNodeTypeName = this.getType();
+	string structureReleasedCondition = this.getAttribute("structureReleasedCondition","");
+	string restrictToRootOwnerId = this.getAttribute("restrictToRootOwnerId","");
+	
+	Item multiRootItems = this.newItem(structureNodeTypeName,"get");
+	if (isReleased && structureReleasedCondition != "") {setReleasedConditionOnItem (multiRootItems, structureReleasedCondition);}
+	if (restrictToRootOwnerId != "") {multiRootItems.setProperty("owned_by_id",restrictToRootOwnerId);}
+
+	multiRootItems.setAttribute("select","id");
+	multiRootItems.setProperty("is_root","1");
+	multiRootItems.setProperty("is_template","0");
+	
+	multiRootItems = multiRootItems.apply();
+	if (multiRootItems.isError()) {return multiRootItems;}
+	
+	for (int i=0; i<multiRootItems.getItemCount(); i++) {
+		res = getGridDataOfSingleRootItem (structureNodeTypeName, multiRootItems.getItemByIndex(i).getID(), inAmlQuery);
+		if (res.isError()) {return res;}
+		resultItems.appendItem(res);
+	}
+}
+else {
+	res = getGridDataOfSingleRootItem (this.getType(), this.getID(), inAmlQuery);
+	if (res.isError()) {return res;}
+	resultItems.appendItem(res);
+}
+
+// strip DUMMY item
+if (resultItems.getItemCount() == 1) {return this;}  // no data found
+
+resultItems.removeItem(resultItems.getItemByIndex(0));
+
+return resultItems;
+}
+
+
+//--- local functions
+
+//-- strip structure Relship
+Item getGridDataOfSingleRootItem (string rootItemType, string rootItemId, string amlQry) {
+	Item resItems = this.newItem("DUMMY");
+	
+	Item qryItem = this.newItem("");
+	qryItem.loadAML(amlQry);
+	qryItem.setType(rootItemType);
+	qryItem.setID(rootItemId);
+
+	resItems = qryItem.apply();
+	return resItems;
+}
+
+// -------------
+void setReleasedConditionOnItem (Item itm, string amlConditions) {
+	if (amlConditions == "") {return;}
+	string[] conditions = amlConditions.Split(';');
+	for (int c=0;c<conditions.Length;c++) {
+		int pos = conditions[c].IndexOf(">");
+		int pos2 = conditions[c].IndexOf("</");
+		if (pos >=0) {
+			string propName = conditions[c].Substring(1,pos);
+			string propVal = conditions[c].Substring(pos+1,pos2);
+			itm.setProperty(propName,propVal);
+		}	
+	}
+}
+
+// needed to end method
+void methodEnd () {
+	return;
+]]></method_code>
+  <method_type>C#</method_type>
+  <name>cFolder GetGridData</name>
+ </Item>
+</AML>

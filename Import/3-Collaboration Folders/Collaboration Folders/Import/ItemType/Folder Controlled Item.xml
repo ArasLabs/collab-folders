@@ -13,8 +13,9 @@
   <label_plural xml:lang="en">Folder Controlled Items</label_plural>
   <manual_versioning>0</manual_versioning>
   <open_icon>../images/Icons/16x16/16x16_forms.gif</open_icon>
-  <revisions keyed_name="Default2" type="Revision">4662A0D8F5BA46FAA5548A019AFD330D</revisions>
+  <revisions keyed_name="NoRev-Default" type="Revision">4662A0D8F5BA46FAA5548A019AFD330D</revisions>
   <show_parameters_tab>1</show_parameters_tab>
+  <structure_view>tabs off</structure_view>
   <unlock_on_logout>0</unlock_on_logout>
   <use_src_access>0</use_src_access>
   <name>Folder Controlled Item</name>
@@ -58,6 +59,8 @@
     <name>name</name>
    </Item>
    <Item type="Server Event" id="89BB9C1A057144179514E0A7766D2ADD" action="add">
+    <event_version>version_1</event_version>
+    <is_required>0</is_required>
     <related_id keyed_name="polymorphic_item_onBeforeAdd" type="Method">
      <Item type="Method" action="get" select="id">
       <name>polymorphic_item_onBeforeAdd</name>
@@ -68,6 +71,8 @@
     <source_id keyed_name="Folder Controlled Item" type="ItemType" name="Folder Controlled Item">B8F0C719176942BFBC6716F72E28750C</source_id>
    </Item>
    <Item type="Server Event" id="FBE2858144E548D792B7BCA94BC659F4" action="add">
+    <event_version>version_1</event_version>
+    <is_required>0</is_required>
     <related_id keyed_name="polymorphic_item_onBeforeCopy" type="Method">
      <Item type="Method" action="get" select="id">
       <name>polymorphic_item_onBeforeCopy</name>
@@ -78,6 +83,8 @@
     <source_id keyed_name="Folder Controlled Item" type="ItemType" name="Folder Controlled Item">B8F0C719176942BFBC6716F72E28750C</source_id>
    </Item>
    <Item type="Server Event" id="FC818EA5DBA04268ACE255D41F51BB03" action="add">
+    <event_version>version_1</event_version>
+    <is_required>0</is_required>
     <related_id keyed_name="polymorphic_item_onBeforeDelete" type="Method">
      <Item type="Method" action="get" select="id">
       <name>polymorphic_item_onBeforeDelete</name>
@@ -88,6 +95,8 @@
     <source_id keyed_name="Folder Controlled Item" type="ItemType" name="Folder Controlled Item">B8F0C719176942BFBC6716F72E28750C</source_id>
    </Item>
    <Item type="Server Event" id="ED70C7B4867E492D9401FEC96D22A38F" action="add">
+    <event_version>version_1</event_version>
+    <is_required>0</is_required>
     <related_id keyed_name="polymorphic_item_onBeforeLock" type="Method">
      <Item type="Method" action="get" select="id">
       <name>polymorphic_item_onBeforeLock</name>
@@ -98,6 +107,8 @@
     <source_id keyed_name="Folder Controlled Item" type="ItemType" name="Folder Controlled Item">B8F0C719176942BFBC6716F72E28750C</source_id>
    </Item>
    <Item type="Server Event" id="238AA9B9343D446A9E6BB646B297FCC9" action="add">
+    <event_version>version_1</event_version>
+    <is_required>0</is_required>
     <related_id keyed_name="polymorphic_item_onBeforeUnlock" type="Method">
      <Item type="Method" action="get" select="id">
       <name>polymorphic_item_onBeforeUnlock</name>
@@ -108,6 +119,8 @@
     <source_id keyed_name="Folder Controlled Item" type="ItemType" name="Folder Controlled Item">B8F0C719176942BFBC6716F72E28750C</source_id>
    </Item>
    <Item type="Server Event" id="03DBFD2135824F04BB0A68E41930774F" action="add">
+    <event_version>version_1</event_version>
+    <is_required>0</is_required>
     <related_id keyed_name="polymorphic_item_onBeforeUpdate" type="Method">
      <Item type="Method" action="get" select="id">
       <name>polymorphic_item_onBeforeUpdate</name>
@@ -118,6 +131,8 @@
     <source_id keyed_name="Folder Controlled Item" type="ItemType" name="Folder Controlled Item">B8F0C719176942BFBC6716F72E28750C</source_id>
    </Item>
    <Item type="Server Event" id="7B02FED62592484B88211AE315038408" action="add">
+    <event_version>version_1</event_version>
+    <is_required>0</is_required>
     <related_id keyed_name="polymorphic_item_onBeforeVersion" type="Method">
      <Item type="Method" action="get" select="id">
       <name>polymorphic_item_onBeforeVersion</name>
@@ -148,6 +163,29 @@
     <source_id keyed_name="Folder Controlled Item" type="ItemType" name="Folder Controlled Item">B8F0C719176942BFBC6716F72E28750C</source_id>
     <track_history>0</track_history>
     <name>generation</name>
+   </Item>
+   <Item type="Property" action="edit" where="source_id='B8F0C719176942BFBC6716F72E28750C' and name='itemtype'">
+    <column_alignment>left</column_alignment>
+    <data_source keyed_name="Folder Controlled Item">
+     <Item type="List" action="get" select="id" page="1" pagesize="1">
+      <name>Folder Controlled Item</name>
+     </Item>
+    </data_source>
+    <data_type>list</data_type>
+    <is_hidden>0</is_hidden>
+    <is_hidden2>0</is_hidden2>
+    <is_indexed>0</is_indexed>
+    <is_keyed>0</is_keyed>
+    <is_multi_valued>0</is_multi_valued>
+    <is_required>0</is_required>
+    <label xml:lang="en">ItemType</label>
+    <range_inclusive>0</range_inclusive>
+    <readonly>1</readonly>
+    <sort_order>128</sort_order>
+    <source_id keyed_name="Folder Controlled Item" type="ItemType" name="Folder Controlled Item">B8F0C719176942BFBC6716F72E28750C</source_id>
+    <stored_length>64</stored_length>
+    <track_history>0</track_history>
+    <name>itemtype</name>
    </Item>
    <Item type="Property" action="edit" where="source_id='B8F0C719176942BFBC6716F72E28750C' and name='major_rev'">
     <column_alignment>left</column_alignment>

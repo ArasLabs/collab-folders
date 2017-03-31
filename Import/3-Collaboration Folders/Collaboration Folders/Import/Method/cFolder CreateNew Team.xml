@@ -1,48 +1,43 @@
 ﻿<AML>
  <Item type="Method" id="A2B85BAAFB674DDABBD8874E79FF7ED4" action="add">
+  <comments>called from other methods</comments>
   <execution_allowed_to keyed_name="World" type="Identity">A73B655731924CD0B027E4F4D5FCC0A9</execution_allowed_to>
-  <method_code><![CDATA['MethodTemplateName=VBMain;
-Dim inn As Innovator = Me.getInnovator()
+  <method_code><![CDATA[Innovator inn = this.getInnovator();
   
-Function Main() As Item
-  'System.Diagnostics.Debugger.Break()
-  Dim amlCmd As Item = inn.newItem("Team","add")
-  Dim val As String = Me.getProperty("name","")
-  amlCmd.setProperty("name",val)
-  val = Me.getProperty("private_team_item_id_string","")
-  amlCmd.setProperty("private_team_item_id_string",val)
+//System.Diagnostics.Debugger.Break();
+  Item amlCmd = inn.newItem("Team","add");
+  string val = this.getProperty("name","");
+  amlCmd.setProperty("name",val);
+  val = this.getProperty("private_team_item_id_string","");
+  amlCmd.setProperty("private_team_item_id_string",val);
   
-  'add current User (alias Id) as team member with role taamManager
-  Dim amlRelItem As Item = inn.newItem("Team Identity","add")
-  Dim aliasId As String = inn.getUserAliases()
-  If (aliasId <> "") Then
-    aliasId = aliasId.Substring(0,32)
-    Dim AliasItem As Item = inn.getItemById("Identity", aliasId)
-
-    amlCmd.setProperty("owned_by_id",aliasId)
-    
-    amlRelItem.setRelatedItem(AliasItem)
-    amlCmd.addRelationship(amlRelItem)
-
-  End If
-  ' run under different identity  
-  Dim plmIdentity As Aras.Server.Security.Identity  = Aras.Server.Security.Identity.GetByName("Super User")
-  Dim PermissionWasSet As Boolean  = Aras.Server.Security.Permissions.GrantIdentity(plmIdentity)
-
-  Dim newTeam As Item = amlCmd.apply()
-
-  ' Revoke 'Aras PLM' permissions
-  If (PermissionWasSet) Then Aras.Server.Security.Permissions.RevokeIdentity(plmIdentity)
-
-  If newTeam.isError() Then Return newTeam 
-  amlCmd = newTeam.apply("Set Folder privateTeam Perm")
-
-  Return newTeam
+  //add current User (alias Id) as team member with role taamManager
+  Item amlRelItem = inn.newItem("Team Identity","add");
+  string aliasId = inn.getUserAliases();
+  if (aliasId != "") {
+    aliasId = aliasId.Substring(0,32);
+    Item AliasItem = inn.getItemById("Identity", aliasId);
+    amlCmd.setProperty("owned_by_id",aliasId);
+    amlRelItem.setRelatedItem(AliasItem);
+    amlCmd.addRelationship(amlRelItem);
+  }
   
-End Function
+  // run under different identity  
+  Aras.Server.Security.Identity plmIdentity = Aras.Server.Security.Identity.GetByName("Super User");
+  bool PermissionWasSet = Aras.Server.Security.Permissions.GrantIdentity(plmIdentity);
+
+  Item newTeam = amlCmd.apply();
+
+  // Revoke 'Aras PLM' permissions
+  if (PermissionWasSet) { Aras.Server.Security.Permissions.RevokeIdentity(plmIdentity);}
+
+  if (newTeam.isError()) {return newTeam;}
+  amlCmd = newTeam.apply("Set Folder privateTeam Perm");
+
+  return newTeam;
 
 ]]></method_code>
-  <method_type>VB</method_type>
+  <method_type>C#</method_type>
   <name>cFolder CreateNew Team</name>
  </Item>
 </AML>

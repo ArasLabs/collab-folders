@@ -1,0 +1,8 @@
+<AML>
+ <!-- delete unused 'onload' Form Events of older versions of cFolders -->
+  <Item type="Form Event" id="A6FB5ED30BCF4E94AD527372BE55693E" action="delete" /> <!-- BaseGridMenu Utilities -->
+  <Item type="Form Event" id="8D2C99343F344B0D9D802EDC85442437" action="delete" /> <!-- CommonBase TreeGridCfg Handler -->
+  <Item type="Form Event" id="18D11667248C418680986C5D36A84FB5" action="delete" /> <!-- cFolder Struct GridMenu Handler -->
+  <Item type="Form Event" id="E1A6D8EA17684C8D8340E779EE3AEC27" action="delete" /> <!-- cFolderStructure GridHandler -->
+  
+ </AML>

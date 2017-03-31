@@ -25,6 +25,7 @@
     <is_versionable>0</is_versionable>
     <revisions keyed_name="Default" type="Revision">7FE395DD8B9F4E1090756A34B733D75E</revisions>
     <show_parameters_tab>1</show_parameters_tab>
+    <structure_view>tabs off</structure_view>
     <unlock_on_logout>0</unlock_on_logout>
     <use_src_access>1</use_src_access>
     <name>cFolder Tmpl CtrItemConfig</name>
@@ -76,6 +77,7 @@
         <name>World</name>
        </Item>
       </role>
+      <show_ssvc>0</show_ssvc>
       <sort_order>128</sort_order>
       <source_id keyed_name="cFolder Tmpl CtrItemConfig" type="ItemType" name="cFolder Tmpl CtrItemConfig">D830FC4501844BB19BDB63C8C3C3ED50</source_id>
       <type>default</type>

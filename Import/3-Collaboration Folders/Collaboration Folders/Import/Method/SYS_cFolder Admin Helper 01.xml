@@ -2,39 +2,38 @@
  <Item type="Method" id="524E2FBE562747EEB241752FC9A261FB" action="add">
   <comments>re-generate has_sub_folder flag on all cFolder items - SQL</comments>
   <execution_allowed_to keyed_name="Administrators" type="Identity">2618D6F5A90949BAA7E920D1B04C7EE1</execution_allowed_to>
-  <method_code><![CDATA[' Use Run Method action
+  <method_code><![CDATA[// Use Run Method action
 
-' Data Administration tool
-Dim SQLstr As String = ""
-Dim inn As Innovator = Me.getInnovator()
-'System.Diagnostics.Debugger.Break()
+// Data Administration tool
+string SQLstr = "";
+Innovator inn = this.getInnovator();
+//System.Diagnostics.Debugger.Break();
 
-' select Sub cFolder relationship
-SQLstr = "SELECT DISTINCT [Item_Sub_Folder].source_id FROM [Item_Sub_Folder]"
-Dim res As Item = inn.applySQL(SQLstr)
-If res.getItemCount() = 0 Then Return inn.newResult("No Sub Folder relationship items found!")
-If res.isError() Then Return inn.newError(res.getErrorString())
+// select Sub cFolder relationship
+SQLstr = "SELECT DISTINCT [Item_Sub_Folder].source_id FROM [Item_Sub_Folder]";
+Item res = inn.applySQL(SQLstr);
+if (res.getItemCount() == 0) {return inn.newResult("No Sub Folder relationship items found!");}
+if (res.isError()) {return inn.newError(res.getErrorString());}
 
-'build list of ids
-Dim i As Integer
-Dim IdsToUpdate As String = "##"
-For i=0 To res.getItemCount() -1
-  IdsToUpdate= IdsToUpdate & "," & res.getItemByIndex(i).getProperty("source_id","")
-Next i
+// build list of ids
+string IdsToUpdate = "##";
+for (int i=0; i<res.getItemCount(); i++) {
+  IdsToUpdate += "," + res.getItemByIndex(i).getProperty("source_id","");
+}
 
-IdsToUpdate = IdsToUpdate.Replace(",,",",")
-IdsToUpdate = IdsToUpdate.Replace("##,","")
+IdsToUpdate = IdsToUpdate.Replace(",,",",");
+IdsToUpdate = IdsToUpdate.Replace("##,","");
 
-IdsToUpdate = "'" & IdsToUpdate.Replace(",","','") & "'"
+IdsToUpdate = "'" + IdsToUpdate.Replace(",","','") + "'";
 
-'Return inn.newResult(IdsToUpdate)
+// return inn.newResult(IdsToUpdate)
 
-SQLstr = SQLstr & " UPDATE [cFolder] Set [cFolder].has_sub_folders='1' WHERE [cFolder].id in (" & IdsToUpdate & ")"
-res = inn.applySQL(SQLstr)
-If res.isError() Then Return inn.newError(res.getErrorString())
+SQLstr += " UPDATE [cFolder] Set [cFolder].has_sub_folders='1' WHERE [cFolder].id in (" + IdsToUpdate + ")";
+res = inn.applySQL(SQLstr);
+if (res.isError()) {return inn.newError(res.getErrorString());}
 
-Return inn.newResult("DONE")]]></method_code>
-  <method_type>VB</method_type>
+return inn.newResult("DONE");]]></method_code>
+  <method_type>C#</method_type>
   <name>SYS_cFolder Admin Helper 01</name>
  </Item>
 </AML>

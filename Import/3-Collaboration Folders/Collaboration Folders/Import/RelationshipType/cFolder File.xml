@@ -27,6 +27,7 @@
     <open_icon>../images/Icons/16x16/16x16_relationship1.gif</open_icon>
     <revisions keyed_name="Default" type="Revision">7FE395DD8B9F4E1090756A34B733D75E</revisions>
     <show_parameters_tab>1</show_parameters_tab>
+    <structure_view>tabs off</structure_view>
     <unlock_on_logout>0</unlock_on_logout>
     <use_src_access>1</use_src_access>
     <name>cFolder File</name>
@@ -107,11 +108,14 @@
         <name>World</name>
        </Item>
       </role>
+      <show_ssvc>0</show_ssvc>
       <sort_order>128</sort_order>
       <source_id keyed_name="cFolder File" type="ItemType" name="cFolder File">022CE9AE944743CA9A9215DCAF042D20</source_id>
       <type>default</type>
      </Item>
      <Item type="Server Event" id="BF15686EF11C480684FA02A43D056A1C" action="add">
+      <event_version>version_1</event_version>
+      <is_required>0</is_required>
       <related_id keyed_name="Set Templ Flag on Folder Rel" type="Method">
        <Item type="Method" action="get" select="id">
         <name>Set Templ Flag on Folder Rel</name>
@@ -122,6 +126,8 @@
       <source_id keyed_name="cFolder File" type="ItemType" name="cFolder File">022CE9AE944743CA9A9215DCAF042D20</source_id>
      </Item>
      <Item type="Server Event" id="81F55162FE8A482881FD45ACDCC1E31A" action="add">
+      <event_version>version_1</event_version>
+      <is_required>0</is_required>
       <related_id keyed_name="PE_update_has_files_flag" type="Method">
        <Item type="Method" action="get" select="id">
         <name>PE_update_has_files_flag</name>
@@ -132,6 +138,8 @@
       <source_id keyed_name="cFolder File" type="ItemType" name="cFolder File">022CE9AE944743CA9A9215DCAF042D20</source_id>
      </Item>
      <Item type="Server Event" id="EFE06B0521C841859D6097566C927947" action="add">
+      <event_version>version_1</event_version>
+      <is_required>0</is_required>
       <related_id keyed_name="PE_update_has_files_flag" type="Method">
        <Item type="Method" action="get" select="id">
         <name>PE_update_has_files_flag</name>
@@ -142,6 +150,8 @@
       <source_id keyed_name="cFolder File" type="ItemType" name="cFolder File">022CE9AE944743CA9A9215DCAF042D20</source_id>
      </Item>
      <Item type="Server Event" id="5C4DCD027A8F4669897805C4535AD287" action="add">
+      <event_version>version_1</event_version>
+      <is_required>0</is_required>
       <related_id keyed_name="PE_update_has_files_flag" type="Method">
        <Item type="Method" action="get" select="id">
         <name>PE_update_has_files_flag</name>
@@ -152,6 +162,8 @@
       <source_id keyed_name="cFolder File" type="ItemType" name="cFolder File">022CE9AE944743CA9A9215DCAF042D20</source_id>
      </Item>
      <Item type="Server Event" id="DBFCA5CE1A6841589AB46E0196AAB0F5" action="add">
+      <event_version>version_1</event_version>
+      <is_required>0</is_required>
       <related_id keyed_name="PE_update_has_files_flag" type="Method">
        <Item type="Method" action="get" select="id">
         <name>PE_update_has_files_flag</name>
@@ -162,6 +174,8 @@
       <source_id keyed_name="cFolder File" type="ItemType" name="cFolder File">022CE9AE944743CA9A9215DCAF042D20</source_id>
      </Item>
      <Item type="Server Event" id="F8D0CC6C45B246D5AAD1D6810E79911A" action="add">
+      <event_version>version_1</event_version>
+      <is_required>0</is_required>
       <related_id keyed_name="Increment SortOrder BeforeAdd" type="Method">
        <Item type="Method" action="get" select="id">
         <name>Increment SortOrder BeforeAdd</name>
@@ -172,6 +186,8 @@
       <source_id keyed_name="cFolder File" type="ItemType" name="cFolder File">022CE9AE944743CA9A9215DCAF042D20</source_id>
      </Item>
      <Item type="Server Event" id="A5D804071E2B4463AEEC6A581D0E780E" action="add">
+      <event_version>version_1</event_version>
+      <is_required>0</is_required>
       <related_id keyed_name="EnforceSharedFlagOnFileRels" type="Method">
        <Item type="Method" action="get" select="id">
         <name>EnforceSharedFlagOnFileRels</name>

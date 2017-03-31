@@ -3,14 +3,12 @@
   <execution_allowed_to keyed_name="World" type="Identity">A73B655731924CD0B027E4F4D5FCC0A9</execution_allowed_to>
   <method_code><![CDATA[itemLinkProperty = "team_id";
 
-var element = document.getElementById("arasRelease"); 
 var formArasRelease = "";
-if (element) {formArasRelease = element.innerHTML;}
 
 //=== check if new team logic is needed
 var hideNewTeamLinkAndReturn = false;
-
-if (! document.isEditMode) {hideNewTeamLinkAndReturn = true;}
+var isEditMode = document.isEditMode || parent.isEditMode;
+if (!isEditMode) {hideNewTeamLinkAndReturn = true;}
 
 var propVal = top.aras.getItemProperty(document.thisItem.node, "is_template","");
 // if template, no teams are allowed
@@ -122,15 +120,17 @@ function hideCreateNewAction (hrefHTMLName, bHide) {
 
 // -------
 function fn_GetValueOfFieldByName (propName) {
-	  if (formArasRelease === "Aras9") {return document.getElementsByName(propName)[0].value;}
-	  else {
-		var instance= top.aras.Browser.isIe() ? top.instance : top.instance.contentWindow;
-		return instance.getFieldByName(propName).getElementsByTagName("input")[0].value;
-		}
-	return "";
+	var div_id = getFieldByName(propName).id;
+	var control_id = div_id.substring(0, div_id.indexOf("span"));
+	var select = document.getElementById(control_id);
+
+	var propVal = select.value;
+	if (propVal === null || propVal === undefined) {return "";}
+
+	return propVal;
 }
 ]]></method_code>
   <method_type>JavaScript</method_type>
-  <name>Handle newTeam on Folder Form</name>
+  <name>Handle newTeam on cFolder Form</name>
  </Item>
 </AML>

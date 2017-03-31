@@ -2,74 +2,71 @@
  <Item type="Method" id="8E13866075974046863EE386A8505CB8" action="add">
   <comments>use action "Run Server Method" -  Deletes orphaned PRIVATE Teams</comments>
   <execution_allowed_to keyed_name="Administrators" type="Identity">2618D6F5A90949BAA7E920D1B04C7EE1</execution_allowed_to>
-  <method_code><![CDATA['MethodTemplateName=VBMain;
-Dim inn As Innovator = Me.getInnovator()
+  <method_code><![CDATA[  //System.Diagnostics.Debugger.Break()
   
-Function Main() As Item
-  'System.Diagnostics.Debugger.Break()
+  // run as root
+  Aras.Server.Security.Identity plmIdentity = Aras.Server.Security.Identity.GetByName("Super User");
+  bool PermissionWasSet = Aras.Server.Security.Permissions.GrantIdentity(plmIdentity);
+
+  Item amlCmd = this.newItem("Team","get");
+  amlCmd.setAttribute("select","id,private_team_item_id_string,description");
+  Item teamItems = amlCmd.apply();
   
-  ' run as root
-  Dim plmIdentity As Aras.Server.Security.Identity  = Aras.Server.Security.Identity.GetByName("Super User")
-  Dim PermissionWasSet As Boolean  = Aras.Server.Security.Permissions.GrantIdentity(plmIdentity)
+  for (int i=0; i<teamItems.getItemCount(); i++) {
+  	string configID = teamItems.getItemByIndex(i).getProperty("private_team_item_id_string","");
+  	if (configID == "") {
+  	  //'old version of Folder solution has config id in team's description
+  	  configID = teamItems.getItemByIndex(i).getProperty("description","");
+  	  if (configID != "") {
+  	    int pos = configID.IndexOf("config-");
+  	    if (pos >=0) {
+  	      configID = configID.Substring(7,configID.Length-7);
+  	    }
+		else {
+  	      configID = "";
+        }
+  	  }
+    }
+    if (configID != "") {
+  	  if (isTeamOrpaned(configID)) {
+  	    // delete this team
+  	    teamItems.getItemByIndex(i).apply("delete");
+  	  }
+  	}
+  }
 
-  Dim amlCmd As Item = Me.newItem("Team","get")
-  amlCmd.setAttribute("select","id,private_team_item_id_string,description")
-  Dim teamItems As Item = amlCmd.apply()
+  // Revoke 'Aras PLM' permissions
+  if (PermissionWasSet) {Aras.Server.Security.Permissions.RevokeIdentity(plmIdentity);}
   
-  Dim i As Integer
-  For i=0 To teamItems.getItemCount()-1
-  	Dim configID As String = teamItems.getItemByIndex(i).getProperty("private_team_item_id_string","")
-  	If configID = "" Then
-  	  'old version of Folder solution has config id in team's description
-  	  configID = teamItems.getItemByIndex(i).getProperty("description","")
-  	  If configID <> "" Then
-  	    Dim pos As Integer = configID.indexOf("config-")
-  	    If pos >=0 Then
-  	      configID = configID.SubString(7,configID.Length-7)
-  	    Else
-  	      configID = ""
-        End If  
-  	  End If
-    End If
-    If configID <> "" Then
-  	  If (isTeamOrpaned(configID)) Then
-  	    ' delete this team
-  	    teamItems.getItemByIndex(i).apply("delete")
-  	  End If
-  	End If
-  	
-  Next i
+  return this;
+}  
+// -- end of Main --
 
-  ' Revoke 'Aras PLM' permissions
-  If (PermissionWasSet) Then Aras.Server.Security.Permissions.RevokeIdentity(plmIdentity)
+//----------
+bool isTeamOrpaned( string itemConfigId) {
+  string SQLstr = "";
+
+  // list of item types that may have 'private' teams assigned
+  string ItemTypesToCheck = "cFolder,Project,Program,Document,Part,CAD";
   
-  Return Me
+  string[] ItemTypesList = ItemTypesToCheck.Split(',');
+  for (int i=0; i<ItemTypesList.Length && ItemTypesList[0] != ""; i++) {
+    string TN = "[" + ItemTypesList[i].Replace(" ","_") + "]";
+    SQLstr = "SELECT " + TN + ".id FROM " + TN + "WHERE " + TN + ".config_id='" + itemConfigId + "'";
+    Item resItems = this.getInnovator().applySQL(SQLstr);
+    // is team still connected to an item ?
+    if (resItems.getItemCount() > 0) {return false;}
+  }
+
+  //team is not connected to any existing item of specified item types
+  return true;
+}  
   
-End Function
+void endOfMethod () {
 
-Private Function isTeamOrpaned( itemConfigId As String) As Boolean
-  Dim SQLstr As String
-  Dim resItems As Item
 
-  ' list of item types that may have 'private' teams assigned
-  Dim ItemTypesToCheck = "cFolder,Project,Program,Document,Part,CAD"
-  
-  Dim ItemTypesList As String() = ItemTypesToCheck.split(",")
-  Dim it As Integer
-  For it=0 To ItemTypesList.Length-1
-    Dim TN As String = "[" & ItemTypesList(it).Replace(" ","_") & "]"
-    SQLstr = "SELECT " & TN & ".id FROM " & TN & "WHERE " & TN & ".config_id='" & itemConfigId & "'"
-    resItems = Me.getInnovator().applySQL(SQLstr)
-    ' is team still connected to an item ?
-    If resItems.getItemCount() > 0 Then Return False
-  Next it
-
-  'team is not connected to any existing item of specified item types
-  Return True
-
-End Function
 ]]></method_code>
-  <method_type>VB</method_type>
+  <method_type>C#</method_type>
   <name>cFolder Admin DelOrphanedTeam</name>
  </Item>
 </AML>

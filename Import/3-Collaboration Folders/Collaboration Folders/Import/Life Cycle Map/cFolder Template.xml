@@ -49,7 +49,7 @@
     <from_state keyed_name="Released" type="Life Cycle State">5349B67430424755A2EC1660152C671D</from_state>
     <get_comment>0</get_comment>
     <role keyed_name="Administrators" type="Identity">2618D6F5A90949BAA7E920D1B04C7EE1</role>
-    <segments></segments>
+    <segments />
     <sort_order>256</sort_order>
     <source_id keyed_name="cFolder Template" type="Life Cycle Map">5F5B671124E542B89EE351914401B775</source_id>
     <to_state keyed_name="Obsolete" type="Life Cycle State">35AC8F0A36DC451F86D6E8E385DF8701</to_state>
@@ -60,7 +60,7 @@
     <from_state keyed_name="New" type="Life Cycle State">F1D3DDCE2B79437FA0F0B51527AA5549</from_state>
     <get_comment>0</get_comment>
     <role keyed_name="Administrators" type="Identity">2618D6F5A90949BAA7E920D1B04C7EE1</role>
-    <segments></segments>
+    <segments />
     <sort_order>128</sort_order>
     <source_id keyed_name="cFolder Template" type="Life Cycle Map">5F5B671124E542B89EE351914401B775</source_id>
     <to_state keyed_name="Released" type="Life Cycle State">5349B67430424755A2EC1660152C671D</to_state>

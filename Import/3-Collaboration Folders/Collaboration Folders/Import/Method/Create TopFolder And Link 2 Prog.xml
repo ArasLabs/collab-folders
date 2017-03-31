@@ -1,31 +1,31 @@
 ﻿<AML>
  <Item type="Method" id="91C2D22560E5465593BBA7BD93F8E48F" action="add">
   <execution_allowed_to keyed_name="World" type="Identity">A73B655731924CD0B027E4F4D5FCC0A9</execution_allowed_to>
-  <method_code><![CDATA['System.Diagnostics.Debugger.Break()
-' called onBeforeAdd of "Program", "Project" ...
-If Me.getProperty("name","") = "" Then
-  Return Me.getInnovator().newError("Program name is missing")
-End If
+  <method_code><![CDATA[// System.Diagnostics.Debugger.Break()
+// called onBeforeAdd of "Program", "Project" ...
+if (this.getProperty("name","") == "") {
+  return this.getInnovator().newError("Program name is missing");
+}
 
-Dim folderTemplId As String = Me.getProperty("cfolder_template_id","")
+string folderTemplId = this.getProperty("cfolder_template_id","");
 
+Item newFolder = this.newItem("cFolder","add");
+newFolder.setProperty("name",this.getType() + ":" + this.getProperty("name",""));
 
-Dim newFolder As Item = Me.newItem("cFolder","add")
-newFolder.setProperty("name",Me.GetType() & ":" & Me.getProperty("name",""))
+if (folderTemplId != "") {
+	//set same folder template link on new top folder
+	newFolder.setProperty("cfolder_template_id",folderTemplId);
+}
 
-If folderTemplId <> "" Then 'set same folder template link on new top folder
-  newFolder.setProperty("cfolder_template_id",folderTemplId)
-End If
+newFolder = newFolder.apply();
+if (newFolder.isError()) { return newFolder;}
 
-newFolder = newFolder.apply() 
-If newFolder.isError() Then Return newFolder
+// link new folder to this item (Program, Project ...)
+this.setProperty("top_cfolder_id",newFolder.getID());
 
-' link new folder to this item (Program, Project ...)
-Me.setProperty("top_cfolder_id",newFolder.GetID())
-
-Return Me
+return this;
 ]]></method_code>
-  <method_type>VB</method_type>
+  <method_type>C#</method_type>
   <name>Create TopFolder And Link 2 Prog</name>
  </Item>
 </AML>

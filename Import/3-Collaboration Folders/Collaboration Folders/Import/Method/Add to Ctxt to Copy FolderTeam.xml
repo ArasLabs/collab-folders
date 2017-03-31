@@ -2,18 +2,19 @@
  <Item type="Method" id="7FC2795C01E8463E89A2E85FF0FB6402" action="add">
   <comments>onBeforeUpdate to support method "Copy FolderTeam to SubStructure"</comments>
   <execution_allowed_to keyed_name="World" type="Identity">A73B655731924CD0B027E4F4D5FCC0A9</execution_allowed_to>
-  <method_code><![CDATA['System.Diagnostics.Debugger.Break()
+  <method_code><![CDATA[//System.Diagnostics.Debugger.Break()
 
-Dim SQLstr = "SELECT [cFolder].team_id,[cFolder].related_project_keyed_name FROM [cFolder] WHERE [cFolder].id='" & Me.GetID() & "'"
-Dim thisFolderItem As Item = Me.getInnovator().applySQL(SQLstr)
+// called onBeforeUpdate of "cFolder" items
 
+string SQLstr = "SELECT [cFolder].team_id,[cFolder].related_project_keyed_name FROM [cFolder] WHERE [cFolder].id='" + this.getID() + "'";
+Item thisFolderItem = this.getInnovator().applySQL(SQLstr);
 
-'save previous values to context
-RequestState.Add("prevRelatedProjectKN",thisFolderItem.getProperty("related_project_keyed_name",""))
-RequestState.Add("prevTeamId",thisFolderItem.getProperty("team_id",""))
-return Me
+//save previous values to context
+RequestState.Add("prevRelatedProjectKN",thisFolderItem.getProperty("related_project_keyed_name",""));
+RequestState.Add("prevTeamId",thisFolderItem.getProperty("team_id",""));
+return this;
 ]]></method_code>
-  <method_type>VB</method_type>
+  <method_type>C#</method_type>
   <name>Add to Ctxt to Copy FolderTeam</name>
  </Item>
 </AML>

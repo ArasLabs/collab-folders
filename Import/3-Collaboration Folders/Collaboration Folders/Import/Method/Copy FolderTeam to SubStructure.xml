@@ -1,170 +1,172 @@
 ﻿<AML>
  <Item type="Method" id="6B9B49B64E6B488CAE4C30ED1F91CA10" action="add">
   <execution_allowed_to keyed_name="World" type="Identity">A73B655731924CD0B027E4F4D5FCC0A9</execution_allowed_to>
-  <method_code><![CDATA['MethodTemplateName=VBMain;
-Dim inn As Innovator = Me.getInnovator()
-Dim res As Item
-'
-' called on ItemType: Folder Item, Server Events: onAfterUpdate
-' and from server side method "Synch Item TeamId to TopFolder"
-'
-' on every update of a Folder item its entire structure of sub folder will inherit
-' this folder's team_id and the related_project_keyed_name
-'
-' If you do not want this type of inheritance, you can also call this method from an action
-' to trigger this a manually.
-'
-Function Main() As Item
-  'System.Diagnostics.Debugger.Break()
-  Dim thisItemType As String = Me.GetType()
-  Dim thisItemId As String = Me.GetID()
+  <method_code><![CDATA[//
+// called on ItemType: Folder Item, Server Events: onAfterUpdate
+// and from server side method "Synch Item TeamId to TopcFolder"
+//
+// on every update of a Folder item its entire structure of sub folder will inherit
+// this folder's team_id and the related_project_keyed_name
+//
+// If you do not want this type of inheritance, you can also call this method from an action
+// to trigger this a manually.
+//
 
-  res = copyTeamIdToSubFolders (thisItemType,thisItemId)
-  If res.isError() Then Return res
+	//System.Diagnostics.Debugger.Break();
+	string thisItemType = this.getType();
+	string thisItemId = this.getID();
 
-  if (RequestState.Contains("prevRelatedProjectKN")) Then RequestState.Remove("prevRelatedProjectKN")
+	string parentFolderPrevRelatedProjectKN;
+	if (!RequestState.Contains("prevRelatedProjectKN")) {
+		parentFolderPrevRelatedProjectKN = "";
+	} 
+	else {
+		parentFolderPrevRelatedProjectKN = (string) RequestState["prevRelatedProjectKN"];
+	}  
+	
+	Item res = copyTeamIdToSubFolders (thisItemType,thisItemId, parentFolderPrevRelatedProjectKN);
+	if (res.isError()) {return res;}
 
-  Return Me
-End Function  
+	if (RequestState.Contains("prevRelatedProjectKN")) {RequestState.Remove("prevRelatedProjectKN");}
 
-'-----------------------------
-Private Function copyTeamIdToSubFolders (folderType As String, parentFolderId As String) As Item
-  Dim parentFolderTeamId As String = Me.getProperty("team_id","")
-  Dim parentFolderOwnerId As String = Me.getProperty("owned_by_id","")
-  Dim parentFolderManagerId As String = Me.getProperty("managed_by_id","")
-  Dim parentFolderRelatedProjectKN As String = Me.getProperty("related_project_keyed_name","")
-  Dim parentFolderPrevRelatedProjectKN As String
-  if Not (RequestState.Contains("prevRelatedProjectKN")) Then
-    parentFolderPrevRelatedProjectKN = ""
-  else
-    parentFolderPrevRelatedProjectKN = RequestState("prevRelatedProjectKN")
-  end if
-  if parentFolderRelatedProjectKN = parentFolderPrevRelatedProjectKN Then parentFolderPrevRelatedProjectKN = ""
+	return this;
+} 
 
-  Dim thisSubFolderRel As Item = Me.newItem("Sub cFolder","get")
-  thisSubFolderRel.setProperty("source_id",parentFolderId)
-  thisSubFolderRel.setAttribute("select","team_id,source_id(team_id,config_id,name,related_project_keyed_name),related_id(team_id,owned_by_id,managed_by_id,name,related_project_keyed_name,config_id,keyed_name,allow_team_change_logic)")
-  thisSubFolderRel.setAttribute("serverEvents","0")
-  thisSubFolderRel = thisSubFolderRel.apply()
+//-----------------------------
+Item copyTeamIdToSubFolders (string folderType, string parentFolderId, string parentFolderPrevRelatedProjectKN) {
+	string parentFolderTeamId = this.getProperty("team_id","");
+	string  parentFolderOwnerId = this.getProperty("owned_by_id","");
+	string parentFolderManagerId = this.getProperty("managed_by_id","");
+	string parentFolderRelatedProjectKN = this.getProperty("related_project_keyed_name","");
 
-  'copy team and projectKN to folder controlled Items  
-  res = copyTeamIdToFolderControlledItems(parentFolderId, parentFolderPrevRelatedProjectKN)
-  If res.isError() Then Return res
+	if (parentFolderRelatedProjectKN == parentFolderPrevRelatedProjectKN) {parentFolderPrevRelatedProjectKN = "";}
 
-  Dim i As Integer
-  For i=0 To thisSubFolderRel.getItemCount()-1
-  	Dim thisRelItem As Item = thisSubFolderRel.getItemByIndex(i)
-    Dim relItemId As String = thisRelItem.getProperty("related_id","")
-  	Dim relShipTeamId As String = thisRelItem.getProperty("team_id","")
+	Item thisSubFolderRel = this.newItem("Sub cFolder","get");
+	thisSubFolderRel.setProperty("source_id",parentFolderId);
+	thisSubFolderRel.setAttribute("select","team_id,source_id(team_id,config_id,name,related_project_keyed_name),related_id(team_id,owned_by_id,managed_by_id,name,related_project_keyed_name,config_id,keyed_name,allow_team_change_logic)");
+	thisSubFolderRel.setAttribute("serverEvents","0");
+	thisSubFolderRel = thisSubFolderRel.apply();
 
-    If  (relItemId <> "") Then
-      Dim relItemTeamId As String = thisRelItem.getPropertyItem("related_id").getProperty("team_id","")
-	  Dim relItemOwnerId As String = thisRelItem.getPropertyItem("related_id").getProperty("owned_by_id","")
-	  Dim relItemManagerId As String = thisRelItem.getPropertyItem("related_id").getProperty("managed_by_id","")
-      Dim relItemType As String = thisRelItem.getPropertyItem("related_id").getAttribute("type","")
-      Dim relItemAllowTeamChange As Boolean = (thisRelItem.getPropertyItem("related_id").getProperty("allow_team_change_logic","0") = "1")
-      Dim relItemRelatedProjectKN As String = thisRelItem.getPropertyItem("related_id").getProperty("related_project_keyed_name","")
+	//copy team and projectKN to folder controlled Items  
+	Item res = copyTeamIdToFolderControlledItems(parentFolderId, parentFolderPrevRelatedProjectKN);
+	if (res.isError()) {return res;}
 
-	 
-	  Dim updateRelShipItem as Boolean = false
-      If parentFolderTeamId <> relItemTeamId Then updateRelShipItem = true
-      If parentFolderOwnerId <> relItemOwnerId Then updateRelShipItem = true
-      If parentFolderManagerId <> relItemManagerId Then updateRelShipItem = true
-	  
-      If updateRelShipItem Then
-        res = updateTeamOwnerAndMangerOnRelItem(relItemType,relItemId,parentFolderTeamId,parentFolderOwnerId,parentFolderManagerId)
-        If res.isError() Then Return res
-      End If
+	for (int i=0;i<thisSubFolderRel.getItemCount(); i++) {
+		Item thisRelItem = thisSubFolderRel.getItemByIndex(i);
+		string relItemId = thisRelItem.getProperty("related_id","");
+		string relShipTeamId = thisRelItem.getProperty("team_id","");
 
-      ' set team id on the sub item
-      If relItemAllowTeamChange And parentFolderTeamId <> relItemTeamId Then
-        res = updateTeamIdOnItem(relItemType,relItemId,parentFolderTeamId,parentFolderRelatedProjectKN)
-        If res.isError() Then Return res
-      Else
-        If (parentFolderRelatedProjectKN <> "" And parentFolderRelatedProjectKN <> relItemRelatedProjectKN) Then
-          res = updateTeamIdOnItem(relItemType,relItemId,"",parentFolderRelatedProjectKN)
-          If res.isError() Then Return res
-        End If 
-      End If
-  
-      ' recursion
-      res = copyTeamIdToSubFolders (folderType, relItemId)
-      If res.isError() Then Return res
+		if  (relItemId != "") {
+			string relItemTeamId = thisRelItem.getPropertyItem("related_id").getProperty("team_id","");
+			string relItemOwnerId = thisRelItem.getPropertyItem("related_id").getProperty("owned_by_id","");
+			string relItemManagerId = thisRelItem.getPropertyItem("related_id").getProperty("managed_by_id","");
+			string relItemType = thisRelItem.getPropertyItem("related_id").getAttribute("type","");
+			bool relItemAllowTeamChange = (thisRelItem.getPropertyItem("related_id").getProperty("allow_team_change_logic","0") == "1");
+			string relItemRelatedProjectKN = thisRelItem.getPropertyItem("related_id").getProperty("related_project_keyed_name","");
 
-    End If
-  
-  Next i
-  Return Me
-End Function  
+			 
+			bool updateRelShipItem = false;
+			if (parentFolderTeamId != relItemTeamId) {updateRelShipItem = true;}
+			if (parentFolderOwnerId != relItemOwnerId) {updateRelShipItem = true;}
+			if (parentFolderManagerId != relItemManagerId) {updateRelShipItem = true;}
+			  
+			if (updateRelShipItem) {
+				res = updateTeamOwnerAndMangerOnRelItem(relItemType,relItemId,parentFolderTeamId,parentFolderOwnerId,parentFolderManagerId);
+				if (res.isError()) {return res;}
+			}
 
-'-----------------------------
-Private Function updateTeamOwnerAndMangerOnRelItem (relItemType As String, relItemId As String, newTeamId As String, newOwnerId As String, newManagerId As String) As Item
-  Dim typeTable As String = relItemType.Replace(" " ,"_")
-  Dim setSep As String = "SET"
-  Dim SQLstr As String = "UPDATE [" & typeTable & "]"
-  
-  If newTeamId <> "" Then  
-      SQLstr = SQLstr & setSep & " [" & typeTable & "].team_id='" & newTeamId & "'"
-      setSep = ","
-  End If
+			// set team id on the sub item
+			if (relItemAllowTeamChange && parentFolderTeamId != relItemTeamId) {
+				res = updateTeamIdOnItem(relItemType,relItemId,parentFolderTeamId,parentFolderRelatedProjectKN);
+				if (res.isError()) {return res;}
+			}
+			else {
+				if (parentFolderRelatedProjectKN != "" && parentFolderRelatedProjectKN != relItemRelatedProjectKN) {
+				  res = updateTeamIdOnItem(relItemType,relItemId,"",parentFolderRelatedProjectKN);
+				if (res.isError()) {return res;}
+				} 
+			}
 
-  If newOwnerId <> "" Then  
-      SQLstr = SQLstr & setSep & " [" & typeTable & "].owned_by_id='" & newOwnerId & "'"
-      setSep = ","
-  End If
+			// recursion
+			res = copyTeamIdToSubFolders (folderType, relItemId, parentFolderPrevRelatedProjectKN);
+			if (res.isError()) {return res;}
+		}
 
-  If newManagerId <> "" Then  
-      SQLstr = SQLstr & setSep & " [" & typeTable & "].managed_by_id='" & newManagerId & "'"
-      setSep = ","
-  End If
-    
-  SQLstr = SQLstr & " WHERE [" & typeTable & "].id='" & relItemId & "'"
-  res = inn.applySQL(SQLstr)
-  Return res
-End Function  
+	}
+	return this;
+}  
 
-'-----------------------------
-Private Function updateTeamIdOnItem (relItemType As String, relItemId As String, newTeamId As String, relatedProjectKN As String) As Item
-  Dim typeTable As String = relItemType.Replace(" " ,"_")
-  
-  'link teamId to project space
-  If newTeamId <> "" Or relatedProjectKN <> "" Then  
-    Dim setSep As String = "SET"
-    Dim SQLstr As String = "UPDATE [" & typeTable & "]"
+// -----------------------------
+Item updateTeamOwnerAndMangerOnRelItem (string relItemType, string relItemId, string newTeamId, string newOwnerId, string newManagerId) {
+	string typeTable = relItemType.Replace(" " ,"_");
+	string setSep = "SET";
+	string SQLstr = "UPDATE [" + typeTable + "]";
 
-    If (newTeamId <> "") Then
-      SQLstr = SQLstr & setSep & " [" & typeTable & "].team_id='" & newTeamId & "'"
-      setSep = ","
-    End If
-    If (relatedProjectKN <> "") Then
-      SQLstr = SQLstr & setSep & " [" & typeTable & "].related_project_keyed_name='" & relatedProjectKN & "'" 
-    End If
-    
-    SQLstr = SQLstr & " WHERE [" & typeTable & "].id='" & relItemId & "'"
-    res = inn.applySQL(SQLstr)
-    Return res
-  End If
-  Return Me
-End Function
+	if (newTeamId != "") {  
+		SQLstr = SQLstr + setSep + " [" + typeTable + "].team_id='" + newTeamId + "'";
+		setSep = ",";
+	}
 
-'----------------------------
-Private Function copyTeamIdToFolderControlledItems (folderId As String, prevRelatedProjectKN as String) As Item
-  Dim folderControlledItems As Item = Me.newItem("cFolder Controlled Item","get")
-  folderControlledItems.setProperty("source_id",folderId)
-  folderControlledItems.setAttribute("select","id")
-  folderControlledItems.setAttribute("serverEvents","0")
-  folderControlledItems = folderControlledItems.apply()
+	if (newOwnerId != "") {  
+		SQLstr = SQLstr + setSep + " [" + typeTable + "].owned_by_id='" + newOwnerId + "'";
+		setSep = ",";
+	}
 
-  Dim i As Integer
-  For i=0 To folderControlledItems.getItemCount()-1
-  	Dim folderControlledItem As Item = folderControlledItems.getItemByIndex(i)
-  	folderControlledItem.setAttribute("prevRelatedProjectKN",prevRelatedProjectKN)
-  	res = folderControlledItem.apply("Copy FolderTeam to RelatedItems") 'on every relationship item found
-    If res.isError() Then Return res
-  Next i
-  Return Me
-End Function]]></method_code>
-  <method_type>VB</method_type>
-  <name>Copy FolderTeam to SubStructure</name>
+	if (newManagerId != "") {  
+		SQLstr = SQLstr + setSep + " [" + typeTable + "].managed_by_id='" + newManagerId + "'";
+		setSep = ",";
+	}
+
+	SQLstr = SQLstr + " WHERE [" + typeTable + "].id='" + relItemId + "'";
+	Item res = this.getInnovator().applySQL(SQLstr);
+	return res;
+} 
+
+// -----------------------------
+Item updateTeamIdOnItem (string relItemType, string relItemId, string newTeamId, string relatedProjectKN) {
+	string typeTable = relItemType.Replace(" " ,"_");
+
+	//ink teamId to project space
+	if (newTeamId != "" || relatedProjectKN != "") {  
+		string setSep = "SET";
+		string SQLstr = "UPDATE [" + typeTable + "]";
+
+		if (newTeamId != "") {
+			SQLstr = SQLstr + setSep + " [" + typeTable + "].team_id='" + newTeamId + "'";
+			setSep = ",";
+		}
+		if (relatedProjectKN != "") {
+		    relatedProjectKN = relatedProjectKN.Replace("'","''");  // need to escape single quotes
+			SQLstr = SQLstr + setSep + " [" + typeTable + "].related_project_keyed_name='" + relatedProjectKN + "'" ;
+		}
+
+		SQLstr = SQLstr + " WHERE [" + typeTable + "].id='" + relItemId + "'";
+		Item res = this.getInnovator().applySQL(SQLstr);
+		return res;
+	}
+	return this;
+}
+
+// ----------------------------
+Item copyTeamIdToFolderControlledItems (string folderId, string prevRelatedProjectKN) {
+	Item folderControlledItems = this.newItem("cFolder Controlled Item","get");
+	folderControlledItems.setProperty("source_id",folderId);
+	folderControlledItems.setAttribute("select","id");
+	folderControlledItems.setAttribute("serverEvents","0");
+	folderControlledItems = folderControlledItems.apply();
+
+	for (int i=0; i<folderControlledItems.getItemCount(); i++) {
+		Item folderControlledItem = folderControlledItems.getItemByIndex(i);
+		folderControlledItem.setAttribute("prevRelatedProjectKN",prevRelatedProjectKN);
+		Item res = folderControlledItem.apply("Copy cFolderTeam to RelatedItems"); // on every relationship item found
+		if (res.isError()) {return res;}
+	}
+	return this;
+}
+
+
+void endOfMethod () {]]></method_code>
+  <method_type>C#</method_type>
+  <name>Copy cFolderTeam to SubStructure</name>
  </Item>
 </AML>

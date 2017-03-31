@@ -1,37 +1,37 @@
 ﻿<AML>
  <Item type="Method" id="6D1A80B71F5542B2ADC1E7CE90AD8CD0" action="add">
+  <comments>resets "is_root" flag on child items (onAferAdd) of "cFolder Sub Folder" relship</comments>
   <execution_allowed_to keyed_name="World" type="Identity">A73B655731924CD0B027E4F4D5FCC0A9</execution_allowed_to>
-  <method_code><![CDATA[' on After Add of "Sub cFolder"
-'
-'reset flag on child(related) items
-'System.Diagnostics.Debugger.Break()
-Dim inn As Innovator = Me.getInnovator()
+  <method_code><![CDATA[// on After Add of "Sub cFolder"
+//
+// resets "is_root" flag on child items (onAferAdd) of "cFolder Sub Folder" relship
 
-Dim thisSubFolderRel As Item = inn.newItem(Me.GetType(),"get")
-thisSubFolderRel.setID(Me.getID())
-thisSubFolderRel.setAttribute("select","source_id(is_template)")
-thisSubFolderRel = thisSubFolderRel.apply()
-Dim typeTable As String = ""
-Dim SQLstr As String = ""
-Dim res As Item
+//System.Diagnostics.Debugger.Break();
 
-Dim isTemplateFlag As String = ""
-Dim folderPermission As String = ""
-If Not thisSubFolderRel.isError() Then
-  isTemplateFlag = thisSubFolderRel.getPropertyItem("source_id").getProperty("is_template","0")
-End If
+Innovator inn = this.getInnovator();
 
-typeTable = "cFolder"
-SQLstr = "UPDATE [" & typeTable & "]"
-SQLstr = SQLstr & " SET [" & typeTable & "].is_root='0'"
-If isTemplateFlag = "1" Then
-  SQLstr = SQLstr & " ,[" & typeTable & "].is_template='" & isTemplateFlag & "'"
-  SQLstr = SQLstr & " ,[" & typeTable & "].permission_id='E2227109B19B45E0B4690EEE5E890FBB'" ' permission: cFolder
-End If
-SQLstr = SQLstr & " WHERE [" & typeTable & "].id='" & Me.getProperty("related_id","invalid") & "'"
-res = inn.applySQL(SQLstr)
-Return Me]]></method_code>
-  <method_type>VB</method_type>
+Item thisSubFolderRel = inn.newItem(this.getType(),"get");
+thisSubFolderRel.setID(this.getID());
+thisSubFolderRel.setAttribute("select","source_id(is_template)");
+thisSubFolderRel = thisSubFolderRel.apply();
+
+string isTemplateFlag = "";
+if (! thisSubFolderRel.isError()) {
+  isTemplateFlag = thisSubFolderRel.getPropertyItem("source_id").getProperty("is_template","0");
+}
+
+string typeTable = "cFolder";
+string SQLstr = "UPDATE [" + typeTable + "]";
+SQLstr = SQLstr + " SET [" + typeTable + "].is_root='0'";
+if (isTemplateFlag == "1") {
+  SQLstr = SQLstr + " ,[" + typeTable + "].is_template='" + isTemplateFlag + "'";
+  SQLstr = SQLstr + " ,[" + typeTable + "].permission_id='E2227109B19B45E0B4690EEE5E890FBB'"; // permission: cFolder
+}
+SQLstr = SQLstr + " WHERE [" + typeTable + "].id='" + this.getProperty("related_id","invalid") + "'";
+Item res = inn.applySQL(SQLstr);
+
+return this;]]></method_code>
+  <method_type>C#</method_type>
   <name>cFolder Set Root Templ Flag</name>
  </Item>
 </AML>

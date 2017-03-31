@@ -1,0 +1,27 @@
+﻿<AML>
+ <Item type="Method" id="6630412C7F2940958AC26F1ABD7005ED" action="add">
+  <execution_allowed_to keyed_name="World" type="Identity">A73B655731924CD0B027E4F4D5FCC0A9</execution_allowed_to>
+  <method_code><![CDATA[// onBefore Add - Checks
+
+//get variable that enables this check
+Item innVariable = this.newItem("Variable","get");
+innVariable.setAttribute("select","name,value");
+innVariable.setProperty("name","cFolder Check Root related Proj");
+innVariable = innVariable.apply();
+
+if (innVariable.isError())
+    return this; // do nothing
+
+bool doCheck = (innVariable.getProperty("value","0") == "1");
+
+if (doCheck) {
+    string relProjKN = this.getProperty("related_project_keyed_name","");
+    if (relProjKN == "") {
+        return this.getInnovator().newError("related Project definition missing on top folder !");
+    }
+}
+return this;]]></method_code>
+  <method_type>C#</method_type>
+  <name>Check cFolder Root for relProj</name>
+ </Item>
+</AML>

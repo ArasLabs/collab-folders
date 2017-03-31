@@ -1,0 +1,34 @@
+﻿<AML>
+ <Item type="Method" id="AB2275EA86E64922983F84B4F49B3A95" action="add">
+  <comments>sever side logic - use on relationship onBeforeAdd Event only</comments>
+  <execution_allowed_to keyed_name="World" type="Identity">A73B655731924CD0B027E4F4D5FCC0A9</execution_allowed_to>
+  <method_code><![CDATA[/// can be used server event: onBeforeAdd of any relationship ItemType
+String newSortNumStr = this.getProperty("sort_order","");
+  
+// if sort order already set, keep it
+if (newSortNumStr == "") {newSortNumStr= "0";}
+
+String relSourceId = this.getProperty("source_id","");
+if (relSourceId == "") {return this;}  //probably not a relationship type
+
+Item Rels = this.newItem(this.getType(), "get");
+Rels.setProperty("source_id",relSourceId);
+Rels = Rels.apply();
+int maxVal=-1;
+for (int i=0;i<Rels.getItemCount();i++) {
+  Item Rel = Rels.getItemByIndex(i);
+  int sortOrder = Convert.ToInt32(Rel.getProperty("sort_order"));
+  if (sortOrder > maxVal) {maxVal = sortOrder;}
+}
+
+//detect standard increment of 128, then correct it to +1
+if (Convert.ToInt32(newSortNumStr) - maxVal == 128) {
+  this.setProperty("sort_order",Convert.ToString(maxVal+1)); // increment by 1
+}
+
+return this;]]></method_code>
+  <method_type>C#</method_type>
+  <owned_by_id keyed_name="Innovator Admin" type="Identity">DBA5D86402BF43D5976854B8B48FCDD1</owned_by_id>
+  <name>Increment SortOrder BeforeAdd</name>
+ </Item>
+</AML>
