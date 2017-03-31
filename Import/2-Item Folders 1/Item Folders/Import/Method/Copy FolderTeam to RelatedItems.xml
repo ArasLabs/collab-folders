@@ -16,7 +16,8 @@ Function Main() As Item
   thisRelatedItemRel = thisRelatedItemRel.apply()
 
   If thisRelatedItemRel.isError() Then Return thisRelatedItemRel
-
+  
+  thisRelatedItemRel = thisRelatedItemRel.getItemByIndex(0) 'should only be one records anyways
   Dim parentFolderTeamId As String = thisRelatedItemRel.getPropertyItem("source_id").getProperty("team_id","")
 
   Dim relItemId As String = thisRelatedItemRel.getProperty("related_id","")

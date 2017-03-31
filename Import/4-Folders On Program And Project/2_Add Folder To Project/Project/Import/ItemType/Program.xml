@@ -96,16 +96,6 @@
     <source_id keyed_name="Program" type="ItemType" name="Program">1B3A68711AFE49AFB72121C592E27498</source_id>
     <track_history>0</track_history>
    </Item>
-   <Item type="Server Event" id="D0B764761DB8410AA3927C3EA62C5EAD" action="add">
-    <related_id keyed_name="Add TemplStuct to rel TopFolder" type="Method">
-     <Item type="Method" action="get" select="id">
-      <name>Add TemplStuct to rel TopFolder</name>
-     </Item>
-    </related_id>
-    <server_event>onAfterAdd</server_event>
-    <sort_order>5</sort_order>
-    <source_id keyed_name="Program" type="ItemType" name="Program">1B3A68711AFE49AFB72121C592E27498</source_id>
-   </Item>
    <Item type="Server Event" id="4FE12115B19B43939F4E15E184F9AA53" action="add">
     <related_id keyed_name="Synch Item TeamId to TopFolder" type="Method">
      <Item type="Method" action="get" select="id">

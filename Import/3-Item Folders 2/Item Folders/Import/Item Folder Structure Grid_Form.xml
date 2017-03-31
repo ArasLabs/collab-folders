@@ -15,8 +15,9 @@
       <font_family>arial, helvetica, sans-serif</font_family>
       <font_size>8pt</font_size>
       <font_weight>bold</font_weight>
-      <html_code><![CDATA[<script type="text/javascript">
-// Generic TreeView - HTML-code - Variant2 - populates Toolbar and TreeGrid
+      <html_code><![CDATA[
+<script type="text/javascript">
+// Generic TreeView - HTML-code - Variant2.1 - populates Toolbar and TreeGrid
 //
 // this is a HTML-skeleton.  additional functions with logic need to be loaded from methods attached to tbe Form
 // (FormEvents = onLoad)
@@ -26,7 +27,8 @@
 // ====================================================================================================================
 	top.aras.uiAddConfigLink2Doc4Assembly(document, "TreeTable");
 	top.aras.uiAddConfigLink2Doc4Assembly(document, "Toolbar");
-
+</script>
+<script>
 	var toolbar1_Control = null;
 	var treeGrid1_Control = null;
 	var treeGrid1_MsgsId;
@@ -72,14 +74,14 @@
 
     function loadToolbarAndGrid()
 	 {
-		if (!window.populateToolbar1)  // this function must reside in one of the handlers loaded with the Form (onLoad)
+		if (!window.loadGridToolbar1)  // this function must reside in one of the handlers loaded with the Form (onLoad)
 		{
 			setTimeout('loadToolbarAndGrid()',10);
 			return;
 		}
-		var res = window.populateToolbar1(false);  // this function must reside in one of the handlers loaded with the Form (onLoad)
+		var res = window.loadGridToolbar1();  // this function must reside in one of the handlers loaded with the Form (onLoad)
         toolbar1_Control.show();
-		res = window.populateTreeGrid1(thisItem);  // this function must reside in one of the handlers loaded with the Form (onLoad)
+		res = window.RefreshGrid(true);  // this function must reside in one of the handlers loaded with the Form (onLoad)
 		fixGridHeight();
  	    OnLoadMethodsLoaded = false;
 	}
@@ -162,15 +164,6 @@
 <script type="text/javascript" for="treeGrid1" event="TreeGridOpenNode(rowID)">
 	return treeGrid1_onTreeGridOpenNode(rowID);
 </script>
-<script type="text/javascript" for="treeGrid1" event="DragEnter(a, b)">
-	return treeGrid1_onTreeGridDragEnter(a,b);
-</script>
-<script type="text/javascript" for="treeGrid1" event="DragDrop(a, b)">
-	return treeGrid1_onTreeGridDragDrop(a,b);
-</script>
-<script language="jscript" for="treeGrid1" event="DragStart(a, b)">
-	return treeGrid1_onTreeGridDragStart(a,b);
-</script>
 
 <table id="grid1Table" border="0" cellspacing="0" cellpadding="0" style="width: 100%; height: 100%; table-layout: fixed;" >
 	<tr id="grid1ToolbarRow" style="vertical-align: top;">
@@ -184,12 +177,11 @@
 		<td id="grid_td" style="width: 100%; height: 100%;">
 			<object id="treeGrid1" style="height: 100%; width: 100%; display: block;"
 				classid="../cbin/TreeTable.dll#Aras.Client.Controls.TreeGridContainer">
-                <param name="AllowDrop" value="true">
 			</object>
 		</td>
 	</tr>
 </table>
-]]></html_code>
+	  ]]></html_code>
       <is_disabled>0</is_disabled>
       <is_visible>1</is_visible>
       <label_position>top</label_position>

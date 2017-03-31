@@ -17,6 +17,7 @@ Function Main() As Item
 
   If thisSubFolderRel.isError() Then Return thisSubFolderRel
 
+  thisSubFolderRel = thisSubFolderRel.getItemByIndex(0) 'should only be one records anyways
   Dim parentFolderTeamId As String = thisSubFolderRel.getPropertyItem("source_id").getProperty("team_id","")
 
   Dim relItemId As String = thisSubFolderRel.getProperty("related_id","")

@@ -9,7 +9,7 @@
   <inc_rel_key_name>1</inc_rel_key_name>
   <inc_related_key_name>1</inc_related_key_name>
   <is_list_type>0</is_list_type>
-  <label xml:lang="en">Sub Folders</label>
+  <label xml:lang="en">Sub Folders (this level)</label>
   <name>Item Sub Folder</name>
   <new_show_related>0</new_show_related>
   <related_id keyed_name="Item Folder" type="ItemType" name="Item Folder">C0C8138AB15C41F59FA629EB8EAE2DC2</related_id>

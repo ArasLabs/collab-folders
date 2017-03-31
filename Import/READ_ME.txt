@@ -2,10 +2,32 @@
 Packages Import Instructions
 --------------------------------------------
 
+Rolf Laudenbach (rlaudenbach@aras.com)
 
-ATTENTION: 
+Version:
+--------
+v1-6  (May 2013)
+ - updated grid html and logic to adjust to Innovator 10 (TreeGridContainer)
+ - made folder realted item number show as link
+ - Common Grid handler (utiltities) improvements
+ - Added context menu actions on folder grid (if top folder parent item is locked)
+    - lock, unlock
+    - Add Folder Attachment
+    - Add Folder Controlled Item
+
+- Added phantom rows for grouping Attachment
+- Added drag and drop for one or more files onto Folder grid ('Folder rows', if locked)
+- Added is_shared icon display for shared files on folder grid
+- Added effectivity modes and filter drop down on folder grid ("current" and "latest released" view of controlled items)
+- Folder Templates: Added null relationship to register method for auto numbers of folder controlled items (poly item)
+- Copy form Folder Templates: Improved logic for "Reference" or "Copy" option on relatinships to Controlled Items.
+   - Files of documents are now physically copied in vault.
+- Copy form Folder Templates: Attached files on template folders are physically copied to new folder in vault.
+
+
+## ATTENTION: ##
 If you are using a previous version (v1-3 or less) of this Item Folders add-on soltution,
-then you MUST do stage "0__nash update" first before doing the imports with the Aras import tool !!!
+then you MUST do stage 0 --> "0__nash update" first before doing the imports with the Aras import tool !!!
 
 
 
@@ -73,9 +95,13 @@ then, click the "import" button on top tool bar
 ------------------------------------------------------------------------------------------------------
 Stage - 5 Copy code tree overlay files to the code tree of the the target Aras System
 
-- open folder "CodeTreeOverlays" and select "innovator" and copy this folder
+- open folder "_CodeTreeOverlays" and select "innovator" and copy this folder
 - on the target Aras System go to the installation folders and paste the copy over the "innovator" folder
 - confirm to add or overwrite folders and files.
+
+------------------------------------------------------------------------------------------------------
+Stage - 6 (Optional) SetPaclage version - Will fail, if you do not have the Package Utiltities v1-4 or higher loaded !!!
+
 
 
 

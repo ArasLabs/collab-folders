@@ -16,27 +16,59 @@
       <font_size>8pt</font_size>
       <font_weight>bold</font_weight>
       <html_code><![CDATA[<script type="text/javascript">
-// Generic TreeView - HTML-code - Variant2 - populates Toolbar and TreeGrid
-//
-// this is a HTML-skeleton.  additional functions with logic need to be loaded from methods attached to tbe Form
-// (FormEvents = onLoad)
-//
-// logic of all Click Handlers treeGrid1_XXXX ()  listed in this HTML must be in these attached Form handlers as well
-//
-// ====================================================================================================================
+	// Generic TreeView - HTML-code - adapted for Aras Innovator 10
+	// This is a skeleton, only.
+	// Additional functions will need to provide the logic for populating the gride
+    // These methods must be loaded with the form this html field is on. FormEvent = onLoad
+	//
+	// They must contain these functions:
+	//	 window.RefreshGrid(doInit)
+	//	 window.loadGridToolbar1()
+	//
+	// And they must contain function for the Click Handlers treeGrid1_XXXX ()  listed at the bottom section of this skeleton.
+	//
+	//
+	// ====================================================================================================================
+	var toolbar1_Control = null;
+	var treeGrid1_Control = null;
+	var I18Ncntx = document.thisItem? document.thisItem.getInnovator().getI18NSessionContext() : null;
+	var treeGrid1_MsgsId;
+	var OnLoadMethodsLoaded = false;
+
 	top.aras.uiAddConfigLink2Doc4Assembly(document, "TreeTable");
 	top.aras.uiAddConfigLink2Doc4Assembly(document, "Toolbar");
 
-	var toolbar1_Control = null;
-	var treeGrid1_Control = null;
-	var treeGrid1_MsgsId;
-	var thisItem = undefined;
+	function initForm()
+	{
+		if (!window.RefreshGrid)
+		{
+			setTimeout('initForm()',10);
+			return;
+		}
+		var res = window.RefreshGrid(true);
+	}
 
-    var innovator = new top.Innovator();
-	var I18Ncntx = innovator.getI18NSessionContext();
- 	var OnLoadMethodsLoaded = false;
+	function initToolbar()
+	{
+		if (window.onload1)
+			onload1();  //handler method must be attached to 1st onLoad event of this Form
+		if (window.onload2)
+			onload2();  //handler method must be attached to 1st onLoad event of this Form
+		if (window.onload3)
+			onload3();  //handler method must be attached to 1st onLoad event of this Form
+		if (window.onload4)
+			onload4();  //handler method must be attached to 1st onLoad event of this Form
+		OnLoadMethodsLoaded = true;
+		if (window.loadGridToolbar1)
+			var res = window.loadGridToolbar1();
+	}
 
-	// attach to window Events
+	var onload_handler = function()
+	{
+		interval = window.setInterval(fixGridHeight, 100);
+		window.attachEvent("onbeforeunload", onbeforeunload_handler);
+	}
+
 	var onresize_handler = function ()
 	{
 		fixGridHeight();
@@ -49,40 +81,6 @@
 			clearInterval(interval);
 		}
 	}
-	
-	function onload_handler() {
-      // Make sure the item is loaded before proceeding
-	  var myCount = 0;
-     if (!document.thisItem) {
-       if (myCount > 9) { return; }
-       myCount++;
-       setTimeout("onload_handler()", 300);
-       return;
-     }
-     thisItem = document.thisItem;
-
-	 toolbar1_Control = document.toolbar1;
-	 treeGrid1_Control = document.treeGrid1;
-
-     loadToolbarAndGrid();	 
-
-     interval = window.setInterval(fixGridHeight, 100);
- 	 
-	}
-
-    function loadToolbarAndGrid()
-	 {
-		if (!window.populateToolbar1)  // this function must reside in one of the handlers loaded with the Form (onLoad)
-		{
-			setTimeout('loadToolbarAndGrid()',10);
-			return;
-		}
-		var res = window.populateToolbar1(false);  // this function must reside in one of the handlers loaded with the Form (onLoad)
-        toolbar1_Control.show();
-		res = window.populateTreeGrid1(thisItem);  // this function must reside in one of the handlers loaded with the Form (onLoad)
-		fixGridHeight();
- 	    OnLoadMethodsLoaded = false;
-	}
 
 	function fixGridHeight()
 	{
@@ -92,48 +90,46 @@
 		top.aras.fixLiquidContainerHeight(document, el);
 	}
 
-    window.attachEvent("onbeforeunload", onbeforeunload_handler);
 	window.attachEvent("onload", onload_handler);
-	window.attachEvent("onresize", onresize_handler);	
-
+	window.attachEvent("onresize", onresize_handler);
 </script>
 
-<style>
-   html, body
+<!-- ========== Sizing styles to ensure this HTML field fills the entire form ========= -->
+<style type="text/css">
+	html, body
 	{
-	  margin: 0;
-	  padding: 0;
-	  height: 100%;
-	  border: none;
+		margin: 0px;
+		height: 100%;
 	}
-	.sys_f_container
+	.sys_f_border
 	{
-	  position:absolute; 
-	  top:0px; 
-	  left:0px;
-	  width: 100%;
-	  height: 100%;
+		padding: 0px;
 	}
-	.sys_f_table
+	.sys_f_container, .sys_f_table
 	{
-	  position:absolute; 
-	  top:0px; left:0px;
-	  width: 100%;
-	  height: 100%;
+		width: 100%;
+		height: 100%;
 	}
 </style>
 
-<script type="text/javascript" for="treeGrid1" event="GridStart(isSuccess)">
-	treeGrid1_Control=document.treeGrid1;
-</script>
+<!-- ========== Toolbar Click Handlers ========= -->
 <script type="text/javascript" for="toolbar1" event="Onload()">
 	toolbar1_Control = document.toolbar1;
+	initToolbar();
+	if (window.loadGridToolbar1) //if not view in formtool
+		toolbar1_Control.show();
 </script>
 <script type="text/javascript" for="toolbar1" event="Onclick(tbItem)">
 	toolbar1_onToolbarClick(tbItem);
 </script>
 <script type="text/javascript" for="toolbar1" event="OnChange(tbItem)">
 	toolbar1_onToolbarOnChange(tbItem);
+</script>
+
+<!-- ========== TreeGrid Click Handlers ========= -->
+<script type="text/javascript" for="treeGrid1" event="GridStart(isSuccess)">
+	treeGrid1_Control=document.treeGrid1;
+	initForm();
 </script>
 <script type="text/javascript" for="treeGrid1" event="GridClick(rowId, col)">
 	treeGrid1_onGridClick(rowId, col);
@@ -150,9 +146,6 @@
 <script type="text/javascript" for="treeGrid1" event="GridMenuClick(m, rowId, col)">
 	treeGrid1_onGridMenuClick(m);
 </script>
-<script type="text/javascript" for="treeGrid1" event="GridEditCell(mode, rowID, col)">
-	return treeGrid1_onGridEditCell(mode, rowID, col);
-</script>
 <script type="text/javascript" for="treeGrid1" event="GridKeyPress(kEv)">
 	return true;
 </script>
@@ -162,34 +155,35 @@
 <script type="text/javascript" for="treeGrid1" event="TreeGridOpenNode(rowID)">
 	return treeGrid1_onTreeGridOpenNode(rowID);
 </script>
-<script type="text/javascript" for="treeGrid1" event="DragEnter(a, b)">
-	return treeGrid1_onTreeGridDragEnter(a,b);
+<script type="text/javascript" for="treeGrid1" event="GridEditCell(mode, rowID, col)">
+	if(mode == 0)
+	{
+		return thisTreeGrid1.BeginEditCell(rowID, col)
+	}
+	
+	if(mode == 2)
+	{
+		return thisTreeGrid1.EndEditCell(rowID, col)
+	}
+	return true;
 </script>
-<script type="text/javascript" for="treeGrid1" event="DragDrop(a, b)">
-	return treeGrid1_onTreeGridDragDrop(a,b);
-</script>
-<script language="jscript" for="treeGrid1" event="DragStart(a, b)">
-	return treeGrid1_onTreeGridDragStart(a,b);
-</script>
-
-<table id="grid1Table" border="0" cellspacing="0" cellpadding="0" style="width: 100%; height: 100%; table-layout: fixed;" >
-	<tr id="grid1ToolbarRow" style="vertical-align: top;">
-		<td style="width: 100%; height: 28px;">
-			<object id="toolbar1" style="width: 100%; height: 28px; display: block;"
+<!-- ========== Table containing Toolbar and TreeGrid in 2 separate rows ========= -->
+<table style="width: 100%; height: 100%; position: absolute; top: 0px; left: 0px;" cellspacing="0" cellpadding="0">
+	<tr style="vertical-align: top;">
+		<td style="height: 28px;">
+				<object id="toolbar1" style="width: 100%; height: 28px; display: block;"
 					classid="../cbin/Toolbar.dll#Aras.Client.Controls.Toolbar" >
-			</object>
+				</object>
 		</td>
 	</tr>
-	<tr id="grid1TreeRow" style="vertical-align: top;">
-		<td id="grid_td" style="width: 100%; height: 100%;">
+	<tr style="vertical-align: top;">
+		<td id="grid_td" style="height: 100%;">
 			<object id="treeGrid1" style="height: 100%; width: 100%; display: block;"
 				classid="../cbin/TreeTable.dll#Aras.Client.Controls.TreeGridContainer">
-                <param name="AllowDrop" value="true">
 			</object>
 		</td>
 	</tr>
-</table>
-]]></html_code>
+</table>]]></html_code>
       <is_disabled>0</is_disabled>
       <is_visible>1</is_visible>
       <label_position>top</label_position>

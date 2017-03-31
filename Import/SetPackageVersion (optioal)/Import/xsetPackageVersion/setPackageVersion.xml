@@ -1,0 +1,6 @@
+<AML>
+  <Item type="PackageDefinition" action="updatePackageDefinitionVersion" where="PackageDefinition.state='Released'" >
+    <name>Item Folders</name>
+    <minor_rev>v1-6</minor_rev>
+  </Item>
+</AML>

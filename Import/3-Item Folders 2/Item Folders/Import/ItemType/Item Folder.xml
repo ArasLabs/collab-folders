@@ -146,8 +146,8 @@
     <column_alignment>center</column_alignment>
     <column_width>60</column_width>
     <data_type>boolean</data_type>
-    <is_hidden>1</is_hidden>
-    <is_hidden2>1</is_hidden2>
+    <is_hidden>0</is_hidden>
+    <is_hidden2>0</is_hidden2>
     <is_indexed>0</is_indexed>
     <is_keyed>0</is_keyed>
     <is_multi_valued>0</is_multi_valued>
@@ -156,7 +156,7 @@
     <name>is_template</name>
     <range_inclusive>0</range_inclusive>
     <readonly>0</readonly>
-    <sort_order>6244</sort_order>
+    <sort_order>101</sort_order>
     <source_id keyed_name="Item Folder" type="ItemType" name="Item Folder">C0C8138AB15C41F59FA629EB8EAE2DC2</source_id>
     <track_history>0</track_history>
    </Item>
@@ -311,6 +311,7 @@
     <is_keyed>0</is_keyed>
     <is_multi_valued>0</is_multi_valued>
     <is_required>0</is_required>
+    <label xml:lang="en">Gen</label>
     <name>generation</name>
     <range_inclusive>0</range_inclusive>
     <readonly>1</readonly>

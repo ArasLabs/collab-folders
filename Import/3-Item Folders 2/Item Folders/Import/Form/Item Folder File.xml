@@ -1,0 +1,109 @@
+﻿<AML>
+ <Item type="Form" id="D31DE256578345A2BFDA4997248340AC" action="add">
+  <name>Item Folder File</name>
+  <stylesheet><![CDATA[../styles/default.css]]></stylesheet>
+  <Relationships>
+   <Item type="Body" id="93C7A115ADB641FEA3647C2C25134963" action="add">
+    <bg_attach>scroll</bg_attach>
+    <bg_color>#FFFFFF</bg_color>
+    <bg_repeat>no-repeat</bg_repeat>
+    <sort_order>128</sort_order>
+    <source_id keyed_name="Item Folder File" type="Form">D31DE256578345A2BFDA4997248340AC</source_id>
+    <Relationships>
+     <Item type="Field" id="9C731172BCCD4D5A92114028FB5BF7F4" action="add">
+      <border_width>0</border_width>
+      <field_type>checkbox</field_type>
+      <font_color>#000000</font_color>
+      <font_family>arial, helvetica, sans-serif</font_family>
+      <font_size>8pt</font_size>
+      <font_weight>bold</font_weight>
+      <is_disabled>1</is_disabled>
+      <is_visible>1</is_visible>
+      <label xml:lang="en">Is Shared</label>
+      <label_position>right</label_position>
+      <list_no_blank>0</list_no_blank>
+      <name>is_shared</name>
+      <propertytype_id keyed_name="is_shared" type="Property">85259A3E2696422F98B4292E24F408E3</propertytype_id>
+      <sort_order>128</sort_order>
+      <source_id keyed_name="93C7A115ADB641FEA3647C2C25134963" type="Body">93C7A115ADB641FEA3647C2C25134963</source_id>
+      <tab_index>10</tab_index>
+      <tab_stop>1</tab_stop>
+      <x>15</x>
+      <y>60</y>
+     </Item>
+     <Item type="Field" id="A6C5A34596F742D7B432E9A455DA85E0" action="add">
+      <border_width>0</border_width>
+      <field_type>checkbox</field_type>
+      <font_color>#000000</font_color>
+      <font_family>arial, helvetica, sans-serif</font_family>
+      <font_size>8pt</font_size>
+      <font_weight>bold</font_weight>
+      <is_disabled>1</is_disabled>
+      <is_visible>1</is_visible>
+      <label xml:lang="en">Templ</label>
+      <label_position>right</label_position>
+      <list_no_blank>0</list_no_blank>
+      <name>is_template</name>
+      <propertytype_id keyed_name="is_template" type="Property">8C191C80506D4C0699DEC1A5BBFC22FF</propertytype_id>
+      <sort_order>512</sort_order>
+      <source_id keyed_name="93C7A115ADB641FEA3647C2C25134963" type="Body">93C7A115ADB641FEA3647C2C25134963</source_id>
+      <tab_index>3594</tab_index>
+      <tab_stop>1</tab_stop>
+      <x>15</x>
+      <y>85</y>
+     </Item>
+     <Item type="Field" id="D061FA68244B42AE85B68797AF5FA924" action="add">
+      <border_width>0</border_width>
+      <field_type>checkbox</field_type>
+      <font_color>#000000</font_color>
+      <font_family>arial, helvetica, sans-serif</font_family>
+      <font_size>8pt</font_size>
+      <font_weight>bold</font_weight>
+      <is_disabled>0</is_disabled>
+      <is_visible>1</is_visible>
+      <label xml:lang="en">Referenced File</label>
+      <label_position>right</label_position>
+      <list_no_blank>0</list_no_blank>
+      <name>referenced_files</name>
+      <propertytype_id keyed_name="referenced_file" type="Property">C78227C249104837B403349DA6625EE4</propertytype_id>
+      <sort_order>256</sort_order>
+      <source_id keyed_name="93C7A115ADB641FEA3647C2C25134963" type="Body">93C7A115ADB641FEA3647C2C25134963</source_id>
+      <tab_index>7178</tab_index>
+      <tab_stop>0</tab_stop>
+      <x>95</x>
+      <y>85</y>
+     </Item>
+     <Item type="Field" id="FD6ED2D1ED8C4AE8A41143F4FF88B4F8" action="add">
+      <border_width>0</border_width>
+      <display_length>40</display_length>
+      <field_type>item</field_type>
+      <font_color>#000000</font_color>
+      <font_family>arial, helvetica, sans-serif</font_family>
+      <font_size>8pt</font_size>
+      <font_weight>bold</font_weight>
+      <is_disabled>1</is_disabled>
+      <is_visible>1</is_visible>
+      <label xml:lang="en">File</label>
+      <label_position>top</label_position>
+      <list_no_blank>0</list_no_blank>
+      <name>related_id</name>
+      <sort_order>384</sort_order>
+      <source_id keyed_name="93C7A115ADB641FEA3647C2C25134963" type="Body">93C7A115ADB641FEA3647C2C25134963</source_id>
+      <tab_index>6666</tab_index>
+      <tab_stop>1</tab_stop>
+      <x>15</x>
+      <y>15</y>
+     </Item>
+    </Relationships>
+   </Item>
+  </Relationships>
+ </Item>
+ <Item type="Field" id="FD6ED2D1ED8C4AE8A41143F4FF88B4F8" action="edit">
+  <propertytype_id>
+   <Item type="Property" action="get" select="id">
+    <name>related_id</name>
+    <source_id type="ItemType" keyed_name="Item Folder File">022CE9AE944743CA9A9215DCAF042D20</source_id>
+   </Item>
+  </propertytype_id>
+ </Item>
+</AML>

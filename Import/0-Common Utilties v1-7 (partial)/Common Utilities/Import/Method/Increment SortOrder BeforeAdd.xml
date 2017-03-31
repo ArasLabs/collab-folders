@@ -1,0 +1,33 @@
+﻿<AML>
+ <Item type="Method" id="AB2275EA86E64922983F84B4F49B3A95" action="add">
+  <comments>sever side logic - use on relationship onBeforeAdd Event only</comments>
+  <execution_allowed_to keyed_name="World" type="Identity">A73B655731924CD0B027E4F4D5FCC0A9</execution_allowed_to>
+  <method_code><![CDATA[Dim newSortNumStr As String = Me.getProperty("sort_order","")
+  
+' if sort order already set, keep it
+If newSortNumStr = "" Then newSortNumStr= "0"
+
+Dim relSourceId As String = Me.getProperty("source_id","")
+If relSourceId = "" Then Return Me  'probably not a relationship type
+
+Dim Rels As Item = Me.newItem(Me.GetType(), "get")
+Rels.setProperty("source_id",relSourceId)
+Rels = Rels.apply()
+Dim maxVal As Integer
+Dim i As Integer
+For i=0 To Rels.getItemCount() -1
+  Dim Rel As Item = Rels.getItemByIndex(i)
+  Dim sortOrder As Integer = CInt(Rel.getProperty("sort_order"))
+  If (sortOrder > maxVal) Then  maxVal = sortOrder
+Next i
+
+'detect standard increment of 128, then correct it to +1
+If (CInt(newSortNumStr) - maxVal) = 128 Then
+  Me.setProperty("sort_order",maxVal+1) 'increment by 1
+End If
+
+Return Me]]></method_code>
+  <method_type>VB</method_type>
+  <name>Increment SortOrder BeforeAdd</name>
+ </Item>
+</AML>

@@ -1,0 +1,6 @@
+<AML>
+<!-- from Form: Item Folder Template -->
+<Item type="Field" id="67DB9621CF8647029EBE8E4F3A58A50A" action="delete" keyed_name="item_types_with_autonumbers" />
+<Item type="Field" id="15C657E22F9B4F7EBCD25193B70DB84E" action="delete" keyed_name="item_number" />
+
+</AML>
