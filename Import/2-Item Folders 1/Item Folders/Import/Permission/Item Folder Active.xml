@@ -27,7 +27,7 @@
    </Item>
    <Item type="Access" id="B31C9200A1F44CBE9DACA27F35BA6A8B" action="add">
     <can_change_access>0</can_change_access>
-    <can_delete>1</can_delete>
+    <can_delete>0</can_delete>
     <can_discover>1</can_discover>
     <can_get>1</can_get>
     <can_update>1</can_update>
@@ -83,7 +83,7 @@
    </Item>
    <Item type="Access" id="2FE584C0125F4F798189F06B9D53E720" action="add">
     <can_change_access>0</can_change_access>
-    <can_delete>1</can_delete>
+    <can_delete>0</can_delete>
     <can_discover>1</can_discover>
     <can_get>1</can_get>
     <can_update>1</can_update>

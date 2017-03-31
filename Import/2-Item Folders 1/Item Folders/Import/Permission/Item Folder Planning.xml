@@ -75,7 +75,7 @@
     <can_change_access>0</can_change_access>
     <can_delete>0</can_delete>
     <can_discover>1</can_discover>
-    <can_get>1</can_get>
+    <can_get>0</can_get>
     <can_update>0</can_update>
     <related_id keyed_name="Team" type="Identity">275764859FDE49AF817571E8BFD8CBB5</related_id>
     <show_permissions_warning>0</show_permissions_warning>

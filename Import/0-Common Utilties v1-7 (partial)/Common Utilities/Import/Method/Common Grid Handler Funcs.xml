@@ -96,6 +96,31 @@ fn_clearResultsOnStatusBar = function () {
 //  if (sb) {sb.setStatus(0, "");}
 };
 
+// -------
+IsCurrUserMemberOfIdentity = function (identity_name_to_check)
+{
+
+  var identityItem = top.aras.newIOMItem("Identity","get");
+  identityItem.setProperty("name",identity_name_to_check);
+  identityItem = identityItem.apply();
+  if (identityItem.isError()) {return false;}
+  
+  return IsCurrUserMemberOfIdentityId(identityItem.getID());
+};
+
+// -------
+IsCurrUserMemberOfIdentityId = function (identity_id_to_check)
+{
+  if (!identity_id_to_check || identity_id_to_check === undefined || identity_id_to_check === "" ) {return false;}
+
+  var sessionIdentitites_array = top.aras.getIdentityList().split(",");
+  // now we have all identities the current user (session) is member of
+  // scan if given identity is in the list - if yes, return true
+  for (var i=0;i<sessionIdentitites_array.length;i++) {
+    if (identity_id_to_check == sessionIdentitites_array[i]) {return true;}
+  }
+  return false;
+};
 
 // ============================= old function,  use fn_enableToolbarElement() instead !!!
 fn_setTbControlEnabled = function (ctrlName, b) {
@@ -364,6 +389,20 @@ fn_SetBackgroundColorOfCellsInRow = function(gridCtrl, row, colStart, colEnd, bg
 		  gridCtrl.cells(row, c).setBgColor(bgColor);
 		}
 	}
+};
+
+//-----------------
+fn_SetBackgroundColorOfCellsInRowsToRoot = function (gridCtrl, row_id, startCell, endCell, colorCode, doColorRootRow) {
+  if (!doColorRootRow || doColorRootRow === undefined) {doColorRootRow=false;}
+
+  fn_SetBackgroundColorOfCellsInRow(gridCtrl, row_id, startCell, endCell, colorCode);
+  var parent_row_id = gridCtrl.getParentId(row_id);
+  while (parent_row_id)
+  {
+    if (!doColorRootRow || parent_row_id.indexOf("ROOT") < 0)
+      {fn_SetBackgroundColorOfCellsInRow(gridCtrl, parent_row_id, startCell, endCell, colorCode);}
+    parent_row_id = gridCtrl.getParentId(parent_row_id);
+  }
 };
 
 //==================================

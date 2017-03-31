@@ -1,34 +1,32 @@
 --------------------------------------------
 Packages Import Instructions
 --------------------------------------------
+Author:
+  Rolf Laudenbach (rlaudenbach@aras.com)
 
-Rolf Laudenbach (rlaudenbach@aras.com)
 
 Version:
 --------
-v1-6  (May 2013)
- - updated grid html and logic to adjust to Innovator 10 (TreeGridContainer)
- - made folder realted item number show as link
- - Common Grid handler (utiltities) improvements
- - Added context menu actions on folder grid (if top folder parent item is locked)
-    - lock, unlock
-    - Add Folder Attachment
-    - Add Folder Controlled Item
 
-- Added phantom rows for grouping Attachment
-- Added drag and drop for one or more files onto Folder grid ('Folder rows', if locked)
-- Added is_shared icon display for shared files on folder grid
-- Added effectivity modes and filter drop down on folder grid ("current" and "latest released" view of controlled items)
-- Folder Templates: Added null relationship to register method for auto numbers of folder controlled items (poly item)
-- Copy form Folder Templates: Improved logic for "Reference" or "Copy" option on relatinships to Controlled Items.
-   - Files of documents are now physically copied in vault.
-- Copy form Folder Templates: Attached files on template folders are physically copied to new folder in vault.
+v1-7  (June 2013)
+- Improved Life-Cycle on "Item Folder"
+  - Folders now start with state "Planning"
+  - Promotion to "Active" or "Archived" can be done by folder's owner.
+  - Separeate permission sets for "Planning", "Active" and "Archived" (can be updated to your oranization's groups to hide "Archived" folders for example)
+  - Once Folder is in state "Archived" all relationships to "Files" and "Controlled Items" are "fixed" to their genaration at this time.
+   
+- Added actions to promote "Folders" to the "Folder Navigator Grid"
+  - if current user is owner of top folder, then 2 more actions are presented:
+     - Promote Folders to Active (down)   - promotes all folders from selected folder down to "Active"
+     - Promote Folders to Archived (down) - promotes all folders from selected folder down to "Archived"
 
+- Features of previous versions are described under "Version History" at the bottom of this ReadMe
+
+- promotes all folders from selected folder down to "Active"
 
 ## ATTENTION: ##
 If you are using a previous version (v1-3 or less) of this Item Folders add-on soltution,
 then you MUST do stage 0 --> "0__nash update" first before doing the imports with the Aras import tool !!!
-
 
 
 --------------------------------------------
@@ -103,5 +101,25 @@ Stage - 5 Copy code tree overlay files to the code tree of the the target Aras S
 Stage - 6 (Optional) SetPaclage version - Will fail, if you do not have the Package Utiltities v1-4 or higher loaded !!!
 
 
+================
+Version History:
+================
 
+v1-6  (May 2013)
+ - updated grid html and logic to adjust to Innovator 10 (TreeGridContainer)
+ - made folder related item number show as link
+ - Common Grid handler (utiltities) improvements
+ - Added context menu actions on folder grid (if top folder parent item is locked)
+    - lock, unlock
+    - Add Folder Attachment
+    - Add Folder Controlled Item
+
+- Added phantom rows for grouping Attachments and Controlled Item
+- Added drag and drop for one or more files onto Folder grid ('Folder rows', if locked)
+- Added is_shared icon display for shared files on folder grid
+- Added effectivity modes and filter drop down on folder grid ("current" and "latest released" view of controlled items)
+- Folder Templates: Added null relationship to register method for auto numbers of folder controlled items (poly item)
+- Copy form Folder Templates: Improved logic for "Reference" or "Copy" option on relatinships to Controlled Items.
+   - Files of documents are now physically copied in vault.
+- Copy form Folder Templates: Attached files on template folders are physically copied to new folder in vault.
 
