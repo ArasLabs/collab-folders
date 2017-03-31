@@ -1,5 +1,0 @@
-﻿<AML>
- <Item type="PackageDefinition" action="merge" where="PackageDefinition.name='PLM CommonUtilities'" >
-  <name>Common Utilities</name>
- </Item>
-</AML>

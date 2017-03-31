@@ -29,7 +29,7 @@
       <sort_order>640</sort_order>
       <source_id keyed_name="760D5E9944CC4F34AF739B963FAD7883" type="Body">760D5E9944CC4F34AF739B963FAD7883</source_id>
       <tab_stop>1</tab_stop>
-      <x>620</x>
+      <x>621</x>
       <y>20</y>
       <name>btn_add</name>
       <Relationships>
@@ -82,6 +82,7 @@
      </Item>
      <Item type="Field" id="4C58EE878F284D76A9EBE0E438B35F48" action="add">
       <border_width>0</border_width>
+      <display_length_unit>ex</display_length_unit>
       <field_type>textarea</field_type>
       <font_color>#000000</font_color>
       <font_family>arial, helvetica, sans-serif</font_family>
@@ -95,8 +96,8 @@
       <sort_order>384</sort_order>
       <source_id keyed_name="760D5E9944CC4F34AF739B963FAD7883" type="Body">760D5E9944CC4F34AF739B963FAD7883</source_id>
       <tab_stop>1</tab_stop>
-      <textarea_cols>90</textarea_cols>
-      <textarea_rows>4</textarea_rows>
+      <textarea_cols>75</textarea_cols>
+      <textarea_rows>8</textarea_rows>
       <x>140</x>
       <y>45</y>
       <name>folder_description</name>
@@ -104,7 +105,8 @@
      <Item type="Field" id="87B13E5180184EC8943B8715E37E2D27" action="add">
       <bg_color>#ffffdd</bg_color>
       <border_width>0</border_width>
-      <display_length>90</display_length>
+      <display_length>75</display_length>
+      <display_length_unit>ex</display_length_unit>
       <field_type>text</field_type>
       <font_color>#000000</font_color>
       <font_family>arial, helvetica, sans-serif</font_family>
@@ -125,6 +127,8 @@
      <Item type="Field" id="8A85F58FFA4442DDBDDD55034E283127" action="add">
       <bg_color>#ffffff</bg_color>
       <border_width>0</border_width>
+      <display_length>20</display_length>
+      <display_length_unit>ex</display_length_unit>
       <field_type>text</field_type>
       <font_color>#000000</font_color>
       <font_family>arial, helvetica, sans-serif</font_family>

@@ -5,24 +5,25 @@
    <Item type="Body" id="25BE532F03F04380BE1CE414886F5C1F" action="merge">
     <source_id keyed_name="Program" type="Form">5E93287DD73D4E138C101CA2F2363EA9</source_id>
     <Relationships>
-     <Item type="Field" id="BE01C95BAD164401899C1576E61F6B4F" action="add">
+     <Item type="Field" id="AB80466B15AE4480B45B95140FF2F4A5" action="add">
       <border_width>0</border_width>
+      <display_length_unit>px</display_length_unit>
       <field_type>html</field_type>
       <font_color>#000000</font_color>
       <font_family>arial, helvetica, sans-serif</font_family>
       <font_size>8pt</font_size>
       <font_weight>bold</font_weight>
-      <html_code><![CDATA[<div id="arasRelease">Aras9</div>]]></html_code>
-      <is_disabled>1</is_disabled>
+      <html_code><![CDATA[<div id="arasRelease">Aras10</div>]]></html_code>
+      <is_disabled>0</is_disabled>
       <is_visible>0</is_visible>
-      <label xml:lang="en">html1</label>
+      <label xml:lang="en">ArasRelease</label>
       <label_position>top</label_position>
       <list_no_blank>0</list_no_blank>
-      <sort_order>1024</sort_order>
+      <sort_order>1280</sort_order>
       <source_id keyed_name="25BE532F03F04380BE1CE414886F5C1F" type="Body">25BE532F03F04380BE1CE414886F5C1F</source_id>
       <tab_stop>1</tab_stop>
-      <x>190</x>
-      <y>180</y>
+      <x>98</x>
+      <y>9</y>
       <name>html_arasRelease</name>
      </Item>
      <Item type="Field" id="F5F6CCFE609445CCA73943AD8B8959D3" action="merge">

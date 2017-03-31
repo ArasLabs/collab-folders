@@ -975,8 +975,10 @@ FolderStructGrid.prototype.initDefaultMenu = function FolderStructGrid_initDefau
 	if (this.arasRelease !== "Aras9") {
       defaultMenu.push({name: "view_attached_files", label: top.aras.getResource("ItemFolders","itemfoldertreegrid.contextmenu.view_attached_files")});
     }
-	
-	defaultMenu.push({name: "refresh_this_row", label: top.aras.getResource("ItemFolders","itemfoldertreegrid.contextmenu.refresh_this_row")});
+	else
+	{
+	  defaultMenu.push({name: "refresh_this_row", label: top.aras.getResource("ItemFolders","itemfoldertreegrid.contextmenu.refresh_this_row")});
+	}
 
 	if(this.isEditable()) {
  	  defaultMenu.push({separator: true });
@@ -1127,7 +1129,7 @@ fn_onRefreshThisFolder = function (folderGridCtxt, eArg) {
   if (eArg.rowItemType !== "Item Folder"){top.aras.AlertError(top.aras.getResource("ItemFolders", "itemfoldertreegrid.message.action_not_valid_on_folder_rows"));return;}
 
   fn_enableToolbarControls(folderGridCtxt.toolbar, false, folderGridCtxt.fixEffectivityToReleased);
-  folderGridCtxt.grid.SetPaintEnabled(false);
+  folderGridCtxt.grid.setPaintEnabled(false);
   
   // delete all Children down from this node (selectedId)
   var allChildIds = folderGridCtxt.grid.getChildItemsId(eArg.selectedId,true,"|").split("|");
@@ -1175,7 +1177,7 @@ fn_onRefreshThisFolder = function (folderGridCtxt, eArg) {
   folderGridCtxt.DrawFolderChildren(folderItem, folderItem.getID(), eArg.selectedId, parents);
   folderGridCtxt.grid.openItem(eArg.selectedId); //refreshed folder Item
   
-  folderGridCtxt.grid.SetPaintEnabled(true);
+  folderGridCtxt.grid.setPaintEnabled(true);
   fn_enableToolbarControls(folderGridCtxt.toolbar, true, folderGridCtxt.fixEffectivityToReleased);
   return;
 };

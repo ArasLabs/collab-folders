@@ -1,7 +1,7 @@
 ﻿<AML>
  <Item type="Form" id="D8A26FDB1ECC4DC19CFCF263713F320C" action="add">
   <category_form>0</category_form>
-  <height>245</height>
+  <height>180</height>
   <stylesheet><![CDATA[../styles/default.css]]></stylesheet>
   <width>1100</width>
   <name>Item Folder</name>
@@ -30,7 +30,7 @@
       <source_id keyed_name="2420B2CC2AF04726A6ABD207F80DE852" type="Body">2420B2CC2AF04726A6ABD207F80DE852</source_id>
       <tab_index>9445</tab_index>
       <tab_stop>1</tab_stop>
-      <x>180</x>
+      <x>165</x>
       <y>115</y>
       <name>allow_sub_folders</name>
      </Item>
@@ -51,13 +51,14 @@
       <source_id keyed_name="2420B2CC2AF04726A6ABD207F80DE852" type="Body">2420B2CC2AF04726A6ABD207F80DE852</source_id>
       <tab_index>9444</tab_index>
       <tab_stop>1</tab_stop>
-      <x>305</x>
-      <y>105</y>
+      <x>300</x>
+      <y>100</y>
       <name>allowed_relationships</name>
      </Item>
      <Item type="Field" id="76D20AB5481140CA8FABCB4C8CF60631" action="add">
       <bg_color>#FFFFFF</bg_color>
       <border_width>0</border_width>
+      <display_length_unit>ex</display_length_unit>
       <field_type>textarea</field_type>
       <font_color>#000000</font_color>
       <font_family>arial, helvetica, sans-serif</font_family>
@@ -73,8 +74,8 @@
       <source_id keyed_name="2420B2CC2AF04726A6ABD207F80DE852" type="Body">2420B2CC2AF04726A6ABD207F80DE852</source_id>
       <tab_index>20</tab_index>
       <tab_stop>1</tab_stop>
-      <textarea_cols>80</textarea_cols>
-      <textarea_rows>3</textarea_rows>
+      <textarea_cols>64</textarea_cols>
+      <textarea_rows>5</textarea_rows>
       <x>90</x>
       <y>40</y>
       <name>description</name>
@@ -130,7 +131,7 @@
       <font_family>arial, helvetica, sans-serif</font_family>
       <font_size>8pt</font_size>
       <font_weight>bold</font_weight>
-      <html_code><![CDATA[<div id="arasRelease">Aras9</div>]]></html_code>
+      <html_code><![CDATA[<div id="arasRelease">Aras10</div>]]></html_code>
       <is_disabled>1</is_disabled>
       <is_visible>0</is_visible>
       <label_position>top</label_position>
@@ -151,26 +152,7 @@
       <font_family>arial, helvetica, sans-serif</font_family>
       <font_size>8pt</font_size>
       <font_weight>bold</font_weight>
-      <html_code><![CDATA[<script>
-  window.itemLinkProperty = "team_id";
-  window.itemLinkValue = "xx"; // set onLoad
-  var newItemType = "Item Folder";
-  var presetPropertyOnNewItem = "name";
-  var presetValueFormField = "name";
-	
-  function createNewItemAndLinkToProperty ()
-  {
-    var val = document.getElementsByName(presetValueFormField)[0].value;
-	
-	if (!val || val === undefined || val === "")
-	{
-	  alert("Cannot create new Item. Field 'name' on this form does not have a value !");
-	  return;
-	}
-    if(window.createNewItem) { window.createNewItem(newItemType,window.itemLinkProperty,presetPropertyOnNewItem+":"+val,true); }
-  }
-</script>
-<a name="createNewItemHref" href="javascript:createNewItemAndLinkToProperty()" >
+      <html_code><![CDATA[<a name="createNewItemHref" href="javascript:window.createNewItemAndLinkToProperty()" >
 <font color="#0000FF"><u>Create New...</u></font></a>]]></html_code>
       <is_disabled>0</is_disabled>
       <is_visible>1</is_visible>
@@ -199,7 +181,7 @@
       <source_id keyed_name="2420B2CC2AF04726A6ABD207F80DE852" type="Body">2420B2CC2AF04726A6ABD207F80DE852</source_id>
       <tab_stop>1</tab_stop>
       <x>0</x>
-      <y>90</y>
+      <y>100</y>
       <name>html_is_folder_templ_white_box</name>
      </Item>
      <Item type="Field" id="0FFAFFEAB79241E19B4551E6A9A11B37" action="add">
@@ -218,8 +200,8 @@
       <sort_order>1280</sort_order>
       <source_id keyed_name="2420B2CC2AF04726A6ABD207F80DE852" type="Body">2420B2CC2AF04726A6ABD207F80DE852</source_id>
       <tab_stop>1</tab_stop>
-      <x>1</x>
-      <y>85</y>
+      <x>0</x>
+      <y>95</y>
       <z_index>-1</z_index>
       <name>html_is_folder_template</name>
      </Item>
@@ -256,15 +238,15 @@
       <is_disabled>0</is_disabled>
       <is_visible>0</is_visible>
       <label xml:lang="en">is Template</label>
-      <label_position>top</label_position>
+      <label_position>right</label_position>
       <list_no_blank>0</list_no_blank>
       <propertytype_id keyed_name="is_template" type="Property">62BF6AB90D844761AC429D281E4B9D7E</propertytype_id>
       <sort_order>1152</sort_order>
       <source_id keyed_name="2420B2CC2AF04726A6ABD207F80DE852" type="Body">2420B2CC2AF04726A6ABD207F80DE852</source_id>
       <tab_index>6244</tab_index>
       <tab_stop>1</tab_stop>
-      <x>450</x>
-      <y>10</y>
+      <x>65</x>
+      <y>111</y>
       <name>is_template</name>
      </Item>
      <Item type="Field" id="1E517D504C9E4111A2A59F9E6A6C0B5E" action="add">
@@ -276,7 +258,7 @@
   {
     document.getElementById("ITEM_INFO_INTERNAL_SPAN").innerHTML = top.aras.uiDrawItemInfoTable(document.itemType,null,new Array(0));
   }
-  window.attachEvent("onload", populate_ITEM_INFO_INTERNAL_SPAN);
+  window.addEventListener("load", populate_ITEM_INFO_INTERNAL_SPAN);
 </script>]]></html_code>
       <is_disabled>0</is_disabled>
       <is_visible>1</is_visible>
@@ -284,8 +266,8 @@
       <sort_order>384</sort_order>
       <source_id keyed_name="2420B2CC2AF04726A6ABD207F80DE852" type="Body">2420B2CC2AF04726A6ABD207F80DE852</source_id>
       <tab_stop>0</tab_stop>
-      <x>-10</x>
-      <y>-18</y>
+      <x>0</x>
+      <y>0</y>
       <z_index>-1</z_index>
       <name>item_info</name>
      </Item>
@@ -314,7 +296,8 @@
      <Item type="Field" id="0801C8D539424E53B7666B6487A28432" action="add">
       <bg_color>#FFFFFF</bg_color>
       <border_width>0</border_width>
-      <display_length>80</display_length>
+      <display_length>64</display_length>
+      <display_length_unit>ex</display_length_unit>
       <field_type>text</field_type>
       <font_color>#000000</font_color>
       <font_family>arial, helvetica, sans-serif</font_family>
@@ -377,7 +360,7 @@
       <tab_index>1000</tab_index>
       <tab_stop>1</tab_stop>
       <x>90</x>
-      <y>105</y>
+      <y>100</y>
       <name>related_project_keyed_name</name>
      </Item>
      <Item type="Field" id="28D568DA3C824FBA8F5328EA95595CF3" action="add">

@@ -17,7 +17,7 @@
       <font_family>arial, helvetica, sans-serif</font_family>
       <font_size>8pt</font_size>
       <font_weight>bold</font_weight>
-      <html_code><![CDATA[<div id="arasRelease">Aras9</div>]]></html_code>
+      <html_code><![CDATA[<div id="arasRelease">Aras10</div>]]></html_code>
       <is_disabled>0</is_disabled>
       <is_visible>0</is_visible>
       <label_position>top</label_position>
@@ -95,6 +95,16 @@
     <sort_order>1</sort_order>
     <source_id keyed_name="Item Folder Structure Grid" type="Form">EC9D60083BDB4DA1B57309A931E7B990</source_id>
    </Item>
+   <Item type="Form Event" id="8D2C99343F344B0D9D802EDC85442437" action="add">
+    <form_event>onload</form_event>
+    <related_id keyed_name="CommonBase GridRowFuncs" type="Method">
+     <Item type="Method" action="get" select="id">
+      <name>CommonBase GridRowFuncs</name>
+     </Item>
+    </related_id>
+    <sort_order>2</sort_order>
+    <source_id keyed_name="Item Folder Structure Grid" type="Form">EC9D60083BDB4DA1B57309A931E7B990</source_id>
+   </Item>
    <Item type="Form Event" id="E1A6D8EA17684C8D8340E779EE3AEC27" action="add">
     <form_event>onload</form_event>
     <related_id keyed_name="Item Folder Struct Grid Handler" type="Method">
@@ -102,7 +112,7 @@
       <name>Item Folder Struct Grid Handler</name>
      </Item>
     </related_id>
-    <sort_order>2</sort_order>
+    <sort_order>3</sort_order>
     <source_id keyed_name="Item Folder Structure Grid" type="Form">EC9D60083BDB4DA1B57309A931E7B990</source_id>
    </Item>
   </Relationships>

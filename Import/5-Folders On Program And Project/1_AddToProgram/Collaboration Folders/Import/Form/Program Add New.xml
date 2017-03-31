@@ -1,7 +1,10 @@
 ﻿<AML>
  <Item type="Form" id="0F3AE48841694A07BBE67B398C9968FC" action="add">
-  <name>Program Add New</name>
+  <category_form>0</category_form>
+  <height>234</height>
   <stylesheet><![CDATA[../styles/default.css]]></stylesheet>
+  <width>699</width>
+  <name>Program Add New</name>
   <Relationships>
    <Item type="Body" id="2ED414FFD9254A838DCE58CE13367D0C" action="add">
     <bg_attach>scroll</bg_attach>
@@ -24,7 +27,6 @@
       <label xml:lang="en">Description</label>
       <label_position>top</label_position>
       <list_no_blank>0</list_no_blank>
-      <name>description</name>
       <propertytype_id keyed_name="description" type="Property">477FBA88329946069A52A0D276C3B233</propertytype_id>
       <sort_order>256</sort_order>
       <source_id keyed_name="2ED414FFD9254A838DCE58CE13367D0C" type="Body">2ED414FFD9254A838DCE58CE13367D0C</source_id>
@@ -34,6 +36,7 @@
       <textarea_rows>4</textarea_rows>
       <x>190</x>
       <y>50</y>
+      <name>description</name>
      </Item>
      <Item type="Field" id="40506456A22B47FAA81A11BB81165B11" action="add">
       <bg_color>#FFFFFF</bg_color>
@@ -48,7 +51,6 @@
       <label xml:lang="en">Select  a Folder Template</label>
       <label_position>top</label_position>
       <list_no_blank>0</list_no_blank>
-      <name>item_folder_template_id</name>
       <propertytype_id keyed_name="item_folder_template_id" type="Property">71EBAD63D13D444E982887729F5EEF00</propertytype_id>
       <sort_order>512</sort_order>
       <source_id keyed_name="2ED414FFD9254A838DCE58CE13367D0C" type="Body">2ED414FFD9254A838DCE58CE13367D0C</source_id>
@@ -56,6 +58,7 @@
       <tab_stop>1</tab_stop>
       <x>390</x>
       <y>10</y>
+      <name>item_folder_template_id</name>
      </Item>
      <Item type="Field" id="489D1A0C4FF2470B83366C8C161B669B" action="add">
       <bg_color>#FFFFFF</bg_color>
@@ -71,12 +74,12 @@
       <is_disabled>0</is_disabled>
       <is_visible>1</is_visible>
       <list_no_blank>0</list_no_blank>
-      <name>item_info</name>
       <sort_order>384</sort_order>
       <source_id keyed_name="2ED414FFD9254A838DCE58CE13367D0C" type="Body">2ED414FFD9254A838DCE58CE13367D0C</source_id>
       <tab_stop>0</tab_stop>
       <x>0</x>
       <y>0</y>
+      <name>item_info</name>
      </Item>
      <Item type="Field" id="4A2E171F4FD84B5B8536DE7FCA2367F9" action="add">
       <bg_color>#FFFFFF</bg_color>
@@ -91,7 +94,6 @@
       <label xml:lang="en">Name</label>
       <label_position>top</label_position>
       <list_no_blank>0</list_no_blank>
-      <name>name</name>
       <propertytype_id keyed_name="name" type="Property">09F271451D1E4FEA8AE12913A71596F2</propertytype_id>
       <sort_order>128</sort_order>
       <source_id keyed_name="2ED414FFD9254A838DCE58CE13367D0C" type="Body">2ED414FFD9254A838DCE58CE13367D0C</source_id>
@@ -99,6 +101,7 @@
       <tab_stop>1</tab_stop>
       <x>190</x>
       <y>10</y>
+      <name>name</name>
      </Item>
     </Relationships>
    </Item>

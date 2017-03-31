@@ -1,7 +1,9 @@
 ﻿<AML>
  <Item type="Form" id="D31DE256578345A2BFDA4997248340AC" action="add">
   <category_form>0</category_form>
+  <height>234</height>
   <stylesheet><![CDATA[../styles/default.css]]></stylesheet>
+  <width>699</width>
   <name>Item Folder File</name>
   <Relationships>
    <Item type="Body" id="93C7A115ADB641FEA3647C2C25134963" action="add">

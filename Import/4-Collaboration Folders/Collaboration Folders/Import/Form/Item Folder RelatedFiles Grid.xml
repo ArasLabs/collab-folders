@@ -18,182 +18,38 @@
       <font_family>arial, helvetica, sans-serif</font_family>
       <font_size>8pt</font_size>
       <font_weight>bold</font_weight>
-      <html_code><![CDATA[<script>
+      <html_code><![CDATA[<script type="text/javascript">
 	// Generic FlatGridView - HTML-code
-	// this is a skeleton.
-	// additional functions with logic need to be loaded from methods attached to tbe Form
-	// (FormEvent = onLoad)
+	// this is a skeleton
 	//
-	// logic of all Click Handlers flatGrid1_XXXX ()  listed in this HTML must be in these attached Form handlers as well
-	//
+	// FormEvent = onLoad
 	// ====================================================================================================================
-	var toolbar1_Control = null;
-	var flatGrid1_Control = null;
-	var flatGrid1_MsgsId;
 
+    var gridInstance= null;
     var innovator = new top.Innovator();
-	var I18Ncntx = innovator.getI18NSessionContext();
-	var OnLoadMethodsLoaded = false;
+    var I18Ncntx = innovator.getI18NSessionContext();
 
-	top.aras.uiAddConfigLink2Doc4Assembly(document, "TreeTable");
-	top.aras.uiAddConfigLink2Doc4Assembly(document, "Toolbar");
-	
-	function onload_handler() {
-      // Make sure the item is loaded before proceeding
-	  var myCount = 0;
-     if (!document.thisItem) {
-       if (myCount > 9) { return; }
-       myCount++;
-       setTimeout("onload_handler()", 300);
-       return;
-     }
-     thisItem = document.thisItem;
-
-	 toolbar1_Control = document.toolbar1;
-	 flatGrid1_Control = document.flatGrid1;
-
- 	 OnLoadMethodsLoaded = false;
-	 loadFormMethods();
-
-     loadToolbarAndGrid();	 
-
-     interval = window.setInterval(fixGridHeight, 100);
- 	 
+	function onTabSelected() {
+		return; // not used
 	}
 
-	function loadFormMethods()
-	{
-        try { onload1(); } catch (excep) { }  //handler method must be attached to 1st onLoad event of this Form
-        try { onload2(); } catch (excep) { }  //handler method must be attached to 1st onLoad event of this Form
-        try { onload3(); } catch (excep) { }  //handler method must be attached to 1st onLoad event of this Form
-		OnLoadMethodsLoaded = true;
+	function setEditMode(item) {
+		// responds to the windows top toolbar actions
+		treeGrid.grid.turnEditOff();
 	}
 
-	function loadToolbarAndGrid()
-	{
-		if (!window.loadGridToolbarHTML)  // this function must reside in one of the handlers loaded with the Form (onLoad)
-		{
-			setTimeout('loadToolbarAndGrid()',10);
-			return;
-		}
-		var res = window.loadGridToolbarHTML();  // this function must reside in one of the handlers loaded with the Form (onLoad)
-        toolbar1_Control.show();
-        
-		var MsgsId = top.aras.showStatusMessage(0, "Loading. please wait ...",'../images/Animated/ProgressSmall.gif'); 
-		
-        initGrid1();
-		fixGridHeight();
-		top.aras.clearStatusMessage(MsgsId);  
-	}	
-
-	function initGrid1()
-	{
-	    if (!window.RefreshGrid)  // this function must reside in one of the handlers loaded with the Form (onLoad)
-		{
-			setTimeout('initGrid1()',10);
-			return;
-		}
-		var res = window.RefreshGrid(true, thisItem);
-	}
-	
-	var onresize_handler = function ()
-	{
-		fixGridHeight();
+	function setViewMode(item) {
+		// responds to the windows top toolbar actions
+		treeGrid.grid.turnEditOff();
 	}
 
-	var onbeforeunload_handler = function ()
-	{
-		if (window.interval)
-		{
-			clearInterval(interval);
+	var onload_handler = function() {
+		if (window.initGrid) {
+			window.initGrid();
 		}
 	}
-
-	function fixGridHeight()
-	{
-		var el = document.getElementById("treeGrid1");
-		top.aras.fixLiquidContainerHeight(document, el);
-		el = document.getElementById("grid_td");
-		top.aras.fixLiquidContainerHeight(document, el);
-	}
-
-    window.attachEvent("onbeforeunload", onbeforeunload_handler);
-	window.attachEvent("onload", onload_handler);
-	window.attachEvent("onresize", onresize_handler);	
+	window.addEventListener("load", onload_handler);
 </script>
-
-<script type="text/javascript" for="flatGrid1" event="GridStart(isSuccess)">
-	flatGrid1_Control=document.flatGrid1;
-</script>
-<script type="text/javascript" for="toolbar1" event="Onload()">
-	toolbar1_Control = document.toolbar1;
-</script>
-<script type="text/javascript" for="toolbar1" event="Onclick(tbItem)">
-	toolbar1_onToolbarClick(tbItem);
-</script>
-<script type="text/javascript" for="flatGrid1" event="GridClick(rowId, col)">
-	flatGrid1_onGridClick(rowId, col);
-</script>
-<script type="text/javascript" for="flatGrid1" event="GridDoubleClick(rowId)">
-	flatGrid1_onGridDoubleClick(rowId);
-</script>
-<script type="text/javascript" for="flatGrid1" event="GridLinkClick(strLink)">
-	flatGrid1_onGridLinkClick(strLink);
-</script>
-<script type="text/javascript" for="flatGrid1" event="GridMenuInit(rowId, col, p)">
-	flatGrid1_onGridMenuInit(rowId, col, p);
-</script>
-<script type="text/javascript" for="flatGrid1" event="GridMenuClick(m, rowId, col)">
-	flatGrid1_onGridMenuClick(m);
-</script>
-<script type="text/javascript" for="flatGrid1" event="GridEditCell(mode, rowID, col)">
-	return flatGrid1_onGridEditCell(mode, rowID, col);
-</script>
-<script type="text/javascript" for="flatGrid1" event="GridKeyPress(kEv)">
-	return true;
-</script>
-
-<style>
-   html, body
-	{
-	  margin: 0;
-	  padding: 0;
-	  height: 100%;
-	  border: none;
-	}
-	.sys_f_container
-	{
-	  position:absolute; 
-	  top:0px; 
-	  left:0px;
-	  width: 100%;
-	  height: 100%;
-	}
-	.sys_f_table
-	{
-	  position:absolute; 
-	  top:0px; left:0px;
-	  width: 100%;
-	  height: 100%;
-	}
-</style>
-
-<table id="grid1Table" border="0" cellspacing="0" cellpadding="0" style="width: 100%; height: 100%; table-layout: fixed;" >
-	<tr id="grid1ToolbarRow" style="vertical-align: top;">
-		<td style="width: 100%; height: 28px;">
-			<object id="toolbar1" style="width: 100%; height: 28px; display: block;"
-					classid="../cbin/Toolbar.dll#Aras.Client.Controls.Toolbar" >
-			</object>
-		</td>
-	</tr>
-	<tr id="grid1TreeRow" style="vertical-align: top;">
-		<td id="grid_td" style="width: 100%; height: 100%;">
-			<object id="flatGrid1" style="height: 100%; width: 100%; display: block;"
-				classid="../cbin/TreeTable.dll#Aras.Client.Controls.GridContainer">
-			</object>
-		</td>
-	</tr>
-</table>
 ]]></html_code>
       <is_disabled>0</is_disabled>
       <is_visible>1</is_visible>
@@ -210,12 +66,22 @@
    </Item>
    <Item type="Form Event" id="427BF7B943504E42843F856883AF34A6" action="add">
     <form_event>onload</form_event>
-    <related_id keyed_name="Common Grid Handler Funcs" type="Method">
+    <related_id keyed_name="CommonBase GridFuncs" type="Method">
      <Item type="Method" action="get" select="id">
-      <name>Common Grid Handler Funcs</name>
+      <name>CommonBase GridFuncs</name>
      </Item>
     </related_id>
     <sort_order>1</sort_order>
+    <source_id keyed_name="Item Folder RelatedFiles Grid" type="Form">F591887F6276430191D370A64F887B32</source_id>
+   </Item>
+   <Item type="Form Event" id="8E91E714B4104BEFAC643C73F33AC90E" action="add">
+    <form_event>onload</form_event>
+    <related_id keyed_name="CommonBase GridRowFuncs" type="Method">
+     <Item type="Method" action="get" select="id">
+      <name>CommonBase GridRowFuncs</name>
+     </Item>
+    </related_id>
+    <sort_order>2</sort_order>
     <source_id keyed_name="Item Folder RelatedFiles Grid" type="Form">F591887F6276430191D370A64F887B32</source_id>
    </Item>
    <Item type="Form Event" id="8901F45564B646DEB34CD16EA952DB2A" action="add">
@@ -225,7 +91,7 @@
       <name>Item Folder RelFiles GridHandler</name>
      </Item>
     </related_id>
-    <sort_order>2</sort_order>
+    <sort_order>3</sort_order>
     <source_id keyed_name="Item Folder RelatedFiles Grid" type="Form">F591887F6276430191D370A64F887B32</source_id>
    </Item>
   </Relationships>

@@ -12,17 +12,17 @@
       <font_family>arial, helvetica, sans-serif</font_family>
       <font_size>8pt</font_size>
       <font_weight>bold</font_weight>
-      <html_code><![CDATA[<div id="arasRelease">Aras9</div>]]></html_code>
+      <html_code><![CDATA[<div id="arasRelease">Aras10</div>]]></html_code>
       <is_disabled>0</is_disabled>
-      <is_visible>1</is_visible>
-      <label xml:lang="en">html3</label>
+      <is_visible>0</is_visible>
+      <label xml:lang="en">ArasRelease</label>
       <label_position>top</label_position>
       <list_no_blank>0</list_no_blank>
       <sort_order>6528</sort_order>
       <source_id keyed_name="65DB9A274E814B92AFCB2CEC08123B06" type="Body">65DB9A274E814B92AFCB2CEC08123B06</source_id>
       <tab_stop>1</tab_stop>
-      <x>190</x>
-      <y>264</y>
+      <x>102</x>
+      <y>4</y>
       <name>html_arasRelease</name>
      </Item>
      <Item type="Field" id="210706CDABBB43DE8E6249349A36F50D" action="add">

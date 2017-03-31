@@ -7,9 +7,8 @@ Author:
 
 Version:
 --------
-V3-0 9.x  (March 2014)
+V3-0 (May 2014)
 
-- Works for Aras 9.3 and 9.4 only !
 - Made compatible with Aras10 - IE and Firefox - (90% but still some minor issues)
 - Reworked loading of folder tree with controlled items and files. Uses "RepeatItemConfig" action now, 
   which allows to load full structure with "released" or "current" effectivity condition at once
@@ -28,14 +27,20 @@ V3-0 9.x  (March 2014)
     on main grid documents can then be search for by "project name"
 
 
+Known Issues
+------------
+- File Drag n Drop does not yet work with Aras 10 !
+- Folder Navigator: action "refresh_this_folder" does not work.  grid API .getChildItems() missing !
+
+
 =========================
 Installation Instructions
 =========================
 
-NOTE: If you already have a previous version of "Item Folders" or "Collaboration Folders" installed,
-      then you MUST run installation Stage0 and Stage8 !!!
-     
-      If you install collaboration Folders the first time. DO NOT run Stage0 and start with Stage1 and skip Stage8 !!!
+NOTE: If you already have a previous version of "Item Folders" or "Collaboration Folders" installed, then you MUST run installation Stage0 and Stage8 !!!
+      If you install collaboration Folders the first time. DO NOT run Stage0 and start with Stage1 and skip Stage7 !!!
+
+      Also if you install into Aras10, there are addtional steps within some stages !!!
 
 --------------------------------------------
 Stage - 0  Updates Flags existing Folders Items 

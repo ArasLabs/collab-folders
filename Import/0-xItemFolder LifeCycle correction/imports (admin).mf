@@ -1,3 +1,0 @@
-<imports>
-   <package name="Collaboration Folders" path="Collaboration Folders\Import" />
-</imports>

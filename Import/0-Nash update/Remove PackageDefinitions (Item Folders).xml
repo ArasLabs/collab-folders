@@ -1,8 +1,0 @@
-﻿<AML>
- <Item type="PackageDefinition" action="delete" where="PackageDefinition.name='Item Folders'" >
- </Item>
- <Item type="PackageDefinition" action="delete" where="PackageDefinition.name='Common Grid Utilities'" >
- </Item>
- <Item type="PackageDefinition" action="delete" where="PackageDefinition.name='Common Utilities'" >
- </Item>
-</AML>

@@ -7,11 +7,11 @@ var thisItem = top.aras.newIOMItem("","");
 thisItem.loadAML(document.item.xml);
 var isTemplate = (thisItem.getProperty("is_template","0") === "1");
 
-var element = document.getElementsByName("is_folder_templ_white_box")[0];
+var element = document.getElementsByName("html_is_folder_templ_white_box")[0];
 if (element && isTemplate) {
   var parentElem = element.parentNode;
   if (parentElem) {parentElem.removeChild(element);}
-  //cff.setVisibilityOfFieldByPropName("is_folder_templ_white_box",!isTemplate);
+  cff.setVisibilityOfFieldByPropName("html_is_folder_templ_white_box",!isTemplate);
 }
 
 cff.setVisibilityOfFieldByPropName("allow_sub_folders",isTemplate);
