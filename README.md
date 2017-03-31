@@ -1,5 +1,5 @@
 # Collaboration Folders
-####*Manage Files and Items in ML-Structs*
+#### *Manage Files and Items in ML-Structs*
 
 Adds handling of multi-level Folder structures. (new Item Types, see data model). On top of Aras Solutions "Product Engineering" and "Program Management"
 
