@@ -1,0 +1,6 @@
+﻿<AML>
+ <Item type="Variable" id="7190C1CBC78A4C99AE066FC0461C361D" action="add">
+  <value>EI_NextDocumentSequence</value>
+  <name>cFolder Default DocNum Method</name>
+ </Item>
+</AML>

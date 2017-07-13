@@ -2,4 +2,7 @@
 <Item action="promoteItem" type="tgc_Configuration" id="872A0A8CBD95458C858EB3D853CBF2B6">
 	<state>Released</state>
 </Item>
+<Item action="promoteItem" type="tgc_Configuration" id="AB8581BEE84F44C8BE132BCB570ECF00">
+	<state>Released</state>
+</Item>
 </AML>

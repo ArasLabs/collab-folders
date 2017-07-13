@@ -19,6 +19,7 @@
 //
 // Rolf Laudenbach
 // 2015
+// Dec 2016 - added reloading onClick
 // =======================================================
 
 // load --> JS libraries from Innovator code tree (Client/Solutions)
@@ -34,6 +35,7 @@ if (top.relationships && typeof(top.relationships) !== undefined) {isStartedFrom
 var isStartedFromTOCview = false;
 var isGetRootItemByConfigRule = false;
 var topItemType = "";
+var grid;
 
 // callback from method "ForceGridRefreshOnRelTabs - so topItem's populate event also results in a refresh of the grid"
 window.forceGridRefreshOnRelationship = function(relshipTypeName) {
@@ -89,6 +91,7 @@ treeGridHandlerClass.prototype.initGridLayout = function treeGridHandlerClass_in
 
  
 	this.grid.InitXml(this.gridEmptyTable_xml);
+	grid = this.grid;
 	
 	this.gridLayoutInitialized = true;
 	return true;
@@ -123,10 +126,13 @@ treeGridHandlerClass.prototype.initialize = function treeGridHandlerClass_Initia
 	this.ignoreToolbarChangeEvent = true; // !!! this must be set to avoid unnecessary toolbar change event during initialization
 
 	this.searchText = "";
+	this.eActionArgs = null;
 	this.relatedProjectKN = "";
 	this.inputRowTdVals = null;
 	this.gridData_AML= [];
     this.IsExpandOnStart = false;
+	this.levelsToLoad = "*";  // "0"= root levels only,  "*"= all levels
+	this.rootRowToRefresh = -1;
 	
 	// create grid control
 	this.grid = this.loadTreeGridIntoHtmlElement("grid1"); // pass the id of the html element on this form
@@ -241,12 +247,36 @@ treeGridHandlerClass.prototype.runServerCallbacks = function treeGridHandlerClas
 };
 
 //--------------
-treeGridHandlerClass.prototype.GetGridData = function treeGridHandlerClass_GetGridData(itemType, itemId, getMultipleRootItems) {
-	if (this.showDebugAlerts) {alert("Type:"+itemType+" Id:"+itemId+" isReleased:"+this.isReleasedMode)+" searchText:"+this.searchText;}
-	if (!getMultipleRootItems || getMultipleRootItems === undefined) {getMultipleRootItems=false;}
+treeGridHandlerClass.prototype.GetGridData = function treeGridHandlerClass_GetGridData(itemType, itemId, getMultipleRootItems, levelsToLoad) {
+	if (this.showDebugAlerts) {alert("Type:"+itemType+" Id:"+itemId+" isReleased:"+this.isReleasedMode+" searchText:"+this.searchText);}
+	if (getMultipleRootItems === null || getMultipleRootItems === undefined) {getMultipleRootItems=false;}
+	if (levelsToLoad === null || levelsToLoad === undefined) {levelsToLoad="*";}
 
 	var resItem = top.aras.newIOMItem("","");
-	var aml = this.CONFIG.buildGridDataQueryAML(this.viewName, itemType, itemId, this.isReleasedMode);
+	var aml = "";
+	if (levelsToLoad === "*"){
+		aml = this.CONFIG.buildGridDataQueryAML(this.viewName, itemType, itemId, this.isReleasedMode);
+	}
+	else if (levelsToLoad === "0"){
+		// build 1 level query as required
+		aml = "<Item type='"+itemType+"' id='"+itemId+"' action='get' select='"+this.CONFIG.getGridStructureNodeItemSelect(this.viewName)+"' >";
+		if (!getMultipleRootItems) {
+			aml += "<Relationships>";
+			aml +=   "<Item type='"+this.structureRelName+"' action='get' select='config_id,id,sort_order,related_id' >";
+			aml +=    "<related_id>";
+			aml +=       "<Item type='"+itemType+"' action='get' select='"+this.CONFIG.getGridStructureNodeItemSelect(this.viewName)+"' />";
+			aml +=    "</related_id>";
+			aml +=   "</Item>";
+			aml += "</Relationships>";
+			aml = aml.replace(/repeatTimes="0"/,'repeatTimes="1"');
+		}
+		aml += "</Item>";
+	}
+	else {
+		aml = this.CONFIG.buildGridDataQueryAML(this.viewName, itemType, itemId, this.isReleasedMode);
+		aml = aml.replace(/repeatTimes="0"/,'repeatTimes="'+levelsToLoad+'"'); 
+	}
+
 	resItem.loadAML(aml);
 
 	if (getMultipleRootItems) {
@@ -266,7 +296,7 @@ treeGridHandlerClass.prototype.GetGridData = function treeGridHandlerClass_GetGr
 
 //--------------
 treeGridHandlerClass.prototype.GetGridDataSearch = function treeGridHandlerClass_GetGridDataSearch(itemType, itemId, getMultipleRootItems) {
-	if (this.showDebugAlerts) {alert("Type:"+itemType+" Id:"+itemId+" isReleased:"+this.isReleasedMode)+" searchText:"+this.searchText;}
+	if (this.showDebugAlerts) {alert("Type:"+itemType+" Id:"+itemId+" isReleased:"+this.isReleasedMode+" searchText:"+this.searchText);}
 	if (!getMultipleRootItems || getMultipleRootItems === undefined) {getMultipleRootItems=false;}
 
 	var resItem = top.aras.newIOMItem("","");
@@ -286,7 +316,7 @@ treeGridHandlerClass.prototype.GetGridDataSearch = function treeGridHandlerClass
 	}
 	
 	var structureNodeRelNames = ""; var sep = "";
-	for (relQueryName in this.structureRowRelDefinitions) {
+	for (var relQueryName in this.structureRowRelDefinitions) {
 		structureNodeRelNames += sep + this.structureRowRelDefinitions[relQueryName].relationshipName;
 		sep = ",";
 	}
@@ -296,16 +326,25 @@ treeGridHandlerClass.prototype.GetGridDataSearch = function treeGridHandlerClass
 	resItem.setAttribute("dataAction",dataAction);
 	resItem.setAction("cFolder GetGridData Search");
 	resItem = resItem.apply();
+
+	// Expand any truncated branches
+	var itemsToCorrect = resItem.getItemsByXPath("//Item[related_id[not(Item)]]");
+	for (var i=0; i<itemsToCorrect.getItemCount() && loadFullStructure===true; i++)
+	{
+		var tmpItem = itemsToCorrect.getItemByIndex(i);
+		tmpItem.setRelatedItem(resItem.getItemsByXPath("//Item[@id='"+tmpItem.getProperty("related_id")+"']").getItemByIndex(0));
+	}	
 	return resItem;
 };
 
 // +++++ Draw grid contents +++++
 treeGridHandlerClass.prototype.Draw = function treeGridHandlerClass_Draw(isReLoad) {
 	if (this.hasInputRow) {this.grid.showInputRow(true);}
-	
+
 	if (this.showDebugAlerts) {alert("draw with reload='"+isReLoad+"'");}
 	// get data from server
 	if (isReLoad) {
+		this.rootRowToRefresh = -1;
 	
 		//alert("reLoad");
 		// re-set variables related to top/root item
@@ -314,11 +353,17 @@ treeGridHandlerClass.prototype.Draw = function treeGridHandlerClass_Draw(isReLoa
 
 		if (!this.initGridLayout()) {return;}
 		var isReleased = (this.getChoiceSelectionFromToolbar("effectivity_mode") === "latest_released");
-// debugger;
+ //debugger;
 		this.isReleasedMode = isReleased;
+
+		this.levelsToLoad = "*";
+		if (isStartedFromTOCview && this.searchText === "") {
+			this.levelsToLoad = "0";
+		}		
 		var itm;
 		this.gridData_AML = [];  // reset
-		var rootDataItems;
+		var rootDataItems,i;
+
 		if (!isGetRootItemByConfigRule) {
 			if (isReleased === true) {
 				itm = top.aras.newIOMItem(this.structureNodeTypeName);
@@ -333,12 +378,12 @@ treeGridHandlerClass.prototype.Draw = function treeGridHandlerClass_Draw(isReLoa
 			if (this.searchText !== "") {
 				rootDataItems = this.GetGridDataSearch(this.structureNodeTypeName,this.structureRootItemId, false);
 				// search results are from GetGridData are flat list of folders !!!
-				for (var i=0; i<rootDataItems.getItemCount(); i++) {
+				for (i=0; i<rootDataItems.getItemCount(); i++) {
 					this.gridData_AML[i] = rootDataItems.getItemByIndex(i);
 				}
 			}
 			else {
-				rootDataItems = this.GetGridData(this.structureNodeTypeName,this.structureRootItemId, false);
+				rootDataItems = this.GetGridData(this.structureNodeTypeName,this.structureRootItemId, false, this.levelsToLoad);
 				this.gridData_AML[0] = rootDataItems;
 				if (this.gridData_AML[0].getItemCount() === 0) {return;} // do nothing 
 				if (this.gridData_AML[0].isError()) {top.areas.AlertError(this.gridData_AML[0].getErrorString()); return;} // do nothing 
@@ -349,9 +394,9 @@ treeGridHandlerClass.prototype.Draw = function treeGridHandlerClass_Draw(isReLoa
 				rootDataItems = this.GetGridDataSearch(this.structureNodeTypeName,this.structureRootItemId, isStartedFromTOCview);
 			}
 			else {
-				rootDataItems = this.GetGridData(this.structureNodeTypeName,this.structureRootItemId, isStartedFromTOCview);
+				rootDataItems = this.GetGridData(this.structureNodeTypeName,this.structureRootItemId, isStartedFromTOCview, this.levelsToLoad); 
 			}
-			for (var i=0; i<rootDataItems.getItemCount(); i++) {
+			for (i=0; i<rootDataItems.getItemCount(); i++) {
 				this.gridData_AML[i] = rootDataItems.getItemByIndex(i);
 			}
 		}
@@ -360,11 +405,14 @@ treeGridHandlerClass.prototype.Draw = function treeGridHandlerClass_Draw(isReLoa
 	this.DrawGridContent(this.gridData_AML);
 };
 
-treeGridHandlerClass.prototype.DrawGridContent = function treeGridHandlerClass_DrawGridContent(dataItemsArray) {
+treeGridHandlerClass.prototype.DrawGridContent = function treeGridHandlerClass_DrawGridContent(dataItemsArray, keepGridContents, drawChildrenOfThisRowId, reDrawChildren) {
 	if (!this.gridLayoutInitialized) {return;} //initGridLayout did not complete all settings - wait for next Draw event.
 //debugger;
-
     if (dataItemsArray.length === 0) {return;}  //cannot draw, if XML is null
+	if (drawChildrenOfThisRowId === null || drawChildrenOfThisRowId === undefined) {drawChildrenOfThisRowId = "";}
+	if (reDrawChildren === null || reDrawChildren === undefined) {reDrawChildren = false;}
+	if (keepGridContents === null || keepGridContents === undefined) {keepGridContents = false;}
+	if (this.rootRowToRefresh >= 0) {keepGridContents = true;}
 
 	// determine current relationship filter setting
 	this.showStructureOnly = false;
@@ -383,11 +431,12 @@ treeGridHandlerClass.prototype.DrawGridContent = function treeGridHandlerClass_D
 		}
 	}
 	
-	this.grid.removeAllRows();
-	this.clearGridRowUserData(); //clear gridUserData of all registered rows
-	this.structureRowRelDefinitions = this.CONFIG.getGridStructureRowRelShipDefinitions(this.viewName);
-	this.relShipColumnMappings = this.CONFIG.relshipColumnMappings;	
-
+	if (!keepGridContents) {
+		this.grid.removeAllRows();
+		this.clearGridRowUserData(); //clear gridUserData of all registered rows
+		this.structureRowRelDefinitions = this.CONFIG.getGridStructureRowRelShipDefinitions(this.viewName);
+		this.relShipColumnMappings = this.CONFIG.relshipColumnMappings;	
+	}
 	var rowConfig = {};
 	
 	// loop over all retrieved root items - and resolve their structure
@@ -397,6 +446,7 @@ treeGridHandlerClass.prototype.DrawGridContent = function treeGridHandlerClass_D
 		
 		this.runServerCallbacks(rootItem);
 		
+		var doDrawRows = true;
 		var parents;
 		var rowId;
     	rowConfig.isApplyChildBgColorUpToRoot = this.CONFIG.isApplyChildBgColorUpToRoot();
@@ -406,7 +456,25 @@ treeGridHandlerClass.prototype.DrawGridContent = function treeGridHandlerClass_D
 
 		if (this.showStructureOnly === true) {rowConfig.rowBgColor = "";}
 		
-		if (isStartedFromTOCview && !isGetRootItemByConfigRule && this.searchText === "") {
+		if (drawChildrenOfThisRowId !== "" && dataItemsArray.length == 1) {
+			rowId = drawChildrenOfThisRowId;
+			rowConfig.rowBgColor = this.structItemBgColor;
+			
+			//debugger;  var childIds = this.grid.getChildItemsId(rowId, true, "|");
+			
+			var parentItemID = this.getGridRowUserData(this.grid.getParentId(rowId),"rowItemID");;
+			var parentItemConfigId = this.getGridRowUserData(this.grid.getParentId(rowId),"rowItemConfigId");;
+			if (parentItemID === undefined) {parentItemID = null;}
+			if (parentItemConfigId === undefined) {parentItemConfigId = null;}
+			this.DrawStructureRowRelationshipsGroups(this.structureRelName, parentItemID, parentItemConfigId, rootItem, rowId, rowConfig); //"BaseGridMain Utilities" function
+			
+			if (reDrawChildren) {
+				parents = {}; //needed for recursive calls to resolve multi-level children of structure
+				this.DrawStructureRowChildren(this.structureRelName, rootItem, rootItem.getProperty("config_id",""), rowId, parents, rowConfig); //"BaseGridMain Utilities" function
+			}
+		}
+		else {
+		 if (isStartedFromTOCview && !isGetRootItemByConfigRule && this.searchText === "" && !keepGridContents) {
 			// do not show root folder in grid (but first level sub folders)
 			rowConfig.rowBgColor = this.structItemBgColor;
 			var firstLevelItems = rootItem.getRelationships(this.structureRelName);
@@ -414,16 +482,27 @@ treeGridHandlerClass.prototype.DrawGridContent = function treeGridHandlerClass_D
 		
 			for (var c=0; c<firstLevelItems.getItemCount(); c++) {
 				rootItem = firstLevelItems.getItemByIndex(c).getPropertyItem("related_id");
-				if (rootItem) {
+				
+				if (this.rootRowToRefresh >= 0) {
+					if (this.rootRowToRefresh !== c) {doDrawRows = false;}
+					else {doDrawRows = true;}
+				}
+
+				if (rootItem && doDrawRows) {
 					rowId = this.DrawStructureRow (this.structureRelName, rootItem, firstLevelItems.getItemByIndex(c), null, null, rowConfig);  //"BaseGridMain Utilities" function
-				if (this.showDebugAlerts) {alert("grid root row added.");}
-							
+					if (this.levelsToLoad  === "0" && this.rootRowToRefresh < 0 ) {
+						// set folder icon to indicate that more level can be reloaded
+						this.grid.setRowIcons(rowId, "../images/cFolderReloadNode.svg", "../images/cFolderReloadNode.svg");
+						this.setGridRowUserData(rowId, "reloadNextLevels", "1");
+					}
+					this.setGridRowUserData(rowId,"rootRowDataIndex",c);
+					if (this.showDebugAlerts) {alert("grid root row added.");}
 					parents = {}; //needed for recursive calls to resolve multi-level children of structure
 					this.DrawStructureRowChildren(this.structureRelName, rootItem, rootItem.getProperty("config_id",""), rowId, parents, rowConfig); //"BaseGridMain Utilities" function
 				}
 			}
-		}
-		else {
+		 }
+		 else {
 			// show root item in grid
 			rowConfig.rowBgColor = this.RootRowBgColor;
 			if (isGetRootItemByConfigRule || this.searchText !== "") {
@@ -432,18 +511,32 @@ treeGridHandlerClass.prototype.DrawGridContent = function treeGridHandlerClass_D
 			if (this.searchText !== "" && rootItem.getAttribute("cFolderChildrenHaveSearchResult","0") === "1") {
 			    rowConfig.rowBgColor = this.RootRowBgColor;
        			rowConfig.doNotColorRootRows = true;
-
 			}
-    		rowId = this.DrawStructureRootRow(this.structureRelName, rootItem, rowConfig); //"BaseGridMain Utilities" function
-			if (this.showDebugAlerts) {alert("grid root row added.");}
+			if (this.rootRowToRefresh >= 0) {
+				if (this.rootRowToRefresh !== d) {doDrawRows = false;}
+				else {doDrawRows = true;}
+			}
+			if (rootItem && doDrawRows) {
+				rowId = this.DrawStructureRootRow(this.structureRelName, rootItem, rowConfig); //"BaseGridMain Utilities" function
+				if (this.levelsToLoad === "0" && this.rootRowToRefresh < 0) {
+					// set folder icon to indicate that more level can be reloaded
+					this.grid.setRowIcons(rowId, "../images/cFolderReloadNode.svg", "../images/cFolderReloadNode.svg");
+					this.setGridRowUserData(rowId, "reloadNextLevels", "1");
+				}
+				this.setGridRowUserData(rowId,"rootRowDataIndex",d);
+				if (this.showDebugAlerts) {alert("grid root row added.");}
 
-			rowConfig.rowBgColor = this.structItemBgColor;
-			if (this.showStructureOnly === true) {rowConfig.rowBgColor = "";}
-			parents = {}; //needed for recursive calls to resolve multi-level children of structure
+				rowConfig.rowBgColor = this.structItemBgColor;
+				if (this.showStructureOnly === true) {rowConfig.rowBgColor = "";}
+				parents = {}; //needed for recursive calls to resolve multi-level children of structure
 
-			this.DrawStructureRowChildren(this.structureRelName, rootItem, rootItem.getProperty("config_id",""), rowId, parents, rowConfig); //"BaseGridMain Utilities" function
+				this.DrawStructureRowChildren(this.structureRelName, rootItem, rootItem.getProperty("config_id",""), rowId, parents, rowConfig); //"BaseGridMain Utilities" function
+			}
+		 }
 		}
 	}
+	
+	this.rootRowToRefresh = -1; // reset
 	
 	// determine whether to expand root row or not ?
 	if (!isGetRootItemByConfigRule) {
@@ -459,6 +552,37 @@ treeGridHandlerClass.prototype.DrawGridContent = function treeGridHandlerClass_D
 	}
 	return;
 };
+
+treeGridHandlerClass.prototype.ReDrawStructureRowValues = function treeGridHandlerClass_ReDrawStructureRowValues(rowId, structureRowItem) {
+	if (structureRowItem === undefined || structureRowItem === null) {
+		// fetch the structrue item
+		structureRowItem = innovator.getItemById(this.getGridRowUserData(rowId,"rowItemType"), this.getGridRowUserData(rowId,"rowItemID"));
+	}
+	this.UpdateStructureRowValues(this.structureRelName, rowId, structureRowItem, null);
+};
+
+treeGridHandlerClass.prototype.ReloadAndDrawThisStructureRow = function treeGridHandlerClass_ReloadAndDrawThisStructureRow(rowId, reloadChildren) {
+	var structureItemId = this.getGridRowUserData(rowId,"rowItemID");
+
+	// reload data of this structure item
+	this.grid.setRowIcons(eArg.rowId, "../images/cFolderReloading.svg", "../images/cFolderReloading.svg");
+	this.grid.enable();
+	var self = this;
+	setTimeout(function(){
+	try {
+		} finally {
+		var dataItems = [];
+		levelsToLoad = "*";
+		if (!reloadChildren) {levelsToLoad = "2";}// get same and next level of folder structure only
+		dataItems[0] = self.GetGridData(self.structureNodeTypeName, structureItemId, false, levelsToLoad);  
+		self.grid.setPaintEnabled(false);
+		self.DrawGridContent(dataItems, true, rowId, reloadChildren);
+		self.grid.setPaintEnabled(true);
+		self.grid.enable();
+		self.grid.openItem(rowId);
+	}} , 50);
+};
+
 // ^^^^^^ Draw grid contents ^^^^^^
 
 treeGridHandlerClass.prototype.SetIsDirtyAndUpdateAction = function treeGridHandlerClass_SetIsDirtyAndUpdateAction(item) {
@@ -611,13 +735,13 @@ treeGridHandlerClass.prototype.onToolbarClick = function treeGridHandlerClass_on
 	}
 	if (coreToolbarAction) {return;}
 	
-
 	// create corresponding menu action for this toolbar action for selected row
 	if (!this.baseMenuActionHandler || this.baseMenuActionHandler === undefined) {return;} // menu action handler not registered
 	var menuItem = {name: actionId};  // for toolbar actions menuItem.name = actionId
-	var eActionArgs = {};
+	this.eActionArgs = {};
 	var selectedId = this.grid.getSelectedId(); //selected grid row
-	this.initActionArgs(eActionArgs,selectedId);
+	this.initActionArgs(this.eActionArgs, selectedId);
+	this.baseMenuActionHandler.updateActionContextArgsForRowId(this.eActionArgs, selectedId);
 	eActionArgs.actionSource = "toolbar";
 
 	var checkMsg = this.baseMenuActionHandler.executeAction(eActionArgs, menuItem);  
@@ -652,40 +776,17 @@ treeGridHandlerClass.prototype.onGridMenuInit = function treeGridHandlerClass_on
 	if (!this.baseMenuActionHandler || this.baseMenuActionHandler === undefined) {return;} // menu action handler not registered
 
 	var id_array = this.grid.getSelectedItemIds("|").split("|");  //supports multi-select
-	var eActionArgs = {};
-	this.initActionArgs(eActionArgs);
+	this.eActionArgs = {};
+	this.initActionArgs(this.eActionArgs);
 	
 	if (id_array.length == 1) {
-		eActionArgs.rowId = id_array[0];
-		eActionArgs.rowItemType = this.getGridRowUserData(id_array[0],"rowItemType");
-		eActionArgs.rowOfGroupName = this.getGridRowUserData(id_array[0],"rowOfGroupName");
-		eActionArgs.rowItemId = this.getGridRowUserData(id_array[0],"rowItemID");
-		eActionArgs.isPhantomRow =  (this.getGridRowUserData(id_array[0],"isPhantomRow") === "1");
-
-		//get Item details from server
-		var rowItem = top.aras.newIOMItem(eActionArgs.rowItemType,"get");
-		rowItem.setID(eActionArgs.rowItemId);
-		rowItem.setAttribute("select","state,owned_by_id,managed_by_id,team_id,is_released,is_current,locked_by_id");
-		rowItem = rowItem.apply();
-		if (!rowItem.isError()) {
-			eActionArgs.rowItemIsReleased = (rowItem.getProperty("is_released","0") === "1");
-			eActionArgs.userIsOwnerOfRowItem = fn_IsCurrUserMemberOfIdentityId(rowItem.getProperty("owned_by_id",""));
-			eActionArgs.userIsOwnerOrManagerOfRowItem = fn_IsCurrUserMemberOfIdentityId(rowItem.getProperty("owned_by_id",""));
-			if (eActionArgs.userIsOwnerOrManagerOfRowItem === false) 
-			  {eActionArgs.userIsOwnerOrManagerOfRowItem = fn_IsCurrUserMemberOfIdentityId(rowItem.getProperty("managed_by_id",""));}
-
-			// define lock status
-			var lckId = rowItem.getProperty("locked_by_id","");
-			eActionArgs.lockStatus = 0; //not locked
-			if (top.aras.getUserID() === lckId) {eActionArgs.lockStatus = 1;} // locked by user
-			else {if (lckId !== "") {eActionArgs.lockStatus = 2;}} // locked by other
-			var col = this.lockIconColumnNo;
-			if (col && col >= 0) {//update icon
-				this.gridSetCellValue(id_array[0],this.lockIconColumnNo,fn_GetLockedCellIconFormatByStatusCode(this.icons,eActionArgs.lockStatus));}		
-		}
+		this.baseMenuActionHandler.updateActionContextArgsForRowId(this.eActionArgs, id_array[0]);
+		var col = this.lockIconColumnNo;
+		if (col && col >= 0 && this.eActionArgs.lockStatus !== undefined) {//update icon
+			this.gridSetCellValue(id_array[0],this.lockIconColumnNo,fn_GetLockedCellIconFormatByStatusCode(this.icons,this.eActionArgs.lockStatus));}		
 	}
 
-	this.baseMenuActionHandler.buildContextMenuForThisRow(eArg.menuItems, this.gridContextMenu, id_array, eActionArgs);
+	this.baseMenuActionHandler.buildContextMenuForThisRow(eArg.menuItems, this.gridContextMenu, id_array, this.eActionArgs);
 	return true;
 };
 
@@ -698,53 +799,102 @@ treeGridHandlerClass.prototype.onGridMenuClick = function treeGridHandlerClass_o
   }
   var menuItem = this.baseMenuActionHandler.getContextMenuItemOfMenuIndex(this.gridContextMenu, menuChoice);
   if (!menuItem) {return;}
-  var eActionArgs = {};
-  this.initActionArgs(eActionArgs,selectedId);
-  eActionArgs.actionSource = "menu";
+  //var eActionArgs = {};
+  //this.initActionArgs(eActionArgs,selectedId);
+  this.eActionArgs.actionSource = "menu";
 
   //debugger;
-  var checkMsg = this.baseMenuActionHandler.executeAction(eActionArgs, menuItem);
+  var checkMsg = this.baseMenuActionHandler.executeAction(this.eActionArgs, menuItem);
   if (checkMsg !== "") {top.aras.AlertError(checkMsg); return;}
+};
+
+treeGridHandlerClass.prototype.onGetChildren = function treeGridHandlerClass_onGetChildren(eArg) {
+	if (this.initialized === false) {return;}
+	alert(eArg.rowId);
+};
+
+treeGridHandlerClass.prototype.onToolbarKeyPress = function treeGridHandlerClass_onToolbarKeyPress(eArg) {
+	if (this.initialized === false) {return;}
+	// eArg.key.keyCode  === 13  (ENTER)
+	alert(eArg.key.keyCode);
+};
+
+treeGridHandlerClass.prototype.onGridKeyPress = function treeGridHandlerClass_onGridKeyPress(eArg) {
+	if (this.initialized === false) {return;}
+	// eArg.key.keyCode  === 13  (ENTER)
 };
 
 treeGridHandlerClass.prototype.onGridClick = function treeGridHandlerClass_onGridClick(eArg) {
 	if (this.initialized === false) {return;}
+	
+	if (this.getGridRowUserData(eArg.rowId, "reloadNextLevels", "0") === "1"  && eArg.column !== undefined && eArg.column === 0) {
+		// only process reloading for root rows
+		this.grid.setRowIcons(eArg.rowId, "../images/cFolderReloading.svg", "../images/cFolderReloading.svg");
+		this.grid.enable();
+		var self = this;
+		setTimeout(function(){
+		try {
+			} finally {
+			fn_ReLoadThisFolder(self, eArg.rowId);
+		}} , 50);
+	}
 };
 
 treeGridHandlerClass.prototype.onGridDoubleClick = function treeGridHandlerClass_onGridDoubleClick(eArg) {
   if (!this.baseMenuActionHandler || this.baseMenuActionHandler === undefined) {return;} // menu action handler not registered
-	var selectedId = eArg.rowId;
 
-	var menuItem = this.baseMenuActionHandler.getContextMenuItemOfOpenItemAction(this.gridContextMenu, this.getGridRowUserData(selectedId,"rowRelationshipType"));
-	if (!menuItem) {return;}
-	var eActionArgs = {};
-	this.initActionArgs(eActionArgs,selectedId);
-	eActionArgs.actionId = menuItem.name;
-	eActionArgs.actionSource = "doubleclick";
+	// only process doubleclick, if row is NOT a structure row
 
-	var checkMsg = this.baseMenuActionHandler.executeAction(eActionArgs, menuItem);
-	if (checkMsg !== "") {top.aras.AlertError(checkMsg); return;}
+	if (this.getGridRowUserData(eArg.rowId,"rowRelationshipType") !== this.structureRelName) {
+		var menuItem = this.baseMenuActionHandler.getContextMenuItemOfOpenItemAction(this.gridContextMenu, this.getGridRowUserData(eArg.rowId,"rowRelationshipType"));
+		if (!menuItem) {return;}
+		this.eActionArgs = {};
+		this.initActionArgs(this.eActionArgs,eArg.rowId);
+		this.baseMenuActionHandler.updateActionContextArgsForRowId(this.eActionArgs, eArg.rowId);
+
+		this.eActionArgs.actionId = menuItem.name;
+		this.eActionArgs.actionSource = "doubleclick";
+
+		var checkMsg = this.baseMenuActionHandler.executeAction(this.eActionArgs, menuItem);
+		if (checkMsg !== "") {top.aras.AlertError(checkMsg); return;}
+	}
 };
 
 treeGridHandlerClass.prototype.onGridLinkClick = function treeGridHandlerClass_onGridLinkClick(eArg) {
   if (!this.baseMenuActionHandler || this.baseMenuActionHandler === undefined) {return;} // menu action handler not registered
     var linkInfo = eArg.linkData.split("~");
+	//alert(linkInfo[2]);
 	var selectedId = linkInfo[0];
 	var col = linkInfo[1];
 	var cellVal = this.gridGetCellValue(selectedId,col);
 	
-	var eActionArgs = {};
-	eActionArgs.actionSource = "hyperlink";
-	eActionArgs.rowItemType = this.getGridRowUserData(selectedId,"rowItemType");
-	eActionArgs.rowOfGroupName = this.getGridRowUserData(selectedId,"rowOfGroupName");
-	eActionArgs.rowItemId = this.getGridRowUserData(selectedId,"rowItemID");
-	eActionArgs.rowNewItemId = this.getGridRowUserData(selectedId,"rowNewItemId");
+	this.eActionArgs = {};
+	this.eActionArgs.actionSource = "hyperlink";
+	this.eActionArgs.rowItemType = this.getGridRowUserData(selectedId,"rowItemType");
+	this.eActionArgs.rowOfGroupName = this.getGridRowUserData(selectedId,"rowOfGroupName");
+	this.eActionArgs.rowItemId = this.getGridRowUserData(selectedId,"rowItemID");
+	this.eActionArgs.rowNewItemId = this.getGridRowUserData(selectedId,"rowNewItemId");
 
-	this.baseMenuActionHandler.executeLink(eActionArgs, linkInfo[2], cellVal);
+	this.baseMenuActionHandler.executeLink(this.eActionArgs, linkInfo[2], cellVal);
 };
 //^^^^^  END Grid's custom grid handlers
 
 // =======  Other helper functions  ========
+//-----------------
+fn_ReLoadThisFolder = function (gridHandler, rowId) {
+	var dataItems = [];
+	dataItems[0] = gridHandler.GetGridData(gridHandler.structureNodeTypeName, gridHandler.getGridRowUserData(rowId,"rowItemID"),false, "*");  // get all sub levels of this folder
+
+	// update data already loaded
+	gridHandler.gridData_AML[gridHandler.getGridRowUserData(rowId,"rootRowDataIndex")] = dataItems[0];
+
+	gridHandler.DrawGridContent(dataItems, true);
+	gridHandler.grid.enable();
+	gridHandler.grid.setRowIcons(rowId, gridHandler.icons[gridHandler.structureNodeTypeName], gridHandler.icons[gridHandler.structureNodeTypeName]);
+	gridHandler.setGridRowUserData(rowId, "reloadNextLevels", "0");
+	gridHandler.grid.openItem(rowId);
+};
+
 //-----------------
 fn_ReadVariableValue = function (variableName, defaultValue) {
 	if (!defaultValue || defaultValue === undefined) {defaultValue="";}
@@ -801,7 +951,7 @@ htmlText = '<table id="main_table" style="overflow:hidden; width: 100%; height: 
 						'</table>';
 			
 var b = document.body;
-b.setAttribute('style', 'overflow: hidden;	position: relative;	width: 100%;height: 100%;margin: 0px;padding: 0px; overflow:hidden;');
+b.setAttribute('style', 'overflow: hidden; position: relative; width: 100%;height: 100%;margin: 0px;padding: 0px; overflow:hidden;');
 
 var mainDiv = document.createElement('div');
 mainDiv.setAttribute('style', 'position: absolute; top: 0px; left: 0px; width: 100%; height: 100%;');
@@ -830,6 +980,7 @@ function initTreeGrid() {
 	}
 	
 	top.TreeGridHandler.CONFIG.applyToItemType = topItemType;
+	//alert(topItemType);
 	top.TreeGridHandler.CONFIG.loadConfigItem();  // if no configName is passed, logic will be applied to find relevant configuration of 'applyToItemType'
 	if (!top.TreeGridHandler.CONFIG.isConfigItemLoaded()) {return;}  //## maybe add error message later !!
 	
@@ -848,7 +999,6 @@ initTreeGrid();
 window.addEventListener("resize", function () {
 	refreshGridContainerSize();
 });
-
 
 ]]></method_code>
   <method_type>JavaScript</method_type>

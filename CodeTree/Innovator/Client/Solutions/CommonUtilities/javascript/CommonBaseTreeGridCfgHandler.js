@@ -269,6 +269,8 @@ GridConfigurationBase.prototype.addActionMenuItemConfig = function GridConfigura
 			if (AttrValue !== "") {this.allMenuActions[menuIdx].ifStartedFromTab = (AttrValue === "true");}
 			AttrValue = menuActionNd.getProperty("if_grid_is_editable","");
 			if (AttrValue !== "") {this.allMenuActions[menuIdx].ifGridIsEditable = (AttrValue === "true");}
+			AttrValue = menuActionNd.getProperty("if_is_user_is_admin","");
+			if (AttrValue !== "") {this.allMenuActions[menuIdx].ifUserIsAdmin = (AttrValue === "true");}
 			AttrValue = menuActionNd.getProperty("if_is_owner_of_context_item","");
 			if (AttrValue !== "") {this.allMenuActions[menuIdx].ifUserIsOwnerOfContextItem = (AttrValue === "true");}
 			AttrValue = menuActionNd.getProperty("if_is_owner_of_row_item","");
@@ -453,10 +455,18 @@ TreeGridConfiguration.prototype = new GridConfigurationBase();
 TreeGridConfiguration.prototype.getGridStructureRelShipName = function TreeGridConfiguration_getGridStructureRelShipName() {
 	return this.structureRelationship.relName;
 };
+TreeGridConfiguration.prototype.getGridStructureLevelsToLoad = function TreeGridConfiguration_getGridStructureLevelsToLoad() {
+	return this.structureRelationship.levelsToLoad;
+};
 TreeGridConfiguration.prototype.getGridStructureNodeName = function TreeGridConfiguration_getGridStructureNodeName() {
 	return this.structureRelationship.relatedItemType;
 };
-TreeGridConfiguration.prototype.getGridStructureNodeItemSelect = function TreeGridConfiguration_getGridStructureNodeItemSelect() {
+TreeGridConfiguration.prototype.getGridStructureNodeItemSelect = function TreeGridConfiguration_getGridStructureNodeItemSelect(viewName) {
+	if (viewName === null || viewName === undefined) {return this.structureRelationship.nodeItemSelect;}
+
+	var viewConfig = this.configItem.getItemsByXPath("//Item/Relationships/Item[@type='tgc_View' and name='"+viewName+"']");
+	var relItemSelect = viewConfig.getProperty("structure_rel_item_select_prop",""); relItemSelect=relItemSelect.replace(/ /g,"");
+	this.structureRelationship.nodeItemSelect = relItemSelect;
 	return this.structureRelationship.nodeItemSelect;
 };
 TreeGridConfiguration.prototype.getGridStructureRelshipSelect = function TreeGridConfiguration_getGridStructureRelshipSelect() {
@@ -526,6 +536,7 @@ TreeGridConfiguration.prototype.loadConfigItem = function TreeGridConfiguration_
 	this.toolbarId = configItem.getProperty("toolbar_id","");
 	
 	this.structureRelationship.relName = configItem.getProperty("structure_relationship","");
+	this.structureRelationship.levelsToLoad = configItem.getProperty("structure_levels_to_load","");
 	this.structureRelationship.relatedItemType = configItem.getProperty("structure_item_type","");
 	var val;
 	val = configItem.getProperty("structure_row_bg_color","");	if (val === "") {val = "";} //default
@@ -627,10 +638,11 @@ TreeGridConfiguration.prototype.loadConfigItem = function TreeGridConfiguration_
 	this.configItemIsLoaded = true;
 };
 
-TreeGridConfiguration.prototype.buildGridDataQueryAML = function TreeGridConfiguration_buildGridDataQueryAML(viewName, rootItemType, rootItemId, isReleased) {
-   if (!viewName || viewName === undefined) {viewName="default";}
+TreeGridConfiguration.prototype.buildGridDataQueryAML = function TreeGridConfiguration_buildGridDataQueryAML(viewName, rootItemType, rootItemId, isReleased, getStructureOnly) {
+    if (viewName === null || viewName === undefined) {viewName="default";}
+	if (getStructureOnly === null || getStructureOnly === undefined) {getStructureOnly=false;}
    
-   if (this.structureRelationship.relName === "") 
+    if (this.structureRelationship.relName === "") 
 	{top.aras.AlertError(top.aras.getResource("CommonUtilities","commonUtilities.message.config_of_grid_is_missing_def_of_struct_rel").format(this.configurationName,viewName)); return;}
 
 	var viewConfig = this.configItem.getItemsByXPath("//Item/Relationships/Item[@type='tgc_View' and name='"+viewName+"']");
@@ -673,40 +685,42 @@ TreeGridConfiguration.prototype.buildGridDataQueryAML = function TreeGridConfigu
 	queryItem.addRelationship(relShipItem);	
 
     // build structure node relationships query items
-	var rels = this.configItem.getItemsByXPath("//Item/Relationships/Item[@type='tgc_View' and name='"+viewName+"']/Relationships/Item[@type='tgc_View Node RelQuery']");
-	for(i = 0; i < rels.getItemCount(); i++) {
-		var rel = rels.getItemByIndex(i);
-		if (rel.getProperty("is_reverse_query","0") !== "1" && rel.getProperty("is_disconnected_query","0") !== "1") {  // skip reverse and disconnected query definitions
-			var relQueryName = rel.getProperty("name","");
-			relName = rel.getProperty("relationship_name","");
-			var relCustomAction = rel.getProperty("relationship_custom_action","get");
-			if (relName === "") 
-				{top.aras.AlertError(top.aras.getResource("CommonUtilities","commonUtilities.message.config_of_grid_def_of_rel_name_of_rel_query_not_set").format(viewName));return;}
-			relShipSelect = rel.getProperty("relationship_select_properties",""); relShipSelect=relShipSelect.replace(/ /g,"");
-			relShipOrderBy = rel.getProperty("relationship_select_properties",""); relShipOrderBy=relShipOrderBy.replace(/ /g,"");
-			relItemProperty = rel.getProperty("related_item_property","");
-			relItemName = rel.getProperty("related_item_type_name","");
-			relItemSelect = rel.getProperty("related_item_select_properties",""); relItemSelect=relItemSelect.replace(/ /g,"");
-		
-			relShipItem = top.aras.newIOMItem(relName,relCustomAction);
-			relShipItem.setAttribute("select",relShipSelect);
-			if (relShipOrderBy !== "") {relShipItem.setAttribute("orderBy",relShipOrderBy);}
+	if (!getStructureOnly) {
+		var rels = this.configItem.getItemsByXPath("//Item/Relationships/Item[@type='tgc_View' and name='"+viewName+"']/Relationships/Item[@type='tgc_View Node RelQuery']");
+		for(i = 0; i < rels.getItemCount(); i++) {
+			var rel = rels.getItemByIndex(i);
+			if (rel.getProperty("is_reverse_query","0") !== "1" && rel.getProperty("is_disconnected_query","0") !== "1") {  // skip reverse and disconnected query definitions
+				var relQueryName = rel.getProperty("name","");
+				relName = rel.getProperty("relationship_name","");
+				var relCustomAction = rel.getProperty("relationship_custom_action","get");
+				if (relName === "") 
+					{top.aras.AlertError(top.aras.getResource("CommonUtilities","commonUtilities.message.config_of_grid_def_of_rel_name_of_rel_query_not_set").format(viewName));return;}
+				relShipSelect = rel.getProperty("relationship_select_properties",""); relShipSelect=relShipSelect.replace(/ /g,"");
+				relShipOrderBy = rel.getProperty("relationship_select_properties",""); relShipOrderBy=relShipOrderBy.replace(/ /g,"");
+				relItemProperty = rel.getProperty("related_item_property","");
+				relItemName = rel.getProperty("related_item_type_name","");
+				relItemSelect = rel.getProperty("related_item_select_properties",""); relItemSelect=relItemSelect.replace(/ /g,"");
+			
+				relShipItem = top.aras.newIOMItem(relName,relCustomAction);
+				relShipItem.setAttribute("select",relShipSelect);
+				if (relShipOrderBy !== "") {relShipItem.setAttribute("orderBy",relShipOrderBy);}
 
-			isReleasedCondition = rel.getProperty("related_item_released_condition","");
-			if (relItemName !== "") {
-				relItem = top.aras.newIOMItem(relItemName,"get");
-				relItem.setAttribute("select",relItemSelect);
-				if (isReleased) {
-					fn_setReleasedConditionOnItem (relItem, isReleasedCondition);
+				isReleasedCondition = rel.getProperty("related_item_released_condition","");
+				if (relItemName !== "") {
+					relItem = top.aras.newIOMItem(relItemName,"get");
+					relItem.setAttribute("select",relItemSelect);
+					if (isReleased) {
+						fn_setReleasedConditionOnItem (relItem, isReleasedCondition);
+					}
+					relShipItem.setPropertyItem(relItemProperty,relItem);
 				}
-				relShipItem.setPropertyItem(relItemProperty,relItem);
-			}
-			else {  // for NULL relship - apply condition to relship item
-				if (isReleased) {
-					fn_setReleasedConditionOnItem (relShipItem, isReleasedCondition);
+				else {  // for NULL relship - apply condition to relship item
+					if (isReleased) {
+						fn_setReleasedConditionOnItem (relShipItem, isReleasedCondition);
+					}
 				}
+				queryItem.addRelationship(relShipItem);
 			}
-			queryItem.addRelationship(relShipItem);
 		}
 	}
 	return queryItem.node.xml;
@@ -847,6 +861,11 @@ TreeGridConfiguration.prototype.addActionMenuItemConfigToAllActions = function T
 	this.addActionMenuItemConfig(actionMenuItems, relQueryName);
 };
 
+// include more GridConfig prototypes from different js file to handle flat Grids  (skips the include, if file does not exits)
+try {
+   window.eval(top.aras.getFileText(top.aras.getBaseURL() + "/Solutions/CommonUtilities/javascript/CommonBaseFlatGridCfgHandler.js"));
+}finally {}
+
 //==================================================================================
 //+++++ misc Helper Functions +++++
 fn_setReleasedConditionOnItem = function (itm, amlConditions) {
@@ -859,6 +878,7 @@ fn_setReleasedConditionOnItem = function (itm, amlConditions) {
 			var propName = conditions[c].substring(1,pos);
 			var propVal = conditions[c].substring(pos+1,pos2);
 			itm.setProperty(propName,propVal);
+			itm.setPropertyAttribute(propName,"isReleasedQueryCondition","1");  // tag the property to indicate condition was added by rules
 		}	
 	}
 };

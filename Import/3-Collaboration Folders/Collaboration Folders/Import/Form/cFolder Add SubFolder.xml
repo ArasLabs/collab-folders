@@ -24,7 +24,7 @@
       <font_weight>bold</font_weight>
       <is_disabled>0</is_disabled>
       <is_visible>1</is_visible>
-      <label xml:lang="en">Add</label>
+      <label xml:lang="en">OK</label>
       <label_position>top</label_position>
       <list_no_blank>0</list_no_blank>
       <sort_order>640</sort_order>
@@ -91,7 +91,7 @@
       <font_family>arial, helvetica, sans-serif</font_family>
       <font_size>8pt</font_size>
       <font_weight>bold</font_weight>
-      <is_disabled>1</is_disabled>
+      <is_disabled>0</is_disabled>
       <is_visible>1</is_visible>
       <label xml:lang="en">Description</label>
       <label_position>top</label_position>
@@ -137,7 +137,7 @@
       <font_family>arial, helvetica, sans-serif</font_family>
       <font_size>8pt</font_size>
       <font_weight>bold</font_weight>
-      <is_disabled>1</is_disabled>
+      <is_disabled>0</is_disabled>
       <is_visible>1</is_visible>
       <label xml:lang="en">Org Number</label>
       <label_position>top</label_position>
@@ -150,6 +150,16 @@
       <name>org_number</name>
      </Item>
     </Relationships>
+   </Item>
+   <Item type="Form Event" id="D99A4410E63549ACB26061964187324B" action="add">
+    <form_event>onload</form_event>
+    <related_id keyed_name="cFolder Add-Ren SubFolder API" type="Method">
+     <Item type="Method" action="get" select="id">
+      <name>cFolder Add-Ren SubFolder API</name>
+     </Item>
+    </related_id>
+    <sort_order>128</sort_order>
+    <source_id keyed_name="cFolder Add SubFolder" type="Form">E28865A1CAEC4362A9FFFDAF4FF6E1B9</source_id>
    </Item>
   </Relationships>
  </Item>

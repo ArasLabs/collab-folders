@@ -84,7 +84,13 @@ RowClass.prototype = {
 		for(var cellName in this.cells) {
 			var cell = this.cells[cellName];
 			if(cell.cellLinkKey) {
-				this.gridCtxt.setLink(rowId, cell.columnIndex, cell.cellLinkKey, cell.propname, cell.getValueFromDom());
+				var linkPropName = cell.propname;
+				var linkKey = cell.cellLinkKey;
+				if (linkKey.indexOf(":") > 0) { // other property is specified for link
+					linkKey = cell.cellLinkKey.split(":")[0];
+					linkPropName = cell.cellLinkKey.split(":")[1];
+				}
+				this.gridCtxt.setLink(rowId, cell.columnIndex, linkKey, linkPropName, cell.getValueFromDom(linkPropName));
 			}
 			
 			var BgColor = cell.getBackgroundColor();
@@ -187,14 +193,16 @@ DefaultCellClass.prototype = {
 		return value;
 	},
 
-	getValueFromDom: function() {
+	getValueFromDom: function(propName) {
 	 if (this.cellStaticValue) {
 	   return this.cellStaticValue;
 	 }
-	
-	 if(this.propname) {
-	  var propName = this.propname.replace(/ /g,"");  // strip spaces
-	  
+	if (!propName || propName === undefined) {
+		propName = this.propname;
+	 }
+	 if(propName) {
+	  propName = propName.replace(/ /g,"");  // strip spaces
+
 	  // evaluate concatenation rule of properties within the same item type
 	  var propNames = [];
 	  if (propName.indexOf("+") > 0) {
@@ -203,16 +211,21 @@ DefaultCellClass.prototype = {
 	  else {
 	    propNames[0] = propName;
 	  }
+
 	  var propValue = "";
 	  var sep = "";
 	  // loop - concatenated props
 	  for (var i=0;i<propNames.length; i++) {
-	    var isRelProp = this.isRelProp;
+	    var isRelProp = false;
 		
 		propName = propNames[i];
+	 
 		if (propName.indexOf("rel.") >=0) {
 		  isRelProp = true;
 		  propName = propName.replace(/rel./,"");
+		}
+		else {
+	      isRelProp = this.isRelProp;
 		}
 	    var val;
 	    if (isRelProp) {

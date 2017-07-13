@@ -1,7 +1,7 @@
 ﻿<AML>
  <Item type="Variable" id="C83CAA330EA34F258DC1390681545B46" action="add">
   <default_value>0</default_value>
-  <value>0</value>
+  <value>1</value>
   <name>cFolder Check Root related Proj</name>
  </Item>
 </AML>

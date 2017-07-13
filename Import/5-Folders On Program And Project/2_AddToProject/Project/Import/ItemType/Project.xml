@@ -41,9 +41,9 @@
     <track_history>0</track_history>
    </Item>
    <Item type="Server Event" id="A2A6921F40C14185AC3C814DE6958986" action="add">
-    <related_id keyed_name="Synch Item TeamId to TopFolder" type="Method">
+    <related_id keyed_name="Synch Item TeamId to TopcFolder" type="Method">
      <Item type="Method" action="get" select="id">
-      <name>Synch Item TeamId to TopFolder</name>
+      <name>Synch Item TeamId to TopcFolder</name>
      </Item>
     </related_id>
     <server_event>onAfterAdd</server_event>
@@ -51,9 +51,9 @@
     <source_id keyed_name="Project" type="ItemType" name="Project">02184EDAA80D499CB6EC94B159966DBE</source_id>
    </Item>
    <Item type="Server Event" id="26AF32F6E22C4EB9A2A7F5BEAAA60B2F" action="add">
-    <related_id keyed_name="Synch Item TeamId to TopFolder" type="Method">
+    <related_id keyed_name="Synch Item TeamId to TopcFolder" type="Method">
      <Item type="Method" action="get" select="id">
-      <name>Synch Item TeamId to TopFolder</name>
+      <name>Synch Item TeamId to TopcFolder</name>
      </Item>
     </related_id>
     <server_event>onAfterUpdate</server_event>

@@ -13,6 +13,7 @@ string targetStatus = this.getProperty("state","");
 
 Innovator inn = this.getInnovator();
 bool isPromoteAsArasPLM = (this.getAttribute("promoteAsArasPLM","0") == "1");
+bool includeSubFolders = (this.getAttribute("includeSubFolders","0") == "1");
 
 // run some checks first ...
 if (thisItemType == "") {
@@ -27,17 +28,22 @@ string ownedById = this.getProperty("owned_by_id");
 if (!isPromoteAsArasPLM && !CCO.Permissions.IdentityListHasId(Aras.Server.Security.Permissions.Current.IdentitiesList, ownedById)) {
   return inn.newError(CCO.ErrorLookup.Lookup("PE_ManualRelease_YouMustBeAMember", this.getPropertyAttribute("owned_by_id","keyed_name","Owner")));
 }
-
-// Call utitity method To traverse Class hierarchy
-Item qryItem = this.newItem("cFolder","Get ItemIDs of Structure Down");
-qryItem.setAttribute("relationshipName","Sub cFolder");
-qryItem.setID(thisItemId);
-qryItem.setAttribute("stopAtLevel","-1");
-qryItem = qryItem.apply();
-string folderIdsList = qryItem.getResult();
-// add this folder id to list
-if (folderIdsList == "") {folderIdsList = thisItemId;}
-else {folderIdsList = thisItemId + "," + folderIdsList;}
+string folderIdsList = "";
+if (includeSubFolders) {
+	// Call utitity method To traverse Class hierarchy
+	Item qryItem = this.newItem("cFolder","Get ItemIDs of Structure Down");
+	qryItem.setAttribute("relationshipName","Sub cFolder");
+	qryItem.setID(thisItemId);
+	qryItem.setAttribute("stopAtLevel","-1");
+	qryItem = qryItem.apply();
+	folderIdsList = qryItem.getResult();
+	// add this folder id to list
+	if (folderIdsList == "") {folderIdsList = thisItemId;}
+	else {folderIdsList = thisItemId + "," + folderIdsList;}
+}
+else {
+	folderIdsList = thisItemId;
+}
 
 // loop through all ids and try to promote these folders
 bool suIdentityWasGranted = false;
@@ -74,7 +80,6 @@ for (int i=0; i<folderIds.Length && folderIds[0] != ""; i++) {
       return thisItem;
     }
   }
-
 }
 
 if (suIdentityWasGranted) {Aras.Server.Security.Permissions.RevokeIdentity(suIdentity);}

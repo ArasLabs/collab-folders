@@ -461,9 +461,9 @@
    <Item type="Form Event" id="3E2CCE08982345D0B0439DC8F64F7157" action="add">
     <form_event>onformpopulated</form_event>
     <owned_by_id keyed_name="Innovator Admin" type="Identity">DBA5D86402BF43D5976854B8B48FCDD1</owned_by_id>
-    <related_id keyed_name="Handle newTeam on Folder Form" type="Method">
+    <related_id keyed_name="Handle newTeam on cFolder Form" type="Method">
      <Item type="Method" action="get" select="id">
-      <name>Handle newTeam on Folder Form</name>
+      <name>Handle newTeam on cFolder Form</name>
      </Item>
     </related_id>
     <sort_order>10</sort_order>

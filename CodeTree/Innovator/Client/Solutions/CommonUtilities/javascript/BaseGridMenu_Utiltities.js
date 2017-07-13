@@ -35,7 +35,9 @@ BaseMenuActionHandler = function (menuId) {
 	eActionArgs.rowOfGroupName				--> holds the name of the group under which this row is listed
 	eActionArgs.rowItemType					--> holds the current item Type name of the row related item
 	eActionArgs.rowItemId					--> holds the current id of the row related item
+	eActionArgs.rowItemState				--> holds the current status name of the row related item
 	eActionArgs.rowItemIsReleased			--> true if current row related item is released (is_released property = "1")
+	eActionArgs.rowItemIsCurrent			--> true if current row related item is current generation (is_current property = "1")
 	eActionArgs.isPhantomRow				--> identifies that row the action was started from is a phantom row (goup row)
 	eActionArgs.updateItemToCurrentVersion	--> tells that row related item must be updated to current version before starting the action
   	eActionArgs.gridHandler					--> references the grid handler object
@@ -49,6 +51,7 @@ BaseMenuActionHandler = function (menuId) {
 	menuAction.executeThisAction			--> Name of system action to execute with row item's context
 	menuAction.ifStartedFromTab  			--> if true, only allow, if started from Tab  			(check: eActionArgs.isStartedFromTab)
 	menuAction.ifGridIsEditable				--> if true, only allow, if grid if editable			(check: eActionArgs.gridIsEditable)
+	menuAction.ifUserIsAdmin				--> if true, only allow, if user is in Administrations Identity
 	menuAction.ifUserIsOwnerOfContextItem	--> if true, only allow, if user is owner of context	(check: eActionArgs.userIsOwnerOfContextItem)
 	menuAction.ifUserIsManagerOfContextItem	--> if true, only allow, if user is owner of context	(check: eActionArgs.userIsOwnerOfContextItem)
 	menuAction.ifUserIsOwnerOfRowItem		--> if true, only allow, if user is owner of row item	(check: eActionArgs.userIsOwnerOfRowItem)
@@ -186,6 +189,10 @@ BaseMenuActionHandler.prototype = {
 	if (idx < 0) {return null;}
 	return gridContextMenu[idx];
   },
+  
+  getOpenItemMenuAction: function() {
+	return "view_item";
+  },
 	//== API
   getContextMenuItemOfOpenItemAction: function(gridContextMenu, relQueryName) {
 	var idx = -1;
@@ -219,11 +226,13 @@ BaseMenuActionHandler.prototype = {
 	  rowItem = rowItem.apply();
 	  if (!rowItem.isError()) {
 		eActionArgs.rowItemIsReleased = (rowItem.getProperty("is_released","0") === "1");
+		eActionArgs.rowItemIsCurrent = (rowItem.getProperty("is_current","0") === "1");
 		eActionArgs.userIsOwnerOfRowItem = fn_IsCurrUserMemberOfIdentityId(rowItem.getProperty("owned_by_id",""));
 		eActionArgs.userIsOwnerOrManagerOfRowItem = fn_IsCurrUserMemberOfIdentityId(rowItem.getProperty("owned_by_id",""));
 		if (eActionArgs.userIsOwnerOrManagerOfRowItem === false) 
 		  {eActionArgs.userIsOwnerOrManagerOfRowItem = fn_IsCurrUserMemberOfIdentityId(rowItem.getProperty("managed_by_id",""));}
 			// define lock status
+		eActionArgs.rowItemState = rowItem.getProperty("state","")
 		var lckId = rowItem.getProperty("locked_by_id","");
 		eActionArgs.lockStatus = 0; //not locked
 		if (top.aras.getUserID() === lckId) {eActionArgs.lockStatus = 1;} // locked by user
@@ -324,10 +333,12 @@ BaseMenuActionHandler.prototype = {
 	// 2nd apply filter by relQueryName
 	if (menuAction.relQueryName !== "default" && menuAction.relQueryName !== eActionArgs.rowOfGroupName) {return false;}
 	
-	// then apply rules from menu config
+	// then apply rules for base menu config
 	if (eActionArgs.isStartedFromTab !== undefined && menuAction.ifStartedFromTab !== undefined && menuAction.ifStartedFromTab !== eActionArgs.isStartedFromTab) {return false;}
 
 	if (eActionArgs.gridIsEditable !== undefined && menuAction.ifGridIsEditable !== undefined && menuAction.ifGridIsEditable !== eActionArgs.gridIsEditable) {return false;}
+
+	if (menuAction.ifUserIsAdmin !== undefined && menuAction.ifUserIsAdmin !== top.aras.isAdminUser()) {return false;}
 
 	if (eActionArgs.userIsOwnerOfContextItem !== undefined && menuAction.ifUserIsOwnerOfContextItem !== undefined && menuAction.ifUserIsOwnerOfContextItem !== eActionArgs.userIsOwnerOfContextItem) {return false;}
 
@@ -339,6 +350,8 @@ BaseMenuActionHandler.prototype = {
 	
 	if (eActionArgs.isPhantomRow !== undefined && menuAction.ifIsGroupRow !== undefined && menuAction.ifIsGroupRow !== eActionArgs.isPhantomRow) {return false;}
 
+	if (eActionArgs.rowItemIsCurrent !== undefined && menuAction.ifItemIsCurrentVersion !== undefined && menuAction.ifItemIsCurrentVersion !== eActionArgs.rowItemIsCurrent) {return false;}
+	
 	if (eActionArgs.rowItemIsReleased !== undefined && menuAction.ifRowItemIsReleased !== undefined && menuAction.ifRowItemIsReleased !== eActionArgs.rowItemIsReleased) {return false;}
 	
 	if (eActionArgs.lockStatus !== undefined && menuAction.ifRowItemIsLocked !== undefined && menuAction.ifRowItemIsLocked === true && eActionArgs.lockStatus !== 1) {return false;}

@@ -2,7 +2,29 @@
  <Item type="Method" id="889B01D14EB7404A8B8B7BB11FED0398" action="add">
   <comments>used on relationships "cFolder_Tmpl_CtrItemConfig"</comments>
   <execution_allowed_to keyed_name="World" type="Identity">A73B655731924CD0B027E4F4D5FCC0A9</execution_allowed_to>
-  <method_code><![CDATA[string newItemNumber = this.getInnovator().getNextSequence("Default Part");
+  <method_code><![CDATA[// get name of numbering method to call .. method must return new number im property "number"
+string variableName = "cFolder Default PartNum Method"; 
+
+Item innVariable = this.newItem("Variable","get");
+innVariable.setAttribute("select","name,value");
+innVariable.setProperty("name",variableName);
+innVariable = innVariable.apply();
+
+// if no or empty variable, use default Numbering sequence
+string newItemNumber = "";
+if (innVariable.isError()) {
+    newItemNumber = "";
+}
+else {
+    string methodName = innVariable.getProperty("value","");
+    if (methodName != "") {
+        Item res = this.getInnovator().applyMethod(methodName,"");
+        newItemNumber = res.getProperty("number","");
+    }
+}
+if (newItemNumber == "") {
+    newItemNumber = this.getInnovator().getNextSequence("Default Part");
+}
 return this.getInnovator().newResult(newItemNumber);]]></method_code>
   <method_type>C#</method_type>
   <name>Folder Template Default PartNum</name>

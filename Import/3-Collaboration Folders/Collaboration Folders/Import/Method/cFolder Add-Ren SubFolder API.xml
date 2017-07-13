@@ -1,0 +1,68 @@
+﻿<AML>
+ <Item type="Method" id="34DC7CC3D8E240F7974611651F09AC9D" action="add">
+  <comments />
+  <execution_allowed_to keyed_name="World" type="Identity">A73B655731924CD0B027E4F4D5FCC0A9</execution_allowed_to>
+  <method_code><![CDATA[//get Control Element
+function getFormFieldElement(fieldName) {
+	var div_id = getFieldByName(fieldName).id;
+	var control_id = div_id.substring(0, div_id.indexOf("span"));
+	return document.getElementById(control_id);
+}
+function hideFormField (fieldName) {
+	var bHide = true;
+	var element = getFieldByName(fieldName);
+	//var element = getFormFieldElement(fieldName);
+	if (element) {
+		var style = element.style;
+		if (style) {
+			if (bHide) {style.display = "none";}
+			else {style.display = "block"; }
+		}
+	}
+}
+
+// Populate Form
+var doRename = false;
+var folderName,folderDesr;
+
+var folderItem = document.thisItem;
+if (folderItem) {
+    doRename = (folderItem.getAttribute("doRename","0")  === "1");
+}
+if (doRename) {
+	// populate fields
+	folderName = folderItem.getProperty("name","");
+	if (folderName !== "") {getFormFieldElement("folder_name").value = folderName;}
+	folderDesr = folderItem.getProperty("description","");
+	if (folderDesr !== "") {getFormFieldElement("folder_description").value = folderDesr;}
+	
+	hideFormField("org_number");
+}
+
+// called from OK button (event)
+window.cFolderAddSubFolder_OK = function() {
+	var result = {};
+	if (doRename) {
+		var val, doUpdate = false;
+		val = getFormFieldElement("folder_name").value;
+		if (val !== folderName) {result.name = val;}
+		val = getFormFieldElement("folder_description").value;
+		if (val !== folderDesr) {result.description = val;}
+	}
+	else {
+		result.org_number = getFormFieldElement("org_number").value;
+		result.name = getFormFieldElement("folder_name").value;
+		result.description = getFormFieldElement("folder_description").value;
+		
+	}
+	//return values in result object
+	parent.args.dialog.result = result;
+	//close the dialog window
+	parent.args.dialog.close();
+	return;
+};]]></method_code>
+  <method_type>JavaScript</method_type>
+  <owned_by_id keyed_name="Innovator Admin" type="Identity">DBA5D86402BF43D5976854B8B48FCDD1</owned_by_id>
+  <name>cFolder Add-Ren SubFolder API</name>
+ </Item>
+</AML>

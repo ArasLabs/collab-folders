@@ -16,8 +16,14 @@ String tableName  = "[" + CCO.DB.GenerateTableName(itemType) + "]";
   SQLstr += " AND " + tableName + ".generation like '%'";
   SQLstr += " AND " + tableName + ".is_released='1'";
   SQLstr += " ORDER BY " + tableName + ".generation DESC";
+
+Item res = this.getInnovator().applySQL(SQLstr);
+if (this.getAttribute("includeCurrentId", "0") == "1") {
+    Item curItm = this.apply("Get ItemID Of Current Gen");
+    res.setProperty("current_id", curItm.getProperty("id"));
+}
   
-return this.getInnovator().applySQL(SQLstr);
+return res;
 ]]></method_code>
   <method_type>C#</method_type>
   <owned_by_id keyed_name="Innovator Admin" type="Identity">DBA5D86402BF43D5976854B8B48FCDD1</owned_by_id>

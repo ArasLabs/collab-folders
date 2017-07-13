@@ -66,9 +66,9 @@
     <type>default</type>
    </Item>
    <Item type="Server Event" id="4FE12115B19B43939F4E15E184F9AA53" action="add">
-    <related_id keyed_name="Synch Item TeamId to TopFolder" type="Method">
+    <related_id keyed_name="Synch Item TeamId to TopcFolder" type="Method">
      <Item type="Method" action="get" select="id">
-      <name>Synch Item TeamId to TopFolder</name>
+      <name>Synch Item TeamId to TopcFolder</name>
      </Item>
     </related_id>
     <server_event>onAfterAdd</server_event>
@@ -76,9 +76,9 @@
     <source_id keyed_name="Program" type="ItemType" name="Program">1B3A68711AFE49AFB72121C592E27498</source_id>
    </Item>
    <Item type="Server Event" id="71DDB21C548D495EB40F926AD8D8753D" action="add">
-    <related_id keyed_name="Synch Item TeamId to TopFolder" type="Method">
+    <related_id keyed_name="Synch Item TeamId to TopcFolder" type="Method">
      <Item type="Method" action="get" select="id">
-      <name>Synch Item TeamId to TopFolder</name>
+      <name>Synch Item TeamId to TopcFolder</name>
      </Item>
     </related_id>
     <server_event>onAfterUpdate</server_event>

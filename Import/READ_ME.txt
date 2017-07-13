@@ -29,7 +29,8 @@ v5-0 (Oct 2016)
 - CodeTreeOverlay now contain Grid config XML and javascript library modules of "common Grid Utitltites"
 - added structure grid handler (logik) specific to Colloboration Folder (instead of generic from common Grid Utitities)
 
-
+- a logic to inherit related_project setting from root folder to sub folders and controlled items a can be enables
+  by setting the variable "cFolder Check Root related Proj" to "1".. (default = "0")
 
 Known Issues
 ------------

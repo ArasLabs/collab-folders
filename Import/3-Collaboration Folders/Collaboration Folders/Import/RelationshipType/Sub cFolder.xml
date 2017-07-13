@@ -55,9 +55,9 @@
      <Item type="Server Event" id="C640E635E71E46039EF3239A6D7244B9" action="add">
       <event_version>version_1</event_version>
       <is_required>0</is_required>
-      <related_id keyed_name="Copy FolderTeam to SubFolders" type="Method">
+      <related_id keyed_name="Copy cFolderTeam to SubFolders" type="Method">
        <Item type="Method" action="get" select="id">
-        <name>Copy FolderTeam to SubFolders</name>
+        <name>Copy cFolderTeam to SubFolders</name>
        </Item>
       </related_id>
       <server_event>onAfterAdd</server_event>
@@ -115,9 +115,9 @@
      <Item type="Server Event" id="B86F3472F2724F7084D2E1721D44BD98" action="add">
       <event_version>version_1</event_version>
       <is_required>0</is_required>
-      <related_id keyed_name="Copy FolderTeam to SubFolders" type="Method">
+      <related_id keyed_name="Copy cFolderTeam to SubFolders" type="Method">
        <Item type="Method" action="get" select="id">
-        <name>Copy FolderTeam to SubFolders</name>
+        <name>Copy cFolderTeam to SubFolders</name>
        </Item>
       </related_id>
       <server_event>onAfterUpdate</server_event>

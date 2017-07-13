@@ -111,9 +111,9 @@
      <Item type="Server Event" id="4B6DACAA01744EA08880ECB077E39CE8" action="add">
       <event_version>version_1</event_version>
       <is_required>0</is_required>
-      <related_id keyed_name="Copy FolderTeam to RelatedItems" type="Method">
+      <related_id keyed_name="Copy cFolderTeam to RelatedItems" type="Method">
        <Item type="Method" action="get" select="id">
-        <name>Copy FolderTeam to RelatedItems</name>
+        <name>Copy cFolderTeam to RelatedItems</name>
        </Item>
       </related_id>
       <server_event>onAfterAdd</server_event>
@@ -147,9 +147,9 @@
      <Item type="Server Event" id="04733ED294E147F293231E249FA08C6B" action="add">
       <event_version>version_1</event_version>
       <is_required>0</is_required>
-      <related_id keyed_name="Copy FolderTeam to RelatedItems" type="Method">
+      <related_id keyed_name="Copy cFolderTeam to RelatedItems" type="Method">
        <Item type="Method" action="get" select="id">
-        <name>Copy FolderTeam to RelatedItems</name>
+        <name>Copy cFolderTeam to RelatedItems</name>
        </Item>
       </related_id>
       <server_event>onAfterDelete</server_event>
@@ -159,9 +159,9 @@
      <Item type="Server Event" id="470E85D5EE8741B1BDDEC8719DBC0A00" action="add">
       <event_version>version_1</event_version>
       <is_required>0</is_required>
-      <related_id keyed_name="Copy FolderTeam to RelatedItems" type="Method">
+      <related_id keyed_name="Copy cFolderTeam to RelatedItems" type="Method">
        <Item type="Method" action="get" select="id">
-        <name>Copy FolderTeam to RelatedItems</name>
+        <name>Copy cFolderTeam to RelatedItems</name>
        </Item>
       </related_id>
       <server_event>onAfterUpdate</server_event>
@@ -207,9 +207,9 @@
      <Item type="Server Event" id="E87370B30A934D41BABA3C34A1ABBDD3" action="add">
       <event_version>version_1</event_version>
       <is_required>0</is_required>
-      <related_id keyed_name="Del FolderTeam on RelatedItems" type="Method">
+      <related_id keyed_name="Del cFolderTeam on RelatedItems" type="Method">
        <Item type="Method" action="get" select="id">
-        <name>Del FolderTeam on RelatedItems</name>
+        <name>Del cFolderTeam on RelatedItems</name>
        </Item>
       </related_id>
       <server_event>onBeforeDelete</server_event>

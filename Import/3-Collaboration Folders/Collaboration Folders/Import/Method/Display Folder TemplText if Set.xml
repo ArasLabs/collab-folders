@@ -48,29 +48,28 @@ else {
 //=== helper functions
 // -------
 function fn_enableFieldByPropName(propName, isEnabled ) {
-  var fieldElement = document.getElementsByName(propName)[0];
+	var fieldElement = getFieldByName(propName);
 
-  //This will disable all the children of the div  (works on firefox but not on IE)
-  var nodes = fieldElement.getElementsByTagName('*');
-  for(var i = 0; i < nodes.length; i++)
-  {
-     nodes[i].disabled = !isEnabled;
-  } 
+	//This will disable all the children of the div  (works on firefox but not on IE)
+	var nodes = fieldElement.getElementsByTagName('*');
+	for(var i = 0; i < nodes.length; i++)
+	{
+		nodes[i].disabled = !isEnabled;
+	} 
 }
 // -------
 function fn_FieldVisibleByName(propName, bShowField) {
-  var fieldElement;
-  if (arasRelease === "Aras9") {fieldElement = document.getElementsByName(propName)[0];}
-  else {
-  	var instance= top.aras.Browser.isIe() ? top.instance : top.instance.contentWindow;
-	fieldElement = instance.getFieldByName(propName);
-  }
-  if (fieldElement) {
-    var display    = bShowField ? "block"        : "none";  
-    var fieldStyle = fieldElement.style;
-    fieldStyle.display    = display;
-  }
-  return;
+	var fieldElement = getFieldByName(propName);
+	
+	if (fieldElement) {
+		var visibility = bShowField ? "visible" : "hidden";
+		var display    = bShowField ? ""        : "none";
+		
+		var fieldStyle = fieldElement.style;
+		fieldStyle.visibility = visibility;
+		fieldStyle.display    = display;	
+	}
+	return;
 }
 
 //===  form callback to open related project

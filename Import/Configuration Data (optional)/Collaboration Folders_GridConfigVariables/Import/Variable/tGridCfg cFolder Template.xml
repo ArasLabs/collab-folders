@@ -1,8 +1,8 @@
 ﻿<AML>
  <Item type="Variable" id="C8B472499A0340D587D47073DD1E91DF" action="add">
-  <value>disabled</value>
   <default_value>Client/Solutions/ItemFolders/xml/cFolderStructureConfig.xml</default_value>
   <owned_by_id keyed_name="Innovator Admin" type="Identity">DBA5D86402BF43D5976854B8B48FCDD1</owned_by_id>
+  <value>disabled</value>
   <name>tGridCfg cFolder Template</name>
  </Item>
 </AML>

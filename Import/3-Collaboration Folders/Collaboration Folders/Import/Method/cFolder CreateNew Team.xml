@@ -32,7 +32,7 @@
   if (PermissionWasSet) { Aras.Server.Security.Permissions.RevokeIdentity(plmIdentity);}
 
   if (newTeam.isError()) {return newTeam;}
-  amlCmd = newTeam.apply("Set Folder privateTeam Perm");
+  amlCmd = newTeam.apply("Set cFolder privateTeam Perm");
 
   return newTeam;
 

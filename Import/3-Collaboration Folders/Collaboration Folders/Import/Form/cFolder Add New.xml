@@ -34,8 +34,8 @@
       <source_id keyed_name="F2121BD8EB964535AE3D07D93A5BE0C3" type="Body">F2121BD8EB964535AE3D07D93A5BE0C3</source_id>
       <tab_index>6372</tab_index>
       <tab_stop>1</tab_stop>
-      <x>365</x>
-      <y>100</y>
+      <x>390</x>
+      <y>55</y>
       <name>cfolder_template_id</name>
      </Item>
      <Item type="Field" id="A87C0014A7D24B31B569C75B4A4A106E" action="add">
@@ -104,7 +104,7 @@
       <source_id keyed_name="F2121BD8EB964535AE3D07D93A5BE0C3" type="Body">F2121BD8EB964535AE3D07D93A5BE0C3</source_id>
       <tab_index>10213</tab_index>
       <tab_stop>1</tab_stop>
-      <x>365</x>
+      <x>390</x>
       <y>10</y>
       <name>owned_by_id</name>
      </Item>

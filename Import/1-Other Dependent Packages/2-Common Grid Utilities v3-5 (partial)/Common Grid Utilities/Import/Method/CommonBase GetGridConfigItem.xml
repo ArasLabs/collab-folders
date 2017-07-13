@@ -2,11 +2,14 @@
  <Item type="Method" id="ACED7387681B4DADB3044BD474DA2567" action="add">
   <comments>Reads the config XML file or the Database into an Item and returns it</comments>
   <execution_allowed_to keyed_name="World" type="Identity">A73B655731924CD0B027E4F4D5FCC0A9</execution_allowed_to>
-  <method_code><![CDATA[//System.Diagnostics.Debugger.Break();
+  <method_code><![CDATA[//if (System.Diagnostics.Debugger.Launch()) {System.Diagnostics.Debugger.Break();}
 
 Item configItem = null;
 
-string filePath = GetConfigurationFileNameOfType(this.getType());
+// try to get file path from variable setting. 1. by ItemType,  2. by configName (parameter)
+string filePath = GetConfigurationFileNameOfType(this.getAttribute("configName",""));
+if (filePath == "") {filePath = GetConfigurationFileNameOfType(this.getType());}
+
 if (filePath != "") {
 	if (filePath.IndexOf("Client/Solutions") == 0 || filePath.IndexOf("Client\\Solutions") == 0) {
 		filePath = CCO.Server.MapPath("./../" + filePath);

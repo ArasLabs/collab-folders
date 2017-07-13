@@ -1,0 +1,35 @@
+Known Issues "Collaboration Folders" v5-2(A11-SP9)
+==================================================
+
+
+Action "Expand All sub Folders" does not always really expand to all levels down --> needs debugging and fixing.
+
+Action "Add Sub Solder" on root row does not show the new folder (works on non-root folders) --> needs debugging and fixing.
+-> Workaround: Do a Refresh All from toolbar (loading all new, but takes longer) !
+
+
+Sometimes the action from the context menu on Folder Navigation structure does not activate 
+-> Workaround: call the action again !
+
+Action "Refresh this Folder" does the refresh on the structure of relevant root row (leaving the others untouched) but adding nonsense row at the bottom
+-> Workaround: Do a Refresh All from toolbar (loading all new, but takes longer) !
+
+
+Adding Controlled Item shows as first child (should be last child)
+-> Workaround:  collapse and re-open parent folder re-draws in correct order.
+
+Adding File(FOlder Attachment) shows as first child (should be last child)
+-> Workaround:  collapse and re-open parent folder re-draws in correct order.
+
+Adding URL shows as first child (should be last child) 
+-> Workaround:  collapse and re-open parent folder re-draws in correct order.
+
+
+Adding Controlled Item to a folder that alread has Files or URLs redraws files twice with new controlled item  
+-> Workaround:  Do a Refresh All from toolbar and reopen the folders.
+
+
+After Deleting (Remove) a controlled Item, file, URL or sub folder collapsing and re-opening rows redraws incorrectly with strange behaviour some times 
+-> Workaround:  Do a Refresh All from toolbar and reopen the folders.
+
+

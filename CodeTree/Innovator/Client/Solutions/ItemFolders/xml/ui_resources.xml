@@ -50,7 +50,7 @@
 	<resource key="itemfoldertreegrid.message.action_not_allowed_on_rows_of_this_type" value="This action is not allowed for rows of this type !"/>
 	<resource key="itemfoldertreegrid.message.error_getting_parent_of_group_row" value="Error getting parent of this row ! Contact your System Administrator."/>
 	<resource key="itemfoldertreegrid.message.folder_row_must_be_locked_for_action" value="The folder row to add a new item to must be locked for this action !"/>
-	<resource key="itemfoldertreegrid.message.folder_row_locked_by_other_no_permission_action" value="The folder row to add a new item to is locked by someone else. You do not have permission for this action !"/>
+	<resource key="itemfoldertreegrid.message.folder_row_locked_by_other_no_permission_action" value="The folder row is locked by someone else. You do not have permission for this action !"/>
 	<resource key="itemfoldertreegrid.message.adding_files_to_folder_not_allowed" value="Adding attachments (files) is not allowed on this folder !"/>
 	<resource key="itemfoldertreegrid.message.adding_ctrld_items_to_folder_not_allowed" value="Adding controlled items is not allowed on this folder !"/>
 	<resource key="itemfoldertreegrid.message.adding_sub_folder_not_allowed" value="Adding sub folders is not allowed on this folder !"/>

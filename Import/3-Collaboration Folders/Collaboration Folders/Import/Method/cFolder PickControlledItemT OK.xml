@@ -1,9 +1,9 @@
 ﻿<AML>
- <Item type="Method" id="7A894CC74C184019A302627ABA2AA025" action="add">
+ <Item type="Method" id="700A456ABA134EE9A5E9C9C4A684826B" action="add">
   <execution_allowed_to keyed_name="World" type="Identity">A73B655731924CD0B027E4F4D5FCC0A9</execution_allowed_to>
-  <method_code><![CDATA[window.cFolderAddSubFolder_OK();
+  <method_code><![CDATA[window.cFolderPickControlledItemType_OK();
 return;]]></method_code>
   <method_type>JavaScript</method_type>
-  <name>cFolder Add SubFolder OK</name>
+  <name>cFolder PickControlledItemT OK</name>
  </Item>
 </AML>

@@ -86,6 +86,9 @@ BaseGrid.prototype = {
         var id = item.getId();
         this.onToolbarChange({ id: id });
     },
+    handleToolbarKeyPress: function (key) {
+        this.onToolbarKeyPress({ key: key });
+    },
 
     handleGridClick: function (rowId, column) {
         this.onGridClick({ rowId: rowId, column: column });
@@ -143,14 +146,6 @@ BaseGrid.prototype = {
 
     handleGridKeyPress: function (key) {
         this.onGridKeyPress({ key: key });
-    },
-
-    handleGridOpenNode: function (rowId) {
-        this.onGridOpenNode({ rowId: rowId });
-    },
-
-    handleGridCloseNode: function (rowId) {
-        this.onGridCloseNode({ rowId: rowId });
     },
 
     handleGridDragEnter: function (a, b) {
@@ -247,6 +242,7 @@ BaseGrid.prototype = {
 			document.getElementById('toolbar_td').appendChild(toolbar.domNode);
 			dojo.connect(toolbar, 'onClick', this, 'handleToolbarOnClick');
 			dojo.connect(toolbar, 'onChange', this, 'handleToolbarOnChange');
+			dojo.connect(toolbar, 'toolbarKeyPress', this, 'handleToolbarKeyPress');
 			toolbar.startup();
 			this.toolbar = toolbar;
 
@@ -292,8 +288,11 @@ BaseGrid.prototype = {
 		});
 		dojo.connect(grid, 'gridKeyPress', this, 'handleGridKeyPress');
 		if (isTreeGrid) {
-			dojo.connect(grid, 'gridOpenNode', this, 'handleGridOpenNode');
-			dojo.connect(grid, 'gridCloseNode', this, 'handleGridCloseNode');
+			dojo.connect(grid, 'onToggleRow_Experimental', this, function (itemId, state) {
+				//alert(itemId + " - "+state);
+				if (state) {return this.onGridOpenNode({ rowId: itemId, state: state});}
+				else {return this.onGridCloseNode({ rowId: itemId, state: state});}
+			});
 		}
 
 		this.grid = grid;
@@ -318,6 +317,7 @@ BaseGrid.prototype = {
 			toolbar = new Aras.Client.Controls.ToolBar({ connectId: toolbarElementId, ImageBase: '../cbin/' });
 			dojo.connect(toolbar, 'onClick', this, 'handleToolbarOnClick');
 			dojo.connect(toolbar, 'onChange', this, 'handleToolbarOnChange');
+			dojo.connect(toolbar, 'toolbarKeyPress', this, 'handleToolbarKeyPress');
 		}
 		else {
 			dojo.require('Aras.Client.Controls.Public.ToolBar');
@@ -401,8 +401,11 @@ BaseGrid.prototype = {
 		});
         dojo.connect(grid, 'gridKeyPress', this, 'handleGridKeyPress');
 		if (isTreeGrid) {
-			dojo.connect(grid, 'gridOpenNode', this, 'handleGridOpenNode');
-			dojo.connect(grid, 'gridCloseNode', this, 'handleGridCloseNode');
+			dojo.connect(grid, 'onToggleRow_Experimental', this, function (itemId, state) {
+				//alert(itemId + " - "+state);
+				if (state) {return this.onGridOpenNode({ rowId: itemId, state: state});}
+				else {return this.onGridCloseNode({ rowId: itemId, state: state});}
+			});
 		}
 
         return grid;
@@ -555,9 +558,17 @@ BaseGrid.prototype = {
 	/// <summary>
 	///
 	/// </summary>
+    deleteGridRowUserData: function (rowId) {
+        if (!rowId || rowId === "") { return; }
+        delete this.gridRowUserData[rowId];
+		return;
+    },
+    //--- API
+	/// <summary>
+	///
+	/// </summary>
     gridRowExists: function (rowId) {
-        var r = this.gridRowUserData[rowId];
-        return (r && r !== undefined);
+        return (rowId in this.gridRowUserData);
     },
     //--- API
 	/// <summary>
@@ -723,7 +734,8 @@ BaseGrid.prototype = {
     },
 	//--- NO API
     DrawStructureRow_ex: function (gridStructureRelShipName, itemNode, relationshipNode, parentItemConfigId, parentRowId, rowConfig, addRelatinonshipRows) {
-        var data = { itemNode: itemNode, relationshipNode: relationshipNode, parentRowId: parentRowId };
+
+		var data = { itemNode: itemNode, relationshipNode: relationshipNode, parentRowId: parentRowId };
         var thisColumMapping;
         if (rowConfig.columnMapping) { thisColumMapping = rowConfig.columnMapping; }
         else { thisColumMapping = this.relShipColumnMappings[gridStructureRelShipName]; }
@@ -755,6 +767,7 @@ BaseGrid.prototype = {
 
         var newRowID;
         if (parentRowId) {
+			if (parentItemConfigId === undefined || parentItemConfigId == null) {parentItemConfigId = "ROOT";}
 			if (this.disallowDuplicateStructureItems) {
 				newRowID = parentItemConfigId + "-" + itemConfigID;
 			}
@@ -774,19 +787,24 @@ BaseGrid.prototype = {
 			this.setGridRowUserData(newRowID, "rowItemConfigId", itemConfigID);
 			this.setGridRowUserData(newRowID, "rowRelationshipType", gridStructureRelShipName);
 			this.setGridRowUserData(newRowID, "rowOfGroupName", gridStructureRelShipName);
-
-			// add other relationship items as children
-			if (addRelatinonshipRows)
-				{this.DrawStructureRowRelationshipsGroups(gridStructureRelShipName, parentItemID, parentItemConfigId, itemNode, newRowID, rowConfig);}
 		}
+		// add other relationship items as children
+		if (addRelatinonshipRows)
+			{this.DrawStructureRowRelationshipsGroups(gridStructureRelShipName, parentItemID, parentItemConfigId, itemNode, newRowID, rowConfig);}
         return newRowID;
     },
     //--- API
 	/// <summary>
 	///
 	/// </summary>
-    DrawStructureRowChildren: function (gridStructureRelShipName, parentItem, parentItemConfigId, parent_row_id, parents, rowConfig) {
+    DrawStructureRowChildren: function (gridStructureRelShipName, parentItem, parentItemConfigId, parent_row_id, parents, rowConfig, levelsToDraw, reloadIcon) {
+		if (levelsToDraw === undefined) {levelsToDraw = null;}
+		if (reloadIcon === undefined) {reloadIcon = null;}
+		if (parentItemConfigId === undefined || parentItemConfigId == null) {parentItemConfigId = "ROOT";}
+		
         parents[parentItemConfigId] = true;
+		// conditional debugging; if (Object.keys(parents).length == 1) {debugger;}
+		
         var structRels = parentItem.getRelationships(gridStructureRelShipName);
         for (var i = 0; i < structRels.getItemCount() ; i++) {
             var structRel = structRels.getItemByIndex(i);
@@ -798,8 +816,16 @@ BaseGrid.prototype = {
 				if (childItem && childItem.node) { // single item
 					var childItemConfigId = childItem.getProperty("config_id", "");
 					var rowID = this.DrawStructureRow(gridStructureRelShipName, childItem, structRel, parentItemConfigId, parent_row_id, rowConfig);
+					
+					if (levelsToDraw !== null && reloadIcon !== null) {
+						if (Object.keys(parents).length >= levelsToDraw) {
+							this.grid.setRowIcons(rowID, reloadIcon, reloadIcon);
+							this.setGridRowUserData(rowID, "reloadNextLevels", "1");
+						}
+					}
+					
 					if (parents[childItemConfigId] !== true) {
-						this.DrawStructureRowChildren(gridStructureRelShipName, childItem, childItemConfigId, rowID, parents, rowConfig);
+						this.DrawStructureRowChildren(gridStructureRelShipName, childItem, childItemConfigId, rowID, parents, rowConfig, levelsToDraw, reloadIcon);
 					}
 				}
 			}
@@ -848,6 +874,7 @@ BaseGrid.prototype = {
     //	DrawStructureRowSingleRelationshipRow: function (gridStructureRelShipName, relName, relshipNode, relItemNode, parentRowId, parentItemConfigId) {
     //--- API
     DrawStructureRowSingleRelationshipRow: function (gridStructureRelShipName, relQueryName, relshipNode, relItemNode, parentRowId, parentItemConfigId, insertGroupingRow) {
+		if (parentItemConfigId === undefined || parentItemConfigId == null) {parentItemConfigId = "ROOT";}
 		if (!insertGroupingRow || insertGroupingRow === undefined) {insertGroupingRow=false;}
 		var groupOrParentId = parentRowId;
 
@@ -936,6 +963,7 @@ BaseGrid.prototype = {
             groupName = this.structureRowRelDefinitions[relQueryName].groupName;
             if (this.showRelShipsFilter && this.showRelShipsFilter !== undefined && (this.showRelShipsFilter.indexOf(groupName) >= 0 || this.showRelShipsFilter === "ALL")) {
 			
+				structItemRelShipConfig.updateDiffColumnsCallback = rowConfig.updateDiffColumnsCallback;			
                 structItemRelShipConfig.relQueryName = relQueryName;
                 structItemRelShipConfig.relName = this.structureRowRelDefinitions[relQueryName].relationshipName;
                 structItemRelShipConfig.groupRowId = phantomRowGroupIds[relQueryName].rowId;
@@ -994,7 +1022,10 @@ BaseGrid.prototype = {
 	///
 	/// </summary>
     DrawStructureRowRelationshipsGroupRows: function (gridStructureRelShipName, parentItemID, parentItemConfigId, dataItem, parentRowId, structItemRelShipConfig) {
+		if (parentItemConfigId === undefined || parentItemConfigId == null) {parentItemConfigId = "ROOT";}
         var relItems, relItem;
+		
+		var doUpdateDiff = (structItemRelShipConfig.updateDiffColumnsCallback && structItemRelShipConfig.updateDiffColumnsCallback !== undefined);
 
         if (structItemRelShipConfig.isReverseQuery === true) {
             // build and run reverse Query
@@ -1033,16 +1064,16 @@ BaseGrid.prototype = {
         var relCount = relItems.getItemCount();
 
 		// if .groupName not set, do not add phantom grid row for grouping
-		var groupOrParentId = "";
+		var groupOrParentRowId = "";
         if (structItemRelShipConfig.groupName !== "") {
 			if (structItemRelShipConfig.groupRowId === "" && relCount > 0)
 				{ structItemRelShipConfig.groupRowId = this.DrawGroupRowAsChild(gridStructureRelShipName, parentRowId, structItemRelShipConfig); }
 
-			groupOrParentId = structItemRelShipConfig.groupRowId;
+			groupOrParentRowId = structItemRelShipConfig.groupRowId;
 		}
 		else {
 			// do not add phantom row
-			groupOrParentId = parentRowId;
+			groupOrParentRowId = parentRowId;
 		    structItemRelShipConfig.groupRowId = "";
 		}
 		
@@ -1051,12 +1082,10 @@ BaseGrid.prototype = {
 
 		// determine the row's icon (if not set)
         var icon = null;
-		var isRowItemIconDefined = false;
 		var RowIconItemTypeProp = "";
 		var isRowIconItemTypePropOnRel = false;
         if (structItemRelShipConfig.rowIcon && structItemRelShipConfig.rowIcon !== undefined && structItemRelShipConfig.rowIcon !== "{rowItemType}" && structItemRelShipConfig.rowIcon.indexOf("useTypeOfRelProperty:") < 0) { // always use configured icon
             icon = structItemRelShipConfig.rowIcon;
-			isRowItemIconDefined = true;
         }
 		else {
 			if (structItemRelShipConfig.rowIcon.indexOf("useTypeOfRelProperty:") >= 0 ) {
@@ -1069,14 +1098,14 @@ BaseGrid.prototype = {
 		}
 		
 		// color code parent row (and group row), if has children
-		if (structItemRelShipConfig.bgColorOfStructItemWithChildren && structItemRelShipConfig.bgColorOfStructItemWithChildren !== "") {
+		if (!doUpdateDiff && structItemRelShipConfig.bgColorOfStructItemWithChildren && structItemRelShipConfig.bgColorOfStructItemWithChildren !== "") {
 		  if (structItemRelShipConfig.groupRowId !== "") {
 			this.setBackgroundColorOfRow_ex(structItemRelShipConfig.groupRowId, structItemRelShipConfig.bgColorOfStructItemWithChildren, true, structItemRelShipConfig.isApplyChildBgColorUpToRoot, structItemRelShipConfig.doNotColorRootRows, true);}
 		  else {
 			this.setBackgroundColorOfRow_ex(parentRowId, structItemRelShipConfig.bgColorOfStructItemWithChildren, true, structItemRelShipConfig.isApplyChildBgColorUpToRoot, structItemRelShipConfig.doNotColorRootRows, true );}
 		}
 
-		// check if relevant grid config for newRowId is available
+		// check if relevant grid config for newRows is available
 		if (relItems.getItemByIndex(0).getProperty(structItemRelShipConfig.relatedItemProperty, "") === "") {
 			if ( relItems.getItemByIndex(0).getProperty("config_id", "") === "") {
 				top.aras.AlertError(top.aras.getResource("CommonUtilities","commonUtilities.message.draw_struct_row_a_null_rel_config_is_missing_prop_config_id"));
@@ -1087,35 +1116,57 @@ BaseGrid.prototype = {
 				top.aras.AlertError(top.aras.getResource("CommonUtilities","commonUtilities.message.draw_struct_row_a_rel_config_is_missing_prop_config_id"));
 			}
 		}
+		var rowItemConfigId = dataItem.getProperty("config_id", "");
 
 		// draw child rows
+		var newRowID;
         for (var i = 0; i < relCount; i++) {
             var dataItemRel = relItems.getItemByIndex(i);
-            var relItemId = dataItemRel.getProperty(structItemRelShipConfig.relatedItemProperty, "");
+			var relItemId = dataItemRel.getProperty(structItemRelShipConfig.relatedItemProperty, "");
 			var rowItemId = relItemId;
-            var relItemType, newRowID;
-
-            // relationship could be a NULL relationship
-			var rowItemConfigId = dataItem.getProperty("config_id", "");
-            if (relItemId === "") {
-                relItem = null;
-                relItemType = dataItemRel.getType();
+			
+			// define newRowID - relationship could be a NULL relationship
+			if (relItemId === "") {
+				relItem = null;
+				relItemType = dataItemRel.getType();
 				rowItemId = dataItemRel.getID();
-                newRowID = dataItemRel.getProperty("config_id", "") + "-" + rowItemConfigId;
-            }
-            else {
-                relItem = dataItemRel.getPropertyItem(structItemRelShipConfig.relatedItemProperty);
-                relItemType = relItem.getType();
+				newRowID = dataItemRel.getProperty("config_id", "") + "-" + rowItemConfigId;
+			}
+			else {
+				relItem = dataItemRel.getPropertyItem(structItemRelShipConfig.relatedItemProperty);
+				relItemType = relItem.getType();
 				if (structItemRelShipConfig.disallowDuplicateItems) {
 					newRowID = parentItemConfigId + "-" + rowItemConfigId + "-" + relItem.getProperty("config_id", "");
 				}
 				else {
 					newRowID = dataItemRel.getProperty("config_id", "") + "-" + rowItemConfigId + "-" + relItem.getProperty("config_id", "");
 				}
-            }
+			}
 			
+			if (!doUpdateDiff) {
+				// add a new rows
+				newRowID = this.AddRowToGrid(parentRowId, groupOrParentRowId, newRowID, rowItemConfigId, dataItemRel, relItem, relItemType, rowItemId, icon, this.gridVisibleColumns, this.relShipColumnMappings[structItemRelShipConfig.relQueryName], structItemRelShipConfig, RowIconItemTypeProp, isRowIconItemTypePropOnRel);
+			}
+			else {
+				// detect change action - then add or update the rows
+				var addRow = !this.gridRowExists(newRowID);
+				if (addRow) {
+					newRowID = this.AddRowToGrid(parentRowId, groupOrParentRowId, newRowID, rowItemConfigId, dataItemRel, relItem, relItemType, rowItemId, icon, this.gridVisibleColumns, this.relShipColumnMappings[structItemRelShipConfig.relQueryName], structItemRelShipConfig, RowIconItemTypeProp, isRowIconItemTypePropOnRel);
+				}
+				else {
+					// update values on diff columns and set the change Action --> calls callback function
+					structItemRelShipConfig.updateDiffColumnsCallback(this, newRowID, dataItemRel, relItem, structItemRelShipConfig.relQueryName, structItemRelShipConfig.rowBgColor, addRow);
+				}
+			}
+
+        } //--- for i
+		if (relCount === 1) {return newRowID;}  //if only 1 row gets added, return its grid row id
+    },
+    AddRowToGrid: function (parentRowId, groupOrParentRowId, newRowID, rowItemConfigId, dataItemRel, relItem, relItemType, rowItemId, icon, gridVisibleColumns, columnMappings, structItemRelShipConfig, RowIconItemTypeProp, isRowIconItemTypePropOnRel) {
+	
+		if (!this.gridRowExists(newRowID)) {
 			// determine icon for each row (can be mixed)
-			if (!isRowItemIconDefined) {  //get small icon of item type
+			if (icon === null) {  //get small icon of item type
 				var iconItemType = relItemType;
 				if (RowIconItemTypeProp !== "") {if (isRowIconItemTypePropOnRel) {iconItemType = dataItemRel.getProperty(RowIconItemTypeProp, "");}}
 				if (!this.icons[iconItemType] || this.icons[iconItemType] === undefined) {
@@ -1126,24 +1177,22 @@ BaseGrid.prototype = {
 					icon = this.icons[iconItemType];
 				}
 			}
-			
-            var data, row;
+		
+			var data = { itemNode: relItem, relationshipNode: dataItemRel, parentRowId: parentRowId };
+			var row = new RowClass(this, data, gridVisibleColumns, columnMappings);
+			//## use for detailed debugging
+			//if (this.showDebugAlerts) {alert("row values = "+ row.getValues());}
 
-			if (!this.gridRowExists(newRowID)) {
-				data = { itemNode: relItem, relationshipNode: dataItemRel, parentRowId: parentRowId };
-				row = new RowClass(this, data, this.gridVisibleColumns, this.relShipColumnMappings[structItemRelShipConfig.relQueryName]);
-				//## use for detailed debugging
-				//if (this.showDebugAlerts) {alert("row values = "+ row.getValues());}
+			this.grid.insertNewChild(groupOrParentRowId, newRowID, row.getValues(), newRowID, icon, icon);
+			row.bind(newRowID, structItemRelShipConfig.rowBgColor, relItemType, rowItemId);
+			this.setGridRowUserData(newRowID, "rowItemConfigId", rowItemConfigId);
+			this.setGridRowUserData(newRowID, "rowRelationshipType", structItemRelShipConfig.relName);
+			this.setGridRowUserData(newRowID, "rowOfGroupName", structItemRelShipConfig.relQueryName);
+			return newRowID;
+		}
+		return null;
+	},
 
-				this.grid.insertNewChild(groupOrParentId, newRowID, row.getValues(), newRowID, icon, icon);
-				row.bind(newRowID, structItemRelShipConfig.rowBgColor, relItemType, rowItemId);
-				this.setGridRowUserData(newRowID, "rowItemConfigId", rowItemConfigId);
-				this.setGridRowUserData(newRowID, "rowRelationshipType", structItemRelShipConfig.relName);
-				this.setGridRowUserData(newRowID, "rowOfGroupName", structItemRelShipConfig.relQueryName);
-			}
-        } //--- for i
-		if (relCount === 1) {return newRowID;}  //if only 1 row gets added, return its grid row id
-    },
     //--- API
 	/// <summary>
 	///
@@ -1184,10 +1233,11 @@ BaseGrid.prototype = {
         var endCell = this.numberOfGridColumns - 1;
 
         fn_SetBackgroundColorOfCellsInRow(this.grid, rowId, startCell, endCell, colorCode);
+        var parent_row_id;
 
         // include one parent level
         if (applyToParentRow && !applyUpToRoot) {
-            var parent_row_id = this.grid.getParentId(rowId);
+            parent_row_id = this.grid.getParentId(rowId);
             if (parent_row_id && this.grid.getParentId(parent_row_id)) { fn_SetBackgroundColorOfCellsInRow(this.grid, parent_row_id, startCell, endCell, colorCode, this.isTreeGrid); }
         }
         if (!applyUpToRoot) { return; }
@@ -1201,6 +1251,12 @@ BaseGrid.prototype = {
         return;
     }
 };
+
+// include more BaseGrid prototypes from different js file
+try {
+   window.eval(top.aras.getFileText(top.aras.getBaseURL() + "/Solutions/CommonUtilities/javascript/BaseGridDiff_Utilities.js"));
+}finally {}
+
 
 // MISC GRID HELPER FUNCTIONS
 //==================================
@@ -1283,11 +1339,12 @@ fn_GetSmallIconFormatOfItemType = function (itemType) {
 };
 
 //-----------------
-fn_showFormInModalDialog = function (formName, title, itemTypeName, param, inCallback) {
+fn_showFormInModalDialog = function (formName, title, itemTypeName, param, inCallback, contextItem) {
 	if (param === undefined) {param=null;}
+	if (contextItem === undefined) {contextItem=null;}
 	if (inCallback === undefined) {inCallback=null;}
 	var callback;
-	if (inCallback != null) {callback = inCallback;}
+	if (inCallback !== null) {callback = inCallback;}
 	else {
 	  callback = {
 		oncancel: function(dlgRes) {
@@ -1304,19 +1361,27 @@ fn_showFormInModalDialog = function (formName, title, itemTypeName, param, inCal
   if (formNd)
   {
     var thisParam;
-	if (param != null) { thisParam = param;}
+	if (param !== null) { thisParam = param;}
 	else {thisParam	= {};}
     thisParam.title = title;
     thisParam.formId = formNd.getAttribute("id");
     thisParam.aras = top.aras;
     thisParam.itemTypeName = itemTypeName;
+	if (contextItem !== null) {thisParam.item = contextItem;}  // will be document.thisItem when form is loaded
 
     var width = parseInt(top.aras.getItemProperty(formNd, "width")) +50;
     var height = parseInt(top.aras.getItemProperty(formNd, "height")) +50;
 
 	var options = { dialogHeight:height, dialogWidth:width,  status:0, help:0, resizable:1, scroll:0 };
 
-	var aWindow = top.aras.getMainWindow() == window.top ? top.aras.getMainWindow().document.getElementById("main").contentWindow : top;
+	var aWindow 
+	var mw = top.aras.getMainWindow();
+	if (mw.main) {
+		aWindow = mw.main;	
+	}
+	else {
+		aWindow = mw == window.top ? mw.document.getElementById("main").contentWindow : top;
+	}
 	top.aras.modalDialogHelper.show('DefaultPopup', aWindow, thisParam, options, 'ShowFormAsADialog.html', callback);
 
   }

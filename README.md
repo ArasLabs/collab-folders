@@ -15,10 +15,11 @@ folder structure or sub structures can have their own "private" teams.
 
 ## History
 
-This project and the following release notes have been migrated from the old Aras Projects page. Unlike community projects that have been migrated and archived, this project will be updated for compatibility with the latest release of Aras Innovator.
+This project and the following release notes have been migrated from the old Aras Projects page. Unlike community projects that have been migrated and archived, this project will be updated for compatibility with the latest release of Aras Innovator. 
 
 Release | Notes
 --------|--------
+[v5.3](https://github.com/ArasLabs/collab-folders/releases/tag/v5.3) | Aras 11 SP7-SP9.
 [v5.0](https://github.com/ArasLabs/collab-folders/releases/tag/v5.0) | Aras 11SP6 & SP7. Read the Readme.txt for a functional overview and installation instructions.
 [v4.0](https://github.com/ArasLabs/collab-folders/releases/tag/v4.0) | Aras 11 only. Read the Readme.txt. Collaboration Folders Add-On Package. Please also read the documentation.
 [v3.1](https://github.com/ArasLabs/collab-folders/releases/tag/v3.1) | Aras 10 only. Read the Readme.txt. Collaboration Folders Add-On Package. Please also read the documentation.
@@ -33,6 +34,7 @@ Release | Notes
 
 Project | Aras
 --------|------
+[v5.3](https://github.com/ArasLabs/collab-folders/releases/tag/v5.3) | 11 SP7-SP9
 [v5.0](https://github.com/ArasLabs/collab-folders/releases/tag/v5.0) | 11 SP6-SP7
 [v4.0](https://github.com/ArasLabs/collab-folders/releases/tag/v4.0) | 11
 [v3.1](https://github.com/ArasLabs/collab-folders/releases/tag/v3.1) | 10
@@ -66,6 +68,7 @@ Project | Aras
 6. Enter your login credentials and click **Login**
   * _Note: You must login as root for the package import to succeed!_
 7. Follow the instructions in [Import/READ_ME.txt](./Import/READ_ME.txt) for importing packages.
+  * _Note: Steps 2-3 replace the code tree overlay steps in the READ___ME.txt instructions._
 
 ## Usage
 

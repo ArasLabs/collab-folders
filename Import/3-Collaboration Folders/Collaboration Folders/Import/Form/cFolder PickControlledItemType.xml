@@ -1,0 +1,83 @@
+﻿<AML>
+ <Item type="Form" id="5821C3F39CA8483B942DD711A74AA189" action="add">
+  <category_form>0</category_form>
+  <height>110</height>
+  <stylesheet><![CDATA[../styles/default.css]]></stylesheet>
+  <width>350</width>
+  <name>cFolder PickControlledItemType</name>
+  <Relationships>
+   <Item type="Body" id="47F5234010414BA18315E7DCABD47A88" action="add">
+    <sort_order>128</sort_order>
+    <source_id keyed_name="cFolder PickControlledItemType" type="Form">5821C3F39CA8483B942DD711A74AA189</source_id>
+    <Relationships>
+     <Item type="Field" id="38D11D7C9A9845DB9612EFFE639B6B41" action="add">
+      <border_width>0</border_width>
+      <css>{$this field rule} input
+{
+  width: 80px;
+}</css>
+      <display_length_unit>px</display_length_unit>
+      <field_type>button</field_type>
+      <font_color>#000000</font_color>
+      <font_family>tahoma, arial, helvetica, sans-serif</font_family>
+      <font_size>8pt</font_size>
+      <font_weight>bold</font_weight>
+      <is_disabled>0</is_disabled>
+      <is_visible>1</is_visible>
+      <label xml:lang="en">OK</label>
+      <label_position>top</label_position>
+      <list_no_blank>0</list_no_blank>
+      <sort_order>128</sort_order>
+      <source_id keyed_name="47F5234010414BA18315E7DCABD47A88" type="Body">47F5234010414BA18315E7DCABD47A88</source_id>
+      <tab_stop>1</tab_stop>
+      <x>15</x>
+      <y>70</y>
+      <name>btn_ok</name>
+      <Relationships>
+       <Item type="Field Event" id="83CE922D658C44128C8FA3112D27176F" action="add">
+        <field_event>onclick</field_event>
+        <related_id keyed_name="cFolder PickControlledItemT OK" type="Method">
+         <Item type="Method" action="get" select="id">
+          <name>cFolder PickControlledItemT OK</name>
+         </Item>
+        </related_id>
+        <sort_order>128</sort_order>
+        <source_id keyed_name="btn_ok" type="Field">38D11D7C9A9845DB9612EFFE639B6B41</source_id>
+       </Item>
+      </Relationships>
+     </Item>
+     <Item type="Field" id="A81596C0B45141A79346C11EFCCBDAEA" action="add">
+      <border_width>0</border_width>
+      <display_length_unit>px</display_length_unit>
+      <field_type>dropdown</field_type>
+      <font_color>#000000</font_color>
+      <font_family>tahoma, arial, helvetica, sans-serif</font_family>
+      <font_size>8pt</font_size>
+      <font_weight>bold</font_weight>
+      <is_disabled>0</is_disabled>
+      <is_visible>1</is_visible>
+      <label xml:lang="en">Select a Controlled Item Type</label>
+      <label_position>top</label_position>
+      <list_no_blank>0</list_no_blank>
+      <sort_order>256</sort_order>
+      <source_id keyed_name="47F5234010414BA18315E7DCABD47A88" type="Body">47F5234010414BA18315E7DCABD47A88</source_id>
+      <tab_stop>1</tab_stop>
+      <x>15</x>
+      <y>10</y>
+      <name>controlled_item_type</name>
+     </Item>
+    </Relationships>
+   </Item>
+   <Item type="Form Event" id="0ACE9E1DFB404C6EAEC9EA0D9CF88CD1" action="add">
+    <form_event>onload</form_event>
+    <related_id keyed_name="cFolder PickControlledItemType" type="Method">
+     <Item type="Method" action="get" select="id">
+      <name>cFolder PickControlledItemType</name>
+     </Item>
+    </related_id>
+    <sort_order>128</sort_order>
+    <source_id keyed_name="cFolder PickControlledItemType" type="Form">5821C3F39CA8483B942DD711A74AA189</source_id>
+   </Item>
+  </Relationships>
+ </Item>
+</AML>
