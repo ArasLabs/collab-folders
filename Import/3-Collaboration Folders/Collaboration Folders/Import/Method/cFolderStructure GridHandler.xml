@@ -739,7 +739,7 @@ treeGridHandlerClass.prototype.onToolbarClick = function treeGridHandlerClass_on
 	if (!this.baseMenuActionHandler || this.baseMenuActionHandler === undefined) {return;} // menu action handler not registered
 	var menuItem = {name: actionId};  // for toolbar actions menuItem.name = actionId
 	this.eActionArgs = {};
-	var selectedId = this.grid.getSelectedId(); //selected grid row
+	var selectedId = this.grid.getSelectedID(); //selected grid row
 	this.initActionArgs(this.eActionArgs, selectedId);
 	this.baseMenuActionHandler.updateActionContextArgsForRowId(this.eActionArgs, selectedId);
 	eActionArgs.actionSource = "toolbar";
@@ -793,7 +793,7 @@ treeGridHandlerClass.prototype.onGridMenuInit = function treeGridHandlerClass_on
 //+++++  BEGIN Grid's custom grid handlers
 treeGridHandlerClass.prototype.onGridMenuClick = function treeGridHandlerClass_onGridMenuClick(menuChoice) {
   if (!this.baseMenuActionHandler || this.baseMenuActionHandler === undefined) {return;} // menu action handler not registered
-  var selectedId = this.grid.getSelectedId(); //selected grid row
+  var selectedId = this.grid.getSelectedID(); //selected grid row
   if (!selectedId || typeof(selectedId) == "undefined" || selectedId === "" || selectedId === "NOTHING_MSG") {
        return;
   }
@@ -969,7 +969,13 @@ function initTreeGrid() {
 	if (!document.thisItem) { 
 	    // assumes form with this logic got started from a TOCview
 		// sdelectedId holds the path to the selected "ItemType" separated by "/"   (i.e.  Design/Part)
-		var selectedTOCitem = top.main.tree.mainTreeApplet.getSelectedId();
+	
+		//debugger;
+		var selectedTOCitem = "";
+		var mainTreeApplet = top.main.tree.mainTreeApplet;
+		if (mainTreeApplet.selectedItemKey)  {selectedTOCitem=mainTreeApplet.selectedItemKey;}
+		else {selectedTOCitem = top.main.tree.mainTreeApplet.getSelectedID();}
+			
 		var tocPath = selectedTOCitem.split("/");
 		topItemType = tocPath[tocPath.length-1];
 		
@@ -1002,6 +1008,7 @@ window.addEventListener("resize", function () {
 
 ]]></method_code>
   <method_type>JavaScript</method_type>
+  <owned_by_id keyed_name="Innovator Admin" type="Identity">DBA5D86402BF43D5976854B8B48FCDD1</owned_by_id>
   <name>cFolderStructure GridHandler</name>
  </Item>
 </AML>
