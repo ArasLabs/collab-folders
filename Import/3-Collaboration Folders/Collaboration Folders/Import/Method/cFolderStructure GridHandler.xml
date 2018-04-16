@@ -742,9 +742,9 @@ treeGridHandlerClass.prototype.onToolbarClick = function treeGridHandlerClass_on
 	var selectedId = this.grid.getSelectedID(); //selected grid row
 	this.initActionArgs(this.eActionArgs, selectedId);
 	this.baseMenuActionHandler.updateActionContextArgsForRowId(this.eActionArgs, selectedId);
-	eActionArgs.actionSource = "toolbar";
+	this.eActionArgs.actionSource = "toolbar";
 
-	var checkMsg = this.baseMenuActionHandler.executeAction(eActionArgs, menuItem);  
+	var checkMsg = this.baseMenuActionHandler.executeAction(this.eActionArgs, menuItem);  
 	if (checkMsg !== "") {top.aras.AlertError(checkMsg); return;}
 };
 
