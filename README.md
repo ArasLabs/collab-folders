@@ -87,15 +87,6 @@ tGridCfg Root Folders TOC | Client/Solutions/ItemFolders/xml/cFolderStructureCon
 tGridCfg User Folders TOC | Client/Solutions/ItemFolders/xml/cFolderStructureConfig.xml
 
 
-
-
-
-
-
-
-
-
-
 ## Usage
 
 See [Collaboration Folders Concept v3-0.pdf](./Documentation/Collaboration%20Folders%20Concept%20v3-0.pdf) or [Collaboration Folders User Guide v3-0.pdf](./Documentation/Collaboration%20Folders%20User%20Guide%20v3-0.pdf) for more information on using this project.
