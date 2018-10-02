@@ -47,7 +47,7 @@ Installation Instructions
 =========================
 	(1) Start the Aras Packing "Import Tool" and login as "admin". 
 
-	The imports will require multiple steps that need to be run extactly in the sequence listed below. Use option MERGE for all steps !!!
+	The imports will require multiple steps that need to be run exactly in the sequence listed below. Use option MERGE for all steps !!!
 
 	1-Other Dependent Packages:
 		Select this manifest File "…\1-Other Dependent Packages\1-Common Utilties v2-1 (partial)\imports (admin).mf"
@@ -208,7 +208,7 @@ v1-6  (May 2013)
 - Added is_shared icon display for shared files on folder grid
 - Added effectivity modes and filter drop down on folder grid ("current" and "latest released" view of controlled items)
 - Folder Templates: Added null relationship to register method for auto numbers of folder controlled items (poly item)
-- Copy form Folder Templates: Improved logic for "Reference" or "Copy" option on relatinships to Controlled Items.
+- Copy form Folder Templates: Improved logic for "Reference" or "Copy" option on relationships to Controlled Items.
    - Files of documents are now physically copied in vault.
 - Copy from Folder Templates: Attached files on template folders are physically copied to new folder in vault.
 
