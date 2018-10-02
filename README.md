@@ -73,6 +73,19 @@ Project | Aras
   * _Note: You must login as root for the package import to succeed!_
 7. Follow the instructions in [Import/READ_ME.txt](./Import/READ_ME.txt) for importing packages.
   * _Note: Steps 2-3 replace the code tree overlay steps in the READ___ME.txt instructions._
+#### Important!
+  **If you are using a language pack, some default variables will be changed. To use Collaboration Folders with a language pack, you must do the following.**
+  1. Navigate to Admin > Variables within the TOC.
+  2. Find the variables related to Collab Folders by searching tGridCfg*
+  3. Modify the values to the following:
+   
+Variable| Value
+--------|------
+tGridCfg cFolder Template | Client/Solutions/ItemFolders/xml/cFolderStructureConfig.xml
+tGridCfg Project | Client/Solutions/ItemFolders/xml/cFolderStructureConfig.xml
+tGridCfg Root Folders TOC | Client/Solutions/ItemFolders/xml/cFolderStructureConfig.xml
+tGridCfg User Folders TOC | Client/Solutions/ItemFolders/xml/cFolderStructureConfig.xml
+
 
 ## Usage
 
