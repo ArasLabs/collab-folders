@@ -45,9 +45,9 @@ Known Issues
 =========================
 Installation Instructions
 =========================
-	(1) Start the Aras Packing "Import Tool" and logon as "admin". 
+	(1) Start the Aras Packing "Import Tool" and login as "admin". 
 
-	The imports will require multiple steps that need to be run extactly in the sequence listed below. Use option MERGE for all steps !!!
+	The imports will require multiple steps that need to be run exactly in the sequence listed below. Use option MERGE for all steps !!!
 
 	1-Other Dependent Packages:
 		Select this manifest File "…\1-Other Dependent Packages\1-Common Utilties v2-1 (partial)\imports (admin).mf"
@@ -73,12 +73,11 @@ Installation Instructions
 		Select this manifest File "…\3-Collaboration Folders\2-imports (admin).mf"
 		"Collaboration Folders" <-- place check mark in this option and start the import.
 
-	(Optional) 4-Collaboration Folders on TOC:
+	4-Collaboration Folders on TOC:
 		Select this manifest File "…\4-Collaboration Folders on TOC\imports (admin).mf"
 		"Collaboration Folders" <-- place check mark in this option and start the import.
 
-
-	(Optional) 6-Folders On Program And Project:
+    (Optional) 6-Folders On Program And Project:
 		Select this manifest File "…\6-Folders On Program And Project\1_AddToProgram\1-imports - CF (admin).mf"
 		"Collaboration Folders" <-- place check mark in this option and start the import.
 
@@ -90,9 +89,14 @@ Installation Instructions
 
 		Select this manifest File "…\6-Folders On Program And Project\2_AddToProject\2-imports - Project (admin).mf"
 		"com.aras.innovator.solution.Project" <-- place check mark in this option and start the import.
+	
+	(Optional) Configuration Data:
+		Select this manifest File "…\5-Configuration Data\imports (admin).mf"
+		"Collaboration Folders" <-- place check mark in this option and start the import.
+		## this import will fail, if you do not have the grid configurations from package "Common Grid Utilities" loaded already ##
 		
-	(Optional) \SetPackageVersion :
-		Select this manifest File "…\SetPackageVersion (optioal)\imports (admin).mf"
+	(Optional) SetPackageVersion :
+		Select this manifest File "…\SetPackageVersion (optional)\imports (admin).mf"
 		"Collaboration Folders" <-- place check mark in this option and start the import.
 		## this import will fail, if you do not have the package "Package Utilities v1-6(A11)" loaded already ##
 		
@@ -208,7 +212,7 @@ v1-6  (May 2013)
 - Added is_shared icon display for shared files on folder grid
 - Added effectivity modes and filter drop down on folder grid ("current" and "latest released" view of controlled items)
 - Folder Templates: Added null relationship to register method for auto numbers of folder controlled items (poly item)
-- Copy form Folder Templates: Improved logic for "Reference" or "Copy" option on relatinships to Controlled Items.
+- Copy form Folder Templates: Improved logic for "Reference" or "Copy" option on relationships to Controlled Items.
    - Files of documents are now physically copied in vault.
 - Copy from Folder Templates: Attached files on template folders are physically copied to new folder in vault.
 

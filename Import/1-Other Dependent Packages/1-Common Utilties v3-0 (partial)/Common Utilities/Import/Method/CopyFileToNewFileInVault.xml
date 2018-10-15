@@ -1,0 +1,80 @@
+﻿<AML>
+ <Item type="Method" id="DC91D02A7D5B4C06AD9C5220EAD605EC" action="add">
+  <execution_allowed_to keyed_name="World" type="Identity">A73B655731924CD0B027E4F4D5FCC0A9</execution_allowed_to>
+  <method_code><![CDATA[/// Context must be item of type "File" pointiong to an existing physical file in vault
+/// Content must contain properties:
+///  filename
+///
+/// custom context attributes
+///  newFilename
+///  localVaultPath
+///  newFilenamePrefix
+///
+Innovator inn = this.getInnovator();
+
+  //System.Diagnostics.Debugger.Break()
+  String localVaultRoot = this.getAttribute("localVaultPath","");
+  String newFilename = this.getAttribute("newFilename","");
+  String newFilenamePrefix = this.getAttribute("newFilenamePrefix","");
+  String fid = this.getID();
+  String fn = this.getProperty("filename","");
+  String ArasDBName = CCO.DB.DatabaseName;
+
+  //get filePath to filename
+  String vaultedSourceFile = buildVaultPathFromFileId(fid,localVaultRoot,ArasDBName) + fn;
+  if (!File.Exists(vaultedSourceFile)) {return inn.newError("File not found ! (in vault path:'" + vaultedSourceFile + "')");}
+  
+  //create new file item
+
+  // remove template keyword in file name - just in case
+  newFilename = newFilename.Replace("Templ","templ");
+  newFilename = newFilename.Replace("template ","");
+  newFilename = newFilename.Replace(" template","");
+  newFilename = newFilename.Replace(" template ","");
+  newFilename = newFilename.Replace("template","");
+  newFilename = newFilename.Replace(" templ","");
+  newFilename = newFilename.Replace("templ ","");
+  newFilename = newFilename.Replace(" templ ","");
+  newFilename = newFilename.Replace("templ","");
+  
+  newFilename = newFilenamePrefix + newFilename;
+  
+  String newFileId = inn.getNewID();
+  String vaultNewFile = buildVaultPathFromFileId(newFileId,localVaultRoot,ArasDBName) + newFilename;
+  if (File.Exists(vaultNewFile)) {return inn.newError("File already exists ! (in vault path:'" + vaultNewFile + "')");}
+
+  Item newFileItem = inn.newItem("File", "add");
+  newFileItem.setID(newFileId);
+  newFileItem.setProperty("filename", newFilename);
+  newFileItem.attachPhysicalFile(vaultedSourceFile);
+  newFileItem = newFileItem.apply();
+  
+  return newFileItem;
+}
+	
+//-----------------------------
+String buildVaultPathFromFileId (String fileId,String localVaultRoot, String dbName) {
+
+  String  vaultPath = "";
+//  vaultPath = VSLogic.VSLogic.GetPathFromID(fileId, "\\", False, ArasDBName, localVaultRoot);
+
+  int[] treeConfig = {1,2,29};
+
+  vaultPath = "\\";
+  vaultPath = vaultPath + fileId.Substring(treeConfig[0]-1,1) + "\\";
+  vaultPath = vaultPath + fileId.Substring(treeConfig[1]-1,2) + "\\";
+  vaultPath = vaultPath + fileId.Substring(fileId.Length - treeConfig[2],treeConfig[2]) + "\\";
+  vaultPath = localVaultRoot + dbName + vaultPath;
+
+  return vaultPath;
+}
+
+// needed to end method
+void methodEnd () {
+	return;
+]]></method_code>
+  <method_type>C#</method_type>
+  <owned_by_id keyed_name="Innovator Admin" type="Identity">DBA5D86402BF43D5976854B8B48FCDD1</owned_by_id>
+  <name>CopyFileToNewFileInVault</name>
+ </Item>
+</AML>
