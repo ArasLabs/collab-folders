@@ -5,10 +5,8 @@
 var a = top.aras;
 var controlledItemTypeName = "Folder Controlled Item";
 
-//get Dropdown Control Element
-var div_id = getFieldByName("controlled_item_type").id;
-var control_id = div_id.substring(0, div_id.indexOf("span"));
-var select = document.getElementById(control_id);
+//selectbox is the single select list for controlled item types
+var selectBox = document.all.controlled_item_type;
 
 //get read from polymorphic list
 var xml = '<Item type="Morphae" action="get" select="related_id">' +
@@ -30,23 +28,25 @@ setOption = function(index, listItem) {
 	var optionValue = a.getItemProperty(listItem, "name");
 	var optionLabel = a.getItemProperty(listItem, "label");
 	if (optionLabel === "--") {optionLabel = optionValue;}
-	select.options[index]= new Option(optionLabel, optionValue);
+	var opt = document.createElement("option");
+    opt.innerText = optionLabel;
+    opt.value = optionValue;
+    return opt;
 };
 if (results.getItemCount() === 1) {
-	setOption(0, results.getItemByIndex(0).node.selectSingleNode("related_id/Item"))
-	select.value = select.options[0].value;  // label would be in select.options[0].text
-	a.updateDomSelectLabel(select);
+	var opt = setOption(0, results.getItemByIndex(0).node.selectSingleNode("related_id/Item"))
+	selectBox.options.add(opt);
 }
 else {
-	select.options[0]= new Option("","");
 	for (var i=0;i < results.getItemCount(); i++) {
-		setOption(i+1, results.getItemByIndex(i).node.selectSingleNode("related_id/Item"))
+		var opt = setOption(i+1, results.getItemByIndex(i).node.selectSingleNode("related_id/Item"))
+		selectBox.options.add(opt);
 	}
 }
 
 // called from OK button (event)
 window.cFolderPickControlledItemType_OK = function() {
-	parent.args.dialog.result = select.value;
+	parent.args.dialog.result = selectBox.value;
 	parent.args.dialog.close();
 	return;
 }]]></method_code>

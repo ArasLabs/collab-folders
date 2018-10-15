@@ -1,7 +1,7 @@
 ﻿<AML>
  <Item type="Form" id="5821C3F39CA8483B942DD711A74AA189" action="add">
   <category_form>0</category_form>
-  <height>110</height>
+  <height>150</height>
   <stylesheet><![CDATA[../styles/default.css]]></stylesheet>
   <width>350</width>
   <name>cFolder PickControlledItemType</name>
@@ -30,8 +30,8 @@
       <sort_order>128</sort_order>
       <source_id keyed_name="47F5234010414BA18315E7DCABD47A88" type="Body">47F5234010414BA18315E7DCABD47A88</source_id>
       <tab_stop>1</tab_stop>
-      <x>15</x>
-      <y>70</y>
+      <x>21</x>
+      <y>87</y>
       <name>btn_ok</name>
       <Relationships>
        <Item type="Field Event" id="83CE922D658C44128C8FA3112D27176F" action="add">
@@ -49,7 +49,7 @@
      <Item type="Field" id="A81596C0B45141A79346C11EFCCBDAEA" action="add">
       <border_width>0</border_width>
       <display_length_unit>px</display_length_unit>
-      <field_type>dropdown</field_type>
+      <field_type>listbox single select</field_type>
       <font_color>#000000</font_color>
       <font_family>tahoma, arial, helvetica, sans-serif</font_family>
       <font_size>8pt</font_size>
@@ -59,10 +59,11 @@
       <label xml:lang="en">Select a Controlled Item Type</label>
       <label_position>top</label_position>
       <list_no_blank>0</list_no_blank>
+      <listbox_size>4</listbox_size>
       <sort_order>256</sort_order>
       <source_id keyed_name="47F5234010414BA18315E7DCABD47A88" type="Body">47F5234010414BA18315E7DCABD47A88</source_id>
       <tab_stop>1</tab_stop>
-      <x>15</x>
+      <x>16</x>
       <y>10</y>
       <name>controlled_item_type</name>
      </Item>

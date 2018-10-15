@@ -77,7 +77,7 @@ Installation Instructions
 		Select this manifest File "…\4-Collaboration Folders on TOC\imports (admin).mf"
 		"Collaboration Folders" <-- place check mark in this option and start the import.
 
-	5-Folders On Program And Project:
+    (Optional) 6-Folders On Program And Project:
 		Select this manifest File "…\6-Folders On Program And Project\1_AddToProgram\1-imports - CF (admin).mf"
 		"Collaboration Folders" <-- place check mark in this option and start the import.
 
@@ -100,6 +100,10 @@ Installation Instructions
 		"Collaboration Folders" <-- place check mark in this option and start the import.
 		## this import will fail, if you do not have the package "Package Utilities v1-6(A11)" loaded already ##
 		
+	(OUTDATED) 5-Configuration Data:
+		Select this manifest File "…\5-Configuration Data\imports (admin).mf"
+		"Collaboration Folders" <-- place check mark in this option and start the import.
+		## This import will break Collab Folders on newer versions of innovator##
 
 
 	(2) After all imports have finished the final step is to copy some add-on "images" and "ui_resource"(for multi-language messages) files
