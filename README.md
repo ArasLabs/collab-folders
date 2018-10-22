@@ -19,6 +19,7 @@ This project and the following release notes have been migrated from the old Ara
 
 Release | Notes
 --------|--------
+[v6.0](https://github.com/ArasLabs/collab-folders/releases/tag/v6.0)| Aras 11 SP14. Updated packages and documentation to support 11 SP14.
 [v5.5](https://github.com/ArasLabs/collab-folders/releases/tag/v5.5) | Aras 11 SP11
 [v5.4](https://github.com/ArasLabs/collab-folders/releases/tag/v5.4) | Aras 11 SP7-SP9. Fix structure of optional import folders.
 [v5.3](https://github.com/ArasLabs/collab-folders/releases/tag/v5.3) | Aras 11 SP7-SP9.
@@ -36,6 +37,7 @@ Release | Notes
 
 Project | Aras
 --------|------
+[v6.0](https://github.com/ArasLabs/collab-folders/releases/tag/v6.0)| 11 SP14
 [v5.5](https://github.com/ArasLabs/collab-folders/releases/tag/v5.5) | 11 SP11
 [v5.4](https://github.com/ArasLabs/collab-folders/releases/tag/v5.4) | 11 SP7-SP9
 [v5.3](https://github.com/ArasLabs/collab-folders/releases/tag/v5.3) | 11 SP7-SP9
