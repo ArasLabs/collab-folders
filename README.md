@@ -1,4 +1,5 @@
 # Collaboration Folders
+
 #### *Manage Files and Items in ML-Structs*
 
 Adds handling of multi-level Folder structures. (new Item Types, see data model). On top of Aras Solutions "Product Engineering" and "Program Management"
@@ -54,6 +55,7 @@ Project | Aras
 ## Installation
 
 #### Important!
+
 **Always back up your code tree and database before applying an import package or code tree patch!**
 
 ### Pre-requisites
@@ -68,15 +70,17 @@ Project | Aras
 1. Backup your code tree and store the backup in a safe place.
 2. Copy the Innovator folder from the project's CodeTree subdirectory.
 3. Paste the Innovator folder into the root directory of your Aras installation.
-  * Tip: This is the same directory that contains the InnovatorServerConfig.xml file.
+   * Tip: This is the same directory that contains the InnovatorServerConfig.xml file.
 4. Backup your database and store the BAK file in a safe place.
 5. Open up the Aras Package Import tool.
 6. Enter your login credentials and click **Login**
-  * _Note: You must login as root for the package import to succeed!_
+   * _Note: You must login as root for the package import to succeed!_
 7. Follow the instructions in [Import/READ_ME.txt](./Import/READ_ME.txt) for importing packages.
-  * _Note: Steps 2-3 replace the code tree overlay steps in the READ___ME.txt instructions._
+   * _Note: Steps 2-3 replace the code tree overlay steps in the READ___ME.txt instructions._
+
 #### Important!
-  **If you are using a language pack, some default variables will be changed. To use Collaboration Folders with a language pack, you must do the following.**
+
+**If you are using a language pack, some default variables will be changed. To use Collaboration Folders with a language pack, you must do the following.**
   1. Navigate to Admin > Variables within the TOC.
   2. Find the variables related to Collab Folders by searching tGridCfg*
   3. Modify the values to the following:
